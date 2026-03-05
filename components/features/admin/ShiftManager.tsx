@@ -24,7 +24,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
 
   // 変更分のみを抽出する（保存時）
   const getUpdates = () => {
-    const updates = []
+    const updates: any[] = []
     
     casts?.forEach((cast: any) => {
       dates.forEach((date: string) => {
