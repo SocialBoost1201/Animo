@@ -1,0 +1,95 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { HeroMediaLayer } from './HeroMediaLayer';
+import { HeroVideoRotatorProps, HeroMedia } from './types';
+import { motion } from 'framer-motion';
+
+export const HeroVideoRotator: React.FC<HeroVideoRotatorProps> = ({
+  media = [],
+  transitionMode = 'fade',
+  durationMs = 3000,
+  transitionMs = 700,
+  overlayOpacity = 0.4
+}) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
+
+  useEffect(() => {
+    // Check for prefers-reduced-motion
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setIsReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsReducedMotion(e.matches);
+    };
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (media.length <= 1 || isReducedMotion) return;
+
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % media.length);
+    }, durationMs);
+
+    return () => clearInterval(interval);
+  }, [media.length, durationMs, isReducedMotion]);
+
+  return (
+    <div className="relative h-screen w-full overflow-hidden bg-black flex items-center justify-center">
+      {/* 1. Media Layer (Videos/Images with transitions) */}
+      <HeroMediaLayer
+        media={media}
+        activeIndex={activeIndex}
+        transitionMode={transitionMode}
+        transitionMs={transitionMs}
+        isReducedMotion={isReducedMotion}
+      />
+
+      {/* 2. Overlay Layer (For text readability) */}
+      <div 
+        className="absolute inset-0 bg-black pointer-events-none z-10"
+        style={{ opacity: overlayOpacity }}
+      />
+
+      {/* 3. Copy & CTA Layer */}
+      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          className="text-white font-serif tracking-widest text-4xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-lg uppercase"
+        >
+          CLUB ANIMO
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+          className="text-white/90 font-sans tracking-[0.2em] text-sm md:text-base max-w-lg leading-loose drop-shadow-md"
+        >
+          煌びやかなシャンデリアの下で<br />
+          特別な時間を
+        </motion.p>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
+      >
+        <span className="text-white/70 text-[10px] uppercase tracking-widest mb-2 font-mono">Scroll</span>
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"
+        />
+      </motion.div>
+    </div>
+  );
+};
