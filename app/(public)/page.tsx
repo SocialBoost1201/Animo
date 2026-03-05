@@ -55,13 +55,13 @@ export default async function HomePage() {
       />
 
       {/* 2. Concept Section */}
-      <section className="py-[var(--spacing-section)] bg-[var(--color-background)] px-6">
+      <section className="py-[var(--spacing-section)] bg-white px-6">
         <div className="container mx-auto max-w-4xl text-center">
           <FadeIn>
-            <h2 className="text-[var(--color-gold)] font-serif text-3xl md:text-4xl mb-8 tracking-widest uppercase">
+            <h2 className="text-[var(--color-gold)] font-serif text-3xl md:text-4xl mb-12 luxury-tracking-super uppercase">
               <RevealText text="Concept" />
             </h2>
-            <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-12" />
+            <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-16 opacity-50" />
             
             {settings?.today_mood && (
                <p className="text-sm md:text-base text-[var(--color-gold)] font-serif mb-6 px-4 py-2 border border-[var(--color-gold)]/30 inline-block bg-[var(--color-gold)]/5">
@@ -69,10 +69,10 @@ export default async function HomePage() {
                </p>
             )}
 
-            <p className="text-lg md:text-xl leading-loose font-serif mb-8 text-[var(--color-foreground)]">
+            <p className="text-xl md:text-2xl leading-loose font-serif mb-12 text-[#171717] luxury-tracking">
               関内の大人の社交場
             </p>
-            <p className="text-sm md:text-base leading-loose text-gray-600 font-sans max-w-2xl mx-auto">
+            <p className="text-sm md:text-base leading-[2.5] text-gray-500 font-serif max-w-2xl mx-auto luxury-tracking">
               明るく洗練された店内には、象徴的な大シャンデリアが輝きます。<br/>
               日常の喧騒を離れ、上質な空間で極上のキャストとともに、<br/>
               心ゆくまで寛ぎのひとときをお楽しみください。
@@ -82,27 +82,29 @@ export default async function HomePage() {
       </section>
 
       {/* 3. Quick Action CTA (CV強化) */}
-      <section className="py-12 bg-[#171717] text-white">
-        <div className="container mx-auto px-6">
-          <FadeIn className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
-            <h3 className="font-serif tracking-widest text-xl text-[var(--color-gold)] flex flex-col sm:flex-row sm:items-center gap-2">
-              Reservation & Inquiry
+      <section className="py-20 bg-white border-y border-gray-100/50 relative overflow-hidden">
+        {/* 背景のうっすらとしたアクセント */}
+        <div className="absolute inset-0 bg-[var(--color-gold)]/5 mix-blend-multiply" />
+        <div className="container mx-auto px-6 relative z-10">
+          <FadeIn className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            <h3 className="font-serif luxury-tracking text-xl text-[#171717] flex flex-col sm:flex-row sm:items-center gap-4">
+              <span className="text-[var(--color-gold)]">Reservation & Inquiry</span>
               {settings?.vip_availability && (
-                <span className="text-xs font-sans tracking-normal border border-[var(--color-gold)] px-2 py-1 rounded text-white bg-black/20">
+                <span className="text-xs font-serif luxury-tracking border border-[var(--color-gold)]/30 px-3 py-1 text-[var(--color-gold)] bg-white/80">
                   VIP: {settings.vip_availability}
                 </span>
               )}
             </h3>
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <Button asChild size="lg" className="w-full sm:w-auto font-bold tracking-widest">
+            <div className="flex flex-col sm:flex-row gap-6 w-full md:w-auto">
+              <Button asChild size="lg" className="w-full sm:w-auto luxury-tracking font-medium bg-[#171717] text-white border-transparent hover:bg-[var(--color-gold)] hover:border-[var(--color-gold)]">
                 <Link href="/reserve">
-                  <CalendarHeart className="mr-2 w-5 h-5" />
+                  <CalendarHeart className="mr-3 w-4 h-4" />
                   WEB予約
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-[#171717] font-bold tracking-widest">
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto luxury-tracking font-medium border-[#171717] text-[#171717] hover:bg-[#171717] hover:text-white">
                 <a href="tel:045-xxxx-xxxx">
-                  <Phone className="mr-2 w-5 h-5" />
+                  <Phone className="mr-3 w-4 h-4" />
                   045-XXXX-XXXX
                 </a>
               </Button>
@@ -112,11 +114,11 @@ export default async function HomePage() {
       </section>
 
       {/* 4. Today's Cast Preview */}
-      <section className="py-[var(--spacing-section)] bg-[var(--color-gray-light)] px-6 overflow-hidden">
+      <section className="py-[var(--spacing-section)] bg-white px-6 overflow-hidden">
         <div className="container mx-auto">
-          <FadeIn className="flex justify-between items-end mb-12">
+          <FadeIn className="flex justify-between items-end mb-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-serif tracking-widest text-[#171717] uppercase mb-2">
+              <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-[#171717] uppercase mb-4">
                 Today&apos;s Cast
               </h2>
               <p className="text-sm tracking-widest text-gray-500 uppercase">本日の出勤</p>
@@ -131,21 +133,20 @@ export default async function HomePage() {
             {displayCasts.map((cast) => (
               <div key={cast.id} className="min-w-[70vw] sm:min-w-[40vw] md:min-w-0 snap-center group select-none">
                 <Link href={`/cast/${cast.slug}`} className="block relative">
-                  <div className="overflow-hidden rounded-sm bg-white shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                  <div className="overflow-hidden bg-white hover:shadow-luxury-hover transition-all duration-1000">
                     <PlaceholderImage 
                       src={cast.image_url}
                       alt={cast.name} 
                       ratio="4:5" 
                       placeholderText={cast.name}
-                      className="group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     />
-                    <div className="p-4 bg-white relative z-10">
-                      <h3 className="font-serif text-lg text-[#171717]">{cast.name}</h3>
-                      <div className="flex justify-between items-center mt-2">
-                        {/* StartTime and EndTime display omitted from shift relation for now, marking simply as Today */}
-                        <span className="text-xs text-gray-500">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
+                    <div className="pt-6 pb-2 bg-white relative z-10 text-center">
+                      <h3 className="font-serif luxury-tracking text-lg text-[#171717]">{cast.name}</h3>
+                      <div className="flex flex-col justify-center items-center mt-3 gap-2">
+                        <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
                         {cast.is_today && (
-                          <span className="text-[10px] text-[var(--color-gold)] border border-[var(--color-gold)] px-2 py-0.5 rounded-sm">本日出勤</span>
+                          <span className="text-[9px] luxury-tracking text-[var(--color-gold)] uppercase">Today's Cast</span>
                         )}
                       </div>
                     </div>
@@ -171,25 +172,25 @@ export default async function HomePage() {
       {/* 5. Gallery Preview */}
       <section className="py-[var(--spacing-section)] bg-white px-6">
         <div className="container mx-auto">
-          <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif tracking-widest text-[#171717] uppercase mb-4">
+          <FadeIn className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-[#171717] uppercase mb-12">
               Gallery
             </h2>
-            <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto" />
+            <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto opacity-50" />
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {dbGallery.length >= 1 ? (
-              <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
+              <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-white shadow-luxury">
                 <PlaceholderImage 
                   src={dbGallery[0].image_url} 
                   ratio="4:5" 
                   alt={dbGallery[0].title}
                   placeholderText={dbGallery[0].title} 
-                  className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" 
+                  className="h-[400px] lg:h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
                 />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white font-serif tracking-widest border border-white px-6 py-2">View Gallery</span>
+                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000 flex items-center justify-center">
+                  <span className="text-white font-serif luxury-tracking border border-white/50 px-8 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">View Gallery</span>
                 </div>
               </FadeIn>
             ) : (
@@ -199,12 +200,12 @@ export default async function HomePage() {
             )}
 
             {dbGallery.length >= 2 ? (
-              <FadeIn delay={0.2} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-                <PlaceholderImage src={dbGallery[1].image_url} ratio="16:9" alt={dbGallery[1].title} placeholderText={dbGallery[1].title} className="h-full group-hover:scale-105 transition-transform duration-700" />
+              <FadeIn delay={0.2} className="relative group overflow-hidden bg-white shadow-luxury h-[250px] lg:h-auto">
+                <PlaceholderImage src={dbGallery[1].image_url} ratio="16:9" alt={dbGallery[1].title} placeholderText={dbGallery[1].title} className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               </FadeIn>
             ) : (
-               <FadeIn delay={0.2} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-                <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 transition-transform duration-700" />
+               <FadeIn delay={0.2} className="relative group overflow-hidden bg-white shadow-luxury h-[250px] lg:h-auto">
+                <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               </FadeIn>
             )}
 

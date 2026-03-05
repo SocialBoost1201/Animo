@@ -61,7 +61,7 @@ export const HeroVideoRotator: React.FC<HeroVideoRotatorProps> = ({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-          className="text-white font-serif tracking-widest text-4xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-lg uppercase"
+          className="text-white font-serif luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-normal mb-8 uppercase"
         >
           CLUB ANIMO
         </motion.h1>
@@ -69,7 +69,7 @@ export const HeroVideoRotator: React.FC<HeroVideoRotatorProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-          className="text-white/90 font-sans tracking-[0.2em] text-sm md:text-base max-w-lg leading-loose drop-shadow-md"
+          className="text-white/80 font-serif luxury-tracking text-sm md:text-base max-w-lg leading-[2.5]"
         >
           煌びやかなシャンデリアの下で<br />
           特別な時間を
@@ -83,7 +83,7 @@ export const HeroVideoRotator: React.FC<HeroVideoRotatorProps> = ({
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
       >
-        <span className="text-white/70 text-[10px] uppercase tracking-widest mb-2 font-mono">Scroll</span>
+        <span className="text-white/50 text-[9px] uppercase luxury-tracking mb-3 font-serif">Scroll</span>
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}

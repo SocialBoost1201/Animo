@@ -9,8 +9,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand Info */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-block mb-6">
-              <span className="font-serif tracking-widest uppercase text-2xl font-bold">
+            <Link href="/" className="inline-block mb-8">
+              <span className="font-serif luxury-tracking-super uppercase text-xl font-normal">
                 Club Animo
               </span>
             </Link>
@@ -32,32 +32,32 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-serif mb-6 uppercase tracking-wider text-[var(--color-gold)]">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
               Discover
             </h3>
-            <ul className="space-y-4">
-              <li><Link href="/system" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">System</Link></li>
-              <li><Link href="/cast" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">Cast</Link></li>
-              <li><Link href="/shift" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">Today&apos;s Shift</Link></li>
-              <li><Link href="/gallery" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">Gallery</Link></li>
+            <ul className="space-y-5">
+              <li><Link href="/system" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">System</Link></li>
+              <li><Link href="/cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Cast</Link></li>
+              <li><Link href="/shift" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Today&apos;s Shift</Link></li>
+              <li><Link href="/gallery" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Gallery</Link></li>
             </ul>
           </div>
 
           {/* Recruit Info */}
           <div>
-            <h3 className="text-lg font-serif mb-6 uppercase tracking-wider text-[var(--color-gold)]">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
               Recruit
             </h3>
-            <ul className="space-y-4">
-              <li><Link href="/recruit/cast" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">Cast Recruit</Link></li>
-              <li><Link href="/recruit/staff" className="text-gray-400 hover:text-white transition-colors text-sm uppercase tracking-wider">Staff Recruit</Link></li>
-              <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">採用プライバシーポリシー</Link></li>
+            <ul className="space-y-5">
+              <li><Link href="/recruit/cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Cast Recruit</Link></li>
+              <li><Link href="/recruit/staff" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Staff Recruit</Link></li>
+              <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-xs font-serif luxury-tracking">採用プライバシー</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-serif mb-6 uppercase tracking-wider text-[var(--color-gold)]">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
               Access
             </h3>
             <ul className="space-y-4 text-gray-400 text-sm">
@@ -75,9 +75,9 @@ export const Footer = () => {
                   045-XXXX-XXXX
                 </a>
               </li>
-              <li className="mt-4 pt-4 border-t border-white/10">
-                <p className="font-serif text-white tracking-widest">OPEN 20:00 - LAST</p>
-                <p className="text-xs uppercase mt-1">Closed on Sundays & Holidays</p>
+              <li className="mt-6 pt-6 border-t border-white/10">
+                <p className="font-serif text-white luxury-tracking-super text-sm">OPEN 20:00 - LAST</p>
+                <p className="text-[10px] uppercase mt-2 font-serif luxury-tracking text-gray-500">Closed on Sundays & Holidays</p>
               </li>
             </ul>
           </div>

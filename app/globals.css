@@ -12,16 +12,29 @@
   --font-sans: var(--font-inter), var(--font-noto-sans), sans-serif;
 
   /* Brand Spacing & Border Radius */
-  --spacing-section: 120px;
-  --radius-btn: 8px;
+  --spacing-section: 160px;
+  --spacing-section-mobile: 100px;
+  --radius-btn: 2px;
+  
+  /* Brand Shadows */
+  --shadow-luxury: 0 30px 60px -15px rgba(0, 0, 0, 0.03);
+  --shadow-luxury-hover: 0 40px 80px -20px rgba(0, 0, 0, 0.06);
 }
 
-body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-serif); /* 本文もセリフ体を優先させ高級感を底上げ */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ユーティリティクラス（トラッキング） */
+.luxury-tracking {
+  letter-spacing: 0.25em;
+}
+
+.luxury-tracking-super {
+  letter-spacing: 0.4em;
 }
 
 /* Custom scrollbar for horizontal scrolling areas (Today Shift) */

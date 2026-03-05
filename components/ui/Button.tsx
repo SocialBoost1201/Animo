@@ -3,14 +3,14 @@ import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = {
-  base: "inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02]",
+  base: "inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   variants: {
     variant: {
       default:
-        "bg-[var(--color-gold)] text-white shadow-md hover:shadow-lg",
+        "border border-[var(--color-gold)] text-[var(--color-gold)] bg-transparent hover:bg-[var(--color-gold)] hover:text-white",
       outline:
-        "border border-foreground bg-transparent hover:bg-foreground hover:text-background",
-      ghost: "hover:bg-accent hover:text-accent-foreground",
+        "border border-foreground bg-transparent hover:bg-foreground hover:text-background text-foreground",
+      ghost: "hover:bg-gray-50 hover:text-foreground",
       link: "text-[var(--color-gold)] underline-offset-4 hover:underline",
     },
     size: {

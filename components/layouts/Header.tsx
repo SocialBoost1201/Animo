@@ -48,8 +48,8 @@ export const Header = () => {
           <Link href="/" className="flex items-center gap-2">
             <span
               className={cn(
-                'font-serif tracking-widest uppercase transition-colors duration-300 font-bold',
-                isScrolled ? 'text-[#171717] text-xl' : 'text-[#171717] text-2xl'
+                'font-serif luxury-tracking-super uppercase transition-colors duration-500 font-normal',
+                isScrolled ? 'text-[#171717] text-lg' : 'text-white text-xl drop-shadow-md'
               )}
             >
               Club Animo
@@ -63,10 +63,10 @@ export const Header = () => {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'text-sm font-medium tracking-wider uppercase transition-colors hover:text-[var(--color-gold)] font-sans',
+                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)]',
                   pathname === item.href
-                    ? 'text-[var(--color-gold)] font-bold'
-                    : 'text-[#171717]'
+                    ? 'text-[var(--color-gold)]'
+                    : isScrolled ? 'text-[#171717]' : 'text-white drop-shadow-sm'
                 )}
               >
                 {item.label}
@@ -74,7 +74,12 @@ export const Header = () => {
             ))}
             <Link
               href="/reserve"
-              className="ml-4 px-6 py-2 bg-[var(--color-gold)] text-white text-sm font-medium tracking-wider uppercase rounded-sm hover:-translate-y-0.5 transition-transform shadow-md"
+              className={cn(
+                "ml-4 px-6 py-2 border text-xs font-serif luxury-tracking uppercase transition-all duration-500",
+                isScrolled 
+                  ? "border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-white"
+                  : "border-white text-white hover:bg-white hover:text-black"
+              )}
             >
               Reserve
             </Link>
@@ -101,8 +106,8 @@ export const Header = () => {
             transition={{ type: 'tween', duration: 0.3 }}
             className="fixed inset-0 z-[60] bg-white flex flex-col"
           >
-            <div className="p-6 flex justify-between items-center border-b border-gray-100">
-              <span className="font-serif tracking-widest uppercase text-xl text-[#171717] font-bold">
+            <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
+              <span className="font-serif luxury-tracking-super uppercase text-lg text-[#171717]">
                 Club Animo
               </span>
               <button
@@ -119,7 +124,7 @@ export const Header = () => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-lg font-sans tracking-widest uppercase text-[#171717] border-b border-gray-50 pb-4"
+                  className="text-sm font-serif luxury-tracking uppercase text-[#171717] border-b border-gray-100 pb-4"
                 >
                   {item.label}
                 </Link>
@@ -127,13 +132,13 @@ export const Header = () => {
               <div className="mt-8 flex flex-col gap-4">
                 <Link
                   href="/reserve"
-                  className="w-full text-center py-4 bg-[var(--color-gold)] text-white text-sm font-bold tracking-widest uppercase rounded-sm"
+                  className="w-full text-center py-4 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase"
                 >
                   Reserve
                 </Link>
                 <a
                   href="tel:045-xxxx-xxxx"
-                  className="w-full text-center py-4 border border-[#171717] text-[#171717] text-sm font-bold tracking-widest uppercase rounded-sm"
+                  className="w-full text-center py-4 border border-[#171717] text-[#171717] text-xs font-serif luxury-tracking uppercase"
                 >
                   Call Now
                 </a>

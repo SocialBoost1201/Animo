@@ -32,26 +32,26 @@ export const StickyCTA: React.FC = () => {
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex flex-col items-center justify-center border-r border-gray-200 text-[#171717] hover:bg-gray-50 transition-colors"
+              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-[#171717] hover:bg-gray-50 transition-colors"
             >
               <Instagram className="w-5 h-5 mb-1" />
-              <span className="text-[10px] uppercase tracking-wider font-bold">DM</span>
+              <span className="text-[9px] uppercase luxury-tracking font-serif">DM</span>
             </a>
             
             <a
               href="tel:045-xxxx-xxxx"
-              className="flex-1 flex flex-col items-center justify-center border-r border-gray-200 text-[#171717] hover:bg-gray-50 transition-colors"
+              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-[#171717] hover:bg-gray-50 transition-colors"
             >
               <Phone className="w-5 h-5 mb-1" />
-              <span className="text-[10px] uppercase tracking-wider font-bold">Call</span>
+              <span className="text-[9px] uppercase luxury-tracking font-serif">Call</span>
             </a>
             
             <Link
               href="/reserve"
-              className="flex-[1.5] flex flex-col items-center justify-center bg-[var(--color-gold)] text-white hover:brightness-110 transition-all font-bold"
+              className="flex-[1.5] flex flex-col items-center justify-center bg-[var(--color-gold)] text-white hover:bg-[#171717] transition-all duration-500"
             >
               <CalendarHeart className="w-5 h-5 mb-1" />
-              <span className="text-[10px] uppercase tracking-wider">Reserve</span>
+              <span className="text-[9px] uppercase luxury-tracking font-serif">Reserve</span>
             </Link>
           </div>
         </motion.div>

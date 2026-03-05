@@ -12,18 +12,18 @@ export function GalleryGrid({ items }: { items: any[] }) {
         {items.map((item, i) => (
           <div 
             key={item.id}
-            className="group relative cursor-pointer overflow-hidden rounded-sm bg-gray-100 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-lg"
+            className="group relative cursor-pointer overflow-hidden bg-white shadow-luxury transition-all duration-1000 hover:-translate-y-1 hover:shadow-luxury-hover"
             onClick={() => setSelectedImage(item.image_url)}
           >
             <PlaceholderImage
               src={item.image_url}
               alt={item.title || `Gallery ${i}`}
               ratio="4:3"
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105"
             />
             {/* ホバー時のオーバーレイ */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
-              <span className="text-white text-sm font-sans tracking-widest uppercase border border-white/50 px-4 py-2 rounded-sm bg-black/20">
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-1000 backdrop-blur-[2px]">
+              <span className="text-white text-sm font-serif luxury-tracking uppercase border border-white/50 px-6 py-3 bg-transparent">
                 拡大する
               </span>
             </div>
