@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 // 今週の日付一覧（月〜日）を取得するユーティリティ
-export function getWeekDates(startDate = new Date()) {
+function getWeekDates(startDate = new Date()) {
   const dates = []
   const current = new Date(startDate)
   // 曜日を月曜始まりにする調整 (0=日, 1=月... なので 1を基準にする)
