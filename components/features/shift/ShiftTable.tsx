@@ -81,13 +81,13 @@ export function ShiftTable() {
             <button
               key={day.dateStr}
               onClick={() => setActiveDayIndex(idx)}
-              className={`flex-1 min-w-[80px] py-4 text-center text-sm transition-colors relative ${
-                isActive ? 'text-[var(--color-gold)] font-bold' : 'text-gray-400 hover:text-gray-600'
+              className={`flex-1 min-w-[80px] py-4 text-center text-xs font-serif luxury-tracking transition-colors relative ${
+                isActive ? 'text-[var(--color-gold)]' : 'text-gray-400 hover:text-[#171717]'
               }`}
             >
               {day.label}
               {isActive && (
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--color-gold)]" />
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[var(--color-gold)]" />
               )}
             </button>
           );
@@ -99,12 +99,12 @@ export function ShiftTable() {
         {isLoading ? (
           <div className="p-12 text-center text-gray-400">Loading schedule...</div>
         ) : displayCasts.length > 0 ? (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-[var(--color-gold)]/10">
             {displayCasts.map((cast) => {
               const shiftInfo = activeShiftsForDay.find(s => s.cast_id === cast.id);
               return (
-                <div key={cast.id} className="flex items-center p-4 hover:bg-gray-50/50 transition-colors">
-                  <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 mr-4 bg-gray-100">
+                <div key={cast.id} className="flex items-center p-6 bg-white hover:bg-gray-50/50 transition-all duration-500">
+                  <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 mr-6 bg-gray-50 border border-gray-100">
                     <PlaceholderImage 
                       src={cast.image_url}
                       alt={cast.name} 
@@ -114,13 +114,13 @@ export function ShiftTable() {
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-serif text-[#171717]">{cast.name}</h3>
-                    <div className="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                    <h3 className="text-lg font-serif luxury-tracking text-[#171717]">{cast.name}</h3>
+                    <div className="text-[10px] text-[var(--color-gold)] font-serif luxury-tracking mt-2 flex items-center gap-2">
                        {shiftInfo?.start_time?.slice(0, 5) || '20:00'} - {shiftInfo?.end_time?.slice(0, 5) || 'LAST'}
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                     <a href={`/cast/${cast.slug}`} className="text-[10px] font-bold tracking-wider text-[var(--color-gold)] border border-[var(--color-gold)] px-3 py-1.5 rounded-sm hover:bg-[var(--color-gold)] hover:text-white transition-colors uppercase">
+                     <a href={`/cast/${cast.slug}`} className="text-[9px] font-serif luxury-tracking text-[var(--color-gold)] border border-[var(--color-gold)] px-4 py-2 hover:bg-[#171717] hover:border-[#171717] hover:text-white transition-colors uppercase">
                        Profile
                      </a>
                   </div>

@@ -3,8 +3,10 @@ import { HeroVideoRotator } from '@/components/features/hero/HeroVideoRotator';
 import { HeroMedia } from '@/components/features/hero/types';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
+import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
 import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
+import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
 import Link from 'next/link';
 import { CalendarHeart, Phone } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
@@ -58,8 +60,8 @@ export default async function HomePage() {
       <section className="py-[var(--spacing-section)] bg-white px-6">
         <div className="container mx-auto max-w-4xl text-center">
           <FadeIn>
-            <h2 className="text-[var(--color-gold)] font-serif text-3xl md:text-4xl mb-12 luxury-tracking-super uppercase">
-              <RevealText text="Concept" />
+            <h2 className="text-[var(--color-gold)] font-serif text-3xl md:text-4xl mb-12 luxury-tracking-super uppercase text-center block">
+              <GsapRevealTitle text="Concept" />
             </h2>
             <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-16 opacity-50" />
             
@@ -118,8 +120,8 @@ export default async function HomePage() {
         <div className="container mx-auto">
           <FadeIn className="flex justify-between items-end mb-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-[#171717] uppercase mb-4">
-                Today&apos;s Cast
+              <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+                <GsapRevealTitle text="Today's Cast" />
               </h2>
               <p className="text-sm tracking-widest text-gray-500 uppercase">本日の出勤</p>
             </div>
@@ -128,34 +130,38 @@ export default async function HomePage() {
             </Link>
           </FadeIn>
 
-          {/* 横スクロールリスト (Mobile) / グリッド (Desktop) */}
-          <div className="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-4 lg:grid-cols-5 gap-6 snap-x snap-mandatory scrollbar-hide">
-            {displayCasts.map((cast) => (
-              <div key={cast.id} className="min-w-[70vw] sm:min-w-[40vw] md:min-w-0 snap-center group select-none">
-                <Link href={`/cast/${cast.slug}`} className="block relative">
-                  <div className="overflow-hidden bg-white hover:shadow-luxury-hover transition-all duration-1000">
-                    <PlaceholderImage 
-                      src={cast.image_url}
-                      alt={cast.name} 
-                      ratio="4:5" 
-                      placeholderText={cast.name}
-                      className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                    />
-                    <div className="pt-6 pb-2 bg-white relative z-10 text-center">
-                      <h3 className="font-serif luxury-tracking text-lg text-[#171717]">{cast.name}</h3>
-                      <div className="flex flex-col justify-center items-center mt-3 gap-2">
-                        <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
-                        {cast.is_today && (
-                          <span className="text-[9px] luxury-tracking text-[var(--color-gold)] uppercase">Today's Cast</span>
-                        )}
+          {/* Luxury Carousel for Casts */}
+          <div className="mt-8">
+            <LuxuryCarousel 
+              autoplay
+              options={{ loop: true, align: 'center', dragFree: true }}
+              slides={displayCasts.map((cast) => (
+                <div key={cast.id} className="group select-none">
+                  <Link href={`/cast/${cast.slug}`} className="block relative">
+                    <div className="overflow-hidden bg-white hover:shadow-luxury-hover transition-all duration-1000">
+                      <PlaceholderImage 
+                        src={cast.image_url}
+                        alt={cast.name} 
+                        ratio="4:5" 
+                        placeholderText={cast.name}
+                        className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                      />
+                      <div className="pt-8 pb-4 bg-white relative z-10 text-center">
+                        <h3 className="font-serif luxury-tracking text-xl text-[#171717]">{cast.name}</h3>
+                        <div className="flex flex-col justify-center items-center mt-3 gap-2">
+                          <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
+                          {cast.is_today && (
+                            <span className="text-[10px] uppercase luxury-tracking text-[#c9a86a]">Today's Cast</span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
+                  </Link>
+                </div>
+              ))}
+            />
             {displayCasts.length === 0 && (
-              <div className="col-span-full py-12 text-center text-gray-400">
+              <div className="py-12 text-center text-gray-400">
                 本日の出勤予定キャストはまだ公開されていません。
               </div>
             )}
@@ -173,26 +179,33 @@ export default async function HomePage() {
       <section className="py-[var(--spacing-section)] bg-white px-6">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-[#171717] uppercase mb-12">
-              Gallery
+            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-12 text-center block">
+              <GsapRevealTitle text="Gallery" />
             </h2>
             <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto opacity-50" />
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="w-full">
             {dbGallery.length >= 1 ? (
-              <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-white shadow-luxury">
-                <PlaceholderImage 
-                  src={dbGallery[0].image_url} 
-                  ratio="4:5" 
-                  alt={dbGallery[0].title}
-                  placeholderText={dbGallery[0].title} 
-                  className="h-[400px] lg:h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
+              <div className="mt-8">
+                <LuxuryCarousel 
+                  autoplay
+                  options={{ loop: true, align: 'center' }}
+                  slides={dbGallery.map((item) => (
+                    <div key={item.id} className="group relative overflow-hidden bg-white shadow-luxury h-[400px] md:h-[600px] w-full">
+                      <PlaceholderImage 
+                        src={item.image_url} 
+                        alt={item.title}
+                        placeholderText={item.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
+                      />
+                      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000 flex items-center justify-center">
+                        <span className="text-white font-serif luxury-tracking border border-white/50 px-8 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">View Gallery</span>
+                      </div>
+                    </div>
+                  ))}
                 />
-                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000 flex items-center justify-center">
-                  <span className="text-white font-serif luxury-tracking border border-white/50 px-8 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">View Gallery</span>
-                </div>
-              </FadeIn>
+              </div>
             ) : (
                <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
                 <PlaceholderImage ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />

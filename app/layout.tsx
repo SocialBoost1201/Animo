@@ -8,6 +8,8 @@ import {
 import "./globals.css";
 import { Analytics } from "@/components/seo/Analytics";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -56,7 +58,10 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${notoSerif.variable} ${inter.variable} ${notoSans.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <SmoothScrollProvider>
+          {children}
+          <LuxuryBackground />
+        </SmoothScrollProvider>
         <Analytics 
           gaId={process.env.NEXT_PUBLIC_GA_ID} 
           clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} 

@@ -36,14 +36,14 @@ export default function CastRecruitPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-[var(--color-gray-light)] pb-24 flex items-center justify-center pt-32">
-        <div className="bg-white p-12 max-w-lg w-full text-center shadow-sm border border-gray-100 rounded-sm">
-          <h2 className="text-2xl font-serif text-[#171717] mb-4">ご応募ありがとうございます</h2>
-          <p className="text-gray-600 mb-8 leading-relaxed font-sans">
+      <div className="min-h-screen bg-white pb-32 flex items-center justify-center pt-32">
+        <div className="bg-white p-12 max-w-lg w-full text-center shadow-luxury border border-[var(--color-gold)]/20 relative">
+          <h2 className="text-xl font-serif text-[#171717] mb-6 luxury-tracking">ご応募ありがとうございます</h2>
+          <p className="text-gray-500 mb-10 leading-[2.5] font-serif luxury-tracking text-xs">
             入力いただいた情報が送信されました。<br />
             数日以内に採用担当より面接等のご案内をご連絡いたします。
           </p>
-          <Button asChild onClick={() => setIsSuccess(false)}>
+          <Button asChild className="px-10 text-xs font-serif luxury-tracking">
             <a href="/">トップページへ戻る</a>
           </Button>
         </div>
@@ -65,13 +65,13 @@ export default function CastRecruitPage() {
         
         <div className="relative z-10 text-center px-6">
           <FadeIn>
-            <h1 className="text-[var(--color-gold)] font-serif text-4xl md:text-6xl lg:text-7xl tracking-[0.2em] mb-6 drop-shadow-md">
+            <h1 className="text-[var(--color-gold)] font-serif text-4xl md:text-6xl lg:text-7xl luxury-tracking-super mb-6 drop-shadow-md">
               <RevealText text="CAST RECRUIT" />
             </h1>
-            <p className="text-white font-serif tracking-[0.3em] text-sm md:text-lg lg:text-xl drop-shadow mb-12">
+            <p className="text-white font-serif luxury-tracking-super text-xs md:text-sm drop-shadow mb-12">
               もっと輝く、新しい私へ。
             </p>
-            <Button asChild size="lg" className="px-10 py-6 text-lg tracking-widest bg-white text-[#171717] hover:bg-white/90">
+            <Button asChild size="lg" className="px-12 py-5 text-xs font-serif luxury-tracking uppercase bg-white text-[#171717] hover:bg-white/90">
               <a href="#form">今すぐ応募する</a>
             </Button>
           </FadeIn>
@@ -79,14 +79,14 @@ export default function CastRecruitPage() {
       </section>
 
       {/* Concept */}
-      <section className="py-24 px-6 bg-white text-center">
+      <section className="py-32 px-6 bg-white text-center">
         <div className="container mx-auto max-w-3xl">
           <FadeIn>
-             <h2 className="text-2xl md:text-3xl font-serif text-[#171717] mb-8 tracking-widest uppercase">
+             <h2 className="text-xl md:text-2xl font-serif text-[#171717] mb-8 luxury-tracking uppercase">
               Club Animo が選ばれる理由
             </h2>
             <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-10" />
-            <p className="text-gray-600 font-sans leading-loose md:text-lg">
+            <p className="text-gray-600 font-serif leading-[2.5] luxury-tracking text-xs md:text-sm">
               関内エリアトップクラスの集客力と、落ち着いた紳士的なお客様層。<br />
               未経験の方でも安心してスタートできるよう、専属スタッフが徹底的にサポートします。<br />
               あなたの魅力を最大限に引き出し、確かな収入へと繋げるお手伝いをいたします。
@@ -96,33 +96,34 @@ export default function CastRecruitPage() {
       </section>
 
       {/* Merits */}
-      <section className="py-24 px-6 bg-[var(--color-gray-light)]">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FadeIn delay={0.1} className="bg-white p-8 md:p-10 text-center shadow-sm">
-              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="text-[var(--color-gold)] w-8 h-8" />
+      <section className="py-32 px-6 bg-white border-y border-[var(--color-gold)]/20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-gold)]/5 to-transparent pointer-events-none" />
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <FadeIn delay={0.1} className="bg-white p-8 md:p-12 text-center shadow-luxury border border-[var(--color-gold)]/20 relative hover:-translate-y-2 transition-all duration-700">
+              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                <CheckCircle2 className="text-[var(--color-gold)] w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl mb-4 text-[#171717]">圧倒的な高待遇</h3>
-              <p className="font-sans text-sm text-gray-500 leading-relaxed">
+              <h3 className="font-serif text-lg mb-6 text-[#171717] luxury-tracking">圧倒的な高待遇</h3>
+              <p className="font-serif text-xs text-gray-500 leading-[2.5] luxury-tracking">
                 時給保証制度あり。各種バックも充実しており、あなたの頑張りをしっかり評価し還元します。
               </p>
             </FadeIn>
-            <FadeIn delay={0.2} className="bg-white p-8 md:p-10 text-center shadow-sm">
-              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="text-[var(--color-gold)] w-8 h-8" />
+            <FadeIn delay={0.2} className="bg-white p-8 md:p-12 text-center shadow-luxury border border-[var(--color-gold)]/20 relative hover:-translate-y-2 transition-all duration-700">
+              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                <CheckCircle2 className="text-[var(--color-gold)] w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl mb-4 text-[#171717]">未経験者歓迎</h3>
-              <p className="font-sans text-sm text-gray-500 leading-relaxed">
+              <h3 className="font-serif text-lg mb-6 text-[#171717] luxury-tracking">未経験者歓迎</h3>
+              <p className="font-serif text-xs text-gray-500 leading-[2.5] luxury-tracking">
                 お酒の作り方から会話のコツまで、丁寧な事前研修をご用意。ノルマや罰金は一切ありません。
               </p>
             </FadeIn>
-             <FadeIn delay={0.3} className="bg-white p-8 md:p-10 text-center shadow-sm">
-              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="text-[var(--color-gold)] w-8 h-8" />
+             <FadeIn delay={0.3} className="bg-white p-8 md:p-12 text-center shadow-luxury border border-[var(--color-gold)]/20 relative hover:-translate-y-2 transition-all duration-700">
+              <div className="w-16 h-16 bg-[var(--color-gold)]/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                <CheckCircle2 className="text-[var(--color-gold)] w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl mb-4 text-[#171717]">自由シフト制</h3>
-              <p className="font-sans text-sm text-gray-500 leading-relaxed">
+              <h3 className="font-serif text-lg mb-6 text-[#171717] luxury-tracking">自由シフト制</h3>
+              <p className="font-serif text-xs text-gray-500 leading-[2.5] luxury-tracking">
                 週1回、1日3時間〜OK。学生さんやWワークの方でも、自分のペースで無理なく働けます。
               </p>
             </FadeIn>
@@ -131,65 +132,65 @@ export default function CastRecruitPage() {
       </section>
 
       {/* Apply Form Anchor */}
-      <section id="form" className="py-24 px-6 bg-white">
+      <section id="form" className="py-32 px-6 bg-white">
         <div className="container mx-auto max-w-3xl">
-          <FadeIn className="text-center mb-12">
-            <h2 className="text-3xl font-serif text-[#171717] mb-4 tracking-widest uppercase">
+          <FadeIn className="text-center mb-16">
+            <h2 className="text-2xl md:text-3xl font-serif text-[#171717] mb-6 luxury-tracking uppercase">
               Web Application
             </h2>
-            <p className="text-gray-500 font-sans text-sm mb-4">WEB応募フォーム</p>
-            <p className="text-gray-600">
-              気になることやご質問だけでも構いません。お気軽にご応募ください。
+            <p className="text-[var(--color-gold)] font-serif text-xs luxury-tracking mb-6">WEB応募フォーム</p>
+            <p className="text-gray-500 font-serif text-xs leading-[2.5] luxury-tracking">
+              気になることやご質問だけでも構いません。<br/>お気軽にご応募ください。
             </p>
           </FadeIn>
 
-          <FadeIn delay={0.2} className="bg-[var(--color-gray-light)] p-8 md:p-12 rounded-sm border border-gray-100">
+          <FadeIn delay={0.2} className="bg-white p-8 md:p-16 shadow-luxury border-y border-[var(--color-gold)]/20 md:border md:rounded-sm relative">
             {errorMessage && (
-              <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm border border-red-200 rounded-sm text-center">
+              <div className="mb-8 p-4 bg-red-50/50 text-red-600 text-xs font-serif luxury-tracking border border-red-100 text-center">
                 {errorMessage}
               </div>
             )}
             
-             <form onSubmit={handleSubmit} className="space-y-6">
+             <form onSubmit={handleSubmit} className="space-y-10">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-bold text-[#171717] mb-2">お名前 <span className="text-[var(--color-gold)]">*</span></label>
-                  <input required id="name" name="name" type="text" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm" placeholder="山田 花子" />
+                  <label htmlFor="name" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">お名前 <span className="text-[var(--color-gold)] ml-1">*</span></label>
+                  <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 花子" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div>
-                    <label htmlFor="age" className="block text-sm font-bold text-[#171717] mb-2">年齢 <span className="text-[var(--color-gold)]">*</span></label>
-                    <input required id="age" name="age" type="number" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm" placeholder="20" min="20" />
+                    <label htmlFor="age" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">年齢 <span className="text-[var(--color-gold)] ml-1">*</span></label>
+                    <input required id="age" name="age" type="number" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="20" min="20" />
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-bold text-[#171717] mb-2">電話番号 <span className="text-[var(--color-gold)]">*</span></label>
-                    <input required id="phone" name="phone" type="tel" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm" placeholder="090-1234-5678" />
+                    <label htmlFor="phone" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">電話番号 <span className="text-[var(--color-gold)] ml-1">*</span></label>
+                    <input required id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-[#171717] mb-2">ナイトワーク経験</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="experience" value="未経験" className="accent-[var(--color-gold)]" defaultChecked /> 初心者・未経験
+                  <label className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-4 uppercase">ナイトワーク経験</label>
+                  <div className="flex gap-8">
+                    <label className="flex items-center gap-3 cursor-pointer text-xs font-serif luxury-tracking text-gray-500 hover:text-[var(--color-gold)] transition-colors">
+                      <input type="radio" name="experience" value="未経験" className="accent-[var(--color-gold)] scale-110" defaultChecked /> 初心者・未経験
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="experience" value="経験あり" className="accent-[var(--color-gold)]" /> 経験あり
+                    <label className="flex items-center gap-3 cursor-pointer text-xs font-serif luxury-tracking text-gray-500 hover:text-[var(--color-gold)] transition-colors">
+                      <input type="radio" name="experience" value="経験あり" className="accent-[var(--color-gold)] scale-110" /> 経験あり
                     </label>
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-bold text-[#171717] mb-2">ご質問・ご要望</label>
-                  <textarea id="message" name="message" rows={4} className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm resize-none" placeholder="シフトの希望や、気になることがあればご記入ください" />
+                  <label htmlFor="message" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">ご質問・ご要望</label>
+                  <textarea id="message" name="message" rows={4} className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30" placeholder="シフトの希望や、気になることがあればご記入ください" />
                 </div>
 
-                <div className="pt-6 text-center">
+                <div className="pt-8 text-center">
                   <Button 
                     type="submit" 
                     disabled={isSubmitting} 
                     size="lg" 
-                    className="w-full md:w-auto md:min-w-[300px] text-lg tracking-widest py-6"
+                    className="w-full md:w-auto md:min-w-[300px] text-xs font-serif luxury-tracking uppercase px-12 py-4"
                   >
                     {isSubmitting ? 'Sending...' : '応募して面接に進む'}
-                    {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
+                    {!isSubmitting && <ArrowRight className="w-5 h-5 ml-4 font-light" />}
                   </Button>
                 </div>
              </form>

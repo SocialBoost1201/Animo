@@ -21,6 +21,7 @@
   --shadow-luxury-hover: 0 40px 80px -20px rgba(0, 0, 0, 0.06);
 }
 
+body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-serif); /* 本文もセリフ体を優先させ高級感を底上げ */

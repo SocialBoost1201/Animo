@@ -8,21 +8,22 @@ export default async function ShiftPage() {
   // (もしここでServerから流し込む場合は getWeeklyShifts() を利用)
 
   return (
-    <div className="bg-[var(--color-gray-light)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
-      <div className="container mx-auto max-w-5xl">
-        <FadeIn className="text-center mb-16">
-          <h1 className="text-3xl md:text-5xl font-serif tracking-widest text-[#171717] uppercase mb-4">
+    <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-gold)]/5 to-transparent pointer-events-none h-[50vh]" />
+      <div className="container mx-auto max-w-5xl relative z-10">
+        <FadeIn className="text-center mb-24">
+          <h1 className="text-3xl md:text-5xl font-serif luxury-tracking-super text-[#171717] uppercase mb-6">
             Schedule
           </h1>
-          <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-6" />
-          <p className="text-sm text-gray-500 font-sans tracking-wide">
+          <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
+          <p className="text-xs text-[var(--color-gold)] font-serif luxury-tracking uppercase">
             キャストの出勤スケジュール<br />
             （急な変更がある場合もございます。詳細は店舗またはご予約時にお尋ねください）
           </p>
         </FadeIn>
 
         {/* 出勤表コンポーネント (現在Client側でモックデータが動いているため、DBデータに繋ぎ替える) */}
-        <div className="bg-white shadow-sm border border-gray-100 rounded-sm overflow-hidden">
+        <div className="bg-white shadow-luxury border-y border-[var(--color-gold)]/20 md:border md:rounded-sm overflow-hidden">
            <ShiftTable />
         </div>
       </div>

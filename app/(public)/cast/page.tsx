@@ -9,14 +9,15 @@ export default async function CastPage() {
   const casts = await getPublicCasts();
 
   return (
-    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
-      <div className="container mx-auto">
-        <FadeIn className="text-center mb-16">
-          <h1 className="text-3xl md:text-5xl font-serif tracking-widest text-[#171717] uppercase mb-4">
+    <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-gold)]/5 to-transparent pointer-events-none h-[50vh]" />
+      <div className="container mx-auto relative z-10">
+        <FadeIn className="text-center mb-24">
+          <h1 className="text-3xl md:text-5xl font-serif luxury-tracking-super text-[#171717] uppercase mb-6">
             Cast
           </h1>
-          <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-6" />
-          <p className="text-sm text-gray-500 font-sans tracking-wide">
+          <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
+          <p className="text-xs text-[var(--color-gold)] font-serif luxury-tracking uppercase">
             個性豊かな上質空間を彩るキャストたち。<br />
             （本日の出勤キャストを優先して表示しています）
           </p>
@@ -27,24 +28,24 @@ export default async function CastPage() {
           {casts.map((cast, index) => (
             <FadeIn key={cast.id} delay={index * 0.05} className="group relative">
               <Link href={`/cast/${cast.slug}`} className="block">
-                <div className="overflow-hidden bg-white shadow-sm group-hover:shadow-xl transition-all duration-500 rounded-sm">
+                <div className="overflow-hidden bg-white shadow-luxury hover:shadow-luxury-hover transition-all duration-1000 group-hover:-translate-y-1">
                   <div className="relative">
                     <PlaceholderImage 
                       src={cast.image_url}
                       alt={cast.name} 
                       ratio="4:5" 
                       placeholderText={cast.name}
-                      className="group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     />
                     {cast.is_today && (
-                      <div className="absolute top-3 left-3 bg-white/95 text-[10px] font-bold text-[var(--color-gold)] px-2.5 py-1 tracking-widest uppercase rounded-sm border border-[var(--color-gold)]/30 backdrop-blur-sm">
+                      <div className="absolute top-3 left-3 bg-white text-[9px] font-serif luxury-tracking text-[var(--color-gold)] px-4 py-2 uppercase border border-[var(--color-gold)]/30 backdrop-blur-sm">
                         本日出勤
                       </div>
                     )}
                   </div>
-                  <div className="p-4 md:p-5 text-center bg-white relative z-10">
-                    <h3 className="font-serif text-lg md:text-xl text-[#171717]">{cast.name}</h3>
-                    <div className="flex justify-center items-center mt-2 gap-2 text-xs text-gray-400 font-sans tracking-wide">
+                  <div className="p-6 md:p-8 text-center bg-white relative z-10 border-t border-gray-50">
+                    <h3 className="font-serif luxury-tracking text-lg md:text-xl text-[#171717]">{cast.name}</h3>
+                    <div className="flex justify-center items-center mt-3 gap-2 text-[10px] text-gray-400 font-serif luxury-tracking">
                       {cast.age && <span>{cast.age}歳</span>}
                       {(cast.age && cast.height) && <span>/</span>}
                       {cast.height && <span>{cast.height}cm</span>}
