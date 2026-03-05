@@ -108,7 +108,7 @@ export function ShiftTable() {
                     <PlaceholderImage 
                       src={cast.image_url}
                       alt={cast.name} 
-                      ratio="1:1" 
+                      ratio="square" 
                       placeholderText={cast.name[0]} 
                       className="w-full h-full object-cover"
                     />
