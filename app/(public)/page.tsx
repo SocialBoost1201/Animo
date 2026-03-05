@@ -7,37 +7,51 @@ import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
 import { CalendarHeart, Phone } from 'lucide-react';
+import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
+import { getSiteSettings } from '@/lib/actions/contents'; // Readonly config
 
-export default function HomePage() {
-  // 管理画面から取得する想定のダミーデータ
-  const heroMediaData: HeroMedia[] = [
+// サーバーコンポーネントとしてデータ取得
+export default async function HomePage() {
+  // 並列フェッチ
+  const [
+    dbHeroMedia,
+    dbCasts,
+    dbGallery,
+    settings
+  ] = await Promise.all([
+    getPublicHeroMedia(),
+    getPublicCasts(),
+    getPublicContents('gallery', 3), // トップ用に3件取得
+    getSiteSettings().catch(() => null)
+  ]);
+
+  // DBデータからHeroMediaの型にマッピング (DBになければフォールバック)
+  const heroMediaData: HeroMedia[] = dbHeroMedia.length > 0 ? dbHeroMedia.map(m => ({
+    id: m.id,
+    type: m.type as 'video' | 'image',
+    url: m.url,
+    posterUrl: m.poster_url || m.url,
+    title: m.title
+  })) : [
     {
-      id: '1',
-      type: 'image', // 実際はvideoにするがダミーとしてimageを指定する
+      id: 'fallback',
+      type: 'image',
       url: '/images/hero-chandelier.jpg',
-      posterUrl: '/images/hero-chandelier.jpg' // videoのフォールバック用ポスター
-    },
-    {
-      id: '2',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1572116469629-078bc1b849e4?q=80&w=1920&auto=format&fit=crop',
-      posterUrl: 'https://images.unsplash.com/photo-1572116469629-078bc1b849e4?q=80&w=1920&auto=format&fit=crop'
-    },
-    {
-      id: '3',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?q=80&w=1920&auto=format&fit=crop',
-      posterUrl: 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?q=80&w=1920&auto=format&fit=crop'
+      posterUrl: '/images/hero-chandelier.jpg'
     }
   ];
+
+  // トップ表示用: 本日出勤のキャストを優先抽出
+  const todayCasts = dbCasts.filter(c => c.is_today);
+  const displayCasts = todayCasts.length > 0 ? todayCasts : dbCasts.slice(0, 5); // いなければ適当に5人
 
   return (
     <>
       {/* 1. Hero Section (Video Rotator) */}
       <HeroVideoRotator 
         media={heroMediaData} 
-        transitionMode="fade"
-        durationMs={3000}
+        transitionMode={(settings?.hero_transition_mode || 'fade') as 'fade' | 'slide'}
+        durationMs={settings?.hero_duration_ms || 3000}
       />
 
       {/* 2. Concept Section */}
@@ -49,12 +63,18 @@ export default function HomePage() {
             </h2>
             <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-12" />
             
+            {settings?.today_mood && (
+               <p className="text-sm md:text-base text-[var(--color-gold)] font-serif mb-6 px-4 py-2 border border-[var(--color-gold)]/30 inline-block bg-[var(--color-gold)]/5">
+                 {settings.today_mood}
+               </p>
+            )}
+
             <p className="text-lg md:text-xl leading-loose font-serif mb-8 text-[var(--color-foreground)]">
               関内の大人の社交場
             </p>
             <p className="text-sm md:text-base leading-loose text-gray-600 font-sans max-w-2xl mx-auto">
-              明るく洗練された店内には、象徴的な大シャンデリアが輝きます。
-              日常の喧騒を離れ、上質な空間で極上のキャストとともに、
+              明るく洗練された店内には、象徴的な大シャンデリアが輝きます。<br/>
+              日常の喧騒を離れ、上質な空間で極上のキャストとともに、<br/>
               心ゆくまで寛ぎのひとときをお楽しみください。
             </p>
           </FadeIn>
@@ -65,8 +85,13 @@ export default function HomePage() {
       <section className="py-12 bg-[#171717] text-white">
         <div className="container mx-auto px-6">
           <FadeIn className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
-            <h3 className="font-serif tracking-widest text-xl text-[var(--color-gold)]">
+            <h3 className="font-serif tracking-widest text-xl text-[var(--color-gold)] flex flex-col sm:flex-row sm:items-center gap-2">
               Reservation & Inquiry
+              {settings?.vip_availability && (
+                <span className="text-xs font-sans tracking-normal border border-[var(--color-gold)] px-2 py-1 rounded text-white bg-black/20">
+                  VIP: {settings.vip_availability}
+                </span>
+              )}
             </h3>
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
               <Button asChild size="lg" className="w-full sm:w-auto font-bold tracking-widest">
@@ -103,27 +128,36 @@ export default function HomePage() {
 
           {/* 横スクロールリスト (Mobile) / グリッド (Desktop) */}
           <div className="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-4 lg:grid-cols-5 gap-6 snap-x snap-mandatory scrollbar-hide">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="min-w-[70vw] sm:min-w-[40vw] md:min-w-0 snap-center group select-none">
-                <Link href={`/cast/sample-${i}`} className="block relative">
+            {displayCasts.map((cast) => (
+              <div key={cast.id} className="min-w-[70vw] sm:min-w-[40vw] md:min-w-0 snap-center group select-none">
+                <Link href={`/cast/${cast.slug}`} className="block relative">
                   <div className="overflow-hidden rounded-sm bg-white shadow-sm group-hover:shadow-md transition-shadow duration-300">
                     <PlaceholderImage 
-                      alt={`Cast ${i}`} 
+                      src={cast.image_url}
+                      alt={cast.name} 
                       ratio="4:5" 
-                      placeholderText={`Cast ${i}`}
+                      placeholderText={cast.name}
                       className="group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="p-4 bg-white relative z-10">
-                      <h3 className="font-serif text-lg text-[#171717]">Nanami</h3>
+                      <h3 className="font-serif text-lg text-[#171717]">{cast.name}</h3>
                       <div className="flex justify-between items-center mt-2">
-                        <span className="text-xs text-gray-500">20:00 - L</span>
-                        <span className="text-[10px] text-[var(--color-gold)] border border-[var(--color-gold)] px-2 py-0.5 rounded-sm">本日出勤</span>
+                        {/* StartTime and EndTime display omitted from shift relation for now, marking simply as Today */}
+                        <span className="text-xs text-gray-500">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
+                        {cast.is_today && (
+                          <span className="text-[10px] text-[var(--color-gold)] border border-[var(--color-gold)] px-2 py-0.5 rounded-sm">本日出勤</span>
+                        )}
                       </div>
                     </div>
                   </div>
                 </Link>
               </div>
             ))}
+            {displayCasts.length === 0 && (
+              <div className="col-span-full py-12 text-center text-gray-400">
+                本日の出勤予定キャストはまだ公開されていません。
+              </div>
+            )}
           </div>
           
           <div className="mt-8 text-center md:hidden">
@@ -145,18 +179,44 @@ export default function HomePage() {
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
-              <PlaceholderImage ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="text-white font-serif tracking-widest border border-white px-6 py-2">View Gallery</span>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.2} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-              <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 transition-transform duration-700" />
-            </FadeIn>
-            <FadeIn delay={0.3} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-              <PlaceholderImage ratio="16:9" alt="Bar Counter" placeholderText="Bar Counter" className="h-full group-hover:scale-105 transition-transform duration-700" />
-            </FadeIn>
+            {dbGallery.length >= 1 ? (
+              <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
+                <PlaceholderImage 
+                  src={dbGallery[0].image_url} 
+                  ratio="4:5" 
+                  alt={dbGallery[0].title}
+                  placeholderText={dbGallery[0].title} 
+                  className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" 
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white font-serif tracking-widest border border-white px-6 py-2">View Gallery</span>
+                </div>
+              </FadeIn>
+            ) : (
+               <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
+                <PlaceholderImage ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />
+              </FadeIn>
+            )}
+
+            {dbGallery.length >= 2 ? (
+              <FadeIn delay={0.2} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
+                <PlaceholderImage src={dbGallery[1].image_url} ratio="16:9" alt={dbGallery[1].title} placeholderText={dbGallery[1].title} className="h-full group-hover:scale-105 transition-transform duration-700" />
+              </FadeIn>
+            ) : (
+               <FadeIn delay={0.2} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
+                <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 transition-transform duration-700" />
+              </FadeIn>
+            )}
+
+            {dbGallery.length >= 3 ? (
+              <FadeIn delay={0.3} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
+                <PlaceholderImage src={dbGallery[2].image_url} ratio="16:9" alt={dbGallery[2].title} placeholderText={dbGallery[2].title} className="h-full group-hover:scale-105 transition-transform duration-700" />
+              </FadeIn>
+            ) : (
+                <FadeIn delay={0.3} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
+                  <PlaceholderImage ratio="16:9" alt="Bar Counter" placeholderText="Bar Counter" className="h-full group-hover:scale-105 transition-transform duration-700" />
+                </FadeIn>
+            )}
           </div>
           
           <FadeIn delay={0.4} className="mt-12 text-center">
@@ -171,7 +231,8 @@ export default function HomePage() {
       <section className="py-24 bg-[#111] px-6 text-center relative overflow-hidden">
         {/* Background dark placeholder/image */}
         <div className="absolute inset-0 opacity-20">
-          <PlaceholderImage ratio="16:9" alt="Recruit Background" placeholderText="Recruit BG" className="w-full h-full object-cover" />
+          {/* Use DB image if available, else placeholder */}
+          <PlaceholderImage src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1920&auto=format&fit=crop" ratio="16:9" alt="Recruit Background" className="w-full h-full object-cover" />
         </div>
         
         <div className="container mx-auto relative z-10">

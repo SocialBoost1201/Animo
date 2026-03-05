@@ -1,22 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { Button } from '@/components/ui/Button';
 import { CalendarHeart } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { submitContact } from '@/lib/actions/public/submit';
 
-export default function ReservePage() {
+function ReserveForm() {
+  const searchParams = useSearchParams();
+  const defaultCastName = searchParams.get('cast') || '';
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    setErrorMessage('');
+
+    const formData = new FormData(e.currentTarget);
+    formData.append('type', 'reserve');
+    
+    // Server Action呼び出し
+    const result = await submitContact(formData);
+    
     setIsSubmitting(false);
-    setIsSuccess(true);
+
+    if (result.error) {
+      setErrorMessage(result.error);
+    } else {
+      setIsSuccess(true);
+    }
   };
 
   if (isSuccess) {
@@ -27,7 +44,7 @@ export default function ReservePage() {
           <h2 className="text-2xl font-serif text-[#171717] mb-4">予約リクエストを送信しました</h2>
           <p className="text-gray-600 mb-8 leading-relaxed font-sans">
             この度はご予約ありがとうございます。<br />
-            ご入力いただいたメールアドレス宛に自動返信メールを送信いたしました。<br />
+            ご入力の内容は正常に送信されました。<br />
             追ってスタッフより予約確定のご連絡を申し上げます。
           </p>
           <Button asChild onClick={() => setIsSuccess(false)}>
@@ -61,6 +78,12 @@ export default function ReservePage() {
               当日のご予約はお電話にてお問い合わせくださいませ。
             </p>
 
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm border border-red-200 rounded-sm text-center">
+                {errorMessage}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto">
               {/* Name & Furigana */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,29 +91,24 @@ export default function ReservePage() {
                   <label htmlFor="name" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Name <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <input required type="text" id="name" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
+                  <input required id="name" name="name" type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
                 </div>
                 <div>
-                  <label htmlFor="kana" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
-                    Furigana
+                  {/* contactMethodとしてメールアドレスやLINE ID等を共用 */}
+                  <label htmlFor="contactMethod" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                    Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <input type="text" id="kana" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="ヤマダ タロウ" />
+                  <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="info@example.com (メール/LINE等)" />
                 </div>
               </div>
 
               {/* Contact */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="phone" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Phone <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <input required type="tel" id="phone" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
-                    Email <span className="text-[var(--color-gold)] ml-1">*</span>
-                  </label>
-                  <input required type="email" id="email" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="info@example.com" />
+                  <input required id="phone" name="phone" type="tel" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
                 </div>
               </div>
 
@@ -100,13 +118,13 @@ export default function ReservePage() {
                   <label htmlFor="date" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Reserve Date <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <input required type="date" id="date" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]" />
+                  <input required id="date" name="date" type="date" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]" />
                 </div>
                 <div>
                   <label htmlFor="time" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Time <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <select required id="time" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
+                  <select required id="time" name="time" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
                     <option value="">--:--</option>
                     <option value="20:00">20:00</option>
                     <option value="20:30">20:30</option>
@@ -127,15 +145,15 @@ export default function ReservePage() {
                   <label htmlFor="people" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Number of People <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <select required id="people" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
+                  <select required id="people" name="people" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
                     {[1,2,3,4,5,6,7,8,"9名以上"].map(n => <option key={n} value={n}>{n}{typeof n === 'number' ? '名' : ''}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="cast" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                  <label htmlFor="castName" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                     Cast Nomination
                   </label>
-                  <input type="text" id="cast" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="指名するキャスト名（任意）" />
+                  <input id="castName" name="castName" defaultValue={defaultCastName} type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="指名するキャスト名（任意）" />
                 </div>
               </div>
 
@@ -144,7 +162,7 @@ export default function ReservePage() {
                 <label htmlFor="message" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                   Message / Remarks
                 </label>
-                <textarea id="message" rows={4} className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="ご要望やご質問がございましたらご記入ください" />
+                <textarea id="message" name="message" rows={4} className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="ご要望やご質問がございましたらご記入ください" />
               </div>
 
               {/* Submit */}
@@ -167,4 +185,13 @@ export default function ReservePage() {
       </section>
     </div>
   );
+}
+
+// Suspense wrap needed for next/navigation hooks in Next.js 13+
+export default function ReservePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--color-gray-light)]"></div>}>
+      <ReserveForm />
+    </Suspense>
+  )
 }

@@ -1,70 +1,60 @@
 import React from 'react';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { FadeIn } from '@/components/motion/FadeIn';
-import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  return {
-    title: `News Detail | Club Animo`,
-    description: `Club Animoのお知らせ詳細ページです。`,
-  };
+async function getNewsDetail(id: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('contents')
+    .select('*')
+    .eq('id', id)
+    .eq('type', 'news')
+    .eq('is_published', true)
+    .single();
+
+  if (error || !data) return null;
+  return data;
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  
-  if (!slug) {
+export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
+  const news = await getNewsDetail(params.slug);
+
+  if (!news) {
     notFound();
   }
 
-  return (
-    <div className="min-h-screen bg-[var(--color-gray-light)] pb-24">
-      <section className="bg-white pt-12 pb-16 px-6 border-b border-gray-100">
-        <div className="container mx-auto">
-          <div className="mb-4">
-             <Link href="/news" className="text-sm tracking-widest text-gray-500 hover:text-[var(--color-gold)] transition-colors uppercase">
-              ← Back to News
-            </Link>
-          </div>
-          <FadeIn direction="down">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-gray-500 font-sans tracking-wider text-sm">2023.12.01</span>
-              <span className="text-[10px] uppercase tracking-widest bg-gray-50 text-gray-500 border border-gray-200 px-2 py-1 rounded-sm">
-                Information
-              </span>
-            </div>
-            <h1 className="text-[#171717] font-serif text-2xl md:text-3xl lg:text-4xl leading-relaxed">
-              ニュース・お知らせタイトルがここに入ります（ダミー）
-            </h1>
-          </FadeIn>
-        </div>
-      </section>
+  const dateStr = new Date(news.created_at).toISOString().split('T')[0].replace(/-/g, '.');
 
-      <section className="py-16 px-6">
-        <div className="container mx-auto max-w-4xl">
-          <FadeIn delay={0.2} className="bg-white p-8 md:p-12 shadow-sm border border-gray-100 rounded-sm">
-            <div className="prose prose-sm md:prose-base max-w-none font-sans text-gray-700 leading-loose">
-              <p>
-                平素は格別のお引き立てを賜り、厚く御礼申し上げます。<br />
-                Club Animoより、お客様へ大切なお知らせがございます。
-              </p>
-              <PlaceholderImage ratio="16:9" alt="News placeholder" placeholderText="Article Image" className="my-8 rounded-sm" />
-              <p>
-                ここにニュースの本文が入ります。CMSが導入された後、管理画面から入力されたリッチテキスト（HTML等）が展開される予定です。
-                現状はダミーコンテンツとして表示しております。
-              </p>
-            </div>
-          </FadeIn>
-          
-          <div className="mt-12 text-center">
-             <Link href="/news" className="inline-block border border-[#171717] text-[#171717] px-8 py-3 text-sm font-bold tracking-widest uppercase hover:bg-[#171717] hover:text-white transition-colors rounded-sm">
-               お知らせ一覧へ戻る
-             </Link>
-          </div>
+  return (
+    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
+      <div className="container mx-auto max-w-3xl">
+        <div className="mb-8">
+          <Link href="/news" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors">
+            <ArrowLeft size={16} className="mr-2" /> NEWS INDEX
+          </Link>
         </div>
-      </section>
+
+        <FadeIn className="bg-white p-8 md:p-12 shadow-sm border border-gray-100 rounded-sm">
+          <div className="mb-8 pb-8 border-b border-gray-100 text-center">
+            <span className="block text-sm font-sans tracking-widest text-gray-400 mb-4">{dateStr}</span>
+            <h1 className="text-2xl md:text-3xl font-serif leading-relaxed text-[#171717]">{news.title}</h1>
+          </div>
+
+          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-[var(--color-gold)] text-gray-600 font-sans whitespace-pre-wrap">
+            {news.description || '詳細な内容はありません。'}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Button asChild variant="outline" className="px-12">
+              <Link href="/news">一覧に戻る</Link>
+            </Button>
+          </div>
+        </FadeIn>
+      </div>
     </div>
   );
 }

@@ -1,17 +1,56 @@
-import React from 'react';
+'use client'
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, Briefcase } from 'lucide-react';
-
-export const metadata = {
-  title: 'Staff Recruit | Club Animo',
-  description: '関内の高級クラブ「Club Animo」の店舗運営スタッフ求人。キャリアアップを目指す男性スタッフ・幹部候補を募集。',
-};
+import { submitRecruitApplication } from '@/lib/actions/public/submit';
 
 export default function StaffRecruitPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    const formData = new FormData(e.currentTarget);
+    formData.append('type', 'staff');
+    
+    // Server Action呼び出し
+    const result = await submitRecruitApplication(formData);
+    
+    setIsSubmitting(false);
+
+    if (result.error) {
+      setErrorMessage(result.error);
+    } else {
+      setIsSuccess(true);
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-[var(--color-gray-light)] pb-24 flex items-center justify-center pt-32">
+        <div className="bg-white p-12 max-w-lg w-full text-center shadow-sm border border-gray-100 rounded-sm">
+          <h2 className="text-2xl font-serif text-[#171717] mb-4">ご応募ありがとうございます</h2>
+          <p className="text-gray-600 mb-8 leading-relaxed font-sans">
+            入力いただいた情報が送信されました。<br />
+            数日以内に採用担当より面接等のご案内をご連絡いたします。
+          </p>
+          <Button asChild onClick={() => setIsSuccess(false)}>
+            <a href="/">トップページへ戻る</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-gray-light)]">
       {/* Hero Section */}
@@ -113,39 +152,51 @@ export default function StaffRecruitPage() {
           </FadeIn>
 
           <FadeIn delay={0.2} className="bg-[var(--color-gray-light)] p-8 md:p-12 rounded-sm border border-gray-100">
-             <form className="space-y-6">
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm border border-red-200 rounded-sm text-center">
+                {errorMessage}
+              </div>
+            )}
+            
+             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold text-[#171717] mb-2">お名前 <span className="text-[var(--color-gold)]">*</span></label>
-                  <input required type="text" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
+                  <label htmlFor="name" className="block text-sm font-bold text-[#171717] mb-2">お名前 <span className="text-[var(--color-gold)]">*</span></label>
+                  <input required id="name" name="name" type="text" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-[#171717] mb-2">年齢 <span className="text-[var(--color-gold)]">*</span></label>
-                    <input required type="number" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" min="18" />
+                    <label htmlFor="age" className="block text-sm font-bold text-[#171717] mb-2">年齢 <span className="text-[var(--color-gold)]">*</span></label>
+                    <input required id="age" name="age" type="number" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" min="18" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-[#171717] mb-2">電話番号 <span className="text-[var(--color-gold)]">*</span></label>
-                    <input required type="tel" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
+                    <label htmlFor="phone" className="block text-sm font-bold text-[#171717] mb-2">電話番号 <span className="text-[var(--color-gold)]">*</span></label>
+                    <input required id="phone" name="phone" type="tel" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-[#171717] mb-2">希望職種 <span className="text-[var(--color-gold)]">*</span></label>
-                  <select required className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
+                  <label htmlFor="experience" className="block text-sm font-bold text-[#171717] mb-2">希望職種 <span className="text-[var(--color-gold)]">*</span></label>
+                  {/* experienceにスタッフの希望職種をマッピング */}
+                  <select required id="experience" name="experience" className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm text-[#171717]">
                     <option value="">選択してください</option>
                     <option value="幹部候補">幹部候補（正社員）</option>
-                    <option value="ホール制">ホールスタッフ（正社員）</option>
-                    <option value="ホールア">ホールスタッフ（アルバイト）</option>
+                    <option value="ホールスタッフ（正）">ホールスタッフ（正社員）</option>
+                    <option value="ホールスタッフ（ア）">ホールスタッフ（アルバイト）</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-[#171717] mb-2">自己PR・経歴など</label>
-                  <textarea rows={4} className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="過去の経歴や意気込み等があればご記入ください" />
+                  <label htmlFor="message" className="block text-sm font-bold text-[#171717] mb-2">自己PR・経歴など</label>
+                  <textarea id="message" name="message" rows={4} className="w-full bg-white border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="過去の経歴や意気込み等があればご記入ください" />
                 </div>
 
                 <div className="pt-6 text-center">
-                  <Button type="button" size="lg" className="w-full md:w-auto md:min-w-[300px] text-lg tracking-widest py-6">
-                    応募して面接に進む
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting} 
+                    size="lg" 
+                    className="w-full md:w-auto md:min-w-[300px] text-lg tracking-widest py-6"
+                  >
+                    {isSubmitting ? 'Sending...' : '応募して面接に進む'}
+                    {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
                   </Button>
                 </div>
              </form>

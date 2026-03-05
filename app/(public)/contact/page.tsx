@@ -4,17 +4,31 @@ import React, { useState } from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { Button } from '@/components/ui/Button';
+import { submitContact } from '@/lib/actions/public/submit';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    setErrorMessage('');
+
+    const formData = new FormData(e.currentTarget);
+    formData.append('type', 'contact');
+    
+    // Server Action呼び出し
+    const result = await submitContact(formData);
+    
     setIsSubmitting(false);
-    setIsSuccess(true);
+
+    if (result.error) {
+      setErrorMessage(result.error);
+    } else {
+      setIsSuccess(true);
+    }
   };
 
   if (isSuccess) {
@@ -24,7 +38,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-serif text-[#171717] mb-4">お問い合わせを送信しました</h2>
           <p className="text-gray-600 mb-8 leading-relaxed font-sans">
             お問い合わせいただき誠にありがとうございます。<br />
-            入力されたメールアドレス宛に控えのメールを送信しました。<br />
+            ご入力の内容は正常に送信されました。<br />
             数日以内に担当スタッフよりご連絡いたします。
           </p>
           <Button asChild onClick={() => setIsSuccess(false)}>
@@ -58,33 +72,39 @@ export default function ContactPage() {
               以下のフォームよりお気軽にお問い合わせください。
             </p>
 
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm border border-red-200 rounded-sm">
+                {errorMessage}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                <label htmlFor="name" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                   Name <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
-                <input required type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
+                <input required id="name" name="name" type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="山田 太郎" />
               </div>
               
               <div>
-                <label className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
-                  Email <span className="text-[var(--color-gold)] ml-1">*</span>
+                <label htmlFor="contactMethod" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                  Email / Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
-                <input required type="email" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="info@example.com" />
+                <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="info@example.com (LINEやSNSの場合はID等をご記入ください)" />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                <label htmlFor="phone" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                   Phone (Optional)
                 </label>
-                <input type="tel" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
+                <input id="phone" name="phone" type="tel" className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm" placeholder="090-1234-5678" />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
+                <label htmlFor="message" className="block text-sm font-bold text-[#171717] mb-2 uppercase tracking-wide">
                   Message <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
-                <textarea required rows={6} className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="お問い合わせ内容をご記入ください" />
+                <textarea required id="message" name="message" rows={6} className="w-full bg-gray-50 border border-gray-200 p-3 outline-none focus:border-[#171717] transition-colors rounded-sm resize-none" placeholder="お問い合わせ内容をご記入ください" />
               </div>
 
               <div className="pt-6 text-center">

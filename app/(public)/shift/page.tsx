@@ -1,42 +1,31 @@
 import React from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
-import { RevealText } from '@/components/motion/RevealText';
 import { ShiftTable } from '@/components/features/shift/ShiftTable';
 
-export const metadata = {
-  title: "Today's Shift | Club Animo",
-  description: 'Club Animoの出勤情報ページです。本日の出勤キャストと週間スケジュールをご確認いただけます。',
-};
+export default async function ShiftPage() {
+  // Client Componentである ShiftTable 内でデータフェッチを行う構成にする（要件に応じて適宜選定可能）
+  // 今回はUI/UX側をリッチにするためShiftTable側にAPI取得を委譲した設計とする。
+  // (もしここでServerから流し込む場合は getWeeklyShifts() を利用)
 
-export default function ShiftPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-gray-light)] pb-24">
-      {/* Header Section */}
-      <section className="bg-white pt-12 pb-16 px-6 border-b border-gray-100">
-        <div className="container mx-auto">
-          <FadeIn direction="down" className="text-center">
-            <h1 className="text-[var(--color-gold)] font-serif text-3xl md:text-5xl mb-4 tracking-widest uppercase">
-              <RevealText text="Shift" />
-            </h1>
-            <p className="text-[#171717] font-sans tracking-[0.2em] text-sm md:text-base uppercase">
-              出勤情報
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+    <div className="bg-[var(--color-gray-light)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
+      <div className="container mx-auto max-w-5xl">
+        <FadeIn className="text-center mb-16">
+          <h1 className="text-3xl md:text-5xl font-serif tracking-widest text-[#171717] uppercase mb-4">
+            Schedule
+          </h1>
+          <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-6" />
+          <p className="text-sm text-gray-500 font-sans tracking-wide">
+            キャストの出勤スケジュール<br />
+            （急な変更がある場合もございます。詳細は店舗またはご予約時にお尋ねください）
+          </p>
+        </FadeIn>
 
-      {/* Main Content */}
-      <section className="py-16 px-6">
-        <div className="container mx-auto max-w-5xl">
-          <FadeIn delay={0.2}>
-            <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto leading-loose text-sm">
-              スケジュールの変更により、実際の出勤と異なる場合がございます。<br />
-              確実なご指名を希望される場合は、事前にお電話やWEBからご予約をお願いいたします。
-            </p>
-            <ShiftTable />
-          </FadeIn>
+        {/* 出勤表コンポーネント (現在Client側でモックデータが動いているため、DBデータに繋ぎ替える) */}
+        <div className="bg-white shadow-sm border border-gray-100 rounded-sm overflow-hidden">
+           <ShiftTable />
         </div>
-      </section>
+      </div>
     </div>
   );
 }

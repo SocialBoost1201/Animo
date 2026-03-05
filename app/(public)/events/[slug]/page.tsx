@@ -1,73 +1,67 @@
 import React from 'react';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { FadeIn } from '@/components/motion/FadeIn';
-import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { ArrowLeft, Calendar } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  return {
-    title: `Event Detail | Club Animo`,
-    description: `Club Animoのイベント詳細ページです。`,
-  };
+async function getEventDetail(id: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('contents')
+    .select('*')
+    .eq('id', id)
+    .eq('type', 'event')
+    .eq('is_published', true)
+    .single();
+
+  if (error || !data) return null;
+  return data;
 }
 
-export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  
-  if (!slug) {
+export default async function EventDetailPage({ params }: { params: { slug: string } }) {
+  const event = await getEventDetail(params.slug);
+
+  if (!event) {
     notFound();
   }
 
+  const eventDateStr = event.content_date 
+    ? new Date(event.content_date).toISOString().split('T')[0].replace(/-/g, '/') 
+    : '';
+
   return (
-    <div className="min-h-screen bg-[var(--color-gray-light)] pb-24">
-      {/* Hero / Cover */}
-      <section className="relative h-[40vh] md:h-[50vh] w-full flex items-center justify-center">
-        <PlaceholderImage 
-          ratio="16:9" 
-          alt="Event Hero" 
-          placeholderText="Event Poster" 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50" />
-      </section>
-
-      <section className="container mx-auto px-6 -mt-20 relative z-10 max-w-4xl">
-        <FadeIn className="bg-white p-8 md:p-12 shadow-md border border-gray-100 rounded-sm">
-          <div className="mb-6">
-             <Link href="/events" className="text-sm tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors uppercase">
-              ← Back to Events
-            </Link>
-          </div>
-          
-          <div className="mb-8 border-b border-gray-100 pb-8">
-            <span className="text-[var(--color-gold)] font-bold tracking-widest text-sm mb-3 block">
-              2023.12.24 - 12.25
-            </span>
-            <h1 className="text-[#171717] font-serif text-2xl md:text-3xl lg:text-4xl leading-relaxed">
-              イベントタイトルがここに入力されます
-            </h1>
-          </div>
-
-          <div className="prose prose-sm md:prose-base max-w-none font-sans text-gray-700 leading-loose">
-            <p>
-              イベントの詳細な説明文がここに入ります。管理画面（CMS）から登録した内容が反映されます。<br />
-              当日は限定ボトルの割引や特別なノベルティなどをご用意しております。
-            </p>
-            <PlaceholderImage ratio="3:2" alt="Event preview" placeholderText="Event Detail" className="my-8 rounded-sm mx-auto max-w-2xl" />
-            <p>
-              皆様のご来店をキャスト・スタッフ一同、心よりお待ち申し上げております。
-            </p>
-          </div>
-          
-        </FadeIn>
-        
-        <div className="mt-12 text-center">
-            <Link href="/events" className="inline-block border border-[#171717] text-[#171717] px-8 py-3 text-sm font-bold tracking-widest uppercase hover:bg-[#171717] hover:text-white transition-colors rounded-sm">
-              イベント一覧へ戻る
-            </Link>
+    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
+      <div className="container mx-auto max-w-3xl">
+         <div className="mb-8">
+          <Link href="/events" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors">
+            <ArrowLeft size={16} className="mr-2" /> EVENT INDEX
+          </Link>
         </div>
-      </section>
+
+        <FadeIn className="bg-white p-8 md:p-12 shadow-sm border border-gray-100 rounded-sm">
+          <div className="mb-8 pb-8 border-b border-gray-100 text-center">
+             {eventDateStr && (
+              <span className="inline-flex items-center justify-center text-sm font-sans tracking-widest text-[#171717] mb-4 bg-gray-50 px-4 py-1.5 rounded-sm">
+                <Calendar size={14} className="mr-2 text-[var(--color-gold)]" />
+                {eventDateStr} 開催
+              </span>
+            )}
+            <h1 className="text-2xl md:text-3xl font-serif leading-relaxed text-[#171717]">{event.title}</h1>
+          </div>
+
+          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-[var(--color-gold)] text-gray-600 font-sans whitespace-pre-wrap">
+            {event.description || '詳細な内容はありません。'}
+          </div>
+
+          <div className="mt-16 text-center">
+            <Button asChild variant="outline" className="px-12">
+              <Link href="/events">一覧に戻る</Link>
+            </Button>
+          </div>
+        </FadeIn>
+      </div>
     </div>
   );
 }
