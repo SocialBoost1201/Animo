@@ -6,6 +6,8 @@ import {
   Noto_Sans_JP,
 } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@/components/seo/Analytics";
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -48,10 +50,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        <LocalBusinessSchema />
+      </head>
       <body
         className={`${playfair.variable} ${notoSerif.variable} ${inter.variable} ${notoSans.variable} antialiased bg-background text-foreground`}
       >
         {children}
+        <Analytics 
+          gaId={process.env.NEXT_PUBLIC_GA_ID} 
+          clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} 
+        />
       </body>
     </html>
   );

@@ -1,103 +1,64 @@
-'use client';
+'use client'
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { X, ZoomIn } from 'lucide-react';
-import { StaggerList } from '@/components/motion/StaggerList';
 
-interface GalleryItem {
-  id: string;
-  category: 'chandelier' | 'vip' | 'floor';
-  caption: string;
-}
-
-const GALLERY_ITEMS: GalleryItem[] = [
-  { id: '1', category: 'chandelier', caption: 'Main Chandelier' },
-  { id: '2', category: 'floor', caption: 'Main Floor' },
-  { id: '3', category: 'vip', caption: 'VIP Room A' },
-  { id: '4', category: 'floor', caption: 'Bar Counter' },
-  { id: '5', category: 'vip', caption: 'VIP Room B' },
-  { id: '6', category: 'floor', caption: 'Hallway' },
-  { id: '7', category: 'chandelier', caption: 'Lighting Detail' },
-  { id: '8', category: 'floor', caption: 'Entrance' },
-];
-
-export const GalleryGrid: React.FC = () => {
-  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+export function GalleryGrid({ items }: { items: any[] }) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <>
-      <StaggerList 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-        staggerDelay={0.05}
-      >
-        {GALLERY_ITEMS.map((item) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {items.map((item, i) => (
           <div 
-            key={item.id} 
-            className="group relative cursor-pointer overflow-hidden rounded-sm shadow-sm"
-            onClick={() => setSelectedItem(item)}
+            key={item.id}
+            className="group relative cursor-pointer overflow-hidden rounded-sm bg-gray-100 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-lg"
+            onClick={() => setSelectedImage(item.image_url)}
           >
-            <PlaceholderImage 
-              ratio="3:2" 
-              alt={item.caption} 
-              placeholderText={item.caption}
-              className="group-hover:scale-110 transition-transform duration-700 ease-out h-[250px] sm:h-auto"
+            <PlaceholderImage
+              src={item.image_url}
+              alt={item.title || `Gallery ${i}`}
+              ratio="4:3"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
-              <ZoomIn className="text-white w-8 h-8 mb-2" />
-              <span className="text-white font-serif tracking-widest text-sm drop-shadow-md">
-                {item.caption}
+            {/* ホバー時のオーバーレイ */}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 backdrop-blur-[2px]">
+              <span className="text-white text-sm font-sans tracking-widest uppercase border border-white/50 px-4 py-2 rounded-sm bg-black/20">
+                拡大する
               </span>
             </div>
           </div>
         ))}
-      </StaggerList>
 
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {selectedItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-safe"
-            onClick={() => setSelectedItem(null)}
-          >
-            <button
-              className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors p-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedItem(null);
-              }}
-            >
-              <X className="w-8 h-8" />
-            </button>
-            
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative max-w-6xl w-full h-[80vh] flex flex-col items-center justify-center px-4 md:px-12"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-full relative h-full flex items-center justify-center">
-                 <PlaceholderImage 
-                  ratio="16:9" 
-                  alt={selectedItem.caption} 
-                  placeholderText={selectedItem.caption}
-                  className="max-h-[70vh] w-auto max-w-full object-contain shadow-2xl"
-                />
-              </div>
-              <p className="text-white/80 font-serif tracking-widest mt-6 text-lg md:text-xl">
-                {selectedItem.caption}
-              </p>
-            </motion.div>
-          </motion.div>
+        {items.length === 0 && (
+          <div className="col-span-full py-20 text-center text-gray-400">
+            ギャラリーの画像はありません。
+          </div>
         )}
-      </AnimatePresence>
+      </div>
+
+      {/* ライトボックス表示 */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-12 cursor-pointer backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img 
+            src={selectedImage} 
+            alt="Gallery Fullscreen" 
+            className="max-w-full max-h-full object-contain rounded-sm shadow-2xl animate-in zoom-in-95 duration-200"
+          />
+          <button 
+            className="absolute top-6 right-6 text-white bg-black/50 hover:bg-[var(--color-gold)] w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </>
   );
-};
+}
