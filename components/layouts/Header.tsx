@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const NAV_ITEMS = [
@@ -13,13 +13,21 @@ const NAV_ITEMS = [
   { label: 'Shift', href: '/shift' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Access', href: '/access' },
-  { label: 'Recruit', href: '/recruit/cast' },
+];
+
+const RECRUIT_ITEMS = [
+  { label: 'Cast 求人', href: '/recruit/cast' },
+  { label: 'Staff 求人', href: '/recruit/staff' },
 ];
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isRecruitOpen, setIsRecruitOpen] = useState(false);
+  const [isMobileRecruitOpen, setIsMobileRecruitOpen] = useState(false);
   const pathname = usePathname();
+  const recruitRef = useRef<HTMLDivElement>(null);
+  const recruitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +40,33 @@ export const Header = () => {
   // Close mobile menu when pathname changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsRecruitOpen(false);
+    setIsMobileRecruitOpen(false);
   }, [pathname]);
+
+  // Close recruit dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (recruitRef.current && !recruitRef.current.contains(e.target as Node)) {
+        setIsRecruitOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleRecruitEnter = () => {
+    if (recruitTimeoutRef.current) clearTimeout(recruitTimeoutRef.current);
+    setIsRecruitOpen(true);
+  };
+
+  const handleRecruitLeave = () => {
+    recruitTimeoutRef.current = setTimeout(() => {
+      setIsRecruitOpen(false);
+    }, 200);
+  };
+
+  const isRecruitActive = pathname.startsWith('/recruit');
 
   return (
     <>
@@ -72,6 +106,56 @@ export const Header = () => {
                 {item.label}
               </Link>
             ))}
+
+            {/* Recruit Dropdown (Desktop) */}
+            <div
+              ref={recruitRef}
+              className="relative"
+              onMouseEnter={handleRecruitEnter}
+              onMouseLeave={handleRecruitLeave}
+            >
+              <button
+                className={cn(
+                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)] flex items-center gap-1',
+                  isRecruitActive
+                    ? 'text-[var(--color-gold)]'
+                    : isScrolled ? 'text-[#171717]' : 'text-white drop-shadow-sm'
+                )}
+                onClick={() => setIsRecruitOpen(!isRecruitOpen)}
+              >
+                Recruit
+                <ChevronDown className={cn(
+                  'w-3 h-3 transition-transform duration-200',
+                  isRecruitOpen && 'rotate-180'
+                )} />
+              </button>
+
+              <AnimatePresence>
+                {isRecruitOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                    className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md border border-[var(--color-gold)]/20 shadow-lg overflow-hidden"
+                  >
+                    {RECRUIT_ITEMS.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          'block px-5 py-3 text-xs font-serif luxury-tracking text-[#171717] hover:bg-[var(--color-gold)]/10 hover:text-[var(--color-gold)] transition-colors border-b border-[var(--color-gold)]/10 last:border-b-0',
+                          pathname === item.href && 'text-[var(--color-gold)] bg-[var(--color-gold)]/5'
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <Link
               href="/reserve"
               className={cn(
@@ -129,6 +213,47 @@ export const Header = () => {
                   {item.label}
                 </Link>
               ))}
+
+              {/* Recruit (Mobile Accordion) */}
+              <div className="border-b border-gray-100 pb-4">
+                <button
+                  className="text-sm font-serif luxury-tracking uppercase text-[#171717] w-full flex items-center justify-between"
+                  onClick={() => setIsMobileRecruitOpen(!isMobileRecruitOpen)}
+                >
+                  Recruit
+                  <ChevronDown className={cn(
+                    'w-4 h-4 transition-transform duration-200',
+                    isMobileRecruitOpen && 'rotate-180'
+                  )} />
+                </button>
+                <AnimatePresence>
+                  {isMobileRecruitOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-4 pl-4 space-y-4">
+                        {RECRUIT_ITEMS.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                              'block text-sm font-serif luxury-tracking text-gray-500 hover:text-[var(--color-gold)] transition-colors',
+                              pathname === item.href && 'text-[var(--color-gold)]'
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <div className="mt-8 flex flex-col gap-4">
                 <Link
                   href="/reserve"
