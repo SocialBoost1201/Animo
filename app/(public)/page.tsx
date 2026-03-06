@@ -183,8 +183,8 @@ export default async function HomePage() {
               options={{ loop: true, align: 'center', dragFree: true }}
               slides={displayCasts.map((cast) => (
                 <div key={cast.id} className="group select-none">
-                  <Link href={`/cast/${cast.slug}`} className="block relative">
-                    <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000">
+                  <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000">
+                    <Link href={`/cast/${cast.slug}`} className="block relative">
                       <PlaceholderImage 
                         src={cast.image_url}
                         alt={cast.name} 
@@ -192,20 +192,31 @@ export default async function HomePage() {
                         placeholderText={cast.name}
                         className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                       />
-                      <div className="pt-8 pb-4 bg-transparent relative z-10 text-center">
-                        <h3 className="font-serif luxury-tracking text-xl text-[#171717]">{cast.name}</h3>
-                        <div className="flex flex-col justify-center items-center mt-3 gap-2">
-                          <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
-                          {cast.hobby && (
-                            <span className="text-[10px] text-gray-400 font-serif luxury-tracking line-clamp-1">趣味: {cast.hobby}</span>
-                          )}
-                          {cast.is_today && (
-                            <span className="text-[10px] uppercase luxury-tracking text-[#c9a86a]">Today&apos;s Cast</span>
-                          )}
-                        </div>
+                    </Link>
+                    <div className="pt-6 pb-5 px-4 bg-white relative z-10 text-center">
+                      <Link href={`/cast/${cast.slug}`}>
+                        <h3 className="font-serif luxury-tracking text-xl text-[#171717] hover:text-[var(--color-gold)] transition-colors">{cast.name}</h3>
+                      </Link>
+                      <div className="flex flex-col justify-center items-center mt-2 gap-1.5">
+                        <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
+                        {cast.hobby && (
+                          <span className="text-[10px] text-gray-400 font-serif luxury-tracking line-clamp-1">趣味: {cast.hobby}</span>
+                        )}
+                        {cast.is_today && (
+                          <span className="text-[10px] uppercase luxury-tracking text-[var(--color-gold)] border border-[var(--color-gold)]/40 px-3 py-0.5 mt-1">Today&apos;s Cast</span>
+                        )}
                       </div>
+                      {/* 指名予約ボタン */}
+                      <Link
+                        href={`/reserve?cast=${encodeURIComponent(cast.name)}`}
+                        className="mt-4 flex items-center justify-center gap-2 w-full py-3 bg-[#171717] text-white text-[10px] font-serif luxury-tracking uppercase hover:bg-[var(--color-gold)] transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <CalendarHeart className="w-3 h-3" />
+                        指名して予約
+                      </Link>
                     </div>
-                  </Link>
+                  </div>
                 </div>
               ))}
             />
