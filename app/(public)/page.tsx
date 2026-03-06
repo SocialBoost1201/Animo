@@ -95,7 +95,7 @@ export default async function HomePage() {
               <span className="text-[var(--color-gold)]">Reservation & Inquiry</span>
               {settings?.vip_availability && (
                 <span className="text-xs font-serif luxury-tracking border border-[var(--color-gold)]/30 px-3 py-1 text-[var(--color-gold)] bg-white/80">
-                  VIP: {settings.vip_availability}
+                  {settings.vip_availability}
                 </span>
               )}
             </h3>
@@ -192,7 +192,7 @@ export default async function HomePage() {
             {Array.from({ length: Math.max(6, dbGallery.length) }).map((_, i) => {
               const staticFallbacks = [
                 { id: 'fb1', title: 'Main Chandelier', description: 'ホール全体を照らす優美な大シャンデリア。\n無数のクリスタルが非日常の空間へと誘います。', image_url: '/images/chandelier.jpg' },
-                { id: 'fb2', title: 'VIP Room', description: '深紅のカーテンに包まれたプライベート空間。\n大切なお客様との特別なひとときをお約束します。', image_url: '/images/curtain_room.JPG' }
+                { id: 'fb2', title: 'Curtain Room', description: '深紅のカーテンに包まれたプライベート空間。\n大切なお客様との特別なひとときをお約束します。', image_url: '/images/curtain_room.JPG' }
               ];
               
               // If DB has items, use DB items. Else, use static fallbacks.
