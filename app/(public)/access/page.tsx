@@ -157,13 +157,22 @@ export default function AccessPage() {
                   <p className="text-[11px] text-gray-400">Kannai Station (Yokohama Subway Blue Line) — 5 min walk</p>
                 </div>
               </li>
+              <li className="flex items-start gap-4 border-b border-gray-100/50 pb-6">
+                <span className="text-[var(--color-gold)] text-xl mt-1">—</span>
+                <div>
+                  <p className="text-foreground font-serif mb-1">
+                    みなとみらい線「馬車道駅」より <strong className="text-[var(--color-gold)]">徒歩 約5分</strong>
+                  </p>
+                  <p className="text-[11px] text-gray-400">Bashamichi Station (Minatomirai Line) — 5 min walk</p>
+                </div>
+              </li>
               <li className="flex items-start gap-4">
                 <span className="text-[var(--color-gold)] text-xl mt-1">—</span>
                 <div>
                   <p className="text-foreground font-serif mb-1">
-                    お車でお越しの場合は、近隣のコインパーキングをご利用ください
+                    みなとみらい線「日本大通り駅」より <strong className="text-[var(--color-gold)]">徒歩 約7分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">※ 当店指定の駐車場はございません</p>
+                  <p className="text-[11px] text-gray-400">Nihon-odori Station (Minatomirai Line) — 7 min walk</p>
                 </div>
               </li>
             </ul>
