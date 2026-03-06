@@ -86,7 +86,7 @@ const MediaItem = ({ item, isActive }: { item: HeroMedia, isActive: boolean }) =
   if (item.type === 'image' || hasError) {
     return (
       <div 
-        className="w-full h-full bg-cover bg-center"
+        className="w-full h-full bg-cover bg-center md:bg-cover bg-contain bg-no-repeat transition-all duration-1000"
         style={{ backgroundImage: `url(${item.posterUrl || item.url})` }}
       />
     );
@@ -95,7 +95,7 @@ const MediaItem = ({ item, isActive }: { item: HeroMedia, isActive: boolean }) =
   // ビデオの場合
   return (
     <video
-      className="w-full h-full object-cover"
+      className="w-full h-full object-contain md:object-cover transition-all duration-1000"
       src={item.url}
       poster={item.posterUrl}
       autoPlay={isActive}
