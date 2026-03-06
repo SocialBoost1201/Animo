@@ -35,12 +35,13 @@ export default async function HomePage() {
     posterUrl: m.poster_url || m.url,
     title: m.title
   })) : [
-    {
-      id: 'fallback',
-      type: 'image',
-      url: '/images/hero-chandelier.jpg',
-      posterUrl: '/images/hero-chandelier.jpg'
-    }
+    { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/videos/movie01_chandelier.mp4' },
+    { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
+    { id: 'v3', type: 'video', url: '/videos/movie03_bar.mp4', posterUrl: '/videos/movie03_bar.mp4' },
+    { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
+    { id: 'v5', type: 'video', url: '/videos/movie05_floor.mp4', posterUrl: '/videos/movie05_floor.mp4' },
+    { id: 'v6', type: 'video', url: '/videos/movie06_flower.mp4', posterUrl: '/videos/movie06_flower.mp4' },
+    { id: 'v7', type: 'video', url: '/videos/movie07_flower.mp4', posterUrl: '/videos/movie07_flower.mp4' }
   ];
 
   // トップ表示用: 本日出勤のキャストを優先抽出
@@ -208,7 +209,7 @@ export default async function HomePage() {
               </div>
             ) : (
                <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
-                <PlaceholderImage ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />
+                <PlaceholderImage src="/images/chandelier.jpg" ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />
               </FadeIn>
             )}
 
@@ -218,7 +219,7 @@ export default async function HomePage() {
               </FadeIn>
             ) : (
                <FadeIn delay={0.2} className="relative group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[250px] lg:h-auto">
-                <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
+                <PlaceholderImage src="/images/curtain_room.JPG" ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               </FadeIn>
             )}
 
