@@ -94,7 +94,7 @@ export const PriceSimulator = () => {
         <div className="space-y-12">
           {/* 来店タイプ */}
           <FadeIn delay={0.2} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Customer Type</span>
+            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Customer Type <span className="text-[10px] text-gray-400 ml-2">来店タイプ</span></span>
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <div className="flex-1 flex w-full">
                 <div className="w-1/2 pr-2">
@@ -109,7 +109,7 @@ export const PriceSimulator = () => {
 
           {/* 滞在時間 */}
           <FadeIn delay={0.3} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Expected Duration</span>
+            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Expected Duration <span className="text-[10px] text-gray-400 ml-2">滞在時間</span></span>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[60, 90, 120, 150, 180].map((t) => (
                 <ToggleButton key={t} active={duration === t} onClick={() => setDuration(t as Duration)}>
@@ -121,7 +121,7 @@ export const PriceSimulator = () => {
 
           {/* 指名 */}
           <FadeIn delay={0.4} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Nomination</span>
+            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Nomination <span className="text-[10px] text-gray-400 ml-2">指名</span></span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <ToggleButton active={nomination === 'none'} onClick={() => setNomination('none')}>なし</ToggleButton>
               <ToggleButton active={nomination === 'inside'} onClick={() => setNomination('inside')}>場内指名</ToggleButton>
@@ -131,7 +131,7 @@ export const PriceSimulator = () => {
 
           {/* 同伴 */}
           <FadeIn delay={0.5} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Accompaniment</span>
+            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Accompaniment <span className="text-[10px] text-gray-400 ml-2">同伴</span></span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ToggleButton active={!accompaniment} onClick={() => setAccompaniment(false)}>なし</ToggleButton>
               <ToggleButton active={accompaniment} onClick={() => setAccompaniment(true)}>あり</ToggleButton>
@@ -141,7 +141,7 @@ export const PriceSimulator = () => {
 
         {/* Result Area */}
         <FadeIn delay={0.6} className="mt-20 pt-16 border-t border-[var(--color-gold)]/20 text-center">
-          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total</span>
+          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total <span className="text-[10px] text-gray-400 ml-2">お見積り目安</span></span>
           <div className="flex items-end justify-center gap-2 mb-4">
             <span className="text-3xl font-sans text-foreground pb-2">¥</span>
             <AnimatePresence mode="popLayout">
