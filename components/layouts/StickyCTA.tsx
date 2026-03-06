@@ -39,7 +39,7 @@ export const StickyCTA: React.FC = () => {
             </a>
             
             <a
-              href="tel:045-xxxx-xxxx"
+              href="tel:045-263-6961"
               className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-[#171717] hover:bg-gray-50 transition-colors"
             >
               <Phone className="w-5 h-5 mb-1" />

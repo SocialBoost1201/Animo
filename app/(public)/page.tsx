@@ -107,9 +107,9 @@ export default async function HomePage() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="w-full sm:w-auto luxury-tracking font-medium border-[#171717] text-[#171717] hover:bg-[#171717] hover:text-white">
-                <a href="tel:045-xxxx-xxxx">
+                <a href="tel:045-263-6961">
                   <Phone className="mr-3 w-4 h-4" />
-                  045-XXXX-XXXX
+                  045-263-6961
                 </a>
               </Button>
             </div>

@@ -137,7 +137,7 @@ export const Header = () => {
                   Reserve
                 </Link>
                 <a
-                  href="tel:045-xxxx-xxxx"
+                  href="tel:045-263-6961"
                   className="w-full text-center py-4 border border-[#171717] text-[#171717] text-xs font-serif luxury-tracking uppercase"
                 >
                   Call Now
