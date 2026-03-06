@@ -101,7 +101,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                   className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
                 >
                   <option value="floor">メインフロア (Floor)</option>
-                  <option value="vip">VIPルーム (VIP)</option>
+                  <option value="curtain">カーテンルーム (Curtain Room)</option>
                   <option value="chandelier">シャンデリア (Chandelier)</option>
                 </select>
               </div>

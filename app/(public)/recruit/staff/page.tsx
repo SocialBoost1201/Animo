@@ -115,7 +115,7 @@ export default function StaffRecruitPage() {
                 <ul className="space-y-4 text-xs tracking-wider leading-relaxed text-gray-500 font-serif mb-6">
                   <li>・店舗の売上管理、企画立案</li>
                   <li>・キャストのマネジメント、出勤調整</li>
-                  <li>・ホール業務全般、VIP対応</li>
+                  <li>・ホール業務全般、特別ルーム（カーテンルーム）対応</li>
                 </ul>
              </div>
           </FadeIn>

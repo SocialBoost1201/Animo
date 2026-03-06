@@ -45,10 +45,10 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
           />
         </div>
 
-        {/* VIP混雑状況 */}
+        {/* Curtain Room 空き状況 */}
         <div>
-          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">VIP Room Availability</h3>
-          <p className="text-xs text-gray-500 mb-4">現在のVIP席の空き状況（予約導線などに影響）。</p>
+          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Curtain Room Availability</h3>
+          <p className="text-xs text-gray-500 mb-4">現在のカーテンルームの空き状況（予約導線などに影響）。</p>
           <select 
             name="vip_availability"
             defaultValue={initialData?.vip_availability || '空きあり'}
