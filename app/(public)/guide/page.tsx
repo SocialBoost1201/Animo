@@ -205,8 +205,8 @@ export default function GuidePage() {
               <div className="text-xs text-gray-500 font-serif leading-[2.2] space-y-1 pl-9">
                 <p>JR根岸線「関内駅」 徒歩 約5分</p>
                 <p>横浜市営地下鉄「関内駅」 徒歩 約5分</p>
-                <p>みなとみらい線「馬車道駅」 徒歩 約5分</p>
-                <p>みなとみらい線「日本大通り駅」 徒歩 約7分</p>
+                <p>みなとみらい線「馬車道駅」 徒歩 約6分</p>
+                <p>みなとみらい線「日本大通り駅」 徒歩 約8分</p>
               </div>
               <div className="mt-6 text-center">
                 <Button asChild variant="outline">

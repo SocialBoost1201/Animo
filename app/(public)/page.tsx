@@ -325,8 +325,8 @@ export default async function HomePage() {
                   <dd className="leading-loose text-xs">
                     JR根岸線「関内駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約5分</strong><br />
                     横浜市営地下鉄「関内駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約5分</strong><br />
-                    みなとみらい線「馬車道駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約5分</strong><br />
-                    みなとみらい線「日本大通り駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約7分</strong>
+                    みなとみらい線「馬車道駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約6分</strong><br />
+                    みなとみらい線「日本大通り駅」<strong className="text-[var(--color-gold)] font-normal">徒歩 約8分</strong>
                   </dd>
                 </div>
               </dl>

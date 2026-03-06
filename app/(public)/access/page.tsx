@@ -161,18 +161,18 @@ export default function AccessPage() {
                 <span className="text-[var(--color-gold)] text-xl mt-1">—</span>
                 <div>
                   <p className="text-foreground font-serif mb-1">
-                    みなとみらい線「馬車道駅」より <strong className="text-[var(--color-gold)]">徒歩 約5分</strong>
+                    みなとみらい線「馬車道駅」より <strong className="text-[var(--color-gold)]">徒歩 約6分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Bashamichi Station (Minatomirai Line) — 5 min walk</p>
+                  <p className="text-[11px] text-gray-400">Bashamichi Station (Minatomirai Line) — 6 min walk</p>
                 </div>
               </li>
               <li className="flex items-start gap-4">
                 <span className="text-[var(--color-gold)] text-xl mt-1">—</span>
                 <div>
                   <p className="text-foreground font-serif mb-1">
-                    みなとみらい線「日本大通り駅」より <strong className="text-[var(--color-gold)]">徒歩 約7分</strong>
+                    みなとみらい線「日本大通り駅」より <strong className="text-[var(--color-gold)]">徒歩 約8分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Nihon-odori Station (Minatomirai Line) — 7 min walk</p>
+                  <p className="text-[11px] text-gray-400">Nihon-odori Station (Minatomirai Line) — 8 min walk</p>
                 </div>
               </li>
             </ul>
