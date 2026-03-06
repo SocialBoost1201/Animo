@@ -57,7 +57,7 @@ export default async function HomePage() {
       />
 
       {/* 2. Concept Section */}
-      <section className="py-[var(--spacing-section)] bg-white px-6">
+      <section className="py-[var(--spacing-section)] bg-transparent px-6">
         <div className="container mx-auto max-w-4xl text-center">
           <FadeIn>
             <h2 className="text-[var(--color-gold)] font-serif text-3xl md:text-4xl mb-12 luxury-tracking-super uppercase text-center block">
@@ -84,7 +84,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3. Quick Action CTA (CV強化) */}
-      <section className="py-20 bg-white border-y border-gray-100/50 relative overflow-hidden">
+      <section className="py-20 bg-transparent border-y border-[var(--color-gold)]/20 relative overflow-hidden">
         {/* 背景のうっすらとしたアクセント */}
         <div className="absolute inset-0 bg-[var(--color-gold)]/5 mix-blend-multiply" />
         <div className="container mx-auto px-6 relative z-10">
@@ -116,7 +116,7 @@ export default async function HomePage() {
       </section>
 
       {/* 4. Today's Cast Preview */}
-      <section className="py-[var(--spacing-section)] bg-white px-6 overflow-hidden">
+      <section className="py-[var(--spacing-section)] bg-transparent px-6 overflow-hidden">
         <div className="container mx-auto">
           <FadeIn className="flex justify-between items-end mb-16">
             <div>
@@ -138,7 +138,7 @@ export default async function HomePage() {
               slides={displayCasts.map((cast) => (
                 <div key={cast.id} className="group select-none">
                   <Link href={`/cast/${cast.slug}`} className="block relative">
-                    <div className="overflow-hidden bg-white hover:shadow-luxury-hover transition-all duration-1000">
+                    <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000">
                       <PlaceholderImage 
                         src={cast.image_url}
                         alt={cast.name} 
@@ -146,7 +146,7 @@ export default async function HomePage() {
                         placeholderText={cast.name}
                         className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                       />
-                      <div className="pt-8 pb-4 bg-white relative z-10 text-center">
+                      <div className="pt-8 pb-4 bg-transparent relative z-10 text-center">
                         <h3 className="font-serif luxury-tracking text-xl text-[#171717]">{cast.name}</h3>
                         <div className="flex flex-col justify-center items-center mt-3 gap-2">
                           <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
@@ -176,7 +176,7 @@ export default async function HomePage() {
       </section>
 
       {/* 5. Gallery Preview */}
-      <section className="py-[var(--spacing-section)] bg-white px-6">
+      <section className="py-[var(--spacing-section)] bg-transparent px-6">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-20">
             <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-12 text-center block">
@@ -192,7 +192,7 @@ export default async function HomePage() {
                   autoplay
                   options={{ loop: true, align: 'center' }}
                   slides={dbGallery.map((item) => (
-                    <div key={item.id} className="group relative overflow-hidden bg-white shadow-luxury h-[400px] md:h-[600px] w-full">
+                    <div key={item.id} className="group relative overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[400px] md:h-[600px] w-full">
                       <PlaceholderImage 
                         src={item.image_url} 
                         alt={item.title}
@@ -213,11 +213,11 @@ export default async function HomePage() {
             )}
 
             {dbGallery.length >= 2 ? (
-              <FadeIn delay={0.2} className="relative group overflow-hidden bg-white shadow-luxury h-[250px] lg:h-auto">
+              <FadeIn delay={0.2} className="relative group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[250px] lg:h-auto">
                 <PlaceholderImage src={dbGallery[1].image_url} ratio="16:9" alt={dbGallery[1].title} placeholderText={dbGallery[1].title} className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               </FadeIn>
             ) : (
-               <FadeIn delay={0.2} className="relative group overflow-hidden bg-white shadow-luxury h-[250px] lg:h-auto">
+               <FadeIn delay={0.2} className="relative group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[250px] lg:h-auto">
                 <PlaceholderImage ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               </FadeIn>
             )}

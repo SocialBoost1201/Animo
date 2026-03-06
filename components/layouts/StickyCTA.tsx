@@ -48,7 +48,7 @@ export const StickyCTA: React.FC = () => {
             
             <Link
               href="/reserve"
-              className="flex-[1.5] flex flex-col items-center justify-center bg-[var(--color-gold)] text-white hover:bg-[#171717] transition-all duration-500"
+              className="flex-[1.5] flex flex-col items-center justify-center bg-[var(--color-gold)] text-white hover:bg-[#171717] transition-all duration-500 btn-sheen"
             >
               <CalendarHeart className="w-5 h-5 mb-1" />
               <span className="text-[9px] uppercase luxury-tracking font-serif">Reserve</span>

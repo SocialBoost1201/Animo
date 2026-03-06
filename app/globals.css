@@ -6,6 +6,9 @@
   --color-foreground: #171717;
   --color-gold: #c9a86a;
   --color-gray-light: #f5f5f5;
+  --color-air-gray: #f3f2f0;
+  --color-ink-black: #121212;
+  --color-pale-gold: #e6d3a5;
 
   /* Brand Typography */
   --font-serif: var(--font-playfair), var(--font-noto-serif), serif;
@@ -19,12 +22,13 @@
   /* Brand Shadows */
   --shadow-luxury: 0 30px 60px -15px rgba(0, 0, 0, 0.03);
   --shadow-luxury-hover: 0 40px 80px -20px rgba(0, 0, 0, 0.06);
+  --shadow-aura: 0 0 40px -10px rgba(230, 211, 165, 0.5); /* Pale Gold Glow */
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-serif); /* 本文もセリフ体を優先させ高級感を底上げ */
+  font-family: var(--font-sans); /* 本文は細字のSans-Serifで抜け感を */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -45,4 +49,33 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* Aura Effect Utilities */
+.shadow-aura {
+  box-shadow: var(--shadow-aura);
+}
+
+/* Sheen Button Effect */
+@keyframes sheen {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  pointer-events: none;
 }

@@ -26,12 +26,14 @@ export function GsapRevealTitle({ text, className = '', delay = 0 }: GsapRevealT
       { 
         y: 100, 
         opacity: 0,
-        rotateX: -80
+        rotateX: -80,
+        filter: 'blur(10px)'
       },
       {
         y: 0,
         opacity: 1,
         rotateX: 0,
+        filter: 'blur(0px)',
         stagger: 0.03,
         duration: 2,
         delay: delay,
