@@ -36,8 +36,10 @@ export const Footer = () => {
               Discover
             </h3>
             <ul className="space-y-5">
+              <li><Link href="/guide" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">First Visit Guide</Link></li>
               <li><Link href="/system" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">System</Link></li>
               <li><Link href="/cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Cast</Link></li>
+              <li><Link href="/news" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">News</Link></li>
               <li><Link href="/shift" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Today&apos;s Shift</Link></li>
               <li><Link href="/gallery" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Gallery</Link></li>
             </ul>
@@ -64,9 +66,9 @@ export const Footer = () => {
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-[var(--color-gold)]" />
                 <span>
-                  〒231-0014<br />
-                  神奈川県横浜市中区常盤町X-X-X<br />
-                  アニモビル X階
+                  〒231-0012<br />
+                  神奈川県横浜市中区相生町３丁目５３<br />
+                  グランドパークビル
                 </span>
               </li>
               <li className="flex items-center mt-4">
