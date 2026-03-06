@@ -54,7 +54,8 @@ export default async function HomePage() {
       <HeroVideoRotator 
         media={heroMediaData} 
         transitionMode={(settings?.hero_transition_mode || 'fade') as 'fade' | 'slide'}
-        durationMs={settings?.hero_duration_ms || 3000}
+        durationMs={5000}
+        transitionMs={2000}
       />
 
       {/* 2. Concept Section */}
