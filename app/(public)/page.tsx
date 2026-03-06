@@ -23,7 +23,7 @@ export default async function HomePage() {
   ] = await Promise.all([
     getPublicHeroMedia(),
     getPublicCasts(),
-    getPublicContents('gallery', 3), // トップ用に3件取得
+    getPublicContents('gallery', 12), // トップ用に最大12件取得
     getSiteSettings().catch(() => null)
   ]);
 
@@ -187,52 +187,59 @@ export default async function HomePage() {
             <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto opacity-50" />
           </FadeIn>
 
-          {/* Fallback Static Gallery Grid (if DB is empty or has items, we just show statics for now as requested for these 2 specific images) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-5xl mx-auto">
-            <FadeIn delay={0.1}>
-              <div className="group relative">
-                <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[300px] w-full mb-6">
-                  <PlaceholderImage 
-                    src="/images/chandelier.jpg" 
-                    ratio="4:3" 
-                    alt="メインシャンデリア" 
-                    placeholderText="Chandelier" 
-                    className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
-                  />
-                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000" />
-                </div>
-                <div className="text-center px-4">
-                  <h3 className="font-serif luxury-tracking text-lg text-[#171717] mb-3">Main Chandelier</h3>
-                  <p className="text-sm text-gray-500 font-serif leading-relaxed">
-                    ホール全体を照らす優美な大シャンデリア。<br />無数のクリスタルが存在感を放ち、非日常の空間へと誘います。
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
+          {/* Gallery Grid (PC/Tablet: 3 cols, SP: 2 cols) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
+            {Array.from({ length: Math.max(6, dbGallery.length) }).map((_, i) => {
+              const staticFallbacks = [
+                { id: 'fb1', title: 'Main Chandelier', description: 'ホール全体を照らす優美な大シャンデリア。\n無数のクリスタルが非日常の空間へと誘います。', image_url: '/images/chandelier.jpg' },
+                { id: 'fb2', title: 'VIP Room', description: '深紅のカーテンに包まれたプライベート空間。\n大切なお客様との特別なひとときをお約束します。', image_url: '/images/curtain_room.JPG' }
+              ];
+              
+              // If DB has items, use DB items. Else, use static fallbacks.
+              const item = dbGallery.length > 0 ? dbGallery[i] : staticFallbacks[i];
 
-            <FadeIn delay={0.2}>
-              <div className="group relative">
-                <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[300px] w-full mb-6">
-                  <PlaceholderImage 
-                    src="/images/curtain_room.JPG" 
-                    ratio="4:3" 
-                    alt="VIPルーム" 
-                    placeholderText="VIP Room" 
-                    className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
-                  />
-                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000" />
-                </div>
-                <div className="text-center px-4">
-                  <h3 className="font-serif luxury-tracking text-lg text-[#171717] mb-3">VIP Room</h3>
-                  <p className="text-sm text-gray-500 font-serif leading-relaxed">
-                    深紅のカーテンに包まれたプライベート空間。<br />大切なお客様との特別なひとときを、お約束いたします。
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
+              if (!item) {
+                // Return empty box
+                return (
+                  <FadeIn delay={0.1 * (i % 6)} key={`empty-${i}`}>
+                    <div className="group overflow-hidden bg-white/20 backdrop-blur-sm rounded-sm border border-white/20 h-full min-h-[160px] md:min-h-[280px] flex flex-col items-center justify-center opacity-40">
+                      <div className="w-8 h-8 md:w-12 md:h-12 border border-[var(--color-gold)]/20 rounded-full flex items-center justify-center mb-3">
+                        <span className="text-[var(--color-gold)]/40 block w-1 h-1 bg-[var(--color-gold)]/40 rounded-full" />
+                      </div>
+                      <span className="text-[10px] md:text-xs font-serif text-[var(--color-gold)]/40 luxury-tracking uppercase">Coming Soon</span>
+                    </div>
+                  </FadeIn>
+                );
+              }
+
+              return (
+                <FadeIn delay={0.1 * (i % 6)} key={item.id}>
+                  <div className="group overflow-hidden bg-white/40 backdrop-blur-md rounded-sm hover:shadow-aura transition-all duration-1000 border border-white/20 h-full flex flex-col">
+                    <div className="overflow-hidden h-[120px] md:h-[200px] w-full relative shrink-0">
+                      <PlaceholderImage 
+                        src={item.image_url} 
+                        ratio="16:9" 
+                        alt={item.title || 'Gallery Image'} 
+                        placeholderText={item.title || 'Image'} 
+                        className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
+                      />
+                      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000 pointer-events-none" />
+                    </div>
+                    <div className="p-3 md:p-5 text-center flex-1 flex flex-col justify-center">
+                      <h3 className="font-serif luxury-tracking text-sm md:text-base text-[#171717] mb-1 md:mb-2 line-clamp-1">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-[10px] md:text-xs text-gray-500 font-serif leading-relaxed line-clamp-2 md:line-clamp-3">
+                          {item.description.split('\n').map((line: string, j: number) => <React.Fragment key={j}>{line}<br/></React.Fragment>)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
           
-          <FadeIn delay={0.4} className="mt-16 text-center">
+          <FadeIn delay={0.4} className="mt-12 text-center">
             <Button asChild variant="outline">
               <Link href="/gallery" className="px-12">ギャラリーを見る</Link>
             </Button>
