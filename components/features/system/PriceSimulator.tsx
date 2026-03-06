@@ -42,9 +42,12 @@ export const PriceSimulator = () => {
     const subTotal = baseFee + extensionFee + nominationFee + accompanimentFee;
 
     // 5. TAX & Service Charge (30%)
-    const total = Math.floor(subTotal * 1.3);
+    const totalWithTax = Math.round(subTotal * 1.3);
 
-    return total;
+    // 6. 1000円単位で丸め（500円以上切り上げ、499円以下切り下げ）
+    const roundedTotal = Math.round(totalWithTax / 1000) * 1000;
+
+    return roundedTotal;
   }, [customerType, duration, nomination, accompaniment]);
 
   // Luxury Toggle Button Component
