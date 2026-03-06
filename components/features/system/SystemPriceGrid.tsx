@@ -81,8 +81,9 @@ export const SystemPriceGrid = () => {
             </li>
           </ul>
 
-          <div className="mt-12 text-center text-xs text-gray-500 font-serif leading-[2] luxury-tracking">
-            ※当店は自動延長制となっております。
+          <div className="mt-12 text-center text-xs text-gray-500 font-serif leading-[2] luxury-tracking space-y-1">
+            <p>※当店は自動延長制となっております。</p>
+            <p>※キャストドリンク代・ボトル代等は含まれておりません。</p>
           </div>
         </div>
       </FadeIn>

@@ -81,10 +81,7 @@ export const Header = () => {
         <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <span
-              className={cn(
-                'font-serif luxury-tracking-super uppercase transition-colors duration-500 font-normal',
-                isScrolled ? 'text-[#171717] text-lg' : 'text-white text-xl drop-shadow-md'
-              )}
+              className="font-serif luxury-tracking-super uppercase transition-colors duration-500 font-normal text-[#171717] text-lg"
             >
               Club Animo
             </span>
@@ -98,9 +95,7 @@ export const Header = () => {
                 href={item.href}
                 className={cn(
                   'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)]',
-                  pathname === item.href
-                    ? 'text-[var(--color-gold)]'
-                    : isScrolled ? 'text-[#171717]' : 'text-white drop-shadow-sm'
+                  pathname === item.href ? 'text-[var(--color-gold)]' : 'text-[#171717]'
                 )}
               >
                 {item.label}
@@ -117,9 +112,7 @@ export const Header = () => {
               <button
                 className={cn(
                   'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)] flex items-center gap-1',
-                  isRecruitActive
-                    ? 'text-[var(--color-gold)]'
-                    : isScrolled ? 'text-[#171717]' : 'text-white drop-shadow-sm'
+                  isRecruitActive ? 'text-[var(--color-gold)]' : 'text-[#171717]'
                 )}
                 onClick={() => setIsRecruitOpen(!isRecruitOpen)}
               >
@@ -158,12 +151,7 @@ export const Header = () => {
 
             <Link
               href="/reserve"
-              className={cn(
-                "ml-4 px-6 py-2 border text-xs font-serif luxury-tracking uppercase transition-all duration-500",
-                isScrolled 
-                  ? "border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)] hover:text-white"
-                  : "border-white text-white hover:bg-white hover:text-black"
-              )}
+              className="ml-4 px-6 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-[var(--color-gold)] hover:text-white"
             >
               Reserve
             </Link>
