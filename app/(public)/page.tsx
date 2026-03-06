@@ -196,8 +196,11 @@ export default async function HomePage() {
                         <h3 className="font-serif luxury-tracking text-xl text-[#171717]">{cast.name}</h3>
                         <div className="flex flex-col justify-center items-center mt-3 gap-2">
                           <span className="text-xs text-gray-400 font-serif luxury-tracking">{cast.age ? `${cast.age}歳` : ''} {cast.height ? `/${cast.height}cm` : ''}</span>
+                          {cast.hobby && (
+                            <span className="text-[10px] text-gray-400 font-serif luxury-tracking line-clamp-1">趣味: {cast.hobby}</span>
+                          )}
                           {cast.is_today && (
-                            <span className="text-[10px] uppercase luxury-tracking text-[#c9a86a]">Today's Cast</span>
+                            <span className="text-[10px] uppercase luxury-tracking text-[#c9a86a]">Today&apos;s Cast</span>
                           )}
                         </div>
                       </div>

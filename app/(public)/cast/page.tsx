@@ -50,6 +50,11 @@ export default async function CastPage() {
                       {(cast.age && cast.height) && <span>/</span>}
                       {cast.height && <span>{cast.height}cm</span>}
                     </div>
+                    {cast.hobby && (
+                      <p className="text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1">
+                        趣味: {cast.hobby}
+                      </p>
+                    )}
                   </div>
                 </div>
               </Link>
