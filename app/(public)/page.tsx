@@ -187,55 +187,52 @@ export default async function HomePage() {
             <div className="w-[1px] h-16 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto opacity-50" />
           </FadeIn>
 
-          <div className="w-full">
-            {dbGallery.length >= 1 ? (
-              <div className="mt-8">
-                <LuxuryCarousel 
-                  autoplay
-                  options={{ loop: true, align: 'center' }}
-                  slides={dbGallery.map((item) => (
-                    <div key={item.id} className="group relative overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[400px] md:h-[600px] w-full">
-                      <PlaceholderImage 
-                        src={item.image_url} 
-                        alt={item.title}
-                        placeholderText={item.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
-                      />
-                      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000 flex items-center justify-center">
-                        <span className="text-white font-serif luxury-tracking border border-white/50 px-8 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">View Gallery</span>
-                      </div>
-                    </div>
-                  ))}
-                />
+          {/* Fallback Static Gallery Grid (if DB is empty or has items, we just show statics for now as requested for these 2 specific images) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-5xl mx-auto">
+            <FadeIn delay={0.1}>
+              <div className="group relative">
+                <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[300px] w-full mb-6">
+                  <PlaceholderImage 
+                    src="/images/chandelier.jpg" 
+                    ratio="4:3" 
+                    alt="メインシャンデリア" 
+                    placeholderText="Chandelier" 
+                    className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
+                  />
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000" />
+                </div>
+                <div className="text-center px-4">
+                  <h3 className="font-serif luxury-tracking text-lg text-[#171717] mb-3">Main Chandelier</h3>
+                  <p className="text-sm text-gray-500 font-serif leading-relaxed">
+                    ホール全体を照らす優美な大シャンデリア。<br />無数のクリスタルが存在感を放ち、非日常の空間へと誘います。
+                  </p>
+                </div>
               </div>
-            ) : (
-               <FadeIn delay={0.1} className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden bg-gray-100">
-                <PlaceholderImage src="/images/chandelier.jpg" ratio="4:5" alt="Chandelier" placeholderText="Main Chandelier" className="h-[400px] lg:h-full group-hover:scale-105 transition-transform duration-700" />
-              </FadeIn>
-            )}
+            </FadeIn>
 
-            {dbGallery.length >= 2 ? (
-              <FadeIn delay={0.2} className="relative group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[250px] lg:h-auto">
-                <PlaceholderImage src={dbGallery[1].image_url} ratio="16:9" alt={dbGallery[1].title} placeholderText={dbGallery[1].title} className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
-              </FadeIn>
-            ) : (
-               <FadeIn delay={0.2} className="relative group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[250px] lg:h-auto">
-                <PlaceholderImage src="/images/curtain_room.JPG" ratio="16:9" alt="VIP Room" placeholderText="VIP Room" className="h-full group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" />
-              </FadeIn>
-            )}
-
-            {dbGallery.length >= 3 ? (
-              <FadeIn delay={0.3} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-                <PlaceholderImage src={dbGallery[2].image_url} ratio="16:9" alt={dbGallery[2].title} placeholderText={dbGallery[2].title} className="h-full group-hover:scale-105 transition-transform duration-700" />
-              </FadeIn>
-            ) : (
-                <FadeIn delay={0.3} className="relative group overflow-hidden bg-gray-100 h-[250px] lg:h-auto">
-                  <PlaceholderImage ratio="16:9" alt="Bar Counter" placeholderText="Bar Counter" className="h-full group-hover:scale-105 transition-transform duration-700" />
-                </FadeIn>
-            )}
+            <FadeIn delay={0.2}>
+              <div className="group relative">
+                <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 h-[300px] w-full mb-6">
+                  <PlaceholderImage 
+                    src="/images/curtain_room.JPG" 
+                    ratio="4:3" 
+                    alt="VIPルーム" 
+                    placeholderText="VIP Room" 
+                    className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" 
+                  />
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-1000" />
+                </div>
+                <div className="text-center px-4">
+                  <h3 className="font-serif luxury-tracking text-lg text-[#171717] mb-3">VIP Room</h3>
+                  <p className="text-sm text-gray-500 font-serif leading-relaxed">
+                    深紅のカーテンに包まれたプライベート空間。<br />大切なお客様との特別なひとときを、お約束いたします。
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
           </div>
           
-          <FadeIn delay={0.4} className="mt-12 text-center">
+          <FadeIn delay={0.4} className="mt-16 text-center">
             <Button asChild variant="outline">
               <Link href="/gallery" className="px-12">ギャラリーを見る</Link>
             </Button>
