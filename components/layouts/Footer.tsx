@@ -17,15 +17,23 @@ export const Footer = () => {
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               関内の大人の社交場。煌びやかなシャンデリアの下で、特別な時間をお過ごしください。極上のキャストが最高の夜を演出いたします。
             </p>
-            <div className="flex space-x-4">
+            <div className="flex items-center space-x-4">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/club_animo_yokohama/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[var(--color-gold)] transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.instagram.com/club_animo_yokohama/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 text-[10px] font-serif luxury-tracking hover:text-gold transition-colors"
+              >
+                @club_animo_yokohama
               </a>
             </div>
           </div>
@@ -36,12 +44,14 @@ export const Footer = () => {
               Discover
             </h3>
             <ul className="space-y-5">
+              <li><Link href="/concept" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Concept</Link></li>
               <li><Link href="/guide" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">First Visit Guide</Link></li>
               <li><Link href="/system" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">System</Link></li>
               <li><Link href="/cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Cast</Link></li>
               <li><Link href="/news" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">News</Link></li>
               <li><Link href="/shift" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Today&apos;s Shift</Link></li>
               <li><Link href="/gallery" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Gallery</Link></li>
+              <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">FAQ</Link></li>
             </ul>
           </div>
 

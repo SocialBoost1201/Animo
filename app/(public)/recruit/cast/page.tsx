@@ -131,7 +131,47 @@ export default function CastRecruitPage() {
         </div>
       </section>
 
+      {/* 応募の流れ */}
+      <section className="py-24 px-6 bg-white">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-xl md:text-2xl font-serif luxury-tracking uppercase text-[#171717] mb-4">
+              応募の流れ
+            </h2>
+            <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto" />
+          </div>
+
+          <div className="relative">
+            {/* 縦ライン */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-[1px] bg-[var(--color-gold)]/20 hidden md:block" />
+
+            <div className="space-y-8">
+              {[
+                { step: '01', title: 'WEB応募', desc: '下記フォームから、お気軽にご応募ください。お名前と電話番号だけでOKです。' },
+                { step: '02', title: 'ご連絡', desc: '採用担当より2営業日以内にお電話またはLINEにてご連絡いたします。' },
+                { step: '03', title: '面接', desc: '横浜・関内の店舗、またはご希望の場所でお気軽にお話しましょう。服装は自由です。' },
+                { step: '04', title: '体験入店', desc: 'まずはお試しで。ノルマなし・アフターなしで雰囲気を体感してください。' },
+                { step: '05', title: '本入店', desc: 'ご自身のペースでシフトを決めて、いよいよスタートです。' },
+              ].map((item, i) => (
+                <div key={i} className={`flex gap-8 items-start md:items-center ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                  <div className={`flex-1 bg-white p-6 border border-[var(--color-gold)]/20 shadow-sm ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                    <p className="text-[10px] text-[var(--color-gold)] font-serif luxury-tracking uppercase mb-1">Step {item.step}</p>
+                    <h3 className="font-serif luxury-tracking text-base text-[#171717] mb-2">{item.title}</h3>
+                    <p className="text-xs text-gray-500 font-serif leading-[2.2] luxury-tracking">{item.desc}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-[var(--color-gold)]/10 border border-[var(--color-gold)]/30 flex items-center justify-center shrink-0 md:mx-4">
+                    <span className="text-[10px] font-serif text-[var(--color-gold)] luxury-tracking">{item.step}</span>
+                  </div>
+                  <div className="flex-1 hidden md:block" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Apply Form Anchor */}
+
       <section id="form" className="py-32 px-6 bg-white">
         <div className="container mx-auto max-w-3xl">
           <FadeIn className="text-center mb-16">
