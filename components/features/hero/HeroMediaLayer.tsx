@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { HeroMedia, HeroTransitionMode } from './types';
 import { motion } from 'framer-motion';
 
@@ -17,15 +17,14 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   activeIndex,
   transitionMode,
   transitionMs,
-  isReducedMotion
+  isReducedMotion,
 }) => {
-  // reduced motion の場合は 最初のメディアだけ描画してアニメーションさせない
   if (isReducedMotion || media.length === 0) {
     const backupMedia = media[0];
     if (!backupMedia) {
       return (
-        <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-400">Media Not Set</span>
+        <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+          <span className="text-gray-600 text-xs">Media Not Set</span>
         </div>
       );
     }
@@ -36,41 +35,27 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     );
   }
 
-  const variants = {
-    fade: {
-      opacity: 1
-    },
-    slide: {
-      opacity: 1,
-      x: '0%'
-    }
-  };
-
-  const hiddenVariants = {
-    fade: {
-      opacity: 0
-    },
-    slide: {
-      opacity: 0,
-      x: '3%' // or -3% depending on direction, simplified here
-    }
-  };
-
   return (
     <div className="absolute inset-0 overflow-hidden bg-black">
       {media.map((item, index) => {
         const isActive = index === activeIndex;
-
         return (
           <motion.div
             key={item.id}
             initial={false}
-            animate={isActive ? variants[transitionMode] : hiddenVariants[transitionMode]}
-            transition={{ duration: transitionMs / 1000, ease: 'easeInOut' }}
+            animate={{
+              opacity: isActive ? 1 : 0,
+            }}
+            transition={{
+              duration: transitionMs / 1000,
+              ease: 'easeInOut',
+            }}
             className="absolute inset-0 w-full h-full"
-            style={{ 
+            style={{
+              // GPU合成レイヤーに昇格させ、reflow を防ぐ
+              willChange: 'opacity',
               zIndex: isActive ? 10 : 1,
-              pointerEvents: isActive ? 'auto' : 'none' 
+              pointerEvents: 'none',
             }}
           >
             <MediaItem item={item} isActive={isActive} transitionMs={transitionMs} />
@@ -81,45 +66,72 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   );
 };
 
-const MediaItem = ({ item, isActive, transitionMs }: { item: HeroMedia, isActive: boolean, transitionMs: number }) => {
-  const [hasError, setHasError] = useState(false);
+// ─── 個別メディアアイテム ─────────────────────────────────────
+
+const MediaItem = ({
+  item,
+  isActive,
+  transitionMs,
+}: {
+  item: HeroMedia;
+  isActive: boolean;
+  transitionMs: number;
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  // アクティブになったタイミングのみ play を試みる
+  const didPlayRef = useRef(false);
 
   useEffect(() => {
-    if (isActive && videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    } else if (!isActive && videoRef.current) {
-      // フェードアウトが完了した頃に動画を一時停止し、リソースを節約する
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isActive) {
+      // すでに再生中なら何もしない
+      if (!video.paused) return;
+      video.currentTime = 0;
+      video.play().catch(() => {
+        // Autoplay policy に引っかかった場合は無視
+      });
+      didPlayRef.current = true;
+    } else {
+      // フェードアウト後にpauseしてCPUを解放
       const timer = setTimeout(() => {
-        if (videoRef.current) {
+        if (videoRef.current && !videoRef.current.paused) {
           videoRef.current.pause();
         }
-      }, transitionMs + 100);
+      }, transitionMs + 200);
       return () => clearTimeout(timer);
     }
   }, [isActive, transitionMs]);
 
-  if (item.type === 'image' || hasError) {
+  if (item.type === 'image') {
     return (
-      <div 
-        className="w-full h-full bg-center md:bg-cover bg-contain bg-no-repeat"
+      <div
+        className="w-full h-full bg-center bg-cover bg-no-repeat"
         style={{ backgroundImage: `url(${item.posterUrl || item.url})` }}
       />
     );
   }
 
-  // ビデオの場合
   return (
     <video
       ref={videoRef}
-      className="w-full h-full object-contain md:object-cover"
+      className="w-full h-full object-cover"   // ← object-contain を廃止し object-cover に統一
       src={item.url}
       poster={item.posterUrl}
       loop
       muted
       playsInline
-      onError={() => setHasError(true)}
-      preload="auto"
+      // アクティブな動画のみ preload=auto、非アクティブは metadata のみ
+      preload={isActive ? 'auto' : 'metadata'}
+      // GPU合成レイヤーに昇格させカクつきを抑制
+      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+      onError={() => {
+        // エラー時はポスター画像にフォールバック（stateなし＝再render不要）
+        if (videoRef.current && item.posterUrl) {
+          videoRef.current.style.display = 'none';
+        }
+      }}
     />
   );
 };
