@@ -13,8 +13,8 @@ interface ExtendedHeroProps extends HeroVideoRotatorProps {
 export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
   media = [],
   transitionMode = 'fade',
-  durationMs = 3000,
-  transitionMs = 700,
+  durationMs = 5000,
+  transitionMs = 800,
   overlayOpacity = 0.4,
   cta,
 }) => {
