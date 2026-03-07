@@ -19,18 +19,19 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   transitionMs,
   isReducedMotion,
 }) => {
-  if (isReducedMotion || media.length === 0) {
-    const backupMedia = media[0];
-    if (!backupMedia) {
-      return (
-        <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-          <span className="text-gray-600 text-xs">Media Not Set</span>
-        </div>
-      );
-    }
+  if (media.length === 0) {
+    return (
+      <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+        <span className="text-gray-600 text-xs">Media Not Set</span>
+      </div>
+    );
+  }
+
+  // reducedMotion: 最初の1枚だけ表示
+  if (isReducedMotion) {
     return (
       <div className="absolute inset-0">
-        <MediaItem item={backupMedia} isActive={true} transitionMs={0} />
+        <MediaItem item={media[0]} autoPlay={false} />
       </div>
     );
   }
@@ -39,26 +40,25 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     <div className="absolute inset-0 overflow-hidden bg-black">
       {media.map((item, index) => {
         const isActive = index === activeIndex;
+
         return (
           <motion.div
             key={item.id}
             initial={false}
-            animate={{
-              opacity: isActive ? 1 : 0,
-            }}
+            animate={{ opacity: isActive ? 1 : 0 }}
             transition={{
-              duration: transitionMs / 1000,
+              duration: isActive
+                ? transitionMs / 1000       // フェードイン速度
+                : (transitionMs * 1.5) / 1000, // フェードアウトは少し遅め
               ease: 'easeInOut',
             }}
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0"
             style={{
-              // GPU合成レイヤーに昇格させ、reflow を防ぐ
               willChange: 'opacity',
               zIndex: isActive ? 10 : 1,
-              pointerEvents: 'none',
             }}
           >
-            <MediaItem item={item} isActive={isActive} transitionMs={transitionMs} />
+            <MediaItem item={item} autoPlay={true} />
           </motion.div>
         );
       })}
@@ -66,43 +66,28 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   );
 };
 
-// ─── 個別メディアアイテム ─────────────────────────────────────
-
+// ─────────────────────────────────────────────────────────────
+// MediaItem
+// 動画は常時再生させたまま opacity のみで切り替える
+// pause()/currentTime リセットは行わない → 切り替え時の黒画面を防ぐ
+// ─────────────────────────────────────────────────────────────
 const MediaItem = ({
   item,
-  isActive,
-  transitionMs,
+  autoPlay,
 }: {
   item: HeroMedia;
-  isActive: boolean;
-  transitionMs: number;
+  autoPlay: boolean;
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // アクティブになったタイミングのみ play を試みる
-  const didPlayRef = useRef(false);
 
+  // マウント時に一度だけ再生を試みる
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-
-    if (isActive) {
-      // すでに再生中なら何もしない
-      if (!video.paused) return;
-      video.currentTime = 0;
-      video.play().catch(() => {
-        // Autoplay policy に引っかかった場合は無視
-      });
-      didPlayRef.current = true;
-    } else {
-      // フェードアウト後にpauseしてCPUを解放
-      const timer = setTimeout(() => {
-        if (videoRef.current && !videoRef.current.paused) {
-          videoRef.current.pause();
-        }
-      }, transitionMs + 200);
-      return () => clearTimeout(timer);
-    }
-  }, [isActive, transitionMs]);
+    if (!video || !autoPlay) return;
+    video.play().catch(() => {
+      // Autoplay policy に引っかかった場合はブラウザの自動判定に任せる
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (item.type === 'image') {
     return (
@@ -116,22 +101,16 @@ const MediaItem = ({
   return (
     <video
       ref={videoRef}
-      className="w-full h-full object-cover"   // ← object-contain を廃止し object-cover に統一
+      className="w-full h-full object-cover"
       src={item.url}
       poster={item.posterUrl}
+      autoPlay={autoPlay}
       loop
       muted
       playsInline
-      // アクティブな動画のみ preload=auto、非アクティブは metadata のみ
-      preload={isActive ? 'auto' : 'metadata'}
-      // GPU合成レイヤーに昇格させカクつきを抑制
-      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-      onError={() => {
-        // エラー時はポスター画像にフォールバック（stateなし＝再render不要）
-        if (videoRef.current && item.posterUrl) {
-          videoRef.current.style.display = 'none';
-        }
-      }}
+      preload="auto"
+      // GPU合成レイヤーに昇格 → メインスレッドのペイント処理を排除
+      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
     />
   );
 };
