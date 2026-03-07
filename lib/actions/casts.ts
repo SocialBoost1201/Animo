@@ -3,6 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+// キャスト関連ページを全てリバリデートするヘルパー
+function revalidateCastPages(slug?: string) {
+  revalidatePath('/')
+  revalidatePath('/cast')
+  revalidatePath('/shift')
+  if (slug) revalidatePath(`/cast/${slug}`)
+}
+
 export async function getCasts() {
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -38,26 +46,16 @@ export async function createCast(formData: FormData) {
   const status = formData.get('status') as string || 'public'
   const is_today = formData.get('is_today') === 'on'
   
-  // Storage upload handling for image would go here in a production environment
-  // For now using placeholder
   const image_url = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1288&auto=format&fit=crop'
   
   const { error } = await supabase.from('casts').insert({
-    name,
-    slug,
-    age,
-    height,
-    hobby,
-    comment,
-    status,
-    is_today,
-    image_url
+    name, slug, age, height, hobby, comment, status, is_today, image_url
   })
 
   if (error) return { error: error.message }
   
   revalidatePath('/admin/casts')
-  revalidatePath('/cast')
+  revalidateCastPages(slug)
   return { success: true }
 }
 
@@ -74,31 +72,27 @@ export async function updateCast(id: string, formData: FormData) {
   const is_today = formData.get('is_today') === 'on'
   
   const { error } = await supabase.from('casts').update({
-    name,
-    slug,
-    age,
-    height,
-    hobby,
-    comment,
-    status,
-    is_today,
+    name, slug, age, height, hobby, comment, status, is_today,
   }).eq('id', id)
 
   if (error) return { error: error.message }
   
   revalidatePath('/admin/casts')
-  revalidatePath('/cast')
-  revalidatePath(`/cast/${slug}`)
+  revalidateCastPages(slug)
   return { success: true }
 }
 
 export async function deleteCast(id: string) {
   const supabase = await createClient()
+
+  // slug を先に取得してキャストページの revalidate に使う
+  const { data: cast } = await supabase.from('casts').select('slug').eq('id', id).single()
+  
   const { error } = await supabase.from('casts').delete().eq('id', id)
   
   if (error) return { error: error.message }
   
   revalidatePath('/admin/casts')
-  revalidatePath('/cast')
+  revalidateCastPages(cast?.slug)
   return { success: true }
 }

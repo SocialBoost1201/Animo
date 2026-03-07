@@ -4,6 +4,8 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
 import { getPublicCasts } from '@/lib/actions/public/data';
 
+export const dynamic = 'force-dynamic';
+
 // サーバーコンポーネントとしてキャスト一覧を取得
 export default async function CastPage() {
   const casts = await getPublicCasts();

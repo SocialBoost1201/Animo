@@ -13,6 +13,8 @@ import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/act
 import { getSiteSettings } from '@/lib/actions/contents';
 import { Magnetic } from '@/components/motion/Magnetic';
 
+export const dynamic = 'force-dynamic';
+
 // HOW TO ENJOY - 静的コンテンツ
 const HOW_TO_EXAMPLES = [
   {
