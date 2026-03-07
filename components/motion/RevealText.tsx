@@ -43,9 +43,9 @@ export const RevealText: React.FC<RevealTextProps> = ({
       rotateX: 0,
       filter: 'blur(0px)',
       transition: {
-        ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Expo out
+        ease: [0.16, 1, 0.3, 1], // Expo out
         duration: 1.5,
-      },
+      } as any,
     },
   };
 
