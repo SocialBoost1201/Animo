@@ -55,6 +55,7 @@ export async function submitRecruitApplication(formData: FormData) {
   const name = formData.get('name') as string
   const age = parseInt(formData.get('age') as string, 10)
   const phone = formData.get('phone') as string
+  const email = formData.get('email') as string
   const experience = formData.get('experience') as string
   const schedule = formData.get('schedule') as string
   const message = formData.get('message') as string
@@ -64,6 +65,7 @@ export async function submitRecruitApplication(formData: FormData) {
     name,
     age: isNaN(age) ? null : age,
     phone,
+    email: email || null,
     experience,
     schedule,
     message,

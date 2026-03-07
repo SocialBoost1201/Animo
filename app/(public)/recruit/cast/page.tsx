@@ -417,6 +417,16 @@ export default function CastRecruitPage() {
                 </div>
               </div>
 
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
+                  メールアドレス <span className="text-gold ml-1">*</span>
+                </label>
+                <input required id="email" name="email" type="email"
+                  className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
+                  placeholder="example@gmail.com" />
+              </div>
+
               <div>
                 <label className="block text-xs font-serif luxury-tracking text-foreground mb-4 uppercase">ナイトワーク経験</label>
                 <div className="flex gap-8">

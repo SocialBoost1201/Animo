@@ -1,6 +1,7 @@
 import { getInquiries, markAsRead } from '@/lib/actions/inquiries'
 import { Mail, Briefcase, Calendar } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
+import { ReplyForm } from '@/components/features/admin/ReplyForm'
 
 export default async function InquiriesPage() {
   const { contacts, applications } = await getInquiries()
@@ -13,10 +14,11 @@ export default async function InquiriesPage() {
     revalidatePath('/admin/inquiries')
   }
 
-  // Helper template for inbox items
   const InboxItem = ({ item, isApp }: { item: any, isApp: boolean }) => {
     const isUnread = !item.is_read;
     const dateStr = item.created_at.slice(0, 16).replace('T', ' ');
+    // 返信先メール：contacts では contact_method、応募では email
+    const toEmail = isApp ? (item.email || '') : (item.contact_method || '');
 
     return (
       <div className={`p-6 border-b border-gray-100 transition-colors ${isUnread ? 'bg-white' : 'bg-gray-50/50'}`}>
@@ -39,10 +41,10 @@ export default async function InquiriesPage() {
         </div>
 
         <div className="bg-white border border-gray-100 rounded-sm p-4 text-sm text-[#171717] font-sans leading-relaxed mb-4">
-          {/* Detailed Data mapping */}
           <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-4">
             {item.phone && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Phone: </span>{item.phone}</div>}
             {item.contact_method && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Contact: </span>{item.contact_method}</div>}
+            {item.email && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Email: </span>{item.email}</div>}
             {item.age && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Age: </span>{item.age}歳</div>}
             {(item.date || item.time) && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Reserve: </span>{item.date} {item.time}</div>}
             {item.people && <div><span className="text-gray-400 text-xs tracking-widest uppercase">People: </span>{item.people}名</div>}
@@ -54,17 +56,28 @@ export default async function InquiriesPage() {
           </div>
         </div>
 
-        {isUnread && (
-          <div className="flex justify-end">
+        {/* 既読ボタン（未読の場合のみ） */}
+        {isUnread && !item.replied_at && (
+          <div className="flex justify-end mb-2">
             <form action={handleMarkAsRead}>
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="table" value={isApp ? 'recruit_applications' : 'contacts'} />
-              <button type="submit" className="text-xs font-bold text-[var(--color-gold)] hover:text-yellow-600 tracking-widest uppercase transition-colors px-4 py-2 border border-[var(--color-gold)] rounded-sm hover:bg-[var(--color-gold)]/5">
-                Mark as Read (既読にする)
+              <button type="submit" className="text-xs text-gray-400 hover:text-gray-600 tracking-widest uppercase transition-colors px-4 py-2 border border-gray-200 rounded-sm hover:bg-gray-50">
+                既読にする
               </button>
             </form>
           </div>
         )}
+
+        {/* 返信フォーム */}
+        <ReplyForm
+          id={item.id}
+          table={isApp ? 'recruit_applications' : 'contacts'}
+          customerName={item.name || 'お客様'}
+          toEmail={toEmail}
+          repliedAt={item.replied_at}
+          replyText={item.reply_text}
+        />
       </div>
     );
   };

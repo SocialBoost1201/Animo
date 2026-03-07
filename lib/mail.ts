@@ -1,7 +1,10 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const adminEmail = process.env.ADMIN_EMAIL || 'animo4266@gmaill.com';
+
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function sendAdminNotification(payload: {
   type: 'reserve' | 'contact' | 'cast' | 'staff';
@@ -60,8 +63,8 @@ export async function sendAdminNotification(payload: {
   `;
 
   try {
-    const { data: result, error } = await resend.emails.send({
-      from: 'Animo Notification <onboarding@resend.dev>', // 実際の運用にはドメイン認証が必要
+    const { data: result, error } = await getResend().emails.send({
+      from: 'Animo Notification <onboarding@resend.dev>',
       to: adminEmail,
       subject: subject,
       html: html,
@@ -72,5 +75,69 @@ export async function sendAdminNotification(payload: {
     }
   } catch (err) {
     console.error('Failed to send notification email:', err);
+  }
+}
+
+// ユーザー（問い合わせ者）への返信メール
+export async function sendUserReply({
+  to,
+  customerName,
+  replyText,
+}: {
+  to: string;
+  customerName: string;
+  replyText: string;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY is not set. Reply email skipped.');
+    return { success: false, error: 'RESEND_API_KEY is not set' };
+  }
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <p style="font-size: 22px; font-weight: bold; letter-spacing: 0.2em; color: #171717;">CLUB ANIMO</p>
+        <div style="width: 40px; height: 1px; background: #B39257; margin: 10px auto;"></div>
+      </div>
+      
+      <p style="font-size: 14px; color: #444; margin-bottom: 10px;">${customerName} 様</p>
+      <p style="font-size: 14px; color: #444; margin-bottom: 20px;">
+        この度はお問い合わせいただきありがとうございます。<br />
+        以下の通りご返信申し上げます。
+      </p>
+
+      <div style="background: #f9f9f9; border-left: 3px solid #B39257; padding: 20px; margin: 20px 0; white-space: pre-wrap; font-size: 14px; color: #333; line-height: 1.8;">
+${replyText}
+      </div>
+
+      <p style="font-size: 13px; color: #888; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+        ご不明な点がございましたら、お電話またはこのメールへの返信にてお気軽にお問い合わせください。<br />
+        今後ともどうぞよろしくお願いいたします。
+      </p>
+
+      <div style="margin-top: 20px; font-size: 12px; color: #aaa; text-align: center;">
+        <p style="letter-spacing: 0.15em;">CLUB ANIMO</p>
+        <p>〒231-0023 神奈川県横浜市中区山下町</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const { error } = await getResend().emails.send({
+      from: 'Club Animo <onboarding@resend.dev>',
+      to: to,
+      subject: `Club Animo よりご返信 — ${customerName} 様`,
+      html: html,
+    });
+
+    if (error) {
+      console.error('Reply email send error:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error('Failed to send reply email:', err);
+    return { success: false, error: err.message };
   }
 }

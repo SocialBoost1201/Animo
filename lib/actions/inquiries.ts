@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { sendUserReply } from '@/lib/mail'
 
 // Hero Media
 export async function getAdminHeroMedia() {
@@ -100,4 +101,50 @@ export async function getUnreadCounts() {
   ])
 
   return (contactsRes.count || 0) + (appsRes.count || 0)
+}
+
+export async function sendInquiryReply(formData: FormData) {
+  const id = formData.get('id') as string
+  const table = formData.get('table') as 'contacts' | 'recruit_applications'
+  const replyText = formData.get('replyText') as string
+  const toEmail = formData.get('toEmail') as string
+  const customerName = formData.get('customerName') as string
+
+  if (!replyText?.trim()) {
+    return { error: '返信内容を入力してください' }
+  }
+
+  const supabase = await createClient()
+
+  // DB に返信内容・日時を保存
+  const { error: dbError } = await supabase
+    .from(table)
+    .update({
+      reply_text: replyText,
+      replied_at: new Date().toISOString(),
+      is_read: true,
+    })
+    .eq('id', id)
+
+  if (dbError) {
+    console.error('Reply DB update error:', dbError)
+    return { error: 'データ保存に失敗しました: ' + dbError.message }
+  }
+
+  // メールアドレスが入力されている場合のみメール送信
+  if (toEmail && toEmail.includes('@')) {
+    const mailResult = await sendUserReply({
+      to: toEmail,
+      customerName: customerName || 'お客様',
+      replyText,
+    })
+
+    if (!mailResult.success) {
+      return { error: 'DB保存は完了しましたが、メール送信に失敗しました: ' + mailResult.error }
+    }
+  }
+
+  revalidatePath('/admin/inquiries')
+  revalidatePath('/admin/dashboard')
+  return { success: true, emailSent: !!(toEmail && toEmail.includes('@')) }
 }
