@@ -209,7 +209,7 @@ export function ShiftTable() {
           <div className="divide-y divide-[var(--color-gold)]/10">
             {displayCasts.map((cast) => {
               const shiftInfo = activeShifts.find((s) => s.cast_id === cast.id);
-              const startTime = shiftInfo?.start_time?.slice(0, 5) || '20:00';
+              const startTime = shiftInfo?.start_time?.slice(0, 5) || '21:00';
               const endTime = shiftInfo?.end_time?.slice(0, 5) || 'LAST';
               const isSimOpen = openSimulator === cast.id;
 

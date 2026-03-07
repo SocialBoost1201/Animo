@@ -88,7 +88,7 @@ export const Footer = () => {
                 </a>
               </li>
               <li className="mt-6 pt-6 border-t border-white/10">
-                <p className="font-serif text-white luxury-tracking-super text-sm">OPEN 20:00 - LAST</p>
+                <p className="font-serif text-white luxury-tracking-super text-sm">OPEN 21:00 - LAST</p>
                 <p className="text-[10px] uppercase mt-2 font-serif luxury-tracking text-gray-500">Closed on Sundays & Holidays</p>
               </li>
             </ul>

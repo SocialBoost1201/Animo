@@ -28,7 +28,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
     return (shifts || []).map((s: any) => ({
       cast_id: s.cast_id,
       date: s.date,
-      start_time: s.start_time || '20:00',
+      start_time: s.start_time || '21:00',
       end_time: s.end_time || 'LAST',
     }))
   })
@@ -44,7 +44,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
     setEntries(prev => [...prev, {
       cast_id: casts[0].id,
       date: selectedDate,
-      start_time: '20:00',
+      start_time: '21:00',
       end_time: 'LAST',
       isNew: true,
     }])

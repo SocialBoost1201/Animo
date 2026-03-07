@@ -65,7 +65,7 @@ export async function updateShifts(formData: FormData) {
         await supabase.from('shifts').insert({
           cast_id: update.cast_id,
           date: update.date,
-          start_time: update.start_time || '20:00',
+          start_time: update.start_time || '21:00',
           end_time: update.end_time || '01:00'
         })
       } else if (update.action === 'delete') {
