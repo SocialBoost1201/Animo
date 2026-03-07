@@ -82,16 +82,7 @@ export const PriceSimulator = () => {
   );
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-32">
-      <FadeIn delay={0.1} className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-serif text-[var(--color-gold)] uppercase luxury-tracking-super mb-6">
-          Price Simulator
-        </h2>
-        <p className="text-sm md:text-base font-serif text-gray-400 luxury-tracking">
-          ご来店料金の目安をご確認いただけます
-        </p>
-      </FadeIn>
-
+    <div className="w-full max-w-4xl mx-auto mt-8">
       <div className="bg-white/40 backdrop-blur-xl border border-[var(--color-gold)]/20 p-6 md:p-12 shadow-aura mix-blend-multiply rounded-sm">
         
         <div className="space-y-12">
