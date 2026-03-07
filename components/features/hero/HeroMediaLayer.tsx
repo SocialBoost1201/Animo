@@ -95,7 +95,7 @@ const VideoSlot: React.FC<VideoSlotProps> = ({ item, isActive, transitionMs }) =
   if (item.type === 'image') {
     return (
       <div
-        className="absolute inset-0 bg-center bg-cover bg-no-repeat transition-opacity"
+        className="absolute inset-0 bg-center bg-contain md:bg-cover bg-no-repeat transition-opacity"
         style={{
           backgroundImage: `url(${item.posterUrl || item.url})`,
           opacity: isActive ? 1 : 0,
@@ -121,7 +121,7 @@ const VideoSlot: React.FC<VideoSlotProps> = ({ item, isActive, transitionMs }) =
     >
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain md:object-cover"
         src={item.url}
         poster={item.posterUrl}
         loop

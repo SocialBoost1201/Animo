@@ -38,7 +38,7 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
   }, [media.length, durationMs, isReducedMotion]);
 
   return (
-    <div className="relative h-[100svh] min-h-[500px] w-full overflow-hidden bg-black flex items-center justify-center">
+    <div className="relative h-screen min-h-[500px] w-full overflow-hidden bg-black flex items-center justify-center">
       {/* 1. Media Layer */}
       <HeroMediaLayer
         media={media}
