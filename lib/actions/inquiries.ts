@@ -84,3 +84,20 @@ export async function markAsRead(table: 'contacts' | 'recruit_applications', id:
   revalidatePath('/admin/dashboard')
   return { success: true }
 }
+
+export async function getUnreadCounts() {
+  const supabase = await createClient()
+  
+  const [contactsRes, appsRes] = await Promise.all([
+    supabase
+      .from('contacts')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_read', false),
+    supabase
+      .from('recruit_applications')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_read', false)
+  ])
+
+  return (contactsRes.count || 0) + (appsRes.count || 0)
+}

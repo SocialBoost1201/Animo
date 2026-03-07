@@ -26,7 +26,13 @@ const NAV_ITEMS = [
   { href: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 
-export function AdminLayout({ children }: { children: React.ReactNode }) {
+export function AdminLayout({ 
+  children,
+  unreadCount = 0
+}: { 
+  children: React.ReactNode,
+  unreadCount?: number
+}) {
   const pathname = usePathname();
 
   return (
@@ -55,7 +61,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 <Icon size={18} />
-                <span className="tracking-wide">{item.label}</span>
+                <span className="tracking-wide flex-1">{item.label}</span>
+                {item.href === '/admin/inquiries' && unreadCount > 0 && (
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.2rem] text-center">
+                    {unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}

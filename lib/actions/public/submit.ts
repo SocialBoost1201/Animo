@@ -1,12 +1,11 @@
-'use server'
-
 import { createClient } from '@/lib/supabase/server'
+import { sendAdminNotification } from '@/lib/mail'
 
 export async function submitContact(formData: FormData) {
   const supabase = await createClient()
 
   // フォームデータから必要なフィールドを抽出
-  const type = formData.get('type') as string
+  const type = formData.get('type') as string // 'reserve' | 'contact'
   const name = formData.get('name') as string
   const phone = formData.get('phone') as string
   const contact_method = formData.get('contactMethod') as string
@@ -33,9 +32,16 @@ export async function submitContact(formData: FormData) {
   })
 
   if (error) {
-    console.error('Contact submit error:', error.message)
-    return { error: '送信に失敗しました。時間をおいて再度お試しください。' }
+    console.error('Contact submit DB error:', error.message, error.details, error.hint)
+    return { error: '送信に失敗しました。システムエラーが発生した可能性があります。' }
   }
+
+  // 非同期でメール通知を送信（ユーザーの待ち時間を減らすため awaited ではないのが理想だが、安定性のために一度待つか検討）
+  // サーバーアクション内なので await するのが安全
+  await sendAdminNotification({
+    type: type as 'reserve' | 'contact',
+    data: { name, phone, contact_method, date: dateStr, time: timeStr, people, castName, message }
+  });
 
   return { success: true }
 }
@@ -63,9 +69,14 @@ export async function submitRecruitApplication(formData: FormData) {
   })
 
   if (error) {
-    console.error('Recruit submit error:', error.message)
-    return { error: '送信に失敗しました。時間をおいて再度お試しください。' }
+    console.error('Recruit submit DB error:', error.message, error.details, error.hint)
+    return { error: '送信に失敗しました。システムエラーが発生した可能性があります。' }
   }
+
+  await sendAdminNotification({
+    type: type as 'cast' | 'staff',
+    data: { name, age, phone, experience, schedule, message }
+  });
 
   return { success: true }
 }
