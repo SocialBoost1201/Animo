@@ -37,8 +37,9 @@ async function getCastDetail(slug: string) {
   return { ...data, upcomingShifts };
 }
 
-export default async function CastDetailPage({ params }: { params: { slug: string } }) {
-  const cast = await getCastDetail(params.slug);
+export default async function CastDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const cast = await getCastDetail(slug);
 
   if (!cast) {
     notFound();
