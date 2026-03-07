@@ -2,6 +2,7 @@ import React from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
+import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import Link from 'next/link';
 import { ArrowLeft, CalendarHeart } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
@@ -41,6 +42,9 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                   placeholderText={cast.stage_name}
                   className="w-full h-auto object-cover"
                 />
+                <div className="absolute top-4 right-4 z-20">
+                  <CastFavoriteButton castId={cast.id} className="w-10 h-10 shadow-md" />
+                </div>
               </div>
               {/* サブ画像 */}
               {subImages.length > 0 && (

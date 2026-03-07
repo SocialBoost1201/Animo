@@ -8,6 +8,7 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
 import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
+import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
@@ -148,6 +149,9 @@ export default async function HomePage() {
                       placeholderText={cast.name}
                       className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     />
+                    <div className="absolute top-3 right-3 z-20">
+                      <CastFavoriteButton castId={cast.id} />
+                    </div>
                     {cast.is_today && (
                       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-serif luxury-tracking text-[var(--color-gold)] px-3 py-1 uppercase border border-[var(--color-gold)]/30">
                         Today
@@ -355,6 +359,9 @@ export default async function HomePage() {
                         placeholderText={cast.name}
                         className="group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                       />
+                      <div className="absolute top-3 right-3 z-20">
+                        <CastFavoriteButton castId={cast.id} />
+                      </div>
                       {cast.is_today && (
                         <div className="absolute top-3 left-3 bg-white text-[8px] font-serif luxury-tracking text-gold px-3 py-1 uppercase border border-gold/30">
                           Today
