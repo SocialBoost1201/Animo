@@ -47,6 +47,13 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/admin/login'
       return NextResponse.redirect(url)
     }
+
+    // Redirect /admin directly to /admin/dashboard
+    if (request.nextUrl.pathname === '/admin') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/dashboard'
+      return NextResponse.redirect(url)
+    }
   }
 
   // Redirect logged in users away from login page

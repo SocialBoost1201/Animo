@@ -38,10 +38,10 @@ export function AdminLayout({
   return (
     <div className="min-h-screen flex bg-[#f8f9fa]">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden md:flex">
+      <aside className="w-64 bg-white border-r border-gray-100 flex-col hidden md:flex">
         <div className="h-16 flex items-center justify-center border-b border-gray-100 px-6">
           <Link href="/admin/dashboard" className="font-serif tracking-widest text-lg font-bold">
-            ANIMO <span className="text-[var(--color-gold)]">CMS</span>
+            ANIMO <span className="text-gold">CMS</span>
           </Link>
         </div>
         
@@ -56,7 +56,7 @@ export function AdminLayout({
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-sm transition-colors text-sm ${
                   isActive 
-                    ? 'bg-[var(--color-gray-light)] text-[var(--color-gold)] font-bold' 
+                    ? 'bg-gray-light text-gold font-bold' 
                     : 'text-gray-500 hover:bg-gray-50 hover:text-[#171717]'
                 }`}
               >
@@ -89,7 +89,7 @@ export function AdminLayout({
       <main className="flex-1 overflow-x-hidden">
         <header className="h-16 bg-white border-b border-gray-100 flex items-center px-8 md:hidden">
            <Link href="/admin/dashboard" className="font-serif tracking-widest font-bold">
-            ANIMO <span className="text-[var(--color-gold)]">CMS</span>
+            ANIMO <span className="text-gold">CMS</span>
           </Link>
         </header>
         <div className="p-8">
