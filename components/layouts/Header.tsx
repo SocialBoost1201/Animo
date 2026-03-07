@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Magnetic } from '@/components/motion/Magnetic';
 
 const NAV_ITEMS = [
   { label: 'System', href: '/system' },
@@ -149,12 +150,14 @@ export const Header = () => {
               </AnimatePresence>
             </div>
 
-            <Link
-              href="/reserve"
-              className="ml-4 px-6 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-[var(--color-gold)] hover:text-white"
-            >
-              Reserve
-            </Link>
+            <Magnetic strength={0.2} className="ml-4">
+              <Link
+                href="/reserve"
+                className="block px-6 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-[var(--color-gold)] hover:text-white"
+              >
+                Reserve
+              </Link>
+            </Magnetic>
           </nav>
 
           {/* Mobile Menu Toggle */}

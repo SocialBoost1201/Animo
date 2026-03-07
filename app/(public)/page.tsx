@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
 import { getSiteSettings } from '@/lib/actions/contents';
+import { Magnetic } from '@/components/motion/Magnetic';
 
 // HOW TO ENJOY - 静的コンテンツ
 const HOW_TO_EXAMPLES = [
@@ -81,22 +82,27 @@ export default async function HomePage() {
   const todayCasts = dbCasts.filter((c) => c.is_today);
   const displayCasts = todayCasts.length > 0 ? todayCasts : dbCasts.slice(0, 5);
 
+  // HeroCTA
   const heroCta = (
     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full px-6 sm:px-0">
-      <Link
-        href="/shift"
-        className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-white/10 backdrop-blur-sm border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/20 transition-all"
-      >
-        <CalendarDays className="w-4 h-4" />
-        本日の出勤を見る
-      </Link>
-      <Link
-        href="/system"
-        className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-[var(--color-gold)] text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
-      >
-        <Sparkles className="w-4 h-4" />
-        料金を確認する
-      </Link>
+      <Magnetic strength={0.3}>
+        <Link
+          href="/shift"
+          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-white/10 backdrop-blur-sm border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/20 transition-all"
+        >
+          <CalendarDays className="w-4 h-4" />
+          本日の出勤を見る
+        </Link>
+      </Magnetic>
+      <Magnetic strength={0.3}>
+        <Link
+          href="/system"
+          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-[var(--color-gold)] text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
+        >
+          <Sparkles className="w-4 h-4" />
+          料金を確認する
+        </Link>
+      </Magnetic>
     </div>
   );
 

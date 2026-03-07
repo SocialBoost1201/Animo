@@ -2,17 +2,17 @@
 
 @theme {
   /* Brand Colors */
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-gold: #c9a86a;
+  --color-background: #FAFAFA; /* パールのような温かみのある白 */
+  --color-foreground: #1A1A1A; /* リッチブラック（コントラスト緩和） */
+  --color-gold: #B39257; /* シャンパンゴールド（より肌馴染みがよく上品） */
   --color-gray-light: #f5f5f5;
   --color-air-gray: #f3f2f0;
-  --color-ink-black: #121212;
-  --color-pale-gold: #e6d3a5;
+  --color-ink-black: #0F0F0F;
+  --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
   /* Brand Typography */
-  --font-serif: var(--font-playfair), var(--font-noto-serif), serif;
-  --font-sans: var(--font-inter), var(--font-noto-sans), sans-serif;
+  --font-serif: var(--font-cormorant), var(--font-shippori), serif;
+  --font-sans: var(--font-montserrat), var(--font-zen-kaku), sans-serif;
 
   /* Brand Spacing & Border Radius */
   --spacing-section: 160px;
@@ -20,9 +20,9 @@
   --radius-btn: 2px;
   
   /* Brand Shadows */
-  --shadow-luxury: 0 30px 60px -15px rgba(0, 0, 0, 0.03);
-  --shadow-luxury-hover: 0 40px 80px -20px rgba(0, 0, 0, 0.06);
-  --shadow-aura: 0 0 40px -10px rgba(230, 211, 165, 0.5); /* Pale Gold Glow */
+  --shadow-luxury: 0 30px 60px -15px rgba(0, 0, 0, 0.04);
+  --shadow-luxury-hover: 0 40px 80px -20px rgba(0, 0, 0, 0.08);
+  --shadow-aura: 0 0 50px -10px rgba(179, 146, 87, 0.4); /* シャンパンゴールドのオーラ */
 }
 
 body {

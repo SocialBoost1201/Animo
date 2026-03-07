@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import {
-  Playfair_Display,
-  Noto_Serif_JP,
-  Inter,
-  Noto_Sans_JP,
+  Cormorant_Garamond,
+  Shippori_Mincho,
+  Montserrat,
+  Zen_Kaku_Gothic_New,
 } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@/components/seo/Analytics";
@@ -11,26 +11,28 @@ import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
+
+const shippori = Shippori_Mincho({
+  variable: "--font-shippori",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
-const notoSerif = Noto_Serif_JP({
-  variable: "--font-noto-serif",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const zenKaku = Zen_Kaku_Gothic_New({
+  variable: "--font-zen-kaku",
+  weight: ["300", "400", "500"],
   subsets: ["latin"],
-});
-
-const notoSans = Noto_Sans_JP({
-  variable: "--font-noto-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -86,7 +88,7 @@ export default function RootLayout({
         <LocalBusinessSchema />
       </head>
       <body
-        className={`${playfair.variable} ${notoSerif.variable} ${inter.variable} ${notoSans.variable} antialiased bg-background text-foreground`}
+        className={`${cormorant.variable} ${shippori.variable} ${montserrat.variable} ${zenKaku.variable} antialiased bg-background text-foreground`}
       >
         <SmoothScrollProvider>
           {children}

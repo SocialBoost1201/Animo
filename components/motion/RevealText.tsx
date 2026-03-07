@@ -35,16 +35,17 @@ export const RevealText: React.FC<RevealTextProps> = ({
       opacity: 0,
       y: 20,
       rotateX: -45,
+      filter: 'blur(10px)',
     },
     visible: {
       opacity: 1,
       y: 0,
       rotateX: 0,
+      filter: 'blur(0px)',
       transition: {
-        type: 'spring' as const,
-        damping: 15,
-        stiffness: 100,
-        duration: 0.8,
+        type: 'tween',
+        ease: [0.16, 1, 0.3, 1], // Expo out
+        duration: 1.5,
       },
     },
   };

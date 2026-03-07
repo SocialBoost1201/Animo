@@ -25,28 +25,28 @@ export const FadeIn: React.FC<FadeInProps> = ({
   const getInitialPosition = () => {
     switch (direction) {
       case 'up':
-        return { y: distance, opacity: 0 };
+        return { y: distance, opacity: 0, filter: 'blur(12px)' };
       case 'down':
-        return { y: -distance, opacity: 0 };
+        return { y: -distance, opacity: 0, filter: 'blur(12px)' };
       case 'left':
-        return { x: distance, opacity: 0 };
+        return { x: distance, opacity: 0, filter: 'blur(12px)' };
       case 'right':
-        return { x: -distance, opacity: 0 };
+        return { x: -distance, opacity: 0, filter: 'blur(12px)' };
       case 'none':
       default:
-        return { opacity: 0 };
+        return { opacity: 0, filter: 'blur(12px)' };
     }
   };
 
   return (
     <motion.div
       initial={getInitialPosition()}
-      whileInView={{ x: 0, y: 0, opacity: 1 }}
+      whileInView={{ x: 0, y: 0, opacity: 1, filter: 'blur(0px)' }}
       viewport={{ once: viewportOnce, margin: '-50px' }}
       transition={{
         duration: duration,
         delay: delay,
-        ease: [0.25, 0.1, 0.25, 1], // easeOutQuart 相当の上品なイージング
+        ease: [0.16, 1, 0.3, 1], // Expo Out近似の最高級イージング
       }}
       className={className}
       {...props}
