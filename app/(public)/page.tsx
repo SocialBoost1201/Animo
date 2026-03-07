@@ -121,6 +121,25 @@ export default async function HomePage() {
         cta={heroCta}
       />
 
+      {/* 1.5 TODAY'S MOOD */}
+      {settings?.today_mood && (
+        <section className="bg-[#171717] text-white py-12 px-6 border-y border-[var(--color-gold)]/20 shadow-md relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
+          <div className="container mx-auto text-center relative z-10">
+            <FadeIn>
+              <div className="inline-flex items-center justify-center space-x-3 mb-4">
+                <div className="h-[1px] w-8 bg-[var(--color-gold)]"></div>
+                <span className="text-[10px] font-serif text-[var(--color-gold)] luxury-tracking uppercase tracking-widest">Today's Mood</span>
+                <div className="h-[1px] w-8 bg-[var(--color-gold)]"></div>
+              </div>
+              <p className="text-sm md:text-base font-serif tracking-widest leading-loose text-white/90 max-w-2xl mx-auto">
+                {settings.today_mood}
+              </p>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
       {/* 2. TODAY'S CAST */}
       <section className="py-section bg-transparent px-6 overflow-hidden">
         <div className="container mx-auto">

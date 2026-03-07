@@ -45,20 +45,7 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
           />
         </div>
 
-        {/* Curtain Room 空き状況 */}
-        <div>
-          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Curtain Room Availability</h3>
-          <p className="text-xs text-gray-500 mb-4">現在のカーテンルームの空き状況（予約導線などに影響）。</p>
-          <select 
-            name="vip_availability"
-            defaultValue={initialData?.vip_availability || '空きあり'}
-            className="w-full md:w-1/2 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
-          >
-            <option value="空きあり">空きあり</option>
-            <option value="残りわずか">残りわずか</option>
-            <option value="満室(ご予約済)">満室 (ご予約済)</option>
-          </select>
-        </div>
+        {/* Curtain Room 空き状況は要件から除外 */}
 
         <div className="border-t border-gray-100 pt-8 mt-8">
           <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Hero Section Settings</h3>
