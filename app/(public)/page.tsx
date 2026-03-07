@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
+import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
@@ -311,6 +312,22 @@ export default async function HomePage() {
           <FadeIn delay={0.2}>
             <PriceSimulator />
           </FadeIn>
+        </div>
+      </section>
+
+      {/* 5.5 NIGHT STYLE QUIZ */}
+      <section className="py-section bg-white px-6">
+        <div className="container mx-auto">
+          <FadeIn className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+              <GsapRevealTitle text="Night Style" />
+            </h2>
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto opacity-50" />
+            <p className="text-xs text-gray-400 font-serif luxury-tracking mt-6">
+              今日の気分に合わせた過ごし方をご提案します
+            </p>
+          </FadeIn>
+          <NightStyleQuiz />
         </div>
       </section>
 
