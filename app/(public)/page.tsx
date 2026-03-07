@@ -115,14 +115,13 @@ export default async function HomePage() {
       {/* 2. TODAY'S CAST */}
       <section className="py-section bg-transparent px-6 overflow-hidden">
         <div className="container mx-auto">
-          <FadeIn className="flex justify-between items-end mb-16">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
-                <GsapRevealTitle text="Today's Cast" />
-              </h2>
-              <p className="text-sm tracking-widest text-gray-500 uppercase">本日の出勤</p>
-            </div>
-            <Link href="/shift" className="hidden md:inline-flex items-center text-[var(--color-gold)] text-xs font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
+          <FadeIn className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+              <GsapRevealTitle text="Today's Cast" />
+            </h2>
+            <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-4 opacity-50" />
+            <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
+            <Link href="/shift" className="inline-flex items-center text-[var(--color-gold)] text-[10px] font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
               View Schedule →
             </Link>
           </FadeIn>
