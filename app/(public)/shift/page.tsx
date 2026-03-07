@@ -1,11 +1,13 @@
 import React from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { ShiftTable } from '@/components/features/shift/ShiftTable';
+import { getPublicCasts, getPublicShifts } from '@/lib/actions/public/data';
 
 export default async function ShiftPage() {
-  // Client Componentである ShiftTable 内でデータフェッチを行う構成にする（要件に応じて適宜選定可能）
-  // 今回はUI/UX側をリッチにするためShiftTable側にAPI取得を委譲した設計とする。
-  // (もしここでServerから流し込む場合は getWeeklyShifts() を利用)
+  const [casts, shifts] = await Promise.all([
+    getPublicCasts(),
+    getPublicShifts(),
+  ]);
 
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
@@ -22,9 +24,8 @@ export default async function ShiftPage() {
           </p>
         </FadeIn>
 
-        {/* 出勤表コンポーネント (現在Client側でモックデータが動いているため、DBデータに繋ぎ替える) */}
         <div className="bg-white shadow-luxury border-y border-[var(--color-gold)]/20 md:border md:rounded-sm overflow-hidden">
-           <ShiftTable />
+           <ShiftTable initialCasts={casts} initialShifts={shifts} />
         </div>
       </div>
     </div>

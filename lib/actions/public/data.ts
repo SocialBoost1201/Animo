@@ -58,3 +58,27 @@ export async function getPublicContents(type: string, limit?: number) {
   }
   return data
 }
+
+// 公開用: シフト取得（指定日から7日間）
+export async function getPublicShifts() {
+  const supabase = await createClient()
+  const today = new Date()
+  // タイムゾーンずれを防ぐため UTC+9 で日付計算
+  const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000)
+  const startStr = jstToday.toISOString().split('T')[0]
+  const endDate = new Date(jstToday)
+  endDate.setDate(endDate.getDate() + 6)
+  const endStr = endDate.toISOString().split('T')[0]
+
+  const { data, error } = await supabase
+    .from('shifts')
+    .select('*')
+    .gte('date', startStr)
+    .lte('date', endStr)
+
+  if (error) {
+    console.error('Failed to fetch shifts:', error)
+    return []
+  }
+  return data
+}

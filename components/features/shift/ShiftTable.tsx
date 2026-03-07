@@ -1,10 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { getPublicCasts } from '@/lib/actions/public/data';
-import { createBrowserClient } from '@supabase/ssr';
 import { CalendarHeart, ChevronDown, ChevronUp } from 'lucide-react';
 
 // ── 料金計算ロジック（PriceSimulatorと同一） ──────────────────
@@ -124,50 +122,26 @@ function MiniSimulator({ castName }: { castName: string }) {
 }
 
 // ── メインコンポーネント ────────────────────────────────────
-export function ShiftTable() {
+export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[]; initialShifts: any[] }) {
   const [activeDayIndex, setActiveDayIndex] = useState(0);
-  const [casts, setCasts] = useState<any[]>([]);
-  const [shifts, setShifts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [casts] = useState<any[]>(initialCasts);
+  const [shifts] = useState<any[]>(initialShifts);
   const [openSimulator, setOpenSimulator] = useState<string | null>(null);
 
-  // 今日から7日間の日付配列
+  // 今日から7日間の日付配列（JST）
   const days: { label: string; dateStr: string }[] = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date();
-    d.setDate(d.getDate() + i);
-    const mmdd = `${d.getMonth() + 1}/${d.getDate()}`;
-    const week = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
-    const dateStr = d.toISOString().split('T')[0];
+    // JST offset +9h
+    const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    jst.setDate(jst.getDate() + i);
+    const dateStr = jst.toISOString().split('T')[0];
+    const local = new Date(d);
+    local.setDate(local.getDate() + i);
+    const mmdd = `${local.getMonth() + 1}/${local.getDate()}`;
+    const week = ['日', '月', '火', '水', '木', '金', '土'][local.getDay()];
     days.push({ label: i === 0 ? 'Today' : `${mmdd}(${week})`, dateStr });
   }
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const publicCasts = await getPublicCasts();
-        setCasts(publicCasts);
-
-        const supabase = createBrowserClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
-        const { data: shiftData } = await supabase
-          .from('shifts')
-          .select('*')
-          .gte('date', days[0].dateStr)
-          .lte('date', days[6].dateStr);
-
-        if (shiftData) setShifts(shiftData);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
 
   const activeDateStr = days[activeDayIndex].dateStr;
   const activeShifts = shifts.filter((s) => s.date === activeDateStr);
@@ -203,9 +177,7 @@ export function ShiftTable() {
 
       {/* キャストリスト */}
       <div className="p-0">
-        {isLoading ? (
-          <div className="p-12 text-center text-gray-400 text-sm">Loading schedule...</div>
-        ) : displayCasts.length > 0 ? (
+        {displayCasts.length > 0 ? (
           <div className="divide-y divide-[var(--color-gold)]/10">
             {displayCasts.map((cast) => {
               const shiftInfo = activeShifts.find((s) => s.cast_id === cast.id);
