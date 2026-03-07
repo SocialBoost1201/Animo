@@ -144,7 +144,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
   }
 
   const activeDateStr = days[activeDayIndex].dateStr;
-  const activeShifts = shifts.filter((s) => s.date === activeDateStr);
+  const activeShifts = shifts.filter((s) => s.work_date === activeDateStr);
   const castIdsForDay = new Set(activeShifts.map((s) => s.cast_id));
   const displayCasts = casts.filter((c) => castIdsForDay.has(c.id));
 
@@ -154,7 +154,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
       <div className="flex overflow-x-auto border-b border-gray-100 scrollbar-hide">
         {days.map((day, idx) => {
           const isActive = idx === activeDayIndex;
-          const count = shifts.filter((s) => s.date === day.dateStr).length;
+          const count = shifts.filter((s) => s.work_date === day.dateStr).length;
           return (
             <button
               key={day.dateStr}

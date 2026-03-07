@@ -2,37 +2,42 @@
 
 import { createServiceClient } from '@/lib/supabase/service'
 
-// ─── 公開キャスト一覧 ──────────────────────────────────────
+// ─── JST 今日の日付文字列を返す ───────────────────────────
+function jstToday(): string {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0]
+}
+function jstDateAfterDays(days: number): string {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000 + days * 86400000).toISOString().split('T')[0]
+}
+
+// ─── 公開キャスト一覧（is_active=true, display_order順）────
 export async function getPublicCasts() {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('casts')
-    .select('*')
+    .select('*, cast_images(image_url, image_type, is_primary, sort_order)')
     .eq('is_active', true)
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Failed to fetch casts:', error)
-    return []
-  }
+  if (error) { console.error('getPublicCasts:', error); return [] }
   return data
 }
 
-// ─── 公開キャスト詳細（スケジュール JOIN）──────────────────
-export async function getPublicCastById(id: string) {
+// ─── 公開キャスト詳細（slug ベース）──────────────────────
+export async function getPublicCastBySlug(slug: string) {
   const supabase = createServiceClient()
-  const today = new Date()
-  const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000)
-  const todayStr = jstToday.toISOString().split('T')[0]
-  const endDate = new Date(jstToday)
-  endDate.setDate(endDate.getDate() + 6)
-  const endStr = endDate.toISOString().split('T')[0]
+  const today = jstToday()
+  const end = jstDateAfterDays(6)
 
   const { data: cast, error } = await supabase
     .from('casts')
-    .select('*')
-    .eq('id', id)
+    .select(`
+      *,
+      cast_images(image_url, image_type, is_primary, sort_order),
+      cast_tag_relations(cast_tags(id, name, slug))
+    `)
+    .eq('slug', slug)
     .eq('is_active', true)
     .single()
 
@@ -41,10 +46,10 @@ export async function getPublicCastById(id: string) {
   const { data: schedules } = await supabase
     .from('cast_schedules')
     .select('*')
-    .eq('cast_id', id)
-    .gte('date', todayStr)
-    .lte('date', endStr)
-    .order('date', { ascending: true })
+    .eq('cast_id', cast.id)
+    .gte('work_date', today)
+    .lte('work_date', end)
+    .order('work_date', { ascending: true })
 
   return { ...cast, upcomingSchedules: schedules || [] }
 }
@@ -52,47 +57,59 @@ export async function getPublicCastById(id: string) {
 // ─── 公開シフト取得（7日間）──────────────────────────────
 export async function getPublicShifts() {
   const supabase = createServiceClient()
-  const today = new Date()
-  const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000)
-  const startStr = jstToday.toISOString().split('T')[0]
-  const endDate = new Date(jstToday)
-  endDate.setDate(endDate.getDate() + 6)
-  const endStr = endDate.toISOString().split('T')[0]
+  const today = jstToday()
+  const end = jstDateAfterDays(6)
 
   const { data, error } = await supabase
     .from('cast_schedules')
-    .select('*, casts(id, stage_name, image_url, age, hobby)')
-    .gte('date', startStr)
-    .lte('date', endStr)
-    .order('date', { ascending: true })
+    .select(`
+      *,
+      casts(id, slug, stage_name, age, hobby,
+        cast_images(image_url, is_primary))
+    `)
+    .gte('work_date', today)
+    .lte('work_date', end)
+    .order('work_date', { ascending: true })
 
-  if (error) {
-    console.error('Failed to fetch shifts:', error)
-    return []
-  }
+  if (error) { console.error('getPublicShifts:', error); return [] }
   return data
 }
 
 // ─── 本日の出勤キャスト ────────────────────────────────────
 export async function getTodayShifts() {
   const supabase = createServiceClient()
-  const today = new Date()
-  const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000)
-  const todayStr = jstToday.toISOString().split('T')[0]
+  const today = jstToday()
 
   const { data, error } = await supabase
     .from('cast_schedules')
-    .select('*, casts(id, stage_name, image_url, age)')
-    .eq('date', todayStr)
+    .select(`
+      *,
+      casts(id, slug, stage_name, age,
+        cast_images(image_url, is_primary))
+    `)
+    .eq('work_date', today)
 
-  if (error) {
-    console.error('Failed to fetch today shifts:', error)
-    return []
-  }
+  if (error) { console.error('getTodayShifts:', error); return [] }
   return data
 }
 
-// ─── 公開コンテンツ取得 ────────────────────────────────────
+// ─── 公開ニュース取得 ─────────────────────────────────────
+export async function getPublicNews(limit?: number) {
+  const supabase = createServiceClient()
+  let query = supabase
+    .from('news')
+    .select('*')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+
+  if (limit) query = query.limit(limit)
+  const { data, error } = await query
+  if (error) { console.error('getPublicNews:', error); return [] }
+  return data
+}
+
+// ─── 公開コンテンツ取得（後方互換）──────────────────────
 export async function getPublicContents(type: string, limit?: number) {
   const supabase = createServiceClient()
   let query = supabase
@@ -102,16 +119,9 @@ export async function getPublicContents(type: string, limit?: number) {
     .eq('is_published', true)
     .order('content_date', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
-
-  if (limit) {
-    query = query.limit(limit)
-  }
-
+  if (limit) query = query.limit(limit)
   const { data, error } = await query
-  if (error) {
-    console.error(`Failed to fetch ${type}:`, error)
-    return []
-  }
+  if (error) { console.error('getPublicContents:', error); return [] }
   return data
 }
 
@@ -124,10 +134,18 @@ export async function getPublicHeroMedia() {
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
+  if (error) { console.error('getPublicHeroMedia:', error); return [] }
+  return data
+}
 
-  if (error) {
-    console.error('Failed to fetch hero media:', error)
-    return []
-  }
+// ─── ギャラリー取得 ──────────────────────────────────────
+export async function getPublicGallery() {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from('gallery_assets')
+    .select('*')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true })
+  if (error) { console.error('getPublicGallery:', error); return [] }
   return data
 }
