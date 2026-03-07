@@ -8,9 +8,10 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import {
   ArrowRight, CheckCircle2, Phone, Instagram,
-  ChevronDown, ChevronUp, CalendarHeart, Star
+  ChevronDown, ChevronUp, CalendarHeart, Star, MapPin
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
+import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
 
 // ─── データ定義 ────────────────────────────────────────────────
 
@@ -83,6 +84,40 @@ const FAQ_ITEMS = [
   { q: 'ドレスは自分で用意しますか？', a: '店舗にドレスをご用意していますので、手ぶらでお越しいただけます。体験入店も手ぶらでOKです。' },
   { q: '送りは毎回ありますか？', a: 'はい、毎回スタッフが送迎いたします。終電を過ぎた時間でも安心してください。' },
   { q: '学生・Wワークでも大丈夫ですか？', a: '週1日・3時間〜の勤務が可能です。扶養内希望の方も歓迎します。' },
+];
+
+const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
+  { label: '業種', value: 'キャバクラ / ラウンジ' },
+  { label: '職種', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
+  { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-gold w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
+  { label: '給与', value: '時給 5,000円〜 + 各種高額バック\n※経験や容姿により上限なく優遇いたします。' },
+  { label: '給与詳細', value: '■全額日払い可(規定あり)\n■各種バックあり（指名・同伴・ドリンク・ボトル等）\n■体験入店時の時給保証あり\n■ノルマ・罰金一切なし' },
+  { label: '応募資格', value: '18歳以上（高校生不可）\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
+  { label: '勤務時間', value: '20:00〜LAST\n（週1日・3時間〜OK）' },
+  { label: '勤務時間詳細', value: '※シフトは完全自由の自己申告制\n※終電上がりOK、遅出出勤OK' },
+  { label: '休日', value: '日曜日・祝日休業\n（ご自身のペースで出勤日を決めていただけます）' },
+  { label: '待遇', value: '■無料送迎完備\n■ドレス・靴レンタル無料\n■ヘアメイク完備\n■個人ロッカー完備\n■日払い・週払い対応\n■体験入店何回でもOK' },
+];
+
+const RECRUIT_DETAILS_TAGS: RecruitTag[] = [
+  { label: '日払い可', active: true },
+  { label: '帰送車あり', active: true },
+  { label: 'シフト自由', active: true },
+  { label: 'ノルマなし', active: true },
+  { label: 'ヘアメイクあり', active: true },
+  { label: '1日体験入店あり', active: true },
+  { label: '交通費一部支給', active: true },
+  { label: '昇給随時あり', active: true },
+  { label: 'お酒飲めなくても可', active: true },
+  { label: '友達同士で勤務可', active: true },
+  { label: '未経験者歓迎', active: true },
+  { label: 'Wワーク歓迎', active: true },
+  { label: '寮紹介あり', active: false },
+  { label: '託児所紹介あり', active: false },
+  { label: '駅近', active: true },
+  { label: '髪型自由', active: true },
+  { label: '短期可', active: true },
+  { label: '手ぶら出勤可', active: true },
 ];
 
 // ─── メインコンポーネント ──────────────────────────────────────
@@ -273,6 +308,15 @@ export default function CastRecruitPage() {
               </FadeIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ⑥.5 募集要項 */}
+      <section className="py-24 px-6 bg-white">
+        <div className="container mx-auto max-w-5xl">
+          <FadeIn>
+            <RecruitTable title="募集要項" data={RECRUIT_DETAILS_DATA} tags={RECRUIT_DETAILS_TAGS} />
+          </FadeIn>
         </div>
       </section>
 
