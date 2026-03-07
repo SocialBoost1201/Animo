@@ -34,7 +34,7 @@ export const PriceSimulator = () => {
     let nominationFee = 0;
     if (nomination === 'inside') nominationFee = 2500;
     if (nomination === 'main') nominationFee = 3000;
-    if (nomination === 'escort') nominationFee = 3000;
+    if (nomination === 'escort') nominationFee = 5000;
 
     // 4. Accompaniment Charge
     const accompanimentFee = accompaniment ? 5000 : 0;

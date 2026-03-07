@@ -8,7 +8,7 @@ import { CalendarHeart, ChevronDown, ChevronUp } from 'lucide-react';
 // ── 料金計算ロジック（PriceSimulatorと同一） ──────────────────
 const SET_FEE = { member: 6000, visitor: 7000 };
 const EXTENSION_FEE = 3500;
-const NOM_FEE = { none: 0, inside: 2500, main: 3000, escort: 3000 };
+const NOM_FEE = { none: 0, inside: 2500, main: 3000, escort: 5000 };
 const TAX_RATE = 1.3;
 
 function calcPrice(
@@ -95,7 +95,7 @@ function MiniSimulator({ castName }: { castName: string }) {
               { label: 'なし', value: 'none' },
               { label: '場内 +¥2,500', value: 'inside' },
               { label: '本指名 +¥3,000', value: 'main' },
-              { label: '同伴 +¥3,000', value: 'escort' },
+              { label: '同伴 +¥5,000', value: 'escort' },
             ]}
             value={nom}
             onChange={setNom}
