@@ -1,17 +1,12 @@
 import { getCasts, deleteCast } from '@/lib/actions/casts'
 import Link from 'next/link'
-import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react'
-import { revalidatePath } from 'next/cache'
+import { Trash2, Eye, EyeOff, Edit2, Plus } from 'lucide-react'
+import { DeleteCastButton } from '@/components/features/admin/DeleteCastButton'
 
 export default async function CastsPage() {
   const casts = await getCasts()
 
-  async function handleDelete(data: FormData) {
-    'use server'
-    const id = data.get('id') as string
-    await deleteCast(id)
-    revalidatePath('/admin/casts')
-  }
+
 
   return (
     <div className="space-y-6">
@@ -82,18 +77,7 @@ export default async function CastsPage() {
                     >
                       <Edit2 size={16} />
                     </Link>
-                    <form action={handleDelete}>
-                      <input type="hidden" name="id" value={cast.id} />
-                      <button
-                        type="submit"
-                        className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded hover:bg-red-50"
-                        onClick={(e) => {
-                          if (!confirm(`${cast.stage_name || cast.name} を削除してもよろしいですか？`)) e.preventDefault()
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </form>
+                    <DeleteCastButton castId={cast.id} castName={cast.stage_name || cast.name || '名前なし'} />
                   </div>
                 </td>
               </tr>

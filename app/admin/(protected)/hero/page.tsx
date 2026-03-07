@@ -76,9 +76,6 @@ export default async function HeroMediaPage() {
                       <button 
                         type="submit"
                         className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded hover:bg-red-50"
-                        onClick={(e) => {
-                          if (!confirm(`削除してもよろしいですか？`)) e.preventDefault()
-                        }}
                       >
                         <Trash2 size={16} />
                       </button>
