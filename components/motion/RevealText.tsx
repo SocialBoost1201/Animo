@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface RevealTextProps {
   text: string;
@@ -19,7 +19,7 @@ export const RevealText: React.FC<RevealTextProps> = ({
   // 文字列を分割
   const characters = Array.from(text);
 
-  const container = {
+  const container: Variants = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
@@ -30,7 +30,7 @@ export const RevealText: React.FC<RevealTextProps> = ({
     }),
   };
 
-  const child = {
+  const child: Variants = {
     hidden: {
       opacity: 0,
       y: 20,
@@ -43,8 +43,7 @@ export const RevealText: React.FC<RevealTextProps> = ({
       rotateX: 0,
       filter: 'blur(0px)',
       transition: {
-        type: 'tween',
-        ease: [0.16, 1, 0.3, 1], // Expo out
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Expo out
         duration: 1.5,
       },
     },

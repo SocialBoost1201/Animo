@@ -76,7 +76,7 @@ export const SystemPriceGrid = () => {
             <li className="flex flex-col md:flex-row md:items-center justify-between pt-2">
               <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Tax / Service Charge <span className="text-[10px] text-gray-400 ml-2">税・サービス料</span></span>
               <span className="text-xl md:text-2xl font-normal font-sans tracking-wide text-foreground">
-                30%
+                32%
               </span>
             </li>
           </ul>

@@ -20,9 +20,9 @@ const HOW_TO_EXAMPLES = [
     tag: 'Visitor · 60分 · 指名なし',
     items: [
       { name: 'セット料金', price: '¥7,000' },
-      { name: 'TAX / Service (30%)', price: '¥2,100' },
+      { name: 'TAX / Service (32%)', price: '¥2,240' },
     ],
-    total: '¥9,100',
+    total: '¥9,000',
     note: '※ 最もシンプルなご利用例。まず雰囲気を楽しみたい方に。',
   },
   {
@@ -32,9 +32,9 @@ const HOW_TO_EXAMPLES = [
       { name: 'セット料金', price: '¥7,000' },
       { name: '延長 30分', price: '¥3,500' },
       { name: '場内指名', price: '¥2,500' },
-      { name: 'TAX / Service (30%)', price: '¥3,900' },
+      { name: 'TAX / Service (32%)', price: '¥4,160' },
     ],
-    total: '¥16,900',
+    total: '¥17,000',
     note: '※ 気になるキャストをその場で指名して過ごす標準パターン。',
   },
   {
@@ -44,9 +44,9 @@ const HOW_TO_EXAMPLES = [
       { name: 'セット料金', price: '¥7,000' },
       { name: '延長 60分', price: '¥7,000' },
       { name: '本指名', price: '¥3,000' },
-      { name: 'TAX / Service (30%)', price: '¥5,100' },
+      { name: 'TAX / Service (32%)', price: '¥5,440' },
     ],
-    total: '¥22,100',
+    total: '¥22,000',
     note: '※ お気に入りのキャストとたっぷり過ごしたい方のスタンダード。',
   },
 ];

@@ -41,8 +41,8 @@ export const PriceSimulator = () => {
     // Subtotal
     const subTotal = baseFee + extensionFee + nominationFee + accompanimentFee;
 
-    // 5. TAX & Service Charge (30%)
-    const totalWithTax = Math.round(subTotal * 1.3);
+    // 5. TAX & Service Charge (32%)
+    const totalWithTax = Math.round(subTotal * 1.32);
 
     // 6. 1000円単位で丸め（500円以上切り上げ、499円以下切り下げ）
     const roundedTotal = Math.round(totalWithTax / 1000) * 1000;
@@ -161,7 +161,7 @@ export const PriceSimulator = () => {
             </AnimatePresence>
           </div>
           <p className="text-[10px] md:text-xs text-gray-400 font-serif option-tracking leading-[2] mb-12">
-            ※ 税・サービス料（30%）込みの金額です。<br />
+            ※ 税・サービス料（32%）込みの金額です。<br />
             ※ キャストドリンク代やボトルの別注文料金は含まれておりません。<br />
             ※ あくまで目安料金となりますので、あらかじめご了承ください。
           </p>
