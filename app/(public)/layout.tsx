@@ -11,7 +11,7 @@ export default function PublicLayout({
   return (
     <div className="flex flex-col min-h-screen relative">
       <Header />
-      <main className="flex-grow pt-24 md:pt-32 pb-16 md:pb-0">
+      <main className="flex-grow pt-24 md:pt-32 pb-24 md:pb-0">
         {children}
       </main>
       <Footer />

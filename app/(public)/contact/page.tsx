@@ -82,28 +82,28 @@ export default function ContactPage() {
 
             <form onSubmit={handleSubmit} className="space-y-10">
               <div>
-                <label htmlFor="name" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                <label htmlFor="name" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Name <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
                 <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 太郎" />
               </div>
               
               <div>
-                <label htmlFor="contactMethod" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                <label htmlFor="contactMethod" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Email / Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
                 <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com (LINEやSNSの場合はID等をご記入ください)" />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Phone (Optional)
                 </label>
                 <input id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                <label htmlFor="message" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Message <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
                 <textarea required id="message" name="message" rows={6} className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30" placeholder="お問い合わせ内容をご記入ください" />

@@ -35,11 +35,21 @@ body {
 
 /* ユーティリティクラス（トラッキング） */
 .luxury-tracking {
-  letter-spacing: 0.25em;
+  letter-spacing: 0.15em;
+}
+@media (min-width: 768px) {
+  .luxury-tracking {
+    letter-spacing: 0.25em;
+  }
 }
 
 .luxury-tracking-super {
-  letter-spacing: 0.4em;
+  letter-spacing: 0.25em;
+}
+@media (min-width: 768px) {
+  .luxury-tracking-super {
+    letter-spacing: 0.4em;
+  }
 }
 
 /* Custom scrollbar for horizontal scrolling areas (Today Shift) */

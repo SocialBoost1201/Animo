@@ -90,14 +90,14 @@ function ReserveForm() {
               {/* Name & Furigana */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="name" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="name" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Name <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 太郎" />
                 </div>
                 <div>
                   {/* contactMethodとしてメールアドレスやLINE ID等を共用 */}
-                  <label htmlFor="contactMethod" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="contactMethod" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com / LINE ID" />
@@ -107,7 +107,7 @@ function ReserveForm() {
               {/* Contact */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="md:col-span-2">
-                  <label htmlFor="phone" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Phone <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <input required id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
@@ -117,13 +117,13 @@ function ReserveForm() {
               {/* Date & Time */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
-                  <label htmlFor="date" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="date" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Reserve Date <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <input required id="date" name="date" type="date" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]" />
                 </div>
                 <div>
-                  <label htmlFor="time" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="time" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Time <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <select required id="time" name="time" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
@@ -144,7 +144,7 @@ function ReserveForm() {
                {/* People & Cast */}
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="people" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="people" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Number of People <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <select required id="people" name="people" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
@@ -152,7 +152,7 @@ function ReserveForm() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="castName" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="castName" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Cast Nomination
                   </label>
                   <input id="castName" name="castName" defaultValue={defaultCastName} type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="指名 キャスト名（任意）" />
@@ -161,7 +161,7 @@ function ReserveForm() {
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-[10px] font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                <label htmlFor="message" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Message / Remarks
                 </label>
                 <textarea id="message" name="message" rows={4} className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30" placeholder="ご要望やご質問がございましたらご記入ください" />

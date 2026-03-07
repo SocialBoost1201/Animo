@@ -390,7 +390,7 @@ export default function CastRecruitPage() {
 
             <form onSubmit={handleSubmit} className="space-y-10">
               <div>
-                <label htmlFor="name" className="block text-[10px] font-serif luxury-tracking text-foreground mb-3 uppercase">
+                <label htmlFor="name" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
                   お名前 <span className="text-gold ml-1">*</span>
                 </label>
                 <input required id="name" name="name" type="text"
@@ -400,7 +400,7 @@ export default function CastRecruitPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div>
-                  <label htmlFor="age" className="block text-[10px] font-serif luxury-tracking text-foreground mb-3 uppercase">
+                  <label htmlFor="age" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
                     年齢 <span className="text-gold ml-1">*</span>
                   </label>
                   <input required id="age" name="age" type="number" min="20"
@@ -408,7 +408,7 @@ export default function CastRecruitPage() {
                     placeholder="20" />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-[10px] font-serif luxury-tracking text-foreground mb-3 uppercase">
+                  <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
                     電話番号 <span className="text-gold ml-1">*</span>
                   </label>
                   <input required id="phone" name="phone" type="tel"
@@ -418,7 +418,7 @@ export default function CastRecruitPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-serif luxury-tracking text-foreground mb-4 uppercase">ナイトワーク経験</label>
+                <label className="block text-xs font-serif luxury-tracking text-foreground mb-4 uppercase">ナイトワーク経験</label>
                 <div className="flex gap-8">
                   <label className="flex items-center gap-3 cursor-pointer text-xs font-serif luxury-tracking text-gray-500 hover:text-gold transition-colors">
                     <input type="radio" name="experience" value="未経験" className="accent-gold scale-110" defaultChecked />
@@ -432,7 +432,7 @@ export default function CastRecruitPage() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-[10px] font-serif luxury-tracking text-foreground mb-3 uppercase">ご質問・ご要望</label>
+                <label htmlFor="message" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">ご質問・ご要望</label>
                 <textarea id="message" name="message" rows={4}
                   className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30"
                   placeholder="シフトの希望や、気になることがあればご記入ください" />
