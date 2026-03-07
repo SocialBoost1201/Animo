@@ -3,6 +3,8 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { ShiftTable } from '@/components/features/shift/ShiftTable';
 import { getPublicCasts, getPublicShifts } from '@/lib/actions/public/data';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ShiftPage() {
   const [casts, shifts] = await Promise.all([
     getPublicCasts(),

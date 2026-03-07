@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 
 // 公開用: ヒーローメディア取得
 export async function getPublicHeroMedia() {
@@ -61,7 +62,7 @@ export async function getPublicContents(type: string, limit?: number) {
 
 // 公開用: シフト取得（指定日から7日間）
 export async function getPublicShifts() {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const today = new Date()
   // タイムゾーンずれを防ぐため UTC+9 で日付計算
   const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000)
