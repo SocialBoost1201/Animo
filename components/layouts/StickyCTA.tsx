@@ -45,7 +45,7 @@ export const StickyCTA: React.FC = () => {
 
             {/* Instagram DM */}
             <a
-              href="https://ig.me/m/club_animo_yokohama"
+              href="https://ig.me/m/kannai_club_animo"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-foreground hover:bg-gray-50 transition-colors"

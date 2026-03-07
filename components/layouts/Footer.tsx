@@ -19,7 +19,7 @@ export const Footer = () => {
             </p>
             <div className="flex items-center space-x-4">
               <a
-                href="https://www.instagram.com/club_animo_yokohama/"
+                href="https://www.instagram.com/kannai_club_animo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[var(--color-gold)] transition-colors"
@@ -28,12 +28,12 @@ export const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://www.instagram.com/club_animo_yokohama/"
+                href="https://www.instagram.com/kannai_club_animo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 text-[10px] font-serif luxury-tracking hover:text-gold transition-colors"
               >
-                @club_animo_yokohama
+                @kannai_club_animo
               </a>
             </div>
           </div>

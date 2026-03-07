@@ -356,7 +356,7 @@ export default function CastRecruitPage() {
               電話で相談（無料）
             </a>
             <a
-              href="https://ig.me/m/club_animo_yokohama"
+              href="https://ig.me/m/kannai_club_animo"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors"
