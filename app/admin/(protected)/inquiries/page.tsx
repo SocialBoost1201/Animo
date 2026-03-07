@@ -43,8 +43,9 @@ export default async function InquiriesPage() {
         <div className="bg-white border border-gray-100 rounded-sm p-4 text-sm text-[#171717] font-sans leading-relaxed mb-4">
           <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-4">
             {item.phone && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Phone: </span>{item.phone}</div>}
-            {item.contact_method && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Contact: </span>{item.contact_method}</div>}
+            {item.contact_method && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Email: </span>{item.contact_method}</div>}
             {item.email && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Email: </span>{item.email}</div>}
+            {item.line_id && <div><span className="text-gray-400 text-xs tracking-widest uppercase">LINE: </span>{item.line_id}</div>}
             {item.age && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Age: </span>{item.age}歳</div>}
             {(item.date || item.time) && <div><span className="text-gray-400 text-xs tracking-widest uppercase">Reserve: </span>{item.date} {item.time}</div>}
             {item.people && <div><span className="text-gray-400 text-xs tracking-widest uppercase">People: </span>{item.people}名</div>}

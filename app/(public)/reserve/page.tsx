@@ -87,7 +87,7 @@ function ReserveForm() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-10 max-w-2xl mx-auto">
-              {/* Name & Furigana */}
+              {/* Name & Contact */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label htmlFor="name" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
@@ -96,21 +96,26 @@ function ReserveForm() {
                   <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 太郎" />
                 </div>
                 <div>
-                  {/* contactMethodとしてメールアドレスやLINE ID等を共用 */}
                   <label htmlFor="contactMethod" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Email <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
-                  <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com / LINE ID" />
+                  <input required id="contactMethod" name="contactMethod" type="email" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com" />
                 </div>
               </div>
 
-              {/* Contact */}
+              {/* Phone & LINE ID */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="md:col-span-2">
+                <div>
                   <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Phone <span className="text-[var(--color-gold)] ml-1">*</span>
                   </label>
                   <input required id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
+                </div>
+                <div>
+                  <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                    LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
+                  </label>
+                  <input id="lineId" name="lineId" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="@your_line_id" />
                 </div>
               </div>
 

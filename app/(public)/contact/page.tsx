@@ -90,14 +90,21 @@ export default function ContactPage() {
               
               <div>
                 <label htmlFor="contactMethod" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                  Email / Contact Method <span className="text-[var(--color-gold)] ml-1">*</span>
+                  Email <span className="text-[var(--color-gold)] ml-1">*</span>
                 </label>
-                <input required id="contactMethod" name="contactMethod" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com (LINEやSNSの場合はID等をご記入ください)" />
+                <input required id="contactMethod" name="contactMethod" type="email" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com" />
+              </div>
+
+              <div>
+                <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
+                </label>
+                <input id="lineId" name="lineId" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="@your_line_id" />
               </div>
 
               <div>
                 <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                  Phone (Optional)
+                  Phone <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
                 </label>
                 <input id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
               </div>

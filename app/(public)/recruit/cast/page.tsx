@@ -417,14 +417,24 @@ export default function CastRecruitPage() {
                 </div>
               </div>
 
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
-                  メールアドレス <span className="text-gold ml-1">*</span>
-                </label>
-                <input required id="email" name="email" type="email"
-                  className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
-                  placeholder="example@gmail.com" />
+              {/* Email & LINE ID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <label htmlFor="email" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
+                    メールアドレス <span className="text-gold ml-1">*</span>
+                  </label>
+                  <input required id="email" name="email" type="email"
+                    className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
+                    placeholder="example@gmail.com" />
+                </div>
+                <div>
+                  <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
+                    LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
+                  </label>
+                  <input id="lineId" name="lineId" type="text"
+                    className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
+                    placeholder="@your_line_id" />
+                </div>
               </div>
 
               <div>

@@ -11,6 +11,7 @@ export async function submitContact(formData: FormData) {
   const name = formData.get('name') as string
   const phone = formData.get('phone') as string
   const contact_method = formData.get('contactMethod') as string
+  const line_id = formData.get('lineId') as string
   const message = formData.get('message') as string
 
   // 予約特有のフィールド
@@ -25,9 +26,10 @@ export async function submitContact(formData: FormData) {
     name,
     phone,
     contact_method,
+    line_id: line_id || null,
     message,
     date: dateStr || null,
-    time: timeStr ? `${timeStr}:00` : null, // format HH:MM:SS needed by time type
+    time: timeStr ? `${timeStr}:00` : null,
     people: isNaN(people) ? null : people,
     cast_name: castName || null,
     is_read: false
@@ -56,6 +58,7 @@ export async function submitRecruitApplication(formData: FormData) {
   const age = parseInt(formData.get('age') as string, 10)
   const phone = formData.get('phone') as string
   const email = formData.get('email') as string
+  const line_id = formData.get('lineId') as string
   const experience = formData.get('experience') as string
   const schedule = formData.get('schedule') as string
   const message = formData.get('message') as string
@@ -66,6 +69,7 @@ export async function submitRecruitApplication(formData: FormData) {
     age: isNaN(age) ? null : age,
     phone,
     email: email || null,
+    line_id: line_id || null,
     experience,
     schedule,
     message,
