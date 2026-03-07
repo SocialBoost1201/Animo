@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Phone, CalendarDays, CalendarHeart } from 'lucide-react';
+import { Phone, CalendarDays, CalendarHeart, Instagram } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
@@ -28,7 +28,7 @@ export const StickyCTA: React.FC = () => {
             {/* 電話 */}
             <a
               href="tel:045-263-6961"
-              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-[#171717] hover:bg-gray-50 transition-colors"
+              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-foreground hover:bg-gray-50 transition-colors"
             >
               <Phone className="w-5 h-5 mb-1" />
               <span className="text-[9px] uppercase luxury-tracking font-serif">Call</span>
@@ -37,16 +37,27 @@ export const StickyCTA: React.FC = () => {
             {/* 本日の出勤 */}
             <Link
               href="/shift"
-              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-[#171717] hover:bg-gray-50 transition-colors"
+              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-foreground hover:bg-gray-50 transition-colors"
             >
               <CalendarDays className="w-5 h-5 mb-1" />
               <span className="text-[9px] uppercase luxury-tracking font-serif">Today</span>
             </Link>
 
+            {/* Instagram DM */}
+            <a
+              href="https://ig.me/m/club_animo_yokohama"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-foreground hover:bg-gray-50 transition-colors"
+            >
+              <Instagram className="w-5 h-5 mb-1" />
+              <span className="text-[9px] uppercase luxury-tracking font-serif">DM</span>
+            </a>
+
             {/* WEB予約 */}
             <Link
               href="/reserve"
-              className="flex-[1.5] flex flex-col items-center justify-center bg-[var(--color-gold)] text-white hover:bg-[#171717] transition-all duration-500 btn-sheen"
+              className="flex-[1.3] flex flex-col items-center justify-center bg-gold text-white hover:bg-foreground transition-all duration-500 btn-sheen"
             >
               <CalendarHeart className="w-5 h-5 mb-1" />
               <span className="text-[9px] uppercase luxury-tracking font-serif">Reserve</span>
