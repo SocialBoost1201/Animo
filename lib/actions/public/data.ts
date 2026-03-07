@@ -1,11 +1,10 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 
 // 公開用: ヒーローメディア取得
 export async function getPublicHeroMedia() {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('hero_media')
     .select('*')
@@ -22,7 +21,7 @@ export async function getPublicHeroMedia() {
 
 // 公開用: キャスト取得 (出勤フラグや順序など、必要に応じて)
 export async function getPublicCasts() {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('casts')
     .select('*')
@@ -39,7 +38,7 @@ export async function getPublicCasts() {
 
 // 公開用: コンテンツ取得
 export async function getPublicContents(type: string, limit?: number) {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   let query = supabase
     .from('contents')
     .select('*')

@@ -4,11 +4,13 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { ArrowLeft, CalendarHeart } from 'lucide-react';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 async function getCastDetail(slug: string) {
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('casts')
     .select(`
