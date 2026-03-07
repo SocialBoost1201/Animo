@@ -8,13 +8,13 @@ import { CalendarHeart, ChevronDown, ChevronUp } from 'lucide-react';
 // ── 料金計算ロジック（PriceSimulatorと同一） ──────────────────
 const SET_FEE = { member: 6000, visitor: 7000 };
 const EXTENSION_FEE = 3500;
-const NOM_FEE = { none: 0, inside: 2500, main: 3000 };
+const NOM_FEE = { none: 0, inside: 2500, main: 3000, escort: 3000 };
 const TAX_RATE = 1.3;
 
 function calcPrice(
   type: 'member' | 'visitor',
   duration: number,
-  nomination: 'none' | 'inside' | 'main'
+  nomination: 'none' | 'inside' | 'main' | 'escort'
 ) {
   const base = SET_FEE[type];
   const ext = duration > 60 ? ((duration - 60) / 30) * EXTENSION_FEE : 0;
@@ -27,7 +27,7 @@ function calcPrice(
 function MiniSimulator({ castName }: { castName: string }) {
   const [type, setType] = useState<'member' | 'visitor'>('visitor');
   const [duration, setDuration] = useState(60);
-  const [nom, setNom] = useState<'none' | 'inside' | 'main'>('none');
+  const [nom, setNom] = useState<'none' | 'inside' | 'main' | 'escort'>('none');
 
   const price = calcPrice(type, duration, nom);
 
@@ -95,6 +95,7 @@ function MiniSimulator({ castName }: { castName: string }) {
               { label: 'なし', value: 'none' },
               { label: '場内 +¥2,500', value: 'inside' },
               { label: '本指名 +¥3,000', value: 'main' },
+              { label: '同伴 +¥3,000', value: 'escort' },
             ]}
             value={nom}
             onChange={setNom}

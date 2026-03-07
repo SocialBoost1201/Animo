@@ -9,7 +9,7 @@ import { CalendarHeart, Users } from 'lucide-react';
 
 type CustomerType = 'member' | 'visitor';
 type Duration = 60 | 90 | 120 | 150 | 180;
-type Nomination = 'none' | 'inside' | 'main';
+type Nomination = 'none' | 'inside' | 'main' | 'escort';
 type Accompaniment = boolean;
 
 export const PriceSimulator = () => {
@@ -34,6 +34,7 @@ export const PriceSimulator = () => {
     let nominationFee = 0;
     if (nomination === 'inside') nominationFee = 2500;
     if (nomination === 'main') nominationFee = 3000;
+    if (nomination === 'escort') nominationFee = 3000;
 
     // 4. Accompaniment Charge
     const accompanimentFee = accompaniment ? 5000 : 0;
@@ -120,6 +121,7 @@ export const PriceSimulator = () => {
               <ToggleButton active={nomination === 'none'} onClick={() => setNomination('none')}>なし</ToggleButton>
               <ToggleButton active={nomination === 'inside'} onClick={() => setNomination('inside')}>場内指名</ToggleButton>
               <ToggleButton active={nomination === 'main'} onClick={() => setNomination('main')}>本指名</ToggleButton>
+              <ToggleButton active={nomination === 'escort'} onClick={() => setNomination('escort')}>同伴</ToggleButton>
             </div>
           </FadeIn>
 
