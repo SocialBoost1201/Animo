@@ -3,21 +3,23 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-// キャスト関連ページを全てリバリデートするヘルパー
-function revalidateCastPages(slug?: string) {
+// ─── 全関連ページをリバリデート ───────────────────────────
+function revalidateAll(castId?: string) {
   revalidatePath('/')
   revalidatePath('/cast')
   revalidatePath('/shift')
-  if (slug) revalidatePath(`/cast/${slug}`)
+  if (castId) revalidatePath(`/cast/${castId}`)
 }
 
+// ─── 管理画面用: キャスト全取得 ──────────────────────────
 export async function getCasts() {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('casts')
     .select('*')
+    .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
-  
+
   if (error) throw new Error(error.message)
   return data
 }
@@ -29,70 +31,69 @@ export async function getCastById(id: string) {
     .select('*')
     .eq('id', id)
     .single()
-  
+
   if (error) throw new Error(error.message)
   return data
 }
 
+// ─── キャスト登録 ─────────────────────────────────────────
 export async function createCast(formData: FormData) {
   const supabase = await createClient()
-  
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
+
+  const stage_name = formData.get('stage_name') as string
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
-  const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string
   const comment = formData.get('comment') as string
-  const status = formData.get('status') as string || 'public'
-  const is_today = formData.get('is_today') === 'on'
-  
-  const image_url = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1288&auto=format&fit=crop'
-  
-  const { error } = await supabase.from('casts').insert({
-    name, slug, age, height, hobby, comment, status, is_today, image_url
-  })
+  const is_active = formData.get('is_active') !== 'false'
+  const display_order = formData.get('display_order')
+    ? parseInt(formData.get('display_order') as string) : 0
+  const image_url = formData.get('image_url') as string || null
+
+  const { data, error } = await supabase.from('casts').insert({
+    stage_name, age, hobby, comment, is_active, display_order, image_url
+  }).select('id').single()
 
   if (error) return { error: error.message }
-  
+
   revalidatePath('/admin/casts')
-  revalidateCastPages(slug)
-  return { success: true }
+  revalidateAll(data?.id)
+  return { success: true, id: data?.id }
 }
 
+// ─── キャスト更新 ─────────────────────────────────────────
 export async function updateCast(id: string, formData: FormData) {
   const supabase = await createClient()
-  
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
+
+  const stage_name = formData.get('stage_name') as string
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
-  const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string
   const comment = formData.get('comment') as string
-  const status = formData.get('status') as string || 'public'
-  const is_today = formData.get('is_today') === 'on'
-  
+  const is_active = formData.get('is_active') !== 'false'
+  const display_order = formData.get('display_order')
+    ? parseInt(formData.get('display_order') as string) : 0
+  const image_url = formData.get('image_url') as string || null
+
   const { error } = await supabase.from('casts').update({
-    name, slug, age, height, hobby, comment, status, is_today,
+    stage_name, age, hobby, comment, is_active, display_order, image_url,
+    updated_at: new Date().toISOString()
   }).eq('id', id)
 
   if (error) return { error: error.message }
-  
+
   revalidatePath('/admin/casts')
-  revalidateCastPages(slug)
+  revalidateAll(id)
   return { success: true }
 }
 
+// ─── キャスト削除 ─────────────────────────────────────────
 export async function deleteCast(id: string) {
   const supabase = await createClient()
 
-  // slug を先に取得してキャストページの revalidate に使う
-  const { data: cast } = await supabase.from('casts').select('slug').eq('id', id).single()
-  
   const { error } = await supabase.from('casts').delete().eq('id', id)
-  
+
   if (error) return { error: error.message }
-  
+
   revalidatePath('/admin/casts')
-  revalidateCastPages(cast?.slug)
+  revalidateAll()
   return { success: true }
 }

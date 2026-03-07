@@ -29,28 +29,22 @@ export default async function CastPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
           {casts.map((cast, index) => (
             <FadeIn key={cast.id} delay={index * 0.05} className="group relative">
-              <Link href={`/cast/${cast.slug}`} className="block">
+              <Link href={`/cast/${cast.id}`} className="block">
+
                 <div className="overflow-hidden bg-white shadow-luxury hover:shadow-luxury-hover transition-all duration-1000 group-hover:-translate-y-1">
                   <div className="relative">
                     <PlaceholderImage 
                       src={cast.image_url}
-                      alt={cast.name} 
+                      alt={cast.stage_name} 
                       ratio="4:5" 
-                      placeholderText={cast.name}
+                      placeholderText={cast.stage_name}
                       className="group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     />
-                    {cast.is_today && (
-                      <div className="absolute top-3 left-3 bg-white text-[9px] font-serif luxury-tracking text-[var(--color-gold)] px-4 py-2 uppercase border border-[var(--color-gold)]/30 backdrop-blur-sm">
-                        本日出勤
-                      </div>
-                    )}
                   </div>
                   <div className="p-6 md:p-8 text-center bg-white relative z-10 border-t border-gray-50">
-                    <h3 className="font-serif luxury-tracking text-lg md:text-xl text-[#171717]">{cast.name}</h3>
+                    <h3 className="font-serif luxury-tracking text-lg md:text-xl text-[#171717]">{cast.stage_name}</h3>
                     <div className="flex justify-center items-center mt-3 gap-2 text-[10px] text-gray-400 font-serif luxury-tracking">
                       {cast.age && <span>{cast.age}歳</span>}
-                      {(cast.age && cast.height) && <span>/</span>}
-                      {cast.height && <span>{cast.height}cm</span>}
                     </div>
                     {cast.hobby && (
                       <p className="text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1">

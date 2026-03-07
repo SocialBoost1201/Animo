@@ -4,42 +4,14 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { ArrowLeft, CalendarHeart } from 'lucide-react';
-import { createServiceClient } from '@/lib/supabase/service';
+import { getPublicCastById } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-async function getCastDetail(slug: string) {
-  const supabase = createServiceClient()
-  const { data, error } = await supabase
-    .from('casts')
-    .select(`
-      *,
-      shifts (
-        date,
-        start_time,
-        end_time
-      )
-    `)
-    .eq('slug', slug)
-    .eq('status', 'public')
-    .single();
-
-  if (error || !data) return null;
-
-  // sort future shifts
-  const today = new Date().toISOString().split('T')[0];
-  const upcomingShifts = data.shifts
-    .filter((s: any) => s.date >= today)
-    .sort((a: any, b: any) => a.date.localeCompare(b.date))
-    .slice(0, 7); // Max 7 days
-
-  return { ...data, upcomingShifts };
-}
-
-export default async function CastDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const cast = await getCastDetail(slug);
+export default async function CastDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const cast = await getPublicCastById(id);
 
   if (!cast) {
     notFound();
@@ -59,20 +31,14 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
           <div className="w-full md:w-5/12 shrink-0">
             <FadeIn>
               <div className="relative rounded-sm overflow-hidden bg-gray-100">
-                <PlaceholderImage 
+                <PlaceholderImage
                   src={cast.image_url}
-                  alt={cast.name} 
-                  ratio="4:5" 
-                  placeholderText={cast.name}
+                  alt={cast.stage_name}
+                  ratio="4:5"
+                  placeholderText={cast.stage_name}
                   className="w-full h-auto object-cover"
                 />
                 <div className="absolute inset-0 border border-black/5 pointer-events-none" />
-                
-                {cast.is_today && (
-                  <div className="absolute top-4 left-4 bg-white/95 text-xs font-bold text-[var(--color-gold)] px-3 py-1.5 tracking-widest uppercase rounded-sm border border-[var(--color-gold)]/30 backdrop-blur-sm">
-                    本日出勤
-                  </div>
-                )}
               </div>
             </FadeIn>
           </div>
@@ -81,8 +47,7 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
           <div className="w-full md:w-7/12 flex flex-col justify-center">
             <FadeIn delay={0.1}>
               <div className="mb-8">
-                <h1 className="text-4xl md:text-5xl font-serif text-[#171717] mb-2">{cast.name}</h1>
-                <p className="text-sm font-sans tracking-widest text-[var(--color-gold)] uppercase ml-1">{cast.slug}</p>
+                <h1 className="text-4xl md:text-5xl font-serif text-[#171717] mb-2">{cast.stage_name}</h1>
               </div>
 
               {/* スペック */}
@@ -90,10 +55,6 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                 <div className="flex items-center">
                   <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Age</span>
                   <span className="text-[#171717] font-bold">{cast.age ? `${cast.age}歳` : '-'}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Height</span>
-                  <span className="text-[#171717] font-bold">{cast.height ? `${cast.height}cm` : '-'}</span>
                 </div>
                 <div className="flex items-start col-span-2">
                   <span className="w-20 text-gray-400 tracking-widest uppercase text-xs pt-0.5">Hobby</span>
@@ -109,36 +70,35 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                     <div className="h-[1px] flex-1 bg-gray-100" />
                   </h3>
                   <p className="text-gray-600 font-serif leading-loose text-sm p-6 bg-[var(--color-gray-light)] relative">
-                    <span className="absolute top-4 left-4 text-4xl text-[var(--color-gold)] opacity-20 leading-none">"</span>
+                    <span className="absolute top-4 left-4 text-4xl text-[var(--color-gold)] opacity-20 leading-none">&ldquo;</span>
                     <span className="relative z-10 whitespace-pre-wrap">{cast.comment}</span>
                   </p>
                 </div>
               )}
 
-              {/* 直近のシフト */}
+              {/* 直近のスケジュール */}
               <div className="mb-10">
                 <h3 className="text-xs font-bold tracking-widest text-[var(--color-gold)] uppercase mb-4 flex items-center gap-4">
                   Schedule
                   <div className="h-[1px] flex-1 bg-[var(--color-gold)]/20" />
                 </h3>
-                {cast.upcomingShifts && cast.upcomingShifts.length > 0 ? (
+                {cast.upcomingSchedules && cast.upcomingSchedules.length > 0 ? (
                   <ul className="space-y-2">
-                    {cast.upcomingShifts.map((shift: any, i: number) => {
-                      // format date MM/DD
-                      const dateObj = new Date(shift.date);
+                    {cast.upcomingSchedules.map((schedule: any, i: number) => {
+                      const dateObj = new Date(schedule.date + 'T00:00:00+09:00');
                       const mmdd = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
                       const days = ['日', '月', '火', '水', '木', '金', '土'];
                       const dayStr = days[dateObj.getDay()];
-                      const isToday = shift.date === new Date().toISOString().split('T')[0];
+                      const today = new Date();
+                      const jstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
+                      const isToday = schedule.date === jstToday;
+                      const startTime = schedule.start_time?.slice(0, 5) || '21:00';
+                      const endTime = schedule.end_time?.slice(0, 5) || 'LAST';
 
                       return (
                         <li key={i} className={`flex items-center text-sm ${isToday ? 'font-bold text-[#171717] bg-gray-50 -mx-3 px-3 py-1 rounded-sm' : 'text-gray-600'}`}>
-                          <span className="w-20 tracking-wider">
-                            {mmdd} ({dayStr})
-                          </span>
-                          <span>
-                            {shift.start_time?.slice(0, 5)} - {shift.end_time?.slice(0, 5)}
-                          </span>
+                          <span className="w-20 tracking-wider">{mmdd} ({dayStr})</span>
+                          <span>{startTime} - {endTime}</span>
                           {isToday && <span className="ml-3 text-[10px] text-[var(--color-gold)] border border-[var(--color-gold)] px-2 py-0.5 rounded-sm">本日</span>}
                         </li>
                       );
@@ -149,10 +109,10 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                 )}
               </div>
 
-              {/* 予約導線 (クエリパラメータでキャスト名を渡す) */}
+              {/* 予約導線 */}
               <div>
                 <Button asChild className="w-full font-bold tracking-widest text-sm py-6">
-                  <Link href={`/reserve?cast=${encodeURIComponent(cast.name)}`}>
+                  <Link href={`/reserve?cast=${encodeURIComponent(cast.stage_name)}`}>
                     <CalendarHeart className="mr-2 w-5 h-5" />
                     指名してWEB予約
                   </Link>

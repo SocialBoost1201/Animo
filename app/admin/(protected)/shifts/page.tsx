@@ -1,4 +1,4 @@
-import { getWeeklyShifts } from '@/lib/actions/shifts'
+import { getWeeklySchedules } from '@/lib/actions/schedules'
 import { ShiftManager } from '@/components/features/admin/ShiftManager'
 
 export default async function ShiftsPage({
@@ -7,7 +7,7 @@ export default async function ShiftsPage({
   searchParams: { date?: string }
 }) {
   const targetDate = searchParams.date ? new Date(searchParams.date) : new Date()
-  const weeklyData = await getWeeklyShifts(targetDate)
+  const weeklyData = await getWeeklySchedules(targetDate)
 
   return (
     <div className="space-y-6">

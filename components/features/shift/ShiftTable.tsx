@@ -190,31 +190,28 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                   {/* カード本体 */}
                   <div className="flex items-start gap-5 p-5 md:p-6 hover:bg-gray-50/30 transition-colors">
                     {/* 画像 */}
-                    <Link href={`/cast/${cast.slug}`} className="shrink-0">
+                    <Link href={`/cast/${cast.id}`} className="shrink-0">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-sm overflow-hidden bg-gray-50 border border-gray-100">
                         <PlaceholderImage
                           src={cast.image_url}
-                          alt={cast.name}
+                          alt={cast.stage_name}
                           ratio="square"
-                          placeholderText={cast.name[0]}
+                          placeholderText={cast.stage_name[0]}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                         />
                       </div>
                     </Link>
-
                     {/* 情報 */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <Link href={`/cast/${cast.slug}`}>
+                          <Link href={`/cast/${cast.id}`}>
                             <h3 className="text-xl font-serif luxury-tracking text-[#171717] hover:text-[var(--color-gold)] transition-colors">
-                              {cast.name}
+                              {cast.stage_name}
                             </h3>
                           </Link>
                           <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-400 font-serif luxury-tracking">
                             {cast.age && <span>{cast.age}歳</span>}
-                            {cast.age && cast.height && <span>/</span>}
-                            {cast.height && <span>{cast.height}cm</span>}
                           </div>
                         </div>
                         {/* 出勤時間バッジ */}
@@ -234,13 +231,13 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                       {/* アクションボタン */}
                       <div className="flex flex-wrap gap-2 mt-4">
                         <Link
-                          href={`/cast/${cast.slug}`}
+                          href={`/cast/${cast.id}`}
                           className="text-[9px] font-serif luxury-tracking text-[var(--color-gold)] border border-[var(--color-gold)]/60 px-4 py-2 hover:bg-[var(--color-gold)]/10 transition-colors uppercase"
                         >
                           プロフィール
                         </Link>
                         <Link
-                          href={`/reserve?cast=${encodeURIComponent(cast.name)}`}
+                          href={`/reserve?cast=${encodeURIComponent(cast.stage_name)}`}
                           className="flex items-center gap-1.5 text-[9px] font-serif luxury-tracking bg-[#171717] text-white px-4 py-2 hover:bg-[var(--color-gold)] transition-colors uppercase"
                         >
                           <CalendarHeart className="w-3 h-3" />
@@ -264,7 +261,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                   {/* 展開式シミュレーター */}
                   {isSimOpen && (
                     <div className="px-5 md:px-6 pb-5">
-                      <MiniSimulator castName={cast.name} />
+                      <MiniSimulator castName={cast.stage_name} />
                     </div>
                   )}
                 </div>

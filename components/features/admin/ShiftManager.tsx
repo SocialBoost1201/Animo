@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateShifts } from '@/lib/actions/shifts'
+import { saveSchedules } from '@/lib/actions/schedules'
 import { Button } from '@/components/ui/Button'
 import { Check, Loader2, Plus, Trash2 } from 'lucide-react'
 
@@ -110,7 +110,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
     const formData = new FormData()
     formData.append('updates', JSON.stringify(updates))
 
-    const result = await updateShifts(formData)
+    const result = await saveSchedules(formData)
     if (result.error) {
       alert(result.error)
     } else {
@@ -200,7 +200,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
                       className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
                     >
                       {casts?.map((cast: any) => (
-                        <option key={cast.id} value={cast.id}>{cast.name}</option>
+                        <option key={cast.id} value={cast.id}>{cast.stage_name}</option>
                       ))}
                     </select>
                   </div>
