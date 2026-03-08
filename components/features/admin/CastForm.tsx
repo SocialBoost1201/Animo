@@ -13,6 +13,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [compressedImage, setCompressedImage] = useState<Blob | null>(null)
   const isEditing = !!initialData
 
   const primaryImage = initialData?.cast_images?.find((img: any) => img.is_primary) || initialData?.cast_images?.[0]
@@ -22,6 +23,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     setIsPending(true)
     const formData = new FormData(e.currentTarget)
     if (!formData.get('is_active')) formData.set('is_active', 'false')
+
+    // 圧縮済みの画像をFormDataに上書き
+    if (compressedImage) {
+      formData.set('image_file', compressedImage, 'profile.webp')
+    }
 
     try {
       const result = isEditing
@@ -39,23 +45,67 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors'
   const labelClass = 'block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2'
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('画像サイズは5MB以下にしてください')
-        e.target.value = ''
-        return
-      }
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    } else {
+    if (!file) {
       setImagePreview(null)
+      setCompressedImage(null)
+      return
+    }
+
+    try {
+      const { blob, dataUrl } = await resizeImage(file, 1200, 0.8)
+      setImagePreview(dataUrl)
+      setCompressedImage(blob)
+    } catch (error) {
+      alert('画像の処理に失敗しました。別の画像をお試しください。')
+      e.target.value = ''
+      setImagePreview(null)
+      setCompressedImage(null)
     }
   }
+
+  // クライアントサイドでの画像リサイズ・WebP圧縮ユーティリティ
+  const resizeImage = (file: File, maxWidth: number, quality: number): Promise<{ blob: Blob, dataUrl: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+
+          // アスペクト比を維持してリサイズ
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          }
+
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return reject(new Error('Canvas ctx null'))
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // WebPフォーマットでBlob出力
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve({ blob, dataUrl: canvas.toDataURL('image/webp', quality) })
+            } else {
+              reject(new Error('Blob generation failed'))
+            }
+          }, 'image/webp', quality)
+        }
+        img.onerror = () => reject(new Error('Image Load Error'))
+        if (event.target?.result) img.src = event.target.result as string
+      }
+      reader.onerror = () => reject(new Error('Reader Error'))
+      reader.readAsDataURL(file)
+    })
+  }
+
+
 
   return (
     <div className="max-w-3xl">
@@ -245,7 +295,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 <input 
                   name="image_file" 
                   type="file" 
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+
                   onChange={handleImageChange}
                   required={!isEditing}
                   className={inputClass} 
