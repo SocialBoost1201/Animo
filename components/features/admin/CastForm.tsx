@@ -12,6 +12,7 @@ type Cast = any
 export function CastForm({ initialData }: { initialData?: Cast }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const isEditing = !!initialData
 
   const primaryImage = initialData?.cast_images?.find((img: any) => img.is_primary) || initialData?.cast_images?.[0]
@@ -37,6 +38,24 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
   const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors'
   const labelClass = 'block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2'
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('画像サイズは5MB以下にしてください')
+        e.target.value = ''
+        return
+      }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      setImagePreview(null)
+    }
+  }
 
   return (
     <div className="max-w-3xl">
@@ -208,17 +227,35 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               className={inputClass} placeholder="お客様へのメッセージ" />
           </div>
 
-          {/* 画像 URL */}
+          {/* 画像 アップロード */}
           <div>
-            <label className={labelClass}>画像 URL (Image URL)</label>
-            {primaryImage && (
-              <div className="mb-2">
-                <img src={primaryImage.image_url} alt="現在の画像" className="w-16 h-16 object-cover rounded border border-gray-100" />
+            <label className={labelClass}>プロフィール画像 (Profile Image) {isEditing ? '' : '*'}</label>
+            <div className="flex items-start gap-4">
+              {(imagePreview || primaryImage?.image_url) && (
+                <div className="shrink-0 mb-4 md:mb-0">
+                  <img 
+                    src={imagePreview || primaryImage?.image_url} 
+                    alt="プレビュー" 
+                    className="w-24 h-24 object-cover rounded shadow-sm border border-gray-100" 
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1 text-center">プレビュー</p>
+                </div>
+              )}
+              <div className="flex-1">
+                <input 
+                  name="image_file" 
+                  type="file" 
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageChange}
+                  required={!isEditing}
+                  className={inputClass} 
+                />
+                <p className="text-[10px] text-gray-400 mt-2">
+                  ※ 5MB以下の JPEG, PNG, WEBP 画像<br />
+                  ※ {isEditing ? '新しい画像を選択すると上書きされます。' : '最低1枠登録が必要です。'}
+                </p>
               </div>
-            )}
-            <input name="image_url" type="text"
-              defaultValue={primaryImage?.image_url || ''}
-              className={inputClass} placeholder="https://..." />
+            </div>
           </div>
 
           {/* 在籍フラグ */}

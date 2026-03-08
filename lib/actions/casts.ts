@@ -42,8 +42,8 @@ export async function createCast(formData: FormData) {
   const comment = formData.get('comment') as string || null
   const is_active = formData.get('is_active') !== 'false'
   const display_order = parseInt(formData.get('display_order') as string || '0')
-  const image_url = formData.get('image_url') as string || null
   const quiz_tags = formData.getAll('quiz_tags') as string[]
+  const image_file = formData.get('image_file') as File | null
 
   const { data, error } = await supabase.from('casts').insert({
     stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags
@@ -51,15 +51,32 @@ export async function createCast(formData: FormData) {
 
   if (error) return { error: error.message }
 
-  // cast_images へ画像を登録
-  if (image_url && data?.id) {
-    await supabase.from('cast_images').insert({
-      cast_id: data.id,
-      image_url,
-      image_type: 'profile',
-      is_primary: true,
-      sort_order: 0
-    })
+  // cast_images へ画像をアップロードして登録
+  if (image_file && image_file.size > 0 && data?.id) {
+    const ext = image_file.name.split('.').pop()
+    const fileName = `${data.id}-${Date.now()}.${ext}`
+    
+    // Storageにアップロード
+    const { error: uploadError } = await supabase.storage
+      .from('cast-images')
+      .upload(fileName, image_file, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) {
+      console.error('Image Upload Error:', uploadError)
+    } else {
+      // 成功したら公開URLを取得してDB登録
+      const { data: { publicUrl } } = supabase.storage
+        .from('cast-images')
+        .getPublicUrl(fileName)
+
+      await supabase.from('cast_images').insert({
+        cast_id: data.id,
+        image_url: publicUrl,
+        image_type: 'profile',
+        is_primary: true,
+        sort_order: 0
+      })
+    }
   }
 
   revalidatePath('/admin/casts')
@@ -77,8 +94,8 @@ export async function updateCast(id: string, formData: FormData) {
   const comment = formData.get('comment') as string || null
   const is_active = formData.get('is_active') !== 'false'
   const display_order = parseInt(formData.get('display_order') as string || '0')
-  const image_url = formData.get('image_url') as string || null
   const quiz_tags = formData.getAll('quiz_tags') as string[]
+  const image_file = formData.get('image_file') as File | null
 
   const { error } = await supabase.from('casts').update({
     stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags,
@@ -87,12 +104,31 @@ export async function updateCast(id: string, formData: FormData) {
 
   if (error) return { error: error.message }
 
-  // 画像更新（image_url が指定された場合は is_primary を上書き）
-  if (image_url) {
-    await supabase.from('cast_images').delete().eq('cast_id', id).eq('is_primary', true)
-    await supabase.from('cast_images').insert({
-      cast_id: id, image_url, image_type: 'profile', is_primary: true, sort_order: 0
-    })
+  // 画像アップロード・更新処理
+  if (image_file && image_file.size > 0) {
+    const ext = image_file.name.split('.').pop()
+    const fileName = `${id}-${Date.now()}.${ext}`
+    
+    // 古い画像URL（Supabase Storageのもの）があれば削除するロジックなどは、
+    // ここでは複雑になるため省略（または保持）し、新しい画像をis_primaryとして登録・上書きします。
+    
+    const { error: uploadError } = await supabase.storage
+      .from('cast-images')
+      .upload(fileName, image_file, { cacheControl: '3600', upsert: false })
+
+    if (uploadError) {
+      console.error('Image Upload Error:', uploadError)
+    } else {
+      const { data: { publicUrl } } = supabase.storage
+        .from('cast-images')
+        .getPublicUrl(fileName)
+
+      // 古い is_primary を削除（またはダウングレード）してから新しいものを登録
+      await supabase.from('cast_images').delete().eq('cast_id', id).eq('is_primary', true)
+      await supabase.from('cast_images').insert({
+        cast_id: id, image_url: publicUrl, image_type: 'profile', is_primary: true, sort_order: 0
+      })
+    }
   }
 
   revalidatePath('/admin/casts')
