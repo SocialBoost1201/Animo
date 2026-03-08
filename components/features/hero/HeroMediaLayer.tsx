@@ -30,28 +30,65 @@ uniform sampler2D texture1;
 uniform sampler2D texture2;
 uniform float progress;
 uniform float scrollVelocity;
-uniform float aspectRatio;
+uniform vec2 uResolution;
+uniform vec2 uMedia1Resolution;
+uniform vec2 uMedia2Resolution;
 varying vec2 vUv;
+
+vec2 getFitUv(vec2 uv, vec2 resolution, vec2 mediaResolution) {
+  float rs = resolution.x / max(resolution.y, 0.001);
+  float ms = mediaResolution.x / max(mediaResolution.y, 0.001);
+  
+  float scaleX = 1.0;
+  float scaleY = 1.0;
+  
+  if (resolution.x < 768.0) {
+    // Mobile: contain (動画が欠けないように全体を収める)
+    if (rs > ms) {
+      scaleX = ms / rs;
+    } else {
+      scaleY = rs / ms;
+    }
+  } else {
+    // PC: cover (画面いっぱいに広げる)
+    if (rs > ms) {
+      scaleY = rs / ms;
+    } else {
+      scaleX = ms / rs;
+    }
+  }
+  
+  return (uv - 0.5) / vec2(scaleX, scaleY) + 0.5;
+}
 
 void main() {
   vec2 uv = vUv;
   
-  // 水面の波紋ディストーション（トランジション用）
+  vec2 uv1 = getFitUv(uv, uResolution, uMedia1Resolution);
+  vec2 uv2 = getFitUv(uv, uResolution, uMedia2Resolution);
+  
+  float aspectRatio = uResolution.x / max(uResolution.y, 0.001);
   vec2 dir = uv - vec2(0.5);
-  // アスペクト比を補正した距離計算
   vec2 correctedDir = dir * vec2(aspectRatio, 1.0);
   float dist = length(correctedDir);
   
-  // トランジション進行度に応じた波紋
   float ripple = sin(dist * 20.0 - progress * 15.0) * 0.05 * sin(progress * 3.14159);
-  
-  // スクロール速度に応じた揺らぎ（常時）
   float scrollDistortion = sin(uv.y * 10.0 + scrollVelocity) * 0.01 * min(abs(scrollVelocity) * 0.1, 0.05);
   
   vec2 offset = dir * ripple + vec2(scrollDistortion, 0.0);
   
-  vec4 color1 = texture2D(texture1, fract(uv + offset));
-  vec4 color2 = texture2D(texture2, fract(uv - offset));
+  vec2 finalUv1 = uv1 + offset;
+  vec2 finalUv2 = uv2 - offset;
+  
+  vec4 color1 = texture2D(texture1, clamp(finalUv1, 0.0, 1.0));
+  if (finalUv1.x < 0.0 || finalUv1.x > 1.0 || finalUv1.y < 0.0 || finalUv1.y > 1.0) {
+    color1 = vec4(0.0, 0.0, 0.0, 1.0); // レターボックスは黒で埋める
+  }
+  
+  vec4 color2 = texture2D(texture2, clamp(finalUv2, 0.0, 1.0));
+  if (finalUv2.x < 0.0 || finalUv2.x > 1.0 || finalUv2.y < 0.0 || finalUv2.y > 1.0) {
+    color2 = vec4(0.0, 0.0, 0.0, 1.0);
+  }
   
   gl_FragColor = mix(color1, color2, progress);
 }
@@ -93,6 +130,28 @@ const WebGLScene = ({
   const lastScrollY = useRef(0);
   const velocity = useRef(0);
 
+  // 解像度を更新するヘルパー
+  const updateMediaResolution = (item: HeroMedia, uniformName: 'uMedia1Resolution' | 'uMedia2Resolution') => {
+    if (item.type === 'video') {
+      const v = getVideo(item.url);
+      const update = () => {
+        if (v.videoWidth > 0 && materialRef.current) {
+          materialRef.current.uniforms[uniformName].value.set(v.videoWidth, v.videoHeight);
+        }
+      };
+      if (v.readyState >= 1) update();
+      else v.addEventListener('loadedmetadata', update, { once: true });
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        if (materialRef.current) {
+          materialRef.current.uniforms[uniformName].value.set(img.width, img.height);
+        }
+      };
+      img.src = item.url;
+    }
+  };
+
   // 初回マウント時に現在のアクティブテクスチャをロード
   useEffect(() => {
     const item = media[activeIndex];
@@ -108,6 +167,9 @@ const WebGLScene = ({
       tex1Ref.current = loader.load(item.url);
     }
     
+    updateMediaResolution(item, 'uMedia1Resolution');
+    updateMediaResolution(item, 'uMedia2Resolution');
+
     if (materialRef.current) {
       materialRef.current.uniforms.texture1.value = tex1Ref.current;
       materialRef.current.uniforms.texture2.value = tex1Ref.current;
@@ -137,6 +199,8 @@ const WebGLScene = ({
       nextTex = loader.load(nextItem.url);
     }
     
+    updateMediaResolution(nextItem, 'uMedia2Resolution');
+    
     if (materialRef.current) {
       materialRef.current.uniforms.texture1.value = tex1Ref.current;
       materialRef.current.uniforms.texture2.value = nextTex;
@@ -157,6 +221,7 @@ const WebGLScene = ({
         tex1Ref.current = nextTex;
         if (materialRef.current) {
           materialRef.current.uniforms.texture1.value = nextTex;
+          materialRef.current.uniforms.uMedia1Resolution.value.copy(materialRef.current.uniforms.uMedia2Resolution.value);
           materialRef.current.uniforms.progress.value = 0.0;
         }
         // 前の動画を停止（メモリ・負荷対策）
@@ -189,7 +254,7 @@ const WebGLScene = ({
 
     if (materialRef.current) {
       // 画面比率の更新
-      materialRef.current.uniforms.aspectRatio.value = state.size.width / state.size.height;
+      materialRef.current.uniforms.uResolution.value.set(state.size.width, state.size.height);
       
       // スクロールによる歪みパラメータの更新（微細に揺らす）
       materialRef.current.uniforms.scrollVelocity.value = state.clock.elapsedTime * 5.0 + velocity.current * 0.1;
@@ -210,7 +275,9 @@ const WebGLScene = ({
     texture2: { value: null },
     progress: { value: 0.0 },
     scrollVelocity: { value: 0.0 },
-    aspectRatio: { value: 1.0 },
+    uResolution: { value: new THREE.Vector2(1, 1) },
+    uMedia1Resolution: { value: new THREE.Vector2(1920, 1080) },
+    uMedia2Resolution: { value: new THREE.Vector2(1920, 1080) },
   }), []);
 
   return (
@@ -251,11 +318,11 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain md:object-cover"
           />
         ) : (
           <div
-            className="w-full h-full bg-cover bg-center"
+            className="w-full h-full bg-contain md:bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${item.url})` }}
           />
         )}
