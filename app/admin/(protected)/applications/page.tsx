@@ -1,24 +1,23 @@
-import React from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { markAsRead } from '@/lib/actions/inquiries';
 import { revalidatePath } from 'next/cache';
 import { ReplyForm } from '@/components/features/admin/ReplyForm';
+import { StatusSelect } from '@/components/features/admin/StatusSelect';
 import {
   Phone, Mail, Smartphone, Briefcase, Filter, CheckCircle,
-  Star, Clock, XCircle,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-const STATUS_MAP: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  new:       { label: '新着', color: 'bg-blue-100 text-blue-700', icon: <Star size={11} /> },
-  reviewing: { label: '選考中', color: 'bg-amber-100 text-amber-700', icon: <Clock size={11} /> },
-  hired:     { label: '採用', color: 'bg-green-100 text-green-700', icon: <CheckCircle size={11} /> },
-  rejected:  { label: '見送り', color: 'bg-gray-100 text-gray-500', icon: <XCircle size={11} /> },
+const STATUS_BADGE: Record<string, { label: string; color: string }> = {
+  new:       { label: '新着',   color: 'bg-blue-100 text-blue-700' },
+  reviewing: { label: '選考中', color: 'bg-amber-100 text-amber-700' },
+  hired:     { label: '採用',   color: 'bg-green-100 text-green-700' },
+  rejected:  { label: '見送り', color: 'bg-gray-100 text-gray-500' },
 };
 
 const TYPE_MAP: Record<string, { label: string; color: string }> = {
-  cast:  { label: 'Cast 応募', color: 'bg-pink-100 text-pink-700' },
+  cast:  { label: 'Cast 応募',  color: 'bg-pink-100 text-pink-700' },
   staff: { label: 'Staff 応募', color: 'bg-blue-100 text-blue-700' },
 };
 
@@ -49,15 +48,6 @@ export default async function ApplicationsPage({
     revalidatePath('/admin/dashboard');
   }
 
-  async function handleStatusChange(formData: FormData) {
-    'use server';
-    const id = formData.get('id') as string;
-    const status = formData.get('status') as string;
-    const supabase2 = await createClient();
-    await supabase2.from('recruit_applications').update({ status }).eq('id', id);
-    revalidatePath('/admin/applications');
-  }
-
   const tabs = [
     { key: 'all', label: '全て' },
     { key: 'cast', label: 'Cast' },
@@ -74,17 +64,19 @@ export default async function ApplicationsPage({
         <h1 className="text-2xl font-serif tracking-widest text-[#171717]">求人応募管理</h1>
         <p className="text-sm text-gray-400 mt-1">
           {apps?.length ?? 0}件のデータ
-          {unreadCount > 0 && <span className="ml-2 text-amber-600 font-bold">（未読 {unreadCount}件）</span>}
+          {unreadCount > 0 && (
+            <span className="ml-2 text-amber-600 font-bold">（未読 {unreadCount}件）</span>
+          )}
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-200 overflow-x-auto">
         {tabs.map((tab) => (
           <a
             key={tab.key}
             href={`/admin/applications${tab.key !== 'all' ? `?filter=${tab.key}` : ''}`}
-            className={`px-4 py-2.5 text-sm font-medium tracking-wide transition-colors ${
+            className={`shrink-0 px-4 py-2.5 text-sm font-medium tracking-wide transition-colors ${
               filter === tab.key || (tab.key === 'all' && filter === 'all')
                 ? 'border-b-2 border-gold text-[#171717] -mb-px'
                 : 'text-gray-400 hover:text-gray-600'
@@ -100,59 +92,48 @@ export default async function ApplicationsPage({
         {apps && apps.length > 0 ? (
           apps.map((app: any) => {
             const isUnread = !app.is_read;
-            const dateStr = app.created_at.slice(0, 16).replace('T', ' ');
+            const dateStr = app.created_at.slice(0, 10);
             const typeConfig = TYPE_MAP[app.type] ?? { label: app.type, color: 'bg-gray-100 text-gray-600' };
             const status = app.status ?? 'new';
-            const statusConfig = STATUS_MAP[status] ?? STATUS_MAP.new;
+            const badge = STATUS_BADGE[status] ?? STATUS_BADGE.new;
 
             return (
               <div
                 key={app.id}
                 className={`bg-white border shadow-sm ${isUnread ? 'border-amber-200' : 'border-gray-100'}`}
               >
-                {/* Header */}
-                <div className="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
-                  <div className="flex items-center gap-3">
-                    {isUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />}
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${typeConfig.color}`}>
-                      {typeConfig.label}
-                    </span>
-                    <h3 className={`text-base ${isUnread ? 'font-bold text-[#171717]' : 'text-gray-500'}`}>
-                      {app.name}（{app.age ?? '?'}歳）
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">{dateStr}</span>
-                    {/* ステータス変更 */}
-                    <form action={handleStatusChange} className="flex items-center gap-1">
-                      <input type="hidden" name="id" value={app.id} />
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded ${statusConfig.color}`}>
-                        {statusConfig.icon} {statusConfig.label}
+                {/* Card Header */}
+                <div className="px-4 md:px-6 py-4">
+                  {/* Row 1: 名前・タイプ・日付 */}
+                  <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {isUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />}
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${typeConfig.color}`}>
+                        {typeConfig.label}
                       </span>
-                      <select
-                        name="status"
-                        defaultValue={status}
-                        onChange={(e) => {
-                          // Next.js Server Action: フォームをサブミット
-                          (e.target.closest('form') as HTMLFormElement | null)?.requestSubmit();
-                        }}
-                        className="text-xs border border-gray-200 rounded px-2 py-1 text-gray-600 bg-white focus:outline-none focus:border-gold"
-                      >
-                        <option value="new">新着</option>
-                        <option value="reviewing">選考中</option>
-                        <option value="hired">採用</option>
-                        <option value="rejected">見送り</option>
-                      </select>
-                      <button type="submit" className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1 border border-gray-200 rounded ml-1">
-                        更新
-                      </button>
-                    </form>
+                      <h3 className={`text-base ${isUnread ? 'font-bold text-[#171717]' : 'text-gray-500'}`}>
+                        {app.name}（{app.age ?? '?'}歳）
+                      </h3>
+                    </div>
+                    <span className="text-xs text-gray-400 shrink-0">{dateStr}</span>
+                  </div>
+
+                  {/* Row 2: ステータス・既読ボタン */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className={`inline-flex items-center text-[10px] font-bold px-2 py-1 rounded ${badge.color}`}>
+                      {badge.label}
+                    </span>
+                    {/* Client Component でステータス変更 */}
+                    <StatusSelect id={app.id} currentStatus={status} />
                     {isUnread && (
                       <form action={handleMarkAsRead}>
                         <input type="hidden" name="id" value={app.id} />
-                        <button type="submit" className="flex items-center gap-1 text-xs text-gray-400 hover:text-green-600 transition-colors">
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1 text-xs text-gray-400 hover:text-green-600 transition-colors py-1.5 px-2 rounded border border-gray-200"
+                        >
                           <CheckCircle size={14} />
-                          既読
+                          既読にする
                         </button>
                       </form>
                     )}
@@ -160,19 +141,25 @@ export default async function ApplicationsPage({
                 </div>
 
                 {/* Details */}
-                <div className="px-6 pb-4 border-t border-gray-50">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 py-3 text-sm">
+                <div className="px-4 md:px-6 pb-4 border-t border-gray-50">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 py-3 text-sm">
                     {app.phone && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <a
+                        href={`tel:${app.phone}`}
+                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                      >
                         <Phone size={13} className="text-gray-300 shrink-0" />
                         {app.phone}
-                      </div>
+                      </a>
                     )}
                     {app.email && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <a
+                        href={`mailto:${app.email}`}
+                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                      >
                         <Mail size={13} className="text-gray-300 shrink-0" />
                         <span className="truncate">{app.email}</span>
-                      </div>
+                      </a>
                     )}
                     {app.line_id && (
                       <div className="flex items-center gap-2 text-gray-600">
@@ -181,13 +168,13 @@ export default async function ApplicationsPage({
                       </div>
                     )}
                     {app.experience && (
-                      <div className="flex items-center gap-2 text-gray-600 col-span-2">
+                      <div className="flex items-center gap-2 text-gray-600 sm:col-span-2">
                         <Briefcase size={13} className="text-gray-300 shrink-0" />
                         経験：{app.experience}
                       </div>
                     )}
                     {app.schedule && (
-                      <div className="text-gray-600 col-span-2 text-xs">
+                      <div className="text-gray-500 sm:col-span-2 text-xs py-1 bg-gray-50 px-2 rounded">
                         希望スケジュール：{app.schedule}
                       </div>
                     )}

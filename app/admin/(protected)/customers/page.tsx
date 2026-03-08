@@ -130,18 +130,24 @@ export default async function CustomersPage({
 
                 {/* Details */}
                 <div className="px-6 pb-4 border-t border-gray-50">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-3 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 py-3 text-sm">
                     {contact.phone && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                      >
                         <Phone size={13} className="text-gray-300 shrink-0" />
-                        <span>{contact.phone}</span>
-                      </div>
+                        {contact.phone}
+                      </a>
                     )}
                     {contact.contact_method && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <a
+                        href={contact.contact_method.includes('@') ? `mailto:${contact.contact_method}` : '#'}
+                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                      >
                         <Mail size={13} className="text-gray-300 shrink-0" />
                         <span className="truncate">{contact.contact_method}</span>
-                      </div>
+                      </a>
                     )}
                     {contact.line_id && (
                       <div className="flex items-center gap-2 text-gray-600">
