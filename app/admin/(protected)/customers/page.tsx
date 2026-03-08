@@ -69,7 +69,7 @@ export default async function CustomersPage({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-200 overflow-x-auto no-scrollbar whitespace-nowrap -mx-6 px-6 sm:mx-0 sm:px-0">
         {tabs.map((tab) => (
           <a
             key={tab.key}
@@ -130,54 +130,95 @@ export default async function CustomersPage({
 
                 {/* Details */}
                 <div className="px-6 pb-4 border-t border-gray-50">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 py-3 text-sm">
-                    {contact.phone && (
-                      <a
-                        href={`tel:${contact.phone}`}
-                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-                      >
-                        <Phone size={13} className="text-gray-300 shrink-0" />
-                        {contact.phone}
-                      </a>
-                    )}
-                    {contact.contact_method && (
-                      <a
-                        href={contact.contact_method.includes('@') ? `mailto:${contact.contact_method}` : '#'}
-                        className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-                      >
-                        <Mail size={13} className="text-gray-300 shrink-0" />
-                        <span className="truncate">{contact.contact_method}</span>
-                      </a>
-                    )}
-                    {contact.line_id && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Smartphone size={13} className="text-gray-300 shrink-0" />
-                        <span>LINE: {contact.line_id}</span>
+                  {contact.type === 'reserve' ? (
+                    <div className="space-y-4 pt-4">
+                      {/* Reservation Info Block */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-gray-50 border border-gray-100 rounded-sm">
+                        <div className="flex items-center gap-4">
+                          <Calendar className="text-purple-500 w-8 h-8 shrink-0" />
+                          <div>
+                            <p className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">来店予約日時</p>
+                            <p className="text-lg font-serif text-[#171717]">
+                              {contact.date ?? '未定'} <span className="text-xl ml-2">{contact.time?.slice(0, 5) ?? ''}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6 sm:text-right">
+                          <div>
+                            <p className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">人数</p>
+                            <p className="text-lg font-serif text-[#171717]">{contact.people ?? '-'}<span className="text-sm ml-1 text-gray-500">名</span></p>
+                          </div>
+                          {contact.cast_name && (
+                            <div>
+                              <p className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">指名キャスト</p>
+                              <div className="flex items-center gap-1 text-sm font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded">
+                                <Users size={12} className="text-purple-500" /> {contact.cast_name}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    {contact.date && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Calendar size={13} className="text-gray-300 shrink-0" />
-                        <span>{contact.date} {contact.time?.slice(0, 5)}</span>
-                      </div>
-                    )}
-                    {contact.people && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Users size={13} className="text-gray-300 shrink-0" />
-                        <span>{contact.people}名</span>
-                      </div>
-                    )}
-                    {contact.cast_name && (
-                      <div className="col-span-2 text-gray-500 text-xs">
-                        指名: {contact.cast_name}
-                      </div>
-                    )}
-                  </div>
 
-                  {contact.message && (
-                    <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-sm leading-relaxed whitespace-pre-wrap">
-                      {contact.message}
-                    </p>
+                      {/* Contact Info */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 py-2 text-sm border-b border-gray-100 pb-4">
+                        {contact.phone && (
+                          <a href={`tel:${contact.phone}`} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 truncate">
+                            <Phone size={14} className="text-gray-300 shrink-0" /> {contact.phone}
+                          </a>
+                        )}
+                        {contact.contact_method && (
+                          <a href={contact.contact_method.includes('@') ? `mailto:${contact.contact_method}` : '#'} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 truncate">
+                            <Mail size={14} className="text-gray-300 shrink-0" /> {contact.contact_method}
+                          </a>
+                        )}
+                        {contact.line_id && (
+                          <div className="flex items-center gap-2 text-gray-600 truncate">
+                            <Smartphone size={14} className="text-gray-300 shrink-0" /> LINE: {contact.line_id}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Message */}
+                      {contact.message && (
+                        <div>
+                          <p className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-2">ご要望・備考</p>
+                          <p className="text-sm text-gray-600 bg-white border border-gray-100 p-3 rounded-sm leading-relaxed whitespace-pre-wrap">
+                            {contact.message}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4 pt-4">
+                      {/* Contact Info */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pb-3 border-b border-gray-100 text-sm">
+                        {contact.phone && (
+                          <a href={`tel:${contact.phone}`} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 truncate">
+                            <Phone size={14} className="text-gray-300 shrink-0" /> {contact.phone}
+                          </a>
+                        )}
+                        {contact.contact_method && (
+                          <a href={contact.contact_method.includes('@') ? `mailto:${contact.contact_method}` : '#'} className="flex items-center gap-2 text-gray-600 hover:text-blue-600 truncate">
+                            <Mail size={14} className="text-gray-300 shrink-0" /> {contact.contact_method}
+                          </a>
+                        )}
+                        {contact.line_id && (
+                          <div className="flex items-center gap-2 text-gray-600 truncate">
+                            <Smartphone size={14} className="text-gray-300 shrink-0" /> LINE: {contact.line_id}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Message Container */}
+                      {contact.message && (
+                        <div className="bg-gray-50 border border-gray-100 p-4 rounded-sm">
+                          <p className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-2">お問い合わせ内容</p>
+                          <p className="text-sm text-[#171717] leading-relaxed whitespace-pre-wrap">
+                            {contact.message}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   )}
 
                   {/* Reply Form */}
