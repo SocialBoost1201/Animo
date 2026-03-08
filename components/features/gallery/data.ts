@@ -24,7 +24,7 @@ export const GALLERY_DATA: GalleryItemData[] = [
   { id: 'seat-2', category: 'seating', title: 'Curtain Room Details', src: '/images/animo-curtain-room-seating.jpg', alt: 'Curtain Room Details' },
 
   // CHAMPAGNE
-  { id: 'champ-1', category: 'champagne', title: 'Champagne Display', src: '/images/animo-champagne-display.jpg', alt: 'Champagne Display', featured: true },
+  { id: 'champ-1', category: 'champagne', title: 'Champagne Display', src: '/images/animo-champagne-angel-display.jpg', alt: 'Champagne Display', featured: true },
 
   // DECOR
   { id: 'dec-1', category: 'decor', title: 'Red Rose Display', src: '/images/animo-red-rose-flower-display.jpg', alt: 'Red Rose Display', featured: true },

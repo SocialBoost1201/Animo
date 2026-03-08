@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { GalleryItemData } from './data';
-import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 
 interface GalleryItemProps {
   item: GalleryItemData;
@@ -15,14 +14,15 @@ export function GalleryItem({ item, index, onClick, isPriority = false }: Galler
   return (
     <button
       onClick={() => onClick(index)}
-      className="group relative block w-full h-full overflow-hidden bg-[#111] cursor-pointer"
+      className="group relative block w-full overflow-hidden bg-[#111] cursor-pointer rounded-sm"
       aria-label={`View ${item.title}`}
     >
-      {/* 画像本体：遅延ロード、少しズームするホバー効果 */}
-      <PlaceholderImage
+      {/* 画像本体：自然寸法を尊重するimgタグ */}
+      <img
         src={item.src}
         alt={item.alt}
-        className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
+        loading="lazy"
+        className="w-full h-auto block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
       />
 
       {/* グラデーションオーバーレイ */}

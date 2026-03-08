@@ -23,28 +23,12 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 md:gap-4 w-full max-w-[1600px] mx-auto auto-rows-[160px] sm:auto-rows-[220px] lg:auto-rows-[300px] grid-flow-row-dense">
-        {filteredItems.map((item, i) => {
-          let spanClass = 'col-span-1 lg:col-span-1 row-span-1 lg:row-span-1';
-
-          // 1番最初の画像は特大 (2x2)
-          if (i === 0) {
-            spanClass = 'col-span-2 lg:col-span-2 row-span-2 lg:row-span-2';
-          } 
-          // featuredフラグがある場合は横長 (2x1)
-          else if (item.featured) {
-            spanClass = 'col-span-2 lg:col-span-2 row-span-1 lg:row-span-1';
-          } 
-          // それ以外で4の倍数の時は縦長 (1x2) にしてリズムを作る
-          else if (i % 4 === 0) {
-            spanClass = 'col-span-1 lg:col-span-1 row-span-1 lg:row-span-2';
-          }
-
-          return (
+      <div className="columns-2 sm:columns-3 lg:columns-4 gap-2 md:gap-4 w-full max-w-[1600px] mx-auto">
+        {filteredItems.map((item, i) => (
             <FadeIn
               key={`${item.id}-${activeCategory}`}
               delay={Math.min(i * 0.05, 0.4)}
-              className={`${spanClass} h-full overflow-hidden`}
+              className="break-inside-avoid relative w-full mb-2 md:mb-4 overflow-hidden rounded-none"
             >
               <GalleryItem
                 item={item}
@@ -53,11 +37,10 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
                 isPriority={i === 0}
               />
             </FadeIn>
-          );
-        })}
+        ))}
 
         {filteredItems.length === 0 && (
-          <div className="col-span-2 lg:col-span-4 py-32 text-center">
+          <div className="py-32 text-center w-full block">
             <p className="text-gray-400 font-serif luxury-tracking text-sm">
               Coming Soon
             </p>
