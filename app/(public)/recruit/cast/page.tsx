@@ -100,12 +100,27 @@ const CAST_POINTS = [
 const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
   { label: '業種', value: 'キャバクラ / ラウンジ' },
   { label: '職種', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
-  { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-gold w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
+  { label: '住所', value: (
+    <span className="flex items-center justify-between gap-2 w-full">
+      <span className="flex items-center gap-2">
+        <MapPin className="text-gold w-4 h-4 shrink-0"/>
+        神奈川県横浜市中区相生町3-53 グランドパークビル
+      </span>
+      <a
+        href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53"
+        target="_blank" rel="noopener noreferrer"
+        className="flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-0.5 hover:bg-gold/10 transition-colors shrink-0"
+      >
+        <MapPin className="w-3 h-3" /> MAP
+      </a>
+    </span>
+  ) },
   { label: '給与', value: '時給 5,000円〜 + 各種高額バック\n※経験や容姿により上限なく優遇いたします。' },
   { label: '給与詳細', value: '■全額日払い可(規定あり)\n■各種バックあり（指名・同伴・ドリンク・ボトル等）\n■体験入店時の時給保証あり\n■ノルマ・罰金一切なし' },
   { label: '応募資格', value: '18歳以上（高校生不可）\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
   { label: '勤務時間', value: '20:00〜LAST\n（週1日・3時間〜OK）' },
   { label: '勤務時間詳細', value: '※シフトは完全自由の自己申告制\n※終電上がりOK、遅出出勤OK' },
+  { label: '契約期間', value: '短期勤務もOK！お気軽にご相談ください。\n\n学生さんの長期休暇中のみ・1ヶ月限定など、働き方はご相談可能です。\n\n長期・レギュラー勤務できる方も大歓迎！' },
   { label: '休日', value: '日曜日・祝日休業\n（ご自身のペースで出勤日を決めていただけます）' },
   { label: '待遇', value: '■無料送迎完備\n■ドレス・靴レンタル無料\n■ヘアメイク完備\n■個人ロッカー完備\n■日払い・週払い対応\n■体験入店何回でもOK' },
 ];
