@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -50,11 +50,21 @@ function GoldDust({ count = 2000 }) {
 }
 
 export function LuxuryBackground() {
+  const [particleCount, setParticleCount] = useState(3000)
+
+  useEffect(() => {
+    // スマホなど画面幅が狭い場合はパーティクルを3分の1に減らして負荷軽減
+    if (window.innerWidth < 768) {
+      setParticleCount(1000)
+    }
+  }, [])
+
   return (
     <div className="fixed inset-0 z-[-1] pointer-events-none bg-white/50">
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }} dpr={[1, 2]}>
-        <GoldDust count={3000} />
+      <Canvas camera={{ position: [0, 0, 5], fov: 60 }} dpr={1}>
+        <GoldDust count={particleCount} />
       </Canvas>
     </div>
   )
 }
+

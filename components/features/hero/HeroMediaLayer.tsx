@@ -72,8 +72,19 @@ void main() {
   vec2 correctedDir = dir * vec2(aspectRatio, 1.0);
   float dist = length(correctedDir);
   
-  float ripple = sin(dist * 20.0 - progress * 15.0) * 0.05 * sin(progress * 3.14159);
-  float scrollDistortion = sin(uv.y * 10.0 + scrollVelocity) * 0.01 * min(abs(scrollVelocity) * 0.1, 0.05);
+  float ripple = 0.0;
+  float scrollDistortion = 0.0;
+  
+  if (uResolution.x >= 768.0) {
+    // PC: リッチな波紋とスクロール歪みエフェクト
+    ripple = sin(dist * 20.0 - progress * 15.0) * 0.05 * sin(progress * 3.14159);
+    scrollDistortion = sin(uv.y * 10.0 + scrollVelocity) * 0.01 * min(abs(scrollVelocity) * 0.1, 0.05);
+  } else {
+    // Mobile: パフォーマンス優先で簡略化されたエフェクト
+    ripple = sin(dist * 10.0 - progress * 10.0) * 0.02 * sin(progress * 3.14159);
+    // スクロール歪みはモバイルではオフにしてガタつきを防止
+  }
+
   
   vec2 offset = dir * ripple + vec2(scrollDistortion, 0.0);
   
@@ -335,7 +346,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
       <Canvas
         camera={{ position: [0, 0, 1] }}
         gl={{ powerPreference: 'high-performance', alpha: false, antialias: false }}
-        dpr={[1, 1.5]} // パフォーマンス調整
+        dpr={1} // モバイル等のパフォーマンスを最優先するためdprは常に1に固定
       >
         <WebGLScene
           media={media}
