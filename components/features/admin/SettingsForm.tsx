@@ -40,7 +40,7 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
             name="today_mood"
             type="text" 
             defaultValue={initialData?.today_mood || ''}
-            className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+            className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
             placeholder="本日も皆様のご来店を心よりお待ち申し上げております。"
           />
         </div>
@@ -56,7 +56,7 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
              <select 
               name="hero_transition_mode"
               defaultValue={initialData?.hero_transition_mode || 'fade'}
-              className="w-full md:w-1/2 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+              className="w-full md:w-1/2 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
             >
               <option value="fade">Fade Out (フェード切替)</option>
               <option value="slide">Slide Out (スライド切替)</option>

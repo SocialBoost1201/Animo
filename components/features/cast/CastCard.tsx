@@ -38,7 +38,7 @@ export const CastCard: React.FC<CastCardProps> = ({
           />
           {isToday && (
             <div className="absolute top-3 right-3 z-10">
-              <span className="bg-[var(--color-gold)] text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-sm shadow-sm flex items-center gap-1">
+              <span className="bg-gold text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-sm shadow-sm flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 本日出勤
               </span>

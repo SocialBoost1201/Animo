@@ -22,7 +22,7 @@ export const Footer = () => {
                 href="https://www.instagram.com/kannai_club_animo/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[var(--color-gold)] transition-colors"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -40,7 +40,7 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-gold font-medium">
               Discover
             </h3>
             <ul className="space-y-5">
@@ -57,7 +57,7 @@ export const Footer = () => {
 
           {/* Recruit Info */}
           <div>
-            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-gold font-medium">
               Recruit
             </h3>
             <ul className="space-y-5">
@@ -69,12 +69,12 @@ export const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-[var(--color-gold)] font-medium">
+            <h3 className="text-sm font-serif mb-8 uppercase luxury-tracking text-gold font-medium">
               Access
             </h3>
             <ul className="space-y-4 text-gray-400 text-sm">
               <li className="flex items-start">
-                <MapPin className="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-[var(--color-gold)]" />
+                <MapPin className="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-gold" />
                 <span>
                   〒231-0012<br />
                   神奈川県横浜市中区相生町３丁目５３<br />
@@ -82,7 +82,7 @@ export const Footer = () => {
                 </span>
               </li>
               <li className="flex items-center mt-4">
-                <Phone className="w-5 h-5 mr-3 flex-shrink-0 text-[var(--color-gold)]" />
+                <Phone className="w-5 h-5 mr-3 flex-shrink-0 text-gold" />
                 <a href="tel:045-263-6961" className="hover:text-white transition-colors">
                   045-263-6961
                 </a>

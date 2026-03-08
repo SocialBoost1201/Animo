@@ -153,14 +153,14 @@ export function ShiftManager({ initialData }: { initialData: any }) {
               onClick={() => setSelectedDate(date)}
               className={`flex-1 min-w-[60px] py-3 px-2 text-center text-xs tracking-widest transition-colors border-b-2 ${
                 selectedDate === date
-                  ? 'border-[var(--color-gold)] text-[var(--color-gold)] bg-[var(--color-gold)]/5 font-bold'
+                  ? 'border-gold text-gold bg-gold/5 font-bold'
                   : 'border-transparent text-gray-400 hover:text-gray-600'
               }`}
             >
               <div className="font-bold">{DAYS[i]}</div>
               <div className="text-[10px] mt-0.5">{date.slice(5).replace('-', '/')}</div>
               {count > 0 && (
-                <div className="text-[9px] mt-1 text-[var(--color-gold)]">{count}名</div>
+                <div className="text-[9px] mt-1 text-gold">{count}名</div>
               )}
             </button>
           )
@@ -175,7 +175,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
           </h3>
           <button
             onClick={addEntry}
-            className="flex items-center gap-1 text-xs text-[var(--color-gold)] hover:underline font-bold tracking-widest"
+            className="flex items-center gap-1 text-xs text-gold hover:underline font-bold tracking-widest"
           >
             <Plus className="w-3 h-3" /> 追加
           </button>
@@ -197,7 +197,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
                     <select
                       value={entry.cast_id}
                       onChange={e => updateEntry(index, 'cast_id', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
                     >
                       {casts?.map((cast: any) => (
                         <option key={cast.id} value={cast.id}>{cast.stage_name}</option>
@@ -211,7 +211,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
                     <select
                       value={entry.start_time}
                       onChange={e => updateEntry(index, 'start_time', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
                     >
                       {TIME_OPTIONS.map(t => (
                         <option key={t} value={t}>{t}</option>
@@ -225,7 +225,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
                     <select
                       value={entry.end_time}
                       onChange={e => updateEntry(index, 'end_time', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
                     >
                       {TIME_OPTIONS.map(t => (
                         <option key={t} value={t}>{t}</option>

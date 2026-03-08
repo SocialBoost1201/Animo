@@ -63,7 +63,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
           )}
           <button
             onClick={() => setOpen(true)}
-            className="text-xs font-bold tracking-widest uppercase px-4 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold)]/5 transition-colors flex items-center gap-2 rounded-sm"
+            className="text-xs font-bold tracking-widest uppercase px-4 py-2 border border-gold text-gold hover:bg-gold/5 transition-colors flex items-center gap-2 rounded-sm"
           >
             <SendHorizonal size={12} />
             返信する
@@ -84,7 +84,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
               type="text"
               defaultValue={hasEmail ? toEmail : ''}
               placeholder={hasEmail ? toEmail : 'メールアドレスを入力（任意）'}
-              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm"
+              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm"
             />
             {!hasEmail && (
               <p className="text-[10px] text-amber-600 mt-1">
@@ -102,7 +102,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
               required
               rows={6}
               placeholder={`${customerName} 様への返信内容を入力してください`}
-              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-[var(--color-gold)] transition-colors rounded-sm resize-none leading-relaxed"
+              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm resize-none leading-relaxed"
             />
           </div>
 

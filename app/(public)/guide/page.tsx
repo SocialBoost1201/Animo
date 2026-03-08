@@ -68,8 +68,8 @@ export default function GuidePage() {
             <h1 className="text-foreground font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="First Visit Guide" />
             </h1>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
-            <p className="text-[var(--color-gold)] font-serif luxury-tracking text-xs md:text-sm uppercase">
+            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               初めての方へ
             </p>
           </FadeIn>
@@ -102,9 +102,9 @@ export default function GuidePage() {
           <div className="space-y-0">
             {STEPS.map((step, i) => (
               <FadeIn key={step.num} delay={i * 0.1}>
-                <div className="flex gap-6 md:gap-10 py-10 border-b border-[var(--color-gold)]/10">
+                <div className="flex gap-6 md:gap-10 py-10 border-b border-gold/10">
                   <div className="shrink-0 w-12 md:w-16">
-                    <span className="text-3xl md:text-4xl font-serif text-[var(--color-gold)]/30 font-bold">{step.num}</span>
+                    <span className="text-3xl md:text-4xl font-serif text-gold/30 font-bold">{step.num}</span>
                   </div>
                   <div>
                     <h3 className="text-base md:text-lg font-serif text-foreground mb-3 luxury-tracking">{step.title}</h3>
@@ -118,11 +118,11 @@ export default function GuidePage() {
       </section>
 
       {/* 料金目安 */}
-      <section className="py-16 px-6 bg-[var(--color-gold)]/5">
+      <section className="py-16 px-6 bg-gold/5">
         <div className="container mx-auto max-w-4xl">
           <FadeIn className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <CreditCard className="w-5 h-5 text-[var(--color-gold)]" />
+              <CreditCard className="w-5 h-5 text-gold" />
               <h2 className="text-xl md:text-2xl font-serif luxury-tracking-super text-foreground uppercase">Price Guide</h2>
             </div>
             <p className="text-xs text-gray-400 font-serif luxury-tracking">料金の目安</p>
@@ -130,11 +130,11 @@ export default function GuidePage() {
 
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              <div className="bg-white p-6 border border-[var(--color-gold)]/20 text-center">
+              <div className="bg-white p-6 border border-gold/20 text-center">
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Member</p>
                 <p className="text-2xl font-serif text-foreground">¥6,000<span className="text-xs text-gray-400 ml-1">/ 60分</span></p>
               </div>
-              <div className="bg-white p-6 border border-[var(--color-gold)]/20 text-center">
+              <div className="bg-white p-6 border border-gold/20 text-center">
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Visitor</p>
                 <p className="text-2xl font-serif text-foreground">¥7,000<span className="text-xs text-gray-400 ml-1">/ 60分</span></p>
               </div>
@@ -158,7 +158,7 @@ export default function GuidePage() {
         <div className="container mx-auto max-w-3xl">
           <FadeIn className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <HelpCircle className="w-5 h-5 text-[var(--color-gold)]" />
+              <HelpCircle className="w-5 h-5 text-gold" />
               <h2 className="text-xl md:text-2xl font-serif luxury-tracking-super text-foreground uppercase">FAQ</h2>
             </div>
             <p className="text-xs text-gray-400 font-serif luxury-tracking">よくあるご質問</p>
@@ -169,7 +169,7 @@ export default function GuidePage() {
               <FadeIn key={i} delay={i * 0.05}>
                 <div className="py-8 border-b border-gray-100">
                   <h3 className="text-sm font-serif text-foreground mb-3 luxury-tracking flex items-start gap-3">
-                    <span className="text-[var(--color-gold)] shrink-0 text-xs mt-0.5">Q.</span>
+                    <span className="text-gold shrink-0 text-xs mt-0.5">Q.</span>
                     {item.q}
                   </h3>
                   <p className="text-xs text-gray-500 font-serif leading-[2.2] luxury-tracking pl-6">
@@ -181,7 +181,7 @@ export default function GuidePage() {
           </div>
 
           <FadeIn delay={0.3} className="mt-8 text-center">
-            <Link href="/faq" className="text-xs font-serif text-[var(--color-gold)] luxury-tracking uppercase hover:underline underline-offset-4">
+            <Link href="/faq" className="text-xs font-serif text-gold luxury-tracking uppercase hover:underline underline-offset-4">
               その他のご質問はこちら →
             </Link>
           </FadeIn>
@@ -189,19 +189,19 @@ export default function GuidePage() {
       </section>
 
       {/* アクセス（要約） */}
-      <section className="py-16 px-6 bg-[var(--color-gold)]/5">
+      <section className="py-16 px-6 bg-gold/5">
         <div className="container mx-auto max-w-3xl">
           <FadeIn className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Footprints className="w-5 h-5 text-[var(--color-gold)]" />
+              <Footprints className="w-5 h-5 text-gold" />
               <h2 className="text-xl md:text-2xl font-serif luxury-tracking-super text-foreground uppercase">Access</h2>
             </div>
           </FadeIn>
 
           <FadeIn>
-            <div className="bg-white p-6 md:p-8 border border-[var(--color-gold)]/20">
+            <div className="bg-white p-6 md:p-8 border border-gold/20">
               <div className="flex items-start gap-4 mb-6">
-                <MapPin className="w-5 h-5 text-[var(--color-gold)] shrink-0 mt-1" />
+                <MapPin className="w-5 h-5 text-gold shrink-0 mt-1" />
                 <div className="text-sm font-serif text-gray-600 leading-loose">
                   〒231-0012 神奈川県横浜市中区相生町３丁目５３<br />
                   グランドパークビル
@@ -235,7 +235,7 @@ export default function GuidePage() {
               皆様のご来店をお待ちしております。
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button asChild size="lg" className="luxury-tracking font-medium bg-[#171717] text-white border-transparent hover:bg-[var(--color-gold)] hover:border-[var(--color-gold)]">
+              <Button asChild size="lg" className="luxury-tracking font-medium bg-[#171717] text-white border-transparent hover:bg-gold hover:border-gold">
                 <Link href="/reserve">
                   <CalendarHeart className="mr-3 w-4 h-4" />
                   WEB予約

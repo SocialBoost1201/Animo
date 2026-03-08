@@ -17,7 +17,7 @@ export default async function CastsPage() {
         </div>
         <Link
           href="/admin/casts/new"
-          className="bg-[#171717] hover:bg-[var(--color-gold)] text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors"
+          className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors"
         >
           <Plus size={16} />
           新規登録

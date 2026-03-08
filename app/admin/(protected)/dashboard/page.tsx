@@ -29,13 +29,13 @@ export default async function DashboardPage() {
           <p className="text-4xl font-serif text-[#171717] mt-3">{castsCount || 0} <span className="text-sm text-gray-400 font-sans">名</span></p>
         </div>
 
-        <div className="bg-white p-6 rounded-sm border border-[var(--color-gold)] shadow-sm flex flex-col justify-center">
-          <h3 className="text-sm font-bold tracking-widest text-[var(--color-gold)] uppercase">新規の求人応募</h3>
+        <div className="bg-white p-6 rounded-sm border border-gold shadow-sm flex flex-col justify-center">
+          <h3 className="text-sm font-bold tracking-widest text-gold uppercase">新規の求人応募</h3>
           <p className="text-4xl font-serif text-[#171717] mt-3">{applicationsCount || 0} <span className="text-sm text-gray-400 font-sans">件 (未読)</span></p>
         </div>
 
-        <div className="bg-white p-6 rounded-sm border border-[var(--color-gold)] shadow-sm flex flex-col justify-center">
-          <h3 className="text-sm font-bold tracking-widest text-[var(--color-gold)] uppercase">新規の問い合わせ・予約</h3>
+        <div className="bg-white p-6 rounded-sm border border-gold shadow-sm flex flex-col justify-center">
+          <h3 className="text-sm font-bold tracking-widest text-gold uppercase">新規の問い合わせ・予約</h3>
           <p className="text-4xl font-serif text-[#171717] mt-3">{inquiriesCount || 0} <span className="text-sm text-gray-400 font-sans">件 (未読)</span></p>
         </div>
       </div>

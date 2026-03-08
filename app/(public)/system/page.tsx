@@ -23,8 +23,8 @@ export default function SystemPage() {
             <h1 className="text-foreground font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="System" />
             </h1>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
-            <p className="text-[var(--color-gold)] font-serif luxury-tracking text-xs md:text-sm uppercase">
+            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               料金システム
             </p>
           </FadeIn>

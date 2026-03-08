@@ -33,14 +33,14 @@ export default async function CastPage({
 
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-gold)]/5 to-transparent pointer-events-none h-[50vh]" />
+      <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent pointer-events-none h-[50vh]" />
       <div className="container mx-auto relative z-10">
         <FadeIn className="text-center mb-16">
           <h1 className="text-3xl md:text-5xl font-serif luxury-tracking-super text-[#171717] uppercase mb-6">
             Cast
           </h1>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
-          <p className="text-xs text-[var(--color-gold)] font-serif luxury-tracking uppercase">
+          <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+          <p className="text-xs text-gold font-serif luxury-tracking uppercase">
             個性豊かな上質空間を彩るキャストたち。<br />
             （本日の出勤キャストを優先して表示しています）
           </p>
@@ -48,9 +48,9 @@ export default async function CastPage({
 
         {hasDiagnostic && (
           <FadeIn delay={0.2} className="mb-16">
-            <div className="max-w-3xl mx-auto bg-[var(--color-gold)]/5 border border-[var(--color-gold)]/20 p-8 text-center shadow-sm">
+            <div className="max-w-3xl mx-auto bg-gold/5 border border-gold/20 p-8 text-center shadow-sm">
               <div className="inline-block p-3 bg-white rounded-full mb-4 shadow-[0_0_15px_rgba(180,150,90,0.15)]">
-                <Sparkles className="w-6 h-6 text-[var(--color-gold)]" />
+                <Sparkles className="w-6 h-6 text-gold" />
               </div>
               <h2 className="text-lg md:text-xl font-serif text-[#171717] mb-3 luxury-tracking">
                 Night Style 診断結果
@@ -60,10 +60,10 @@ export default async function CastPage({
                 特別なひとときを、彼女たちとともにお過ごしください。
               </p>
               <div className="flex flex-wrap justify-center gap-2">
-                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-[var(--color-gold)] text-[var(--color-gold)]">
+                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
                   {purpose === 'business' ? '接待・おもてなし' : purpose === 'party' ? 'ワイワイ盛り上がる' : 'ゆっくり飲みたい'}
                 </span>
-                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-[var(--color-gold)] text-[var(--color-gold)]">
+                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
                   {atmosphere === 'calm' ? '清楚・落ち着き' : atmosphere === 'cheerful' ? '明るい・ノリが良い' : '聞き上手・癒やし'}
                 </span>
               </div>
@@ -95,7 +95,7 @@ export default async function CastPage({
                       </div>
                     )}
                     {hasDiagnostic && index < 3 && (
-                      <div className="absolute top-3 right-3 bg-[var(--color-gold)] text-white text-[9px] font-serif luxury-tracking px-2 py-1 uppercase shadow-md">
+                      <div className="absolute top-3 right-3 bg-gold text-white text-[9px] font-serif luxury-tracking px-2 py-1 uppercase shadow-md">
                         Recommend
                       </div>
                     )}

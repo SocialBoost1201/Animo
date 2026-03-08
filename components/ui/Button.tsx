@@ -7,11 +7,11 @@ const buttonVariants = {
   variants: {
     variant: {
       default:
-        "border border-[var(--color-gold)] text-[var(--color-gold)] bg-transparent hover:bg-[var(--color-gold)] hover:text-white",
+        "border border-gold text-gold bg-transparent hover:bg-gold hover:text-white",
       outline:
         "border border-foreground bg-transparent hover:bg-foreground hover:text-background text-foreground",
       ghost: "hover:bg-gray-50 hover:text-foreground",
-      link: "text-[var(--color-gold)] underline-offset-4 hover:underline",
+      link: "text-gold underline-offset-4 hover:underline",
     },
     size: {
       default: "h-12 px-6 py-2 md:h-14 md:px-8",

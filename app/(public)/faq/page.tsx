@@ -46,7 +46,7 @@ export default function FAQPage() {
       <section className="bg-white pt-12 pb-16 px-6 border-b border-gray-100">
         <div className="container mx-auto">
           <FadeIn direction="down" className="text-center">
-            <h1 className="text-[var(--color-gold)] font-serif text-3xl md:text-5xl mb-4 tracking-widest uppercase">
+            <h1 className="text-gold font-serif text-3xl md:text-5xl mb-4 tracking-widest uppercase">
               <RevealText text="FAQ" />
             </h1>
             <p className="text-[#171717] font-sans tracking-[0.2em] text-sm md:text-base uppercase">

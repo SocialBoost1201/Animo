@@ -32,10 +32,10 @@ export default async function EventDetailPage({ params }: { params: { slug: stri
     : '';
 
   return (
-    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
+    <div className="bg-background min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
       <div className="container mx-auto max-w-3xl">
          <div className="mb-8">
-          <Link href="/events" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors">
+          <Link href="/events" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-gold transition-colors">
             <ArrowLeft size={16} className="mr-2" /> EVENT INDEX
           </Link>
         </div>
@@ -44,14 +44,14 @@ export default async function EventDetailPage({ params }: { params: { slug: stri
           <div className="mb-8 pb-8 border-b border-gray-100 text-center">
              {eventDateStr && (
               <span className="inline-flex items-center justify-center text-sm font-sans tracking-widest text-[#171717] mb-4 bg-gray-50 px-4 py-1.5 rounded-sm">
-                <Calendar size={14} className="mr-2 text-[var(--color-gold)]" />
+                <Calendar size={14} className="mr-2 text-gold" />
                 {eventDateStr} 開催
               </span>
             )}
             <h1 className="text-2xl md:text-3xl font-serif leading-relaxed text-[#171717]">{event.title}</h1>
           </div>
 
-          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-[var(--color-gold)] text-gray-600 font-sans whitespace-pre-wrap">
+          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-gold text-gray-600 font-sans whitespace-pre-wrap">
             {event.description || '詳細な内容はありません。'}
           </div>
 

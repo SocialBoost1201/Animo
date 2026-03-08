@@ -95,8 +95,8 @@ export const Header = () => {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)]',
-                  pathname === item.href ? 'text-[var(--color-gold)]' : 'text-[#171717]'
+                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-gold',
+                  pathname === item.href ? 'text-gold' : 'text-[#171717]'
                 )}
               >
                 {item.label}
@@ -112,8 +112,8 @@ export const Header = () => {
             >
               <button
                 className={cn(
-                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-[var(--color-gold)] flex items-center gap-1',
-                  isRecruitActive ? 'text-[var(--color-gold)]' : 'text-[#171717]'
+                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-gold flex items-center gap-1',
+                  isRecruitActive ? 'text-gold' : 'text-[#171717]'
                 )}
                 onClick={() => setIsRecruitOpen(!isRecruitOpen)}
               >
@@ -131,15 +131,15 @@ export const Header = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md border border-[var(--color-gold)]/20 shadow-lg overflow-hidden"
+                    className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md border border-gold/20 shadow-lg overflow-hidden"
                   >
                     {RECRUIT_ITEMS.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          'block px-5 py-3 text-xs font-serif luxury-tracking text-[#171717] hover:bg-[var(--color-gold)]/10 hover:text-[var(--color-gold)] transition-colors border-b border-[var(--color-gold)]/10 last:border-b-0',
-                          pathname === item.href && 'text-[var(--color-gold)] bg-[var(--color-gold)]/5'
+                          'block px-5 py-3 text-xs font-serif luxury-tracking text-[#171717] hover:bg-gold/10 hover:text-gold transition-colors border-b border-gold/10 last:border-b-0',
+                          pathname === item.href && 'text-gold bg-gold/5'
                         )}
                       >
                         {item.label}
@@ -153,7 +153,7 @@ export const Header = () => {
             <Magnetic strength={0.2} className="ml-4">
               <Link
                 href="/reserve"
-                className="block px-6 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-[var(--color-gold)] hover:text-white"
+                className="block px-6 py-2 border border-gold text-gold text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-gold hover:text-white"
               >
                 Reserve
               </Link>
@@ -232,8 +232,8 @@ export const Header = () => {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                              'block text-sm font-serif luxury-tracking text-gray-500 hover:text-[var(--color-gold)] transition-colors',
-                              pathname === item.href && 'text-[var(--color-gold)]'
+                              'block text-sm font-serif luxury-tracking text-gray-500 hover:text-gold transition-colors',
+                              pathname === item.href && 'text-gold'
                             )}
                           >
                             {item.label}
@@ -248,7 +248,7 @@ export const Header = () => {
               <div className="mt-8 flex flex-col gap-4">
                 <Link
                   href="/reserve"
-                  className="w-full text-center py-4 border border-[var(--color-gold)] text-[var(--color-gold)] text-xs font-serif luxury-tracking uppercase"
+                  className="w-full text-center py-4 border border-gold text-gold text-xs font-serif luxury-tracking uppercase"
                 >
                   Reserve
                 </Link>

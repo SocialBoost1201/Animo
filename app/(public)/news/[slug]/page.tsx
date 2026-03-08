@@ -30,10 +30,10 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
   const dateStr = new Date(news.created_at).toISOString().split('T')[0].replace(/-/g, '.');
 
   return (
-    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
+    <div className="bg-background min-h-screen pt-24 pb-[var(--spacing-section)] px-6 text-[#171717]">
       <div className="container mx-auto max-w-3xl">
         <div className="mb-8">
-          <Link href="/news" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors">
+          <Link href="/news" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-gold transition-colors">
             <ArrowLeft size={16} className="mr-2" /> NEWS INDEX
           </Link>
         </div>
@@ -44,7 +44,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
             <h1 className="text-2xl md:text-3xl font-serif leading-relaxed text-[#171717]">{news.title}</h1>
           </div>
 
-          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-[var(--color-gold)] text-gray-600 font-sans whitespace-pre-wrap">
+          <div className="prose prose-sm md:prose-base max-w-none prose-p:leading-loose prose-a:text-gold text-gray-600 font-sans whitespace-pre-wrap">
             {news.description || '詳細な内容はありません。'}
           </div>
 

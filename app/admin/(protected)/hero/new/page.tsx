@@ -53,7 +53,7 @@ export default function NewHeroMediaPage() {
               <select 
                 name="type"
                 required
-                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
               >
                 <option value="video">動画 (Video) - 推奨</option>
                 <option value="image">静止画 (Image)</option>
@@ -65,7 +65,7 @@ export default function NewHeroMediaPage() {
                 name="title"
                 type="text" 
                 required
-                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
                 placeholder="巨大シャンデリアのパン"
               />
             </div>
@@ -77,7 +77,7 @@ export default function NewHeroMediaPage() {
               name="url"
               type="url" 
               required
-              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
               placeholder="https://.../video.mp4"
             />
             <p className="text-xs text-gray-400 mt-1">Storageにアップロードした動画ファイル等のURLを入力</p>
@@ -88,7 +88,7 @@ export default function NewHeroMediaPage() {
             <input 
               name="poster_url"
               type="url"
-              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
               placeholder="https://.../poster.jpg"
             />
             <p className="text-xs text-gray-400 mt-1">動画の読み込みが間に合わない場合や、Reduced Motion設定のユーザーに表示される画像です。</p>
@@ -101,7 +101,7 @@ export default function NewHeroMediaPage() {
                   type="checkbox" 
                   name="is_active"
                   defaultChecked={true}
-                  className="w-5 h-5 accent-[var(--color-gold)] rounded bg-gray-100 border-gray-300"
+                  className="w-5 h-5 accent-gold rounded bg-gray-100 border-gray-300"
                 />
                 <span className="text-sm font-bold text-[#171717]">ローテーションを有効にする</span>
               </label>

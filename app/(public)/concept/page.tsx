@@ -25,7 +25,7 @@ export default function ConceptPage() {
         <div className="absolute inset-0 bg-black/50" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <FadeIn>
-            <p className="text-[var(--color-gold)] font-serif luxury-tracking text-xs uppercase tracking-widest mb-6">
+            <p className="text-gold font-serif luxury-tracking text-xs uppercase tracking-widest mb-6">
               Our Concept
             </p>
             <h1 className="text-white font-serif luxury-tracking-super text-4xl md:text-6xl uppercase mb-8">

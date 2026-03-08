@@ -97,7 +97,7 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-          className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"
+          className="w-[1px] h-12 bg-linear-to-b from-white to-transparent"
         />
       </motion.div>
     </div>

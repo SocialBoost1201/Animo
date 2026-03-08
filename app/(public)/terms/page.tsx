@@ -27,12 +27,12 @@ export default function TermsPage() {
               この利用規約（以下「本規約」）は、Club Animo（以下「当店」）が提供するサービス（WEBサイトで提供するサービスを含みます。以下「本サービス」）のご利用条件を定めるものです。
             </p>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">1. ご利用資格</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">1. ご利用資格</h3>
             <p>
               当店は風俗営業等の規制及び業務の適正化等に関する法律等により、20歳未満の方の入店を固くお断りしております。ご入店時に身分証明書の提示をお願いする場合がございます。
             </p>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">2. 禁止事項</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">2. 禁止事項</h3>
             <p>
               お客様は、本サービスのご利用にあたり、以下の行為をしてはなりません。
             </p>
@@ -43,7 +43,7 @@ export default function TermsPage() {
               <li>法令または公序良俗に違反する行為</li>
             </ul>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">3. 免責事項</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">3. 免責事項</h3>
             <p>
               当店は、お客様同士、またはお客様と第三者との間で生じたトラブルについて一切の責任を負いません。また、お荷物・貴重品の紛失等につきましても当店は責任を負いかねますので各自で管理をお願いいたします。
             </p>

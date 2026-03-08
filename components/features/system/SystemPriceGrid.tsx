@@ -7,7 +7,7 @@ export const SystemPriceGrid = () => {
       {/* Block1: 営業時間 */}
       <FadeIn delay={0.1}>
         <div className="text-center">
-          <h2 className="text-sm md:text-base font-serif text-[var(--color-gold)] uppercase luxury-tracking mb-4">
+          <h2 className="text-sm md:text-base font-serif text-gold uppercase luxury-tracking mb-4">
             Open Hours
           </h2>
           <p className="text-2xl md:text-3xl font-serif text-foreground tracking-widest">
@@ -18,17 +18,17 @@ export const SystemPriceGrid = () => {
 
       {/* Block2: セット料金 */}
       <FadeIn delay={0.2}>
-        <h2 className="text-sm md:text-base font-serif text-[var(--color-gold)] uppercase luxury-tracking mb-8 text-center">
+        <h2 className="text-sm md:text-base font-serif text-gold uppercase luxury-tracking mb-8 text-center">
           Set Charge
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white/40 backdrop-blur-md border border-[var(--color-gold)]/20 p-8 shadow-aura flex flex-col items-center text-center">
+          <div className="bg-white/40 backdrop-blur-md border border-gold/20 p-8 shadow-aura flex flex-col items-center text-center">
             <h3 className="text-xl font-serif text-foreground mb-4 luxury-tracking uppercase">Member</h3>
             <p className="text-3xl font-sans text-foreground">
               ¥6,000
             </p>
           </div>
-          <div className="bg-white/40 backdrop-blur-md border border-[var(--color-gold)]/20 p-8 shadow-aura flex flex-col items-center text-center">
+          <div className="bg-white/40 backdrop-blur-md border border-gold/20 p-8 shadow-aura flex flex-col items-center text-center">
             <h3 className="text-xl font-serif text-foreground mb-4 luxury-tracking uppercase">Visitor</h3>
             <p className="text-3xl font-sans text-foreground">
               ¥7,000

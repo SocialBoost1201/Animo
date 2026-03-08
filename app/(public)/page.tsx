@@ -101,7 +101,7 @@ export default async function HomePage() {
       <Magnetic strength={0.3}>
         <Link
           href="/system"
-          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-[var(--color-gold)] text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
+          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
         >
           <Sparkles className="w-4 h-4" />
           料金を確認する
@@ -123,14 +123,14 @@ export default async function HomePage() {
 
       {/* 1.5 TODAY'S MOOD */}
       {settings?.today_mood && (
-        <section className="bg-[#171717] text-white py-12 px-6 border-y border-[var(--color-gold)]/20 shadow-md relative overflow-hidden">
+        <section className="bg-[#171717] text-white py-12 px-6 border-y border-gold/20 shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
           <div className="container mx-auto text-center relative z-10">
             <FadeIn>
               <div className="inline-flex items-center justify-center space-x-3 mb-4">
-                <div className="h-[1px] w-8 bg-[var(--color-gold)]"></div>
-                <span className="text-[10px] font-serif text-[var(--color-gold)] luxury-tracking uppercase tracking-widest">Today's Mood</span>
-                <div className="h-[1px] w-8 bg-[var(--color-gold)]"></div>
+                <div className="h-[1px] w-8 bg-gold"></div>
+                <span className="text-[10px] font-serif text-gold luxury-tracking uppercase tracking-widest">Today's Mood</span>
+                <div className="h-[1px] w-8 bg-gold"></div>
               </div>
               <p className="text-sm md:text-base font-serif tracking-widest leading-loose text-white/90 max-w-2xl mx-auto">
                 {settings.today_mood}
@@ -147,9 +147,9 @@ export default async function HomePage() {
             <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
               <GsapRevealTitle text="Today's Cast" />
             </h2>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-4 opacity-50" />
+            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
             <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
-            <Link href="/shift" className="inline-flex items-center text-[var(--color-gold)] text-[10px] font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
+            <Link href="/shift" className="inline-flex items-center text-gold text-[10px] font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
               View Schedule →
             </Link>
           </FadeIn>
@@ -172,14 +172,14 @@ export default async function HomePage() {
                       <CastFavoriteButton castId={cast.id} />
                     </div>
                     {cast.is_today && (
-                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-serif luxury-tracking text-[var(--color-gold)] px-3 py-1 uppercase border border-[var(--color-gold)]/30">
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-serif luxury-tracking text-gold px-3 py-1 uppercase border border-gold/30">
                         Today
                       </div>
                     )}
                   </Link>
                   <div className="pt-6 pb-5 px-4 bg-white relative z-10 text-center">
                     <Link href={`/cast/${cast.slug}`}>
-                      <h3 className="font-serif luxury-tracking text-xl text-[#171717] hover:text-[var(--color-gold)] transition-colors">
+                      <h3 className="font-serif luxury-tracking text-xl text-[#171717] hover:text-gold transition-colors">
                         {cast.name}
                       </h3>
                     </Link>
@@ -196,13 +196,13 @@ export default async function HomePage() {
                     <div className="flex flex-col gap-2 mt-4">
                       <Link
                         href={`/cast/${cast.slug}`}
-                        className="w-full py-2.5 border border-gray-200 text-[9px] font-serif luxury-tracking text-gray-600 uppercase hover:border-[var(--color-gold)] hover:text-[var(--color-gold)] transition-colors"
+                        className="w-full py-2.5 border border-gray-200 text-[9px] font-serif luxury-tracking text-gray-600 uppercase hover:border-gold hover:text-gold transition-colors"
                       >
                         プロフィールを見る
                       </Link>
                       <Link
                         href={`/reserve?cast=${encodeURIComponent(cast.name)}`}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#171717] text-white text-[9px] font-serif luxury-tracking uppercase hover:bg-[var(--color-gold)] transition-colors"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#171717] text-white text-[9px] font-serif luxury-tracking uppercase hover:bg-gold transition-colors"
                       >
                         <CalendarHeart className="w-3 h-3" />
                         指名して予約

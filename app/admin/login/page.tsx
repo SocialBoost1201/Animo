@@ -22,7 +22,7 @@ export default function LoginPage() {
               name="email"
               type="email" 
               required
-              className="w-full border-b border-gray-200 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+              className="w-full border-b border-gray-200 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
               placeholder="admin@example.com"
             />
           </div>
@@ -33,7 +33,7 @@ export default function LoginPage() {
               name="password"
               type="password" 
               required
-              className="w-full border-b border-gray-200 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+              className="w-full border-b border-gray-200 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
               placeholder="••••••••"
             />
           </div>

@@ -49,7 +49,7 @@ export function GalleryGrid({ items }: { items: any[] }) {
             className="max-w-full max-h-full object-contain rounded-sm shadow-2xl animate-in zoom-in-95 duration-200"
           />
           <button 
-            className="absolute top-6 right-6 text-white bg-black/50 hover:bg-[var(--color-gold)] w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            className="absolute top-6 right-6 text-white bg-black/50 hover:bg-gold w-10 h-10 rounded-full flex items-center justify-center transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedImage(null);

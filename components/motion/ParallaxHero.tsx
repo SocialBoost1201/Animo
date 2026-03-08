@@ -40,7 +40,7 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
           style={{ backgroundImage: `url(${imageUrl})` }}
         />
         {/* Overlay gradient for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-white/90" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/20 to-white/90" />
       </motion.div>
 
       {/* Content */}
@@ -82,7 +82,7 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"
+          className="w-[1px] h-12 bg-linear-to-b from-white to-transparent"
         />
       </motion.div>
     </div>

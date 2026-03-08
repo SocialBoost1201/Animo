@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
               Club Animo（以下「当店」）は、お客様の個人情報保護の重要性を強く認識し、以下の通りプライバシーポリシーを定め、個人情報の保護に努めます。
             </p>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">1. 個人情報の収集・利用</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">1. 個人情報の収集・利用</h3>
             <p>
               当店は、ご予約・ご来店・求人応募・お問い合わせ等に際し、必要な範囲内で個人情報を収集いたします。<br />
               収集した個人情報は、以下の目的の範囲内で利用いたします。
@@ -39,17 +39,17 @@ export default function PrivacyPolicyPage() {
               <li>サービス向上のための統計・分析のため</li>
             </ul>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">2. 個人情報の第三者提供</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">2. 個人情報の第三者提供</h3>
             <p>
               当店は、法令に基づき開示・提供を求められた場合を除き、お客様の同意なく個人情報を第三者に提供・開示することはいたしません。
             </p>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">3. 個人情報の安全管理</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">3. 個人情報の安全管理</h3>
             <p>
               当店は、個人情報の漏洩、滅失または毀損の防止のため、適切なセキュリティ対策を講じ、安全管理に努めます。
             </p>
 
-            <h3 className="text-[#171717] font-bold border-l-4 border-[var(--color-gold)] pl-3 mt-8 mb-4">4. プライバシーポリシーの変更</h3>
+            <h3 className="text-[#171717] font-bold border-l-4 border-gold pl-3 mt-8 mb-4">4. プライバシーポリシーの変更</h3>
             <p>
               当店は、法令の変更等に伴い、本プライバシーポリシーの継続的な見直しと改善を行い、必要に応じて改定することがあります。
             </p>

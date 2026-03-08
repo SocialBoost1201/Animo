@@ -39,8 +39,8 @@ function ReserveForm() {
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-white pb-32 flex items-center justify-center pt-32">
-        <div className="bg-white p-12 max-w-lg w-full text-center shadow-luxury border border-[var(--color-gold)]/20 relative">
-          <CalendarHeart className="w-12 h-12 mx-auto text-[var(--color-gold)] mb-8 opacity-80" />
+        <div className="bg-white p-12 max-w-lg w-full text-center shadow-luxury border border-gold/20 relative">
+          <CalendarHeart className="w-12 h-12 mx-auto text-gold mb-8 opacity-80" />
           <h2 className="text-xl font-serif text-[#171717] mb-6 luxury-tracking">予約リクエストを送信しました</h2>
           <p className="text-gray-500 mb-10 leading-[2.5] font-serif luxury-tracking text-xs">
             この度はご予約ありがとうございます。<br />
@@ -57,15 +57,15 @@ function ReserveForm() {
 
   return (
     <div className="min-h-screen bg-white pb-32">
-      <section className="bg-white pt-24 pb-16 px-6 border-b border-[var(--color-gold)]/20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-gold)]/5 to-transparent pointer-events-none" />
+      <section className="bg-white pt-24 pb-16 px-6 border-b border-gold/20 relative">
+        <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent pointer-events-none" />
         <div className="container mx-auto relative z-10">
           <FadeIn direction="down" className="text-center">
             <h1 className="text-[#171717] font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="Reserve" />
             </h1>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-gold)] to-transparent mx-auto mb-6 opacity-50" />
-            <p className="text-[var(--color-gold)] font-serif luxury-tracking text-xs md:text-sm uppercase">
+            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               来店予約
             </p>
           </FadeIn>
@@ -74,8 +74,8 @@ function ReserveForm() {
 
       <section className="py-24 px-6">
         <div className="container mx-auto max-w-3xl">
-          <FadeIn delay={0.2} className="bg-white p-8 md:p-16 shadow-luxury border-y border-[var(--color-gold)]/20 md:border md:rounded-sm relative">
-            <p className="text-xs text-[var(--color-gold)] mb-12 leading-[2] text-center font-serif luxury-tracking">
+          <FadeIn delay={0.2} className="bg-white p-8 md:p-16 shadow-luxury border-y border-gold/20 md:border md:rounded-sm relative">
+            <p className="text-xs text-gold mb-12 leading-[2] text-center font-serif luxury-tracking">
               以下のフォームよりご予約リクエストを承ります。<br />
               当日のご予約はお電話にてお問い合わせくださいませ。
             </p>
@@ -91,15 +91,15 @@ function ReserveForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label htmlFor="name" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Name <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Name <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 太郎" />
+                  <input required id="name" name="name" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="山田 太郎" />
                 </div>
                 <div>
                   <label htmlFor="contactMethod" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Email <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Email <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="contactMethod" name="contactMethod" type="email" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com" />
+                  <input required id="contactMethod" name="contactMethod" type="email" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="info@example.com" />
                 </div>
               </div>
 
@@ -107,15 +107,15 @@ function ReserveForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label htmlFor="phone" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Phone <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Phone <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
+                  <input required id="phone" name="phone" type="tel" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="090-1234-5678" />
                 </div>
                 <div>
                   <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
                   </label>
-                  <input id="lineId" name="lineId" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="@your_line_id" />
+                  <input id="lineId" name="lineId" type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="@your_line_id" />
                 </div>
               </div>
 
@@ -123,15 +123,15 @@ function ReserveForm() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                   <label htmlFor="date" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Reserve Date <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Reserve Date <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="date" name="date" type="date" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]" />
+                  <input required id="date" name="date" type="date" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]" />
                 </div>
                 <div>
                   <label htmlFor="time" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Time <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Time <span className="text-gold ml-1">*</span>
                   </label>
-                  <select required id="time" name="time" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
+                  <select required id="time" name="time" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
                     <option value="">--:--</option>
                     <option value="20:00">20:00</option>
                     <option value="20:30">20:30</option>
@@ -150,9 +150,9 @@ function ReserveForm() {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label htmlFor="people" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
-                    Number of People <span className="text-[var(--color-gold)] ml-1">*</span>
+                    Number of People <span className="text-gold ml-1">*</span>
                   </label>
-                  <select required id="people" name="people" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
+                  <select required id="people" name="people" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]">
                     {[1,2,3,4,5,6,7,8,"9名以上"].map(n => <option key={n} value={n}>{n}{typeof n === 'number' ? '名' : ''}</option>)}
                   </select>
                 </div>
@@ -160,7 +160,7 @@ function ReserveForm() {
                   <label htmlFor="castName" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Cast Nomination
                   </label>
-                  <input id="castName" name="castName" defaultValue={defaultCastName} type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="指名 キャスト名（任意）" />
+                  <input id="castName" name="castName" defaultValue={defaultCastName} type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="指名 キャスト名（任意）" />
                 </div>
               </div>
 
@@ -169,7 +169,7 @@ function ReserveForm() {
                 <label htmlFor="message" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                   Message / Remarks
                 </label>
-                <textarea id="message" name="message" rows={4} className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-[var(--color-gold)] transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30" placeholder="ご要望やご質問がございましたらご記入ください" />
+                <textarea id="message" name="message" rows={4} className="w-full bg-gray-50/30 border border-gray-200 p-4 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none resize-none" placeholder="ご要望やご質問がございましたらご記入ください" />
               </div>
 
               {/* Submit */}
@@ -183,7 +183,7 @@ function ReserveForm() {
                   {isSubmitting ? 'Sending...' : '予約をリクエストする'}
                 </Button>
                 <p className="text-[10px] text-gray-400 mt-6 font-serif luxury-tracking">
-                  送信ボタンを押すことで、<a href="/privacy" className="underline hover:text-[var(--color-gold)]">プライバシーポリシー</a>に同意したものとみなされます。
+                  送信ボタンを押すことで、<a href="/privacy" className="underline hover:text-gold">プライバシーポリシー</a>に同意したものとみなされます。
                 </p>
               </div>
             </form>

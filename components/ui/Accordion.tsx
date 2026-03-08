@@ -36,7 +36,7 @@ export const Accordion: React.FC<AccordionProps> = ({ items }) => {
               aria-expanded={isOpen}
             >
               <h3 className="font-serif text-[#171717] md:text-lg pr-8">
-                <span className="text-[var(--color-gold)] font-bold mr-3 font-sans">Q.</span>
+                <span className="text-gold font-bold mr-3 font-sans">Q.</span>
                 {item.question}
               </h3>
               <motion.div

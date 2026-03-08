@@ -72,7 +72,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                 value={contentType}
                 onChange={(e) => setContentType(e.target.value)}
                 required
-                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
               >
                 <option value="news">ニュース (News)</option>
                 <option value="event">イベント (Event)</option>
@@ -87,7 +87,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                   name="content_date"
                   type="date" 
                   defaultValue={initialData?.content_date?.slice(0, 10)}
-                  className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                  className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
                 />
               </div>
             )}
@@ -98,7 +98,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                 <select 
                   name="category"
                   defaultValue={initialData?.category || 'floor'}
-                  className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors bg-white"
+                  className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
                 >
                   <option value="floor">メインフロア (Floor)</option>
                   <option value="curtain">カーテンルーム (Curtain Room)</option>
@@ -117,7 +117,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
               type="text" 
               defaultValue={initialData?.title}
               required={contentType !== 'gallery'}
-              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+              className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
               placeholder={contentType === 'gallery' ? "美しい大シャンデリア" : "記事のタイトル"}
             />
           </div>
@@ -129,7 +129,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                 name="description"
                 rows={8}
                 defaultValue={initialData?.description}
-                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
                 placeholder="本文を入力してください"
               />
             </div>
@@ -142,7 +142,7 @@ export function ContentForm({ initialData }: { initialData?: any }) {
                   type="checkbox" 
                   name="is_published"
                   defaultChecked={initialData?.is_published ?? true}
-                  className="w-5 h-5 accent-[var(--color-gold)] rounded bg-gray-100 border-gray-300"
+                  className="w-5 h-5 accent-gold rounded bg-gray-100 border-gray-300"
                 />
                 <span className="text-sm font-bold text-[#171717]">公開する (Published)</span>
               </label>

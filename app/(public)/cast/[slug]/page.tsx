@@ -22,10 +22,10 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
   const tags = cast.cast_tag_relations?.map((r: any) => r.cast_tags).filter(Boolean) || [];
 
   return (
-    <div className="bg-[var(--color-background)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
+    <div className="bg-background min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
       <div className="container mx-auto max-w-5xl">
         <div className="mb-8">
-          <Link href="/cast" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-[var(--color-gold)] transition-colors">
+          <Link href="/cast" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-gold transition-colors">
             <ArrowLeft size={16} className="mr-2" /> CAST LIST
           </Link>
         </div>
@@ -67,7 +67,7 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     {tags.map((tag: any) => (
-                      <span key={tag.id} className="text-[10px] font-serif tracking-widest text-[var(--color-gold)] border border-[var(--color-gold)]/40 px-3 py-1">
+                      <span key={tag.id} className="text-[10px] font-serif tracking-widest text-gold border border-gold/40 px-3 py-1">
                         {tag.name}
                       </span>
                     ))}
@@ -96,7 +96,7 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                     Message <div className="h-[1px] flex-1 bg-gray-100" />
                   </h3>
                   <p className="text-gray-600 font-serif leading-loose text-sm p-6 bg-[var(--color-gray-light)] relative">
-                    <span className="absolute top-4 left-4 text-4xl text-[var(--color-gold)] opacity-20 leading-none">&ldquo;</span>
+                    <span className="absolute top-4 left-4 text-4xl text-gold opacity-20 leading-none">&ldquo;</span>
                     <span className="relative z-10 whitespace-pre-wrap">{cast.comment}</span>
                   </p>
                 </div>
@@ -104,8 +104,8 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
 
               {/* 直近のスケジュール */}
               <div className="mb-10">
-                <h3 className="text-xs font-bold tracking-widest text-[var(--color-gold)] uppercase mb-4 flex items-center gap-4">
-                  Schedule <div className="h-[1px] flex-1 bg-[var(--color-gold)]/20" />
+                <h3 className="text-xs font-bold tracking-widest text-gold uppercase mb-4 flex items-center gap-4">
+                  Schedule <div className="h-[1px] flex-1 bg-gold/20" />
                 </h3>
                 {cast.upcomingSchedules?.length > 0 ? (
                   <ul className="space-y-2">
@@ -123,7 +123,7 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
                         <li key={i} className={`flex items-center text-sm ${isToday ? 'font-bold text-[#171717] bg-gray-50 -mx-3 px-3 py-1 rounded-sm' : 'text-gray-600'}`}>
                           <span className="w-20 tracking-wider">{mmdd} ({dayStr})</span>
                           <span>{startTime} - {endTime}</span>
-                          {isToday && <span className="ml-3 text-[10px] text-[var(--color-gold)] border border-[var(--color-gold)] px-2 py-0.5 rounded-sm">本日</span>}
+                          {isToday && <span className="ml-3 text-[10px] text-gold border border-gold px-2 py-0.5 rounded-sm">本日</span>}
                         </li>
                       );
                     })}

@@ -65,15 +65,15 @@ export const PriceSimulator = () => {
       onClick={onClick}
       className={`relative px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-serif tracking-widest transition-all duration-500 overflow-hidden outline-none ${
         active 
-          ? 'text-[#171717] bg-[var(--color-gold)]/90 shadow-aura' 
-          : 'text-foreground/70 border border-white/20 hover:border-[var(--color-gold)]/40 bg-white/10 hover:bg-white/20'
+          ? 'text-[#171717] bg-gold/90 shadow-aura' 
+          : 'text-foreground/70 border border-white/20 hover:border-gold/40 bg-white/10 hover:bg-white/20'
       }`}
     >
       <span className="relative z-10">{children}</span>
       {active && (
         <motion.div
           layoutId="active-bg"
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-full h-full"
+          className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent w-full h-full"
           initial={{ x: '-100%' }}
           animate={{ x: '100%' }}
           transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
@@ -84,12 +84,12 @@ export const PriceSimulator = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
-      <div className="bg-white/40 backdrop-blur-xl border border-[var(--color-gold)]/20 p-6 md:p-12 shadow-aura mix-blend-multiply rounded-sm">
+      <div className="bg-white/40 backdrop-blur-xl border border-gold/20 p-6 md:p-12 shadow-aura mix-blend-multiply rounded-sm">
         
         <div className="space-y-12">
           {/* 来店タイプ */}
           <FadeIn delay={0.2} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Customer Type <span className="text-[10px] text-gray-400 ml-2">来店タイプ</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Customer Type <span className="text-[10px] text-gray-400 ml-2">来店タイプ</span></span>
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <div className="flex-1 flex w-full">
                 <div className="w-1/2 pr-2">
@@ -104,7 +104,7 @@ export const PriceSimulator = () => {
 
           {/* 滞在時間 */}
           <FadeIn delay={0.3} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Expected Duration <span className="text-[10px] text-gray-400 ml-2">滞在時間</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Expected Duration <span className="text-[10px] text-gray-400 ml-2">滞在時間</span></span>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[60, 90, 120, 150, 180].map((t) => (
                 <ToggleButton key={t} active={duration === t} onClick={() => setDuration(t as Duration)}>
@@ -116,7 +116,7 @@ export const PriceSimulator = () => {
 
           {/* 指名 */}
           <FadeIn delay={0.4} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Nomination <span className="text-[10px] text-gray-400 ml-2">指名</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Nomination <span className="text-[10px] text-gray-400 ml-2">指名</span></span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <ToggleButton active={nomination === 'none'} onClick={() => setNomination('none')}>なし</ToggleButton>
               <ToggleButton active={nomination === 'inside'} onClick={() => setNomination('inside')}>場内指名</ToggleButton>
@@ -127,7 +127,7 @@ export const PriceSimulator = () => {
 
           {/* 同伴 */}
           <FadeIn delay={0.5} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-[var(--color-gold)] uppercase luxury-tracking">Accompaniment <span className="text-[10px] text-gray-400 ml-2">同伴</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Accompaniment <span className="text-[10px] text-gray-400 ml-2">同伴</span></span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ToggleButton active={!accompaniment} onClick={() => setAccompaniment(false)}>なし</ToggleButton>
               <ToggleButton active={accompaniment} onClick={() => setAccompaniment(true)}>あり</ToggleButton>
@@ -136,7 +136,7 @@ export const PriceSimulator = () => {
         </div>
 
         {/* Result Area */}
-        <FadeIn delay={0.6} className="mt-20 pt-16 border-t border-[var(--color-gold)]/20 text-center">
+        <FadeIn delay={0.6} className="mt-20 pt-16 border-t border-gold/20 text-center">
           <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total <span className="text-[10px] text-gray-400 ml-2">お見積り目安</span></span>
           <div className="flex items-end justify-center gap-2 mb-4">
             <span className="text-3xl font-sans text-foreground pb-2">¥</span>
@@ -147,7 +147,7 @@ export const PriceSimulator = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="text-6xl md:text-7xl font-sans font-light tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-b from-foreground to-gray-500"
+                className="text-6xl md:text-7xl font-sans font-light tracking-tight text-foreground bg-clip-text text-transparent bg-linear-to-b from-foreground to-gray-500"
               >
                 {calculateTotal.toLocaleString()}
               </motion.span>
@@ -166,7 +166,7 @@ export const PriceSimulator = () => {
                 WEB予約はこちら
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="px-12 h-14 w-full md:w-auto bg-transparent border-white/30 hover:bg-white/10 hover:text-[var(--color-gold)]">
+            <Button asChild variant="outline" size="lg" className="px-12 h-14 w-full md:w-auto bg-transparent border-white/30 hover:bg-white/10 hover:text-gold">
               <Link href="/shift">
                 <Users className="mr-2 w-5 h-5" />
                 本日の出勤を見る

@@ -172,7 +172,7 @@ export default function CastRecruitPage() {
           placeholderText="Elegant Chandelier"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-white" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/30 to-white" />
         <div className="relative z-10 text-center px-6">
           <FadeIn>
             <p className="text-gold font-serif luxury-tracking text-xs uppercase tracking-widest mb-4">
@@ -498,7 +498,7 @@ export default function CastRecruitPage() {
               <div>
                 <label htmlFor="message" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">ご質問・ご要望</label>
                 <textarea id="message" name="message" rows={4}
-                  className="w-full bg-transparent border border-gray-200 p-4 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none resize-none bg-gray-50/30"
+                  className="w-full bg-gray-50/30 border border-gray-200 p-4 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none resize-none"
                   placeholder="シフトの希望や、気になることがあればご記入ください" />
               </div>
 

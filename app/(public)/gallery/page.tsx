@@ -14,7 +14,7 @@ export default async function GalleryPage() {
           <h1 className="text-3xl md:text-5xl font-serif tracking-widest text-[#171717] uppercase mb-4">
             Gallery
           </h1>
-          <div className="w-12 h-[1px] bg-[var(--color-gold)] mx-auto mb-6" />
+          <div className="w-12 h-[1px] bg-gold mx-auto mb-6" />
           <p className="text-sm text-gray-500 font-sans tracking-wide">
             洗練された関内の大人の社交場。<br />
             ゆったりと寛げる上質な空間をご覧ください。

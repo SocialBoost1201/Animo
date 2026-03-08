@@ -48,7 +48,7 @@ function MiniSimulator({ castName }: { castName: string }) {
           className={`px-3 py-1.5 text-[10px] font-serif luxury-tracking border transition-all ${
             value === o.value
               ? 'bg-[#171717] text-white border-[#171717]'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-[var(--color-gold)]'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-gold'
           }`}
         >
           {o.label}
@@ -58,8 +58,8 @@ function MiniSimulator({ castName }: { castName: string }) {
   );
 
   return (
-    <div className="mt-4 p-4 bg-[var(--color-gold)]/5 border border-[var(--color-gold)]/20 space-y-4">
-      <p className="text-[10px] text-[var(--color-gold)] font-serif luxury-tracking uppercase tracking-widest">
+    <div className="mt-4 p-4 bg-gold/5 border border-gold/20 space-y-4">
+      <p className="text-[10px] text-gold font-serif luxury-tracking uppercase tracking-widest">
         {castName} と過ごす場合の料金目安
       </p>
 
@@ -103,7 +103,7 @@ function MiniSimulator({ castName }: { castName: string }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-[var(--color-gold)]/20">
+      <div className="flex items-center justify-between pt-3 border-t border-gold/20">
         <div>
           <p className="text-[9px] text-gray-400 font-serif">料金目安（TAX込）</p>
           <p className="text-2xl font-serif text-[#171717]">
@@ -113,7 +113,7 @@ function MiniSimulator({ castName }: { castName: string }) {
         </div>
         <Link
           href={`/reserve?cast=${encodeURIComponent(castName)}`}
-          className="text-[9px] font-serif luxury-tracking bg-[var(--color-gold)] text-white px-4 py-2.5 hover:bg-[#171717] transition-colors uppercase"
+          className="text-[9px] font-serif luxury-tracking bg-gold text-white px-4 py-2.5 hover:bg-[#171717] transition-colors uppercase"
         >
           予約する
         </Link>
@@ -161,7 +161,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
               key={day.dateStr}
               onClick={() => setActiveDayIndex(idx)}
               className={`flex-1 min-w-[80px] py-4 text-center text-xs font-serif luxury-tracking transition-colors relative ${
-                isActive ? 'text-[var(--color-gold)]' : 'text-gray-400 hover:text-[#171717]'
+                isActive ? 'text-gold' : 'text-gray-400 hover:text-[#171717]'
               }`}
             >
               <span className="block">{day.label}</span>
@@ -169,7 +169,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                 <span className="text-[9px] block mt-0.5 opacity-70">{count}名</span>
               )}
               {isActive && (
-                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[var(--color-gold)]" />
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gold" />
               )}
             </button>
           );
@@ -179,7 +179,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
       {/* キャストリスト */}
       <div className="p-0">
         {displayCasts.length > 0 ? (
-          <div className="divide-y divide-[var(--color-gold)]/10">
+          <div className="divide-y divide-gold/10">
             {displayCasts.map((cast) => {
               const shiftInfo = activeShifts.find((s) => s.cast_id === cast.id);
               const startTime = shiftInfo?.start_time?.slice(0, 5) || '21:00';
@@ -207,7 +207,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <Link href={`/cast/${cast.id}`}>
-                            <h3 className="text-xl font-serif luxury-tracking text-[#171717] hover:text-[var(--color-gold)] transition-colors">
+                            <h3 className="text-xl font-serif luxury-tracking text-[#171717] hover:text-gold transition-colors">
                               {cast.stage_name}
                             </h3>
                           </Link>
@@ -217,7 +217,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                         </div>
                         {/* 出勤時間バッジ */}
                         <div className="shrink-0 text-right">
-                          <span className="inline-block text-[10px] font-serif luxury-tracking text-[var(--color-gold)] border border-[var(--color-gold)]/40 px-3 py-1">
+                          <span className="inline-block text-[10px] font-serif luxury-tracking text-gold border border-gold/40 px-3 py-1">
                             {startTime} – {endTime}
                           </span>
                         </div>
@@ -233,20 +233,20 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[
                       <div className="flex flex-wrap gap-2 mt-4">
                         <Link
                           href={`/cast/${cast.id}`}
-                          className="text-[9px] font-serif luxury-tracking text-[var(--color-gold)] border border-[var(--color-gold)]/60 px-4 py-2 hover:bg-[var(--color-gold)]/10 transition-colors uppercase"
+                          className="text-[9px] font-serif luxury-tracking text-gold border border-gold/60 px-4 py-2 hover:bg-gold/10 transition-colors uppercase"
                         >
                           プロフィール
                         </Link>
                         <Link
                           href={`/reserve?cast=${encodeURIComponent(cast.stage_name)}`}
-                          className="flex items-center gap-1.5 text-[9px] font-serif luxury-tracking bg-[#171717] text-white px-4 py-2 hover:bg-[var(--color-gold)] transition-colors uppercase"
+                          className="flex items-center gap-1.5 text-[9px] font-serif luxury-tracking bg-[#171717] text-white px-4 py-2 hover:bg-gold transition-colors uppercase"
                         >
                           <CalendarHeart className="w-3 h-3" />
                           今すぐ指名予約
                         </Link>
                         <button
                           onClick={() => setOpenSimulator(isSimOpen ? null : cast.id)}
-                          className="flex items-center gap-1 text-[9px] font-serif luxury-tracking text-gray-400 border border-gray-200 px-4 py-2 hover:border-[var(--color-gold)] hover:text-[var(--color-gold)] transition-colors uppercase"
+                          className="flex items-center gap-1 text-[9px] font-serif luxury-tracking text-gray-400 border border-gray-200 px-4 py-2 hover:border-gold hover:text-gold transition-colors uppercase"
                         >
                           料金目安
                           {isSimOpen ? (

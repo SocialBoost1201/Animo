@@ -35,7 +35,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     }
   }
 
-  const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-gold)] transition-colors'
+  const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors'
   const labelClass = 'block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2'
 
   return (
@@ -131,7 +131,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 name="is_active"
                 defaultChecked={initialData ? (initialData.is_active ?? true) : true}
                 value="true"
-                className="w-5 h-5 accent-[var(--color-gold)]"
+                className="w-5 h-5 accent-gold"
               />
               <span className="text-sm font-bold text-[#171717]">在籍中（公開する）</span>
             </label>

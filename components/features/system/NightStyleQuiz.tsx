@@ -53,7 +53,7 @@ export const NightStyleQuiz = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-8 bg-white/40 backdrop-blur-xl border border-[var(--color-gold)]/20 p-8 md:p-12 shadow-aura mix-blend-multiply">
+    <div className="w-full max-w-2xl mx-auto mt-8 bg-white/40 backdrop-blur-xl border border-gold/20 p-8 md:p-12 shadow-aura mix-blend-multiply">
       {!isFinished ? (
         <AnimatePresence mode="wait">
           <motion.div
@@ -65,7 +65,7 @@ export const NightStyleQuiz = () => {
             className="flex flex-col space-y-8"
           >
             <div className="text-center">
-              <span className="text-[10px] text-[var(--color-gold)] font-serif luxury-tracking uppercase mb-2 block">
+              <span className="text-[10px] text-gold font-serif luxury-tracking uppercase mb-2 block">
                 Question {currentStep + 1} / {QUESTIONS.length}
               </span>
               <h3 className="text-lg md:text-xl font-serif text-[#171717] leading-relaxed">
@@ -83,17 +83,17 @@ export const NightStyleQuiz = () => {
                     onClick={() => handleSelect(currentQuestion.id, option.value)}
                     className={`relative p-4 md:p-6 w-full flex items-center gap-4 border transition-all duration-300 ${
                       isSelected
-                        ? 'bg-[var(--color-gold)]/10 border-[var(--color-gold)] text-[#171717] shadow-sm'
-                        : 'bg-white/60 border-gray-200 text-gray-500 hover:border-[var(--color-gold)]/50 hover:bg-white'
+                        ? 'bg-gold/10 border-gold text-[#171717] shadow-sm'
+                        : 'bg-white/60 border-gray-200 text-gray-500 hover:border-gold/50 hover:bg-white'
                     }`}
                   >
-                    <div className={`p-2 rounded-full ${isSelected ? 'bg-[var(--color-gold)] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                    <div className={`p-2 rounded-full ${isSelected ? 'bg-gold text-white' : 'bg-gray-100 text-gray-400'}`}>
                       <Icon size={18} />
                     </div>
                     <span className="font-serif tracking-wide text-sm md:text-base">{option.text}</span>
                     {isSelected && (
                       <motion.div layoutId="selected-indicator" className="ml-auto">
-                        <ArrowRight size={20} className="text-[var(--color-gold)]" />
+                        <ArrowRight size={20} className="text-gold" />
                       </motion.div>
                     )}
                   </button>
@@ -110,8 +110,8 @@ export const NightStyleQuiz = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-8"
           >
-            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-[var(--color-gold)]/10 mb-6">
-              <Sparkles className="w-8 h-8 text-[var(--color-gold)]" />
+            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-gold/10 mb-6">
+              <Sparkles className="w-8 h-8 text-gold" />
             </div>
             <h3 className="text-2xl font-serif text-[#171717] mb-4 luxury-tracking">
               あなたにぴったりのキャストを<br />ご案内します
@@ -128,7 +128,7 @@ export const NightStyleQuiz = () => {
               </Button>
               <button
                 onClick={resetQuiz}
-                className="flex items-center justify-center gap-2 text-[10px] uppercase font-serif text-gray-400 hover:text-[var(--color-gold)] transition-colors mt-4 sm:mt-0"
+                className="flex items-center justify-center gap-2 text-[10px] uppercase font-serif text-gray-400 hover:text-gold transition-colors mt-4 sm:mt-0"
               >
                 <RefreshCcw size={12} />
                 診断をやり直す

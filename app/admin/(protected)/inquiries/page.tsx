@@ -24,7 +24,7 @@ export default async function InquiriesPage() {
       <div className={`p-6 border-b border-gray-100 transition-colors ${isUnread ? 'bg-white' : 'bg-gray-50/50'}`}>
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
-            {isUnread && <span className="w-2 h-2 rounded-full bg-[var(--color-gold)]"></span>}
+            {isUnread && <span className="w-2 h-2 rounded-full bg-gold"></span>}
             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider ${
               isApp 
                 ? (item.type === 'cast' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700')

@@ -86,7 +86,7 @@ const POSITIONS = {
     tableData: [
       { label: '業種', value: 'キャバクラ / ラウンジ' },
       { label: '職種', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
-      { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-[var(--color-gold)] w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
+      { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-gold w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
       { label: '給与', value: '【正社員】月給 25万円〜35万円以上\n【アルバイト】時給 1,400円以上' },
       { label: '給与詳細', value: '■昇給・昇格随時\n■交通費規定内支給\n■深夜手当あり\n■大入賞・各種歩合あり' },
       { label: '応募資格', value: '18歳以上（高校生不可）\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
@@ -146,7 +146,7 @@ const POSITIONS = {
     tableData: [
       { label: '業種', value: 'キャバクラ / ラウンジ' },
       { label: '職種', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
-      { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-[var(--color-gold)] w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
+      { label: '住所', value: <span className="flex items-center gap-2"><MapPin className="text-gold w-4 h-4 shrink-0"/>神奈川県横浜市中区相生町3-53 グランドパークビル</span> },
       { label: '給与', value: '時給 1,500円〜' },
       { label: '給与詳細', value: '■昇給随時\n■交通費一部支給\n■日払い対応可（要相談）' },
       { label: '応募資格', value: '18歳以上（高校生不可）\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
