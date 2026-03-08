@@ -1,11 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { Instagram, MapPin, Phone } from 'lucide-react';
+import { SilverDustBackground } from '@/components/motion/SilverDustBackground';
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#111111] text-white pt-20 pb-12 mt-auto">
-      <div className="container mx-auto px-6 lg:px-12">
+    <footer className="relative bg-[#111111] text-white pt-20 pb-12 mt-auto overflow-hidden">
+      <SilverDustBackground particleCount={120} opacity={0.4} className="z-0" />
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand Info */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
