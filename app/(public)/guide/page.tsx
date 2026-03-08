@@ -204,7 +204,7 @@ export default function GuidePage() {
                 <MapPin className="w-5 h-5 text-gold shrink-0 mt-1" />
                 <div className="text-sm font-serif text-gray-600 leading-loose">
                   〒231-0012 神奈川県横浜市中区相生町３丁目５３<br />
-                  グランドパークビル
+                  グランドパークビル2F
                 </div>
               </div>
               <div className="text-xs text-gray-500 font-serif leading-[2.2] space-y-1 pl-9">

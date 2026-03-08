@@ -12,7 +12,7 @@ export function LocalBusinessSchema() {
     "description": "関内の大人の社交場。煌びやかなシャンデリアの下で特別な時間をお過ごしください。",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "相生町３丁目５３ グランドパークビル",
+      "streetAddress": "相生町３丁目５３ グランドパークビル2F",
       "addressLocality": "横浜市中区",
       "addressRegion": "神奈川県",
       "postalCode": "231-0012",

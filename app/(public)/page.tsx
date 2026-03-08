@@ -499,7 +499,7 @@ export default async function HomePage() {
                   <dd className="leading-loose">
                     〒231-0012<br />
                     神奈川県横浜市中区相生町３丁目５３<br />
-                    グランドパークビル
+                    グランドパークビル2F
                   </dd>
                 </div>
                 <div className="flex items-start gap-4">

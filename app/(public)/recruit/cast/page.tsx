@@ -104,7 +104,7 @@ const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
     <span className="flex flex-wrap items-start sm:items-center justify-between gap-2 w-full">
       <span className="flex items-start gap-2 text-xs leading-relaxed">
         <MapPin className="text-gold w-4 h-4 shrink-0 mt-0.5"/>
-        <span>神奈川県横浜市中区相生町3-53 グランドパークビル</span>
+        <span>神奈川県横浜市中区相生町3-53 グランドパークビル2F</span>
       </span>
       <a
         href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53"

@@ -5,7 +5,7 @@ import { MapPin, Phone, Clock, Train, Building2 } from 'lucide-react';
 
 export const metadata = {
   title: 'Access | Club Animo',
-  description: '関内の高級クラブ「Club Animo」へのアクセス方法・店舗情報。〒231-0012 神奈川県横浜市中区相生町3丁目53 グランドパークビル',
+  description: '関内の高級クラブ「Club Animo」へのアクセス方法・店舗情報。〒231-0012 神奈川県横浜市中区相生町3丁目53 グランドパークビル2F',
 };
 
 export default function AccessPage() {
@@ -49,7 +49,7 @@ export default function AccessPage() {
                     <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Address</span>
                     〒231-0012<br />
                     神奈川県横浜市中区相生町３丁目５３<br />
-                    グランドパークビル
+                    グランドパークビル2F
                   </dd>
                 </div>
 
@@ -60,7 +60,7 @@ export default function AccessPage() {
                   </dt>
                   <dd className="leading-loose">
                     <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Building</span>
-                    グランドパークビル
+                    グランドパークビル2F
                   </dd>
                 </div>
 
@@ -119,7 +119,7 @@ export default function AccessPage() {
                 />
               </div>
               <a
-                href="https://maps.google.com/maps?q=神奈川県横浜市中区相生町3丁目53+グランドパークビル"
+                href="https://maps.google.com/maps?q=神奈川県横浜市中区相生町3丁目53+グランドパークビル2F"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[10px] text-center text-gold font-serif luxury-tracking uppercase hover:underline transition-all"

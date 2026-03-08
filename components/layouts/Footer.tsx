@@ -78,7 +78,7 @@ export const Footer = () => {
                 <span>
                   〒231-0012<br />
                   神奈川県横浜市中区相生町３丁目５３<br />
-                  グランドパークビル
+                  グランドパークビル2F
                 </span>
               </li>
               <li className="flex items-center mt-4">
