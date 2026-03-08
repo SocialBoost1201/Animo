@@ -4,17 +4,41 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import Link from 'next/link';
-import { ArrowLeft, CalendarHeart } from 'lucide-react';
+import { ArrowLeft, CalendarHeart, Sparkles } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CastDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CastDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{
+    purpose?: string;
+    atmosphere?: string;
+    look?: string;
+    talk?: string;
+  }>;
+}) {
   const { slug } = await params;
+  const sParams = await searchParams;
   const cast = await getPublicCastBySlug(slug);
 
   if (!cast) notFound();
+
+  // 診断マッチング判定
+  const { purpose, atmosphere, look, talk } = sParams;
+  const hasDiagnostic = !!(purpose || atmosphere || look || talk);
+  const quizTags = cast.quiz_tags || [];
+  let matchScore = 0;
+  if (purpose && quizTags.includes(`purpose_${purpose}`)) matchScore += 1;
+  if (atmosphere && quizTags.includes(`atm_${atmosphere}`)) matchScore += 1;
+  if (look && quizTags.includes(`look_${look}`)) matchScore += 1;
+  if (talk && quizTags.includes(`talk_${talk}`)) matchScore += 1;
+
+  const isMatched = hasDiagnostic && matchScore >= 1;
 
   // 代表画像取得
   const primaryImage = cast.cast_images?.find((img: any) => img.is_primary) || cast.cast_images?.[0];
@@ -63,6 +87,14 @@ export default async function CastDetailPage({ params }: { params: Promise<{ slu
           <div className="w-full md:w-7/12 flex flex-col justify-center">
             <FadeIn delay={0.1}>
               <div className="mb-6">
+                {isMatched && (
+                  <div className="inline-flex items-center gap-2 bg-gold/10 border border-gold/30 px-3 py-1.5 mb-4 rounded-full">
+                    <Sparkles className="w-3.5 h-3.5 text-gold" />
+                    <span className="text-[10px] font-bold tracking-widest text-[#171717] font-serif uppercase">
+                      Diagnosis Match: {matchScore}/4
+                    </span>
+                  </div>
+                )}
                 <h1 className="text-4xl md:text-5xl font-serif text-[#171717] mb-2">{cast.stage_name}</h1>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">

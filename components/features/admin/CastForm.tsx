@@ -154,6 +154,50 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   ))}
                 </div>
               </div>
+
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">見た目タグ</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {([
+                    { value: 'look_elegant', label: '清楚系・上品' },
+                    { value: 'look_cute',    label: 'キュート・可愛い' },
+                    { value: 'look_cool',    label: 'クール・スタイリッシュ' },
+                  ] as const).map((tag) => (
+                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                      <input
+                        type="checkbox"
+                        name="quiz_tags"
+                        value={tag.value}
+                        defaultChecked={initialData?.quiz_tags?.includes(tag.value)}
+                        className="accent-gold"
+                      />
+                      {tag.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">会話スタイルタグ</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {([
+                    { value: 'talk_funny',        label: '盛り上げ上手' },
+                    { value: 'talk_intellectual', label: '知的・深い話' },
+                    { value: 'talk_quiet',       label: '落ち着いて聞く' },
+                  ] as const).map((tag) => (
+                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                      <input
+                        type="checkbox"
+                        name="quiz_tags"
+                        value={tag.value}
+                        defaultChecked={initialData?.quiz_tags?.includes(tag.value)}
+                        className="accent-gold"
+                      />
+                      {tag.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 

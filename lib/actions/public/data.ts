@@ -24,6 +24,29 @@ export async function getPublicCasts() {
   return data
 }
 
+// ─── Night Style 診断マッチキャスト（スコア順 top N）─────────
+export async function getMatchedCasts(tags: string[], limit = 4) {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from('casts')
+    .select('id, stage_name, slug, age, quiz_tags, cast_images(image_url, is_primary)')
+    .eq('is_active', true)
+
+  if (error || !data) return []
+
+  // スコア計算: タグ一致ごとに +1
+  const scored = data.map((cast) => {
+    const castTags: string[] = cast.quiz_tags ?? []
+    const score = tags.filter((t) => castTags.includes(t)).length
+    return { ...cast, matchScore: score }
+  })
+
+  return scored
+    .filter((c) => c.matchScore > 0)
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, limit)
+}
+
 // ─── 公開キャスト詳細（slug ベース）──────────────────────
 export async function getPublicCastBySlug(slug: string) {
   const supabase = createServiceClient()

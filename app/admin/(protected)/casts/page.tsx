@@ -1,6 +1,6 @@
 import { getCasts, deleteCast } from '@/lib/actions/casts'
 import Link from 'next/link'
-import { Trash2, Eye, EyeOff, Edit2, Plus } from 'lucide-react'
+import { Trash2, Eye, EyeOff, Edit2, Plus, Sparkles } from 'lucide-react'
 import { DeleteCastButton } from '@/components/features/admin/DeleteCastButton'
 
 export default async function CastsPage() {
@@ -32,6 +32,7 @@ export default async function CastsPage() {
               <th className="px-6 py-4 font-bold">Image</th>
               <th className="px-6 py-4 font-bold">源氏名</th>
               <th className="px-6 py-4 font-bold">年齢</th>
+              <th className="px-6 py-4 font-bold">診断</th>
               <th className="px-6 py-4 font-bold">在籍</th>
               <th className="px-6 py-4 font-bold text-right">Actions</th>
             </tr>
@@ -56,6 +57,18 @@ export default async function CastsPage() {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {cast.age ? `${cast.age}歳` : '-'}
+                </td>
+                <td className="px-6 py-4">
+                  {cast.quiz_tags && cast.quiz_tags.length > 0 ? (
+                    <div className="flex items-center gap-1.5 text-gold">
+                      <Sparkles size={14} />
+                      <span className="text-xs font-bold">{cast.quiz_tags.length} tags</span>
+                    </div>
+                  ) : (
+                    <span className="text-[10px] text-gray-300 flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-200" /> 未設定
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
