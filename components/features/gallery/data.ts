@@ -15,6 +15,7 @@ export const GALLERY_DATA: GalleryItemData[] = [
   { id: 'int-3', category: 'interior', title: 'Main Floor Bar Area', src: '/images/animo-main-floor-bar-area.jpg', alt: 'Main Floor Bar Area' },
   { id: 'int-4', category: 'interior', title: 'Main Chandelier Interior', src: '/images/animo-main-chandelier-interior.jpg', alt: 'Main Chandelier Interior' },
   { id: 'int-2', category: 'interior', title: 'Chandelier Details', src: '/images/chandelier2.jpg', alt: 'Chandelier Details' },
+  { id: 'dec-3', category: 'interior', title: 'Bar Counter', src: '/images/bar-counter.jpg', alt: 'Bar Counter' },
 
   // SEATING
   { id: 'seat-1', category: 'seating', title: 'Curtain Room', src: '/images/curtain_room.jpg', alt: 'Curtain Room', featured: true },
@@ -29,7 +30,6 @@ export const GALLERY_DATA: GalleryItemData[] = [
   // DECOR
   { id: 'dec-1', category: 'decor', title: 'Red Rose Display', src: '/images/animo-red-rose-flower-display.jpg', alt: 'Red Rose Display', featured: true },
   { id: 'dec-2', category: 'decor', title: 'Stone Logo Wall', src: '/images/animo-stone-logo-wall.jpg', alt: 'Stone Logo Wall' },
-  { id: 'dec-3', category: 'decor', title: 'Bar Counter', src: '/images/bar-counter.jpg', alt: 'Bar Counter' },
 ];
 
 export const GALLERY_CATEGORIES = [

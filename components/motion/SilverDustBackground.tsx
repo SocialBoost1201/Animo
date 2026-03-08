@@ -37,7 +37,7 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 1.5 + 0.3, // 0.3 to 1.8 px (very fine dust)
+        size: Math.random() * 2.0 + 1.2, // 1.2 to 3.2 px (少し大きめの粉)
         speedX: (Math.random() - 0.5) * 0.2, // slow horizontal drift
         speedY: (Math.random() - 1) * 0.3 - 0.1, // slowly drifts upwards
         opacity: Math.random() * 0.5 + 0.1, // base opacity
