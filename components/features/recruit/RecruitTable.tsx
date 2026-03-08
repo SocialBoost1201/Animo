@@ -30,29 +30,54 @@ export function RecruitTable({ title, data, tags }: RecruitTableProps) {
           {title}
         </h3>
       )}
-      
+
       <div className="border border-gray-200 bg-white overflow-hidden shadow-sm">
         {data.map((row, index) => (
-          <div key={index} className={`flex flex-col md:flex-row ${index !== data.length - 1 ? 'border-b border-gray-200' : ''}`}>
-            {/* 1列目 ラベル (モバイル: 上部固定, PC: 左固定幅) */}
-            <div className="bg-[#f4ebe1]/40 md:w-56 shrink-0 flex items-center justify-center p-3 md:p-6 border-b md:border-b-0 md:border-r border-gray-200">
-              <span className="text-xs font-bold tracking-widest text-[#171717]">{row.label}</span>
-            </div>
-            {/* 1列目 値 */}
-            <div className={`p-4 md:p-6 text-xs md:text-sm text-gray-700 font-serif leading-loose ${row.subColumn ? 'md:w-1/2 md:border-r border-gray-200' : 'flex-1'} whitespace-pre-wrap`}>
-              {row.value}
-            </div>
-            
-            {/* 2列目 (職種・エリアのような分割用) */}
+          <div
+            key={index}
+            className={`border-b border-gray-200 last:border-b-0`}
+          >
+            {/* ─ 通常行（subColumn なし）─ */}
+            {!row.subColumn && (
+              <div className="flex flex-col sm:flex-row">
+                {/* ラベル */}
+                <div className="bg-[#f4ebe1]/50 sm:w-44 md:w-56 shrink-0 flex items-center justify-center px-4 py-3 border-b sm:border-b-0 sm:border-r border-gray-200">
+                  <span className="text-xs font-bold tracking-widest text-foreground text-center">
+                    {row.label}
+                  </span>
+                </div>
+                {/* 値 */}
+                <div className="flex-1 p-4 md:p-6 text-xs md:text-sm text-gray-700 font-serif leading-loose whitespace-pre-wrap min-w-0">
+                  {row.value}
+                </div>
+              </div>
+            )}
+
+            {/* ─ 2分割行（subColumn あり）─ */}
             {row.subColumn && (
               <>
-                {/* 2列目 ラベル */}
-                <div className="bg-[#f4ebe1]/40 md:w-40 shrink-0 flex items-center justify-center p-3 border-y md:border-y-0 md:border-r border-gray-200">
-                  <span className="text-xs font-bold tracking-widest text-[#171717]">{row.subColumn.label}</span>
-                </div>
-                {/* 2列目 値 */}
-                <div className="p-4 md:p-6 text-xs md:text-sm text-gray-700 font-serif leading-loose flex-1 whitespace-pre-wrap">
-                  {row.subColumn.value}
+                {/* PC: 1行で4セル / スマホ: 主項目を上、サブ項目を下に */}
+                <div className="flex flex-col sm:flex-row">
+                  {/* メインラベル */}
+                  <div className="bg-[#f4ebe1]/50 sm:w-44 md:w-56 shrink-0 flex items-center justify-center px-4 py-3 border-b sm:border-b-0 sm:border-r border-gray-200">
+                    <span className="text-xs font-bold tracking-widest text-foreground text-center">
+                      {row.label}
+                    </span>
+                  </div>
+                  {/* メイン値 */}
+                  <div className="flex-1 p-4 md:p-6 text-xs md:text-sm text-gray-700 font-serif leading-loose whitespace-pre-wrap min-w-0 border-b sm:border-b-0 sm:border-r border-gray-200">
+                    {row.value}
+                  </div>
+                  {/* サブラベル */}
+                  <div className="bg-[#f4ebe1]/50 sm:w-28 md:w-36 shrink-0 flex items-center justify-center px-4 py-3 border-b sm:border-b-0 sm:border-r border-gray-200">
+                    <span className="text-xs font-bold tracking-widest text-foreground text-center">
+                      {row.subColumn.label}
+                    </span>
+                  </div>
+                  {/* サブ値 */}
+                  <div className="flex-1 p-4 md:p-6 text-xs md:text-sm text-gray-700 font-serif leading-loose whitespace-pre-wrap min-w-0">
+                    {row.subColumn.value}
+                  </div>
                 </div>
               </>
             )}
@@ -62,13 +87,13 @@ export function RecruitTable({ title, data, tags }: RecruitTableProps) {
 
       {/* Tags */}
       {tags && tags.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-2 md:gap-3 justify-center">
+        <div className="mt-6 flex flex-wrap gap-2 justify-center">
           {tags.map((tag, i) => (
-            <span 
-              key={i} 
-              className={`text-[10px] md:text-xs font-serif luxury-tracking px-4 py-2.5 text-center min-w-[100px] rounded-sm transition-colors ${
-                tag.active 
-                  ? 'bg-[#8c7a6b] text-white shadow-sm' 
+            <span
+              key={i}
+              className={`text-[11px] font-serif luxury-tracking px-3 py-2 text-center rounded-sm transition-colors ${
+                tag.active
+                  ? 'bg-[#8c7a6b] text-white shadow-sm'
                   : 'bg-gray-100 text-gray-400 border border-gray-200/60'
               }`}
             >

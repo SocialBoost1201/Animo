@@ -101,15 +101,15 @@ const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
   { label: '業種', value: 'キャバクラ / ラウンジ' },
   { label: '職種', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
   { label: '住所', value: (
-    <span className="flex items-center justify-between gap-2 w-full">
-      <span className="flex items-center gap-2">
-        <MapPin className="text-gold w-4 h-4 shrink-0"/>
-        神奈川県横浜市中区相生町3-53 グランドパークビル
+    <span className="flex flex-wrap items-start sm:items-center justify-between gap-2 w-full">
+      <span className="flex items-start gap-2 text-xs leading-relaxed">
+        <MapPin className="text-gold w-4 h-4 shrink-0 mt-0.5"/>
+        <span>神奈川県横浜市中区相生町3-53 グランドパークビル</span>
       </span>
       <a
         href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53"
         target="_blank" rel="noopener noreferrer"
-        className="flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-0.5 hover:bg-gold/10 transition-colors shrink-0"
+        className="inline-flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-1 hover:bg-gold/10 transition-colors shrink-0"
       >
         <MapPin className="w-3 h-3" /> MAP
       </a>
