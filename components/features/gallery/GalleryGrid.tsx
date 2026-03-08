@@ -23,21 +23,21 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 md:gap-4 w-full max-w-[1600px] mx-auto auto-rows-[160px] sm:auto-rows-[220px] lg:auto-rows-[300px]">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 md:gap-4 w-full max-w-[1600px] mx-auto auto-rows-[160px] sm:auto-rows-[220px] lg:auto-rows-[300px] grid-flow-row-dense">
         {filteredItems.map((item, i) => {
-          let spanClass = 'col-span-1 lg:col-span-1 row-span-1';
+          let spanClass = 'col-span-1 lg:col-span-1 row-span-1 lg:row-span-1';
 
-          // First feature is huge
+          // 1番最初の画像は特大 (2x2)
           if (i === 0) {
-            spanClass = 'col-span-2 lg:col-span-2 row-span-2';
+            spanClass = 'col-span-2 lg:col-span-2 row-span-2 lg:row-span-2';
           } 
-          // Other featured / specific layout index
+          // featuredフラグがある場合は横長 (2x1)
           else if (item.featured) {
-            spanClass = 'col-span-2 lg:col-span-2 row-span-1';
+            spanClass = 'col-span-2 lg:col-span-2 row-span-1 lg:row-span-1';
           } 
-          // Alternating slightly
-          else if (i % 5 === 0) {
-            spanClass = 'col-span-2 lg:col-span-2 row-span-1 lg:row-span-2';
+          // それ以外で4の倍数の時は縦長 (1x2) にしてリズムを作る
+          else if (i % 4 === 0) {
+            spanClass = 'col-span-1 lg:col-span-1 row-span-1 lg:row-span-2';
           }
 
           return (
