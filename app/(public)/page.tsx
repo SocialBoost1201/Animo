@@ -9,6 +9,7 @@ import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
 import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
+import { GallerySection } from '@/components/features/gallery/GallerySection';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
@@ -422,58 +423,23 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 7. GALLERY */}
-      <section className="py-section bg-transparent px-6">
+      {/* 7. EXPERIENTIAL GALLERY */}
+      <section className="py-section bg-[#111] px-0 md:px-6 mt-12 mb-12 relative">
+        <div className="absolute inset-0 bg-linear-to-b from-black via-black/95 to-black -z-10 pointer-events-none" />
         <div className="container mx-auto">
-          <FadeIn className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-12">
+          <FadeIn className="text-center mb-10 pt-12">
+            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-gold uppercase mb-8">
               <GsapRevealTitle text="Gallery" />
             </h2>
             <div className="w-px h-16 bg-linear-to-b from-gold to-transparent mx-auto opacity-50" />
+            <p className="text-xs text-gold font-serif luxury-tracking uppercase mt-8">The Atmosphere of Club Animo</p>
           </FadeIn>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
-            {Array.from({ length: Math.max(6, dbGallery.length) }).map((_, i) => {
-              const staticFallbacks = [
-                { id: 'fb1', title: 'Main Chandelier', description: 'ホール全体を照らす優美な大シャンデリア。\n無数のクリスタルが非日常の空間へと誘います。', image_url: '/images/chandelier.jpg' },
-                { id: 'fb2', title: 'Curtain Room', description: '半個室感のあるカーテンルーム。\n深紅のカーテンに包まれた落ち着いた空間で、\n特別なひとときをお過ごしいただけます。', image_url: '/images/curtain_room.JPG' },
-              ];
-              const item = dbGallery.length > 0 ? dbGallery[i] : staticFallbacks[i];
+          <GallerySection />
 
-              if (!item) {
-                return (
-                  <FadeIn delay={0.1 * (i % 6)} key={`empty-${i}`}>
-                    <div className="group overflow-hidden bg-white/20 backdrop-blur-sm border border-white/20 h-full min-h-[160px] md:min-h-[280px] flex flex-col items-center justify-center opacity-40">
-                      <span className="text-[10px] font-serif text-gold/40 luxury-tracking uppercase">Coming Soon</span>
-                    </div>
-                  </FadeIn>
-                );
-              }
-
-              return (
-                <FadeIn delay={0.1 * (i % 6)} key={item.id}>
-                  <div className="group overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000 border border-white/20 h-full flex flex-col">
-                    <div className="overflow-hidden h-[120px] md:h-[200px] w-full relative shrink-0">
-                      <PlaceholderImage
-                        src={item.image_url}
-                        ratio="16:9"
-                        alt={item.title || 'Gallery Image'}
-                        placeholderText={item.title || 'Image'}
-                        className="w-full h-full object-cover group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                      />
-                    </div>
-                    <div className="p-3 md:p-5 text-center flex-1 flex flex-col justify-center">
-                      <h3 className="font-serif luxury-tracking text-sm md:text-base text-foreground mb-1 line-clamp-1">{item.title}</h3>
-                    </div>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-
-          <FadeIn delay={0.4} className="mt-12 text-center">
-            <Button asChild variant="outline">
-              <Link href="/gallery" className="px-12">ギャラリーを見る</Link>
+          <FadeIn delay={0.4} className="mt-16 text-center pb-12">
+            <Button asChild variant="outline" className="border-gold text-gold hover:bg-gold hover:text-black">
+              <Link href="/gallery" className="px-12">すべての写真を見る</Link>
             </Button>
           </FadeIn>
         </div>
