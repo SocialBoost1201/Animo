@@ -6,12 +6,16 @@ interface SilverDustBackgroundProps {
   particleCount?: number;
   className?: string;
   opacity?: number;
+  minSize?: number;
+  maxSize?: number;
 }
 
 export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
   particleCount = 50,
   className = '',
   opacity = 0.5,
+  minSize = 1.2,
+  maxSize = 3.2,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -37,7 +41,7 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 2.0 + 1.2, // 1.2 to 3.2 px (少し大きめの粉)
+        size: Math.random() * (maxSize - minSize) + minSize,
         speedX: (Math.random() - 0.5) * 0.2, // slow horizontal drift
         speedY: (Math.random() - 1) * 0.3 - 0.1, // slowly drifts upwards
         opacity: Math.random() * 0.5 + 0.1, // base opacity

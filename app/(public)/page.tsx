@@ -426,7 +426,7 @@ export default async function HomePage() {
 
       {/* 7. EXPERIENTIAL GALLERY */}
       <section className="py-section bg-[#111] px-0 md:px-6 mt-12 mb-12 relative z-10">
-        <SilverDustBackground particleCount={80} opacity={0.3} className="z-[-5]" />
+        <SilverDustBackground particleCount={80} opacity={0.3} minSize={3.0} maxSize={7.0} className="z-[-5]" />
         <div className="absolute inset-0 bg-linear-to-b from-black via-black/95 to-black -z-10 pointer-events-none" />
         <div className="container mx-auto relative z-20">
           <FadeIn className="text-center mb-10 pt-12">
