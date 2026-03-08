@@ -10,6 +10,7 @@ import {
   Heart, Users, Star, MessageCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import { Ripple } from '@/components/motion/Ripple';
 
 // ─────────────────────────────────────────────────────────────────
 // 設問定義（4問）
@@ -156,19 +157,20 @@ export const NightStyleQuiz = () => {
                   <button
                     key={option.value}
                     onClick={() => handleSelect(currentQuestion.id, option.value)}
-                    className={`relative p-4 md:p-5 w-full flex items-center gap-4 border transition-all duration-300 ${
+                    className={`relative overflow-hidden p-4 md:p-5 w-full flex items-center gap-4 border transition-all duration-500 rounded-sm ${
                       isSelected
-                        ? 'bg-gold/10 border-gold text-[#171717] shadow-sm'
-                        : 'bg-white/60 border-gray-200 text-gray-500 hover:border-gold/50 hover:bg-white'
+                        ? 'bg-gold/5 border-gold text-[#171717] shadow-[0_0_20px_rgba(201,160,99,0.3)]'
+                        : 'bg-white/60 border-gray-200 text-gray-500 hover:border-gold/50 hover:bg-white hover:shadow-[0_0_15px_rgba(201,160,99,0.15)]'
                     }`}
                   >
-                    <div className={`p-2 rounded-full ${isSelected ? 'bg-gold text-white' : 'bg-gray-100 text-gray-400'}`}>
+                    <Ripple />
+                    <div className={`p-2 rounded-full transition-colors duration-500 ${isSelected ? 'bg-gold text-white shadow-[0_0_10px_rgba(201,160,99,0.5)]' : 'bg-gray-100/80 text-gray-400 group-hover:bg-gold/10'}`}>
                       <Icon size={16} />
                     </div>
-                    <span className="font-serif tracking-wide text-sm">{option.text}</span>
+                    <span className="font-serif tracking-wide text-sm relative z-10">{option.text}</span>
                     {isSelected && (
-                      <motion.div layoutId="selected-indicator" className="ml-auto">
-                        <ArrowRight size={18} className="text-gold" />
+                      <motion.div layoutId="selected-indicator" className="ml-auto relative z-10">
+                        <ArrowRight size={18} className="text-gold dropshadow-glow" />
                       </motion.div>
                     )}
                   </button>

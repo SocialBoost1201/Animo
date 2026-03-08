@@ -1,9 +1,10 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { Slot, Slottable } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
+import { Ripple } from "@/components/motion/Ripple"
 
 const buttonVariants = {
-  base: "inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  base: "relative overflow-hidden inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   variants: {
     variant: {
       default:
@@ -34,7 +35,7 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
+  ({ className, variant = "default", size = "default", asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     
     // 手動でバリアントとサイズをマージ
@@ -46,7 +47,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants.base, variantClass, sizeClass, className)}
         ref={ref}
         {...props}
-      />
+      >
+        <Slottable>{children}</Slottable>
+        <Ripple />
+      </Comp>
     )
   }
 )
