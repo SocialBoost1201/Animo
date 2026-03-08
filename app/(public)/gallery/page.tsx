@@ -22,7 +22,7 @@ export default async function GalleryPage() {
         </FadeIn>
 
         {/* ギャラリー一覧をグリッド表示する専用コンポーネント (画像拡大等を持たせる想定) */}
-        <GalleryGrid items={galleryItems} />
+        <GalleryGrid items={galleryItems} activeCategory="all" />
 
       </div>
     </div>
