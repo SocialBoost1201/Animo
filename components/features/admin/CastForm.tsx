@@ -46,7 +46,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
         </Link>
       </div>
 
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm p-8">
+      <div className="bg-white border border-gray-100 shadow-sm rounded-sm p-5 md:p-8">
         <h2 className="text-xl font-serif tracking-widest text-[#171717] mb-8">
           {isEditing ? 'Edit Cast' : 'New Cast'}
         </h2>
@@ -113,13 +113,13 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">目的タグ（どんな来店目的の方に合う？）</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {([
                     { value: 'purpose_business', label: '接待・おもてなし' },
                     { value: 'purpose_party',   label: 'パーティー・盛り上がり' },
                     { value: 'purpose_solo',    label: 'ひとり・まったり' },
                   ] as const).map((tag) => (
-                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                    <label key={tag.value} className="flex items-center gap-3 cursor-pointer text-sm text-gray-600 border border-gray-100 rounded-sm px-3 py-3 hover:border-gold/40 transition-colors active:bg-gold/5">
                       <input
                         type="checkbox"
                         name="quiz_tags"
@@ -135,13 +135,13 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
               <div>
                 <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">雰囲気タグ（どんな雰囲気のキャスト？）</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {([
                     { value: 'atm_calm',      label: '清楚・落ち着き' },
                     { value: 'atm_cheerful',  label: '明るい・ノリが良い' },
                     { value: 'atm_healing',   label: '聞き上手・癒やし' },
                   ] as const).map((tag) => (
-                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                    <label key={tag.value} className="flex items-center gap-3 cursor-pointer text-sm text-gray-600 border border-gray-100 rounded-sm px-3 py-3 hover:border-gold/40 transition-colors active:bg-gold/5">
                       <input
                         type="checkbox"
                         name="quiz_tags"
@@ -157,13 +157,13 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
               <div>
                 <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">見た目タグ</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {([
                     { value: 'look_elegant', label: '清楚系・上品' },
                     { value: 'look_cute',    label: 'キュート・可愛い' },
                     { value: 'look_cool',    label: 'クール・スタイリッシュ' },
                   ] as const).map((tag) => (
-                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                    <label key={tag.value} className="flex items-center gap-3 cursor-pointer text-sm text-gray-600 border border-gray-100 rounded-sm px-3 py-3 hover:border-gold/40 transition-colors active:bg-gold/5">
                       <input
                         type="checkbox"
                         name="quiz_tags"
@@ -179,13 +179,13 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
               <div>
                 <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-2">会話スタイルタグ</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {([
                     { value: 'talk_funny',        label: '盛り上げ上手' },
                     { value: 'talk_intellectual', label: '知的・深い話' },
                     { value: 'talk_quiet',       label: '落ち着いて聞く' },
                   ] as const).map((tag) => (
-                    <label key={tag.value} className="flex items-center gap-2 cursor-pointer text-xs text-gray-600 border border-gray-100 rounded-sm px-3 py-2 hover:border-gold/40 transition-colors">
+                    <label key={tag.value} className="flex items-center gap-3 cursor-pointer text-sm text-gray-600 border border-gray-100 rounded-sm px-3 py-3 hover:border-gold/40 transition-colors active:bg-gold/5">
                       <input
                         type="checkbox"
                         name="quiz_tags"
