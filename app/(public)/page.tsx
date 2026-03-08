@@ -326,7 +326,7 @@ export default async function HomePage() {
       <section className="py-section bg-transparent px-6">
         <div className="container mx-auto max-w-3xl">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
               <GsapRevealTitle text="Price Simulator" />
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto opacity-50" />
@@ -344,7 +344,7 @@ export default async function HomePage() {
       <section className="py-section bg-white px-6">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
               <GsapRevealTitle text="Night Style" />
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto opacity-50" />
