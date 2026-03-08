@@ -86,6 +86,17 @@ const FAQ_ITEMS = [
   { q: '学生・Wワークでも大丈夫ですか？', a: '週1日・3時間〜の勤務が可能です。扶養内希望の方も歓迎します。' },
 ];
 
+const CAST_POINTS = [
+  'ノルマ・強制・ペナルティー一切なし',
+  '週1日・3時間〜の出勤でもOK',
+  '終電上がりOK・遅出出勤OK',
+  '体験入店は何回でも歓迎（当日日払い）',
+  'お酒が飲めなくてもOK（ノンアルコール対応あり）',
+  'ドレス・ヘアメイク・ロッカー無料完備',
+  '安心の毎回送迎完備（終電後もOK）',
+  'スマホ応募OK・履歴書不要・面接場所相談可',
+];
+
 const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
   { label: '業種', value: 'キャバクラ / ラウンジ' },
   { label: '職種', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
@@ -311,7 +322,29 @@ export default function CastRecruitPage() {
         </div>
       </section>
 
-      {/* ⑥.5 募集要項 */}
+      {/* ⑥.5 ここがポイント！ */}
+      <section className="py-16 px-6 bg-[#fffdf8] border-y border-gold/20">
+        <div className="container mx-auto max-w-4xl">
+          <FadeIn>
+            <div className="text-center mb-10">
+              <span className="inline-block text-[10px] font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
+                Point
+              </span>
+              <h2 className="text-xl md:text-2xl font-serif luxury-tracking text-foreground">ここがポイント！</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {CAST_POINTS.map((point, i) => (
+                <div key={i} className="flex items-start gap-3 bg-white border border-gold/15 px-5 py-4 shadow-sm">
+                  <span className="text-gold font-serif text-base leading-none shrink-0 mt-0.5">★</span>
+                  <span className="text-sm font-serif leading-relaxed luxury-tracking text-gray-700">{point}</span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ⑦ 募集要項 */}
       <section className="py-24 px-6 bg-white">
         <div className="container mx-auto max-w-5xl">
           <FadeIn>

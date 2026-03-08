@@ -83,6 +83,16 @@ const POSITIONS = {
       { q: '副業・Wワークは可能ですか？', a: 'アルバイトであれば副業・Wワーク歓迎です。' },
     ],
     formRole: 'staff',
+    points: [
+      '不正解雇・打ち切り一切なし・安定した勤務環境',
+      '学歴・職歴・業界経験一切不問（異業種転職大歓迎）',
+      'アルバイトは週１日・4時間〜自由なシフトに調整可能',
+      '正社員は社会保険完備＋交進費支給＋深夜手当あり',
+      'マネージャー・店長候補への昇格実績多数・独立支援あり',
+      '無料送迎完備＋まかない・食事補助あり',
+      '安心の文化：素行の悪いお客様はお断り',
+      'スマホ応募・WEB面接・LINE面接・場所相談可',
+    ],
     tableData: [
       { label: '業種', value: 'キャバクラ / ラウンジ' },
       { label: '職種', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
@@ -143,6 +153,16 @@ const POSITIONS = {
       { q: '学生・Wワークでも働けますか？', a: '週1日・3時間〜の短時間勤務OKです。授業・他の仕事と両立している方が多いです。' },
     ],
     formRole: 'escort',
+    points: [
+      'お客様の横に座ることはなし！ご案内・受付・お荷物お預かりがメイン業務',
+      '制服貸与（スーツ）完備・外見に自信がなくても大丈夫',
+      '水商売未経験＋お酒が苦手な方も大歓迎',
+      '週1日・3時間〜の短時間勤務OK（授業・Wワーク両立可）',
+      'お客様と接する接客スキルが自然に身につく',
+      '終電上がりOK＋毎回送迎完備',
+      'ノルマ・罰金一切なし・安心の勤務環境',
+      'スマホ応募・WEB応募・履歴書不要',
+    ],
     tableData: [
       { label: '業種', value: 'キャバクラ / ラウンジ' },
       { label: '職種', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
@@ -339,7 +359,29 @@ export default function StaffRecruitPage() {
         </div>
       </section>
 
-      {/* ④.5 募集要項 */}
+      {/* ④.5 ここがポイント！ */}
+      <section className="py-16 px-6 bg-[#fffdf8] border-y border-gold/20">
+        <div className="container mx-auto max-w-4xl">
+          <FadeIn>
+            <div className="text-center mb-10">
+              <span className="inline-block text-[10px] font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
+                Point
+              </span>
+              <h2 className="text-xl md:text-2xl font-serif luxury-tracking text-foreground">ここがポイント！</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {data.points.map((point: string, i: number) => (
+                <div key={i} className="flex items-start gap-3 bg-white border border-gold/15 px-5 py-4 shadow-sm">
+                  <span className="text-gold font-serif text-base leading-none shrink-0 mt-0.5">★</span>
+                  <span className="text-sm font-serif leading-relaxed luxury-tracking text-gray-700">{point}</span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ⑤ 募集要項 */}
       <section className="py-20 px-6 bg-[#f9f7f4]">
         <div className="container mx-auto max-w-5xl">
           <FadeIn>
