@@ -43,9 +43,10 @@ export async function createCast(formData: FormData) {
   const is_active = formData.get('is_active') !== 'false'
   const display_order = parseInt(formData.get('display_order') as string || '0')
   const image_url = formData.get('image_url') as string || null
+  const quiz_tags = formData.getAll('quiz_tags') as string[]
 
   const { data, error } = await supabase.from('casts').insert({
-    stage_name, slug, age, hobby, comment, is_active, display_order
+    stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags
   }).select('id, slug').single()
 
   if (error) return { error: error.message }
@@ -77,9 +78,10 @@ export async function updateCast(id: string, formData: FormData) {
   const is_active = formData.get('is_active') !== 'false'
   const display_order = parseInt(formData.get('display_order') as string || '0')
   const image_url = formData.get('image_url') as string || null
+  const quiz_tags = formData.getAll('quiz_tags') as string[]
 
   const { error } = await supabase.from('casts').update({
-    stage_name, slug, age, hobby, comment, is_active, display_order,
+    stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags,
     updated_at: new Date().toISOString()
   }).eq('id', id)
 

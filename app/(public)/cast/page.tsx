@@ -15,21 +15,27 @@ export default async function CastPage({
 }) {
   const casts = await getPublicCasts();
 
-  const purpose = searchParams?.purpose;
-  const atmosphere = searchParams?.atmosphere;
+  const purpose = (await searchParams)?.purpose;
+  const atmosphere = (await searchParams)?.atmosphere;
   const hasDiagnostic = !!(purpose && atmosphere);
 
-  // 診断に基づくソートロジック (タグの一致度でソート、実運用ではより精緻なロジックを検討)
-  // 現状はダミーの関連付けによる簡易マッチング
-  const sortedCasts = [...casts].sort((a, b) => {
-    if (!hasDiagnostic) return 0;
-    
-    // ここではサンプルとして、雰囲気に合わせて少しだけ順序をいじる
-    // （本来は casts.cast_tags や casts.tags に atmosphere の文字列が含まれているか見る）
-    const aMatch = String(a.hobby || '').includes('酒') ? 1 : 0;
-    const bMatch = String(b.hobby || '').includes('酒') ? 1 : 0;
-    return bMatch - aMatch;
-  });
+  // ─── quiz_tags マッチングスコア計算 ─────────────────────────
+  // 目的タグ=2点 / 雰囲気タグ=2点 / 本日出勤=1点ボーナス
+  const matchScore = (cast: (typeof casts)[number]) => {
+    if (!hasDiagnostic) return cast.is_today ? 1 : 0;
+    const tags: string[] = cast.quiz_tags ?? [];
+    let score = 0;
+    if (purpose && tags.includes(`purpose_${purpose}`)) score += 2;
+    if (atmosphere && tags.includes(`atm_${atmosphere}`)) score += 2;
+    if (cast.is_today) score += 1;
+    return score;
+  };
+
+  const sortedCasts = [...casts].sort((a, b) => matchScore(b) - matchScore(a));
+
+  // マッチスコアが1以上 = おすすめキャスト
+  const isRecommended = (cast: (typeof casts)[number]) =>
+    hasDiagnostic && matchScore(cast) >= 2;
 
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
@@ -39,7 +45,7 @@ export default async function CastPage({
           <h1 className="text-3xl md:text-5xl font-serif luxury-tracking-super text-[#171717] uppercase mb-6">
             Cast
           </h1>
-          <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+          <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
           <p className="text-xs text-gold font-serif luxury-tracking uppercase">
             個性豊かな上質空間を彩るキャストたち。<br />
             （本日の出勤キャストを優先して表示しています）
@@ -89,13 +95,13 @@ export default async function CastPage({
                     <div className="absolute top-3 right-3 z-20">
                       <CastFavoriteButton castId={cast.id} />
                     </div>
-                    {cast.is_today && (
+                    {cast.is_today && !isRecommended(cast) && (
                       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-serif luxury-tracking text-gold px-3 py-1 uppercase border border-gold/30">
                         Today
                       </div>
                     )}
-                    {hasDiagnostic && index < 3 && (
-                      <div className="absolute top-3 right-3 bg-gold text-white text-[9px] font-serif luxury-tracking px-2 py-1 uppercase shadow-md">
+                    {isRecommended(cast) && (
+                      <div className="absolute top-3 left-3 bg-gold text-white text-[9px] font-serif luxury-tracking px-2 py-1 uppercase shadow-md">
                         Recommend
                       </div>
                     )}
