@@ -11,17 +11,18 @@ interface GalleryTabsProps {
 
 export function GalleryTabs({ activeCategory, onSelect }: GalleryTabsProps) {
   return (
-    <div className="w-full flex justify-center mb-16 overflow-x-auto no-scrollbar px-4">
-      <div className="flex items-center gap-8 md:gap-12 pb-4">
+    <div className="w-full flex justify-center mb-16 overflow-x-auto no-scrollbar px-4 relative z-20">
+      <div className="flex items-center gap-6 md:gap-12 pb-4">
         {GALLERY_CATEGORIES.map((cat, i) => {
           const isActive = activeCategory === cat.id;
 
           return (
             <FadeIn key={cat.id} delay={i * 0.1} className="shrink-0 relative group">
               <button
+                type="button"
                 onClick={() => onSelect(cat.id as GalleryCategory | 'all')}
                 className={`
-                  text-xs font-serif tracking-[0.2em] transition-all duration-500 py-2 relative
+                  text-xs font-serif tracking-[0.2em] transition-all duration-500 py-4 px-2 relative z-10 cursor-pointer
                   ${isActive ? 'text-gold' : 'text-gray-400 hover:text-gray-600'}
                 `}
               >

@@ -424,9 +424,9 @@ export default async function HomePage() {
       </section>
 
       {/* 7. EXPERIENTIAL GALLERY */}
-      <section className="py-section bg-[#111] px-0 md:px-6 mt-12 mb-12 relative">
+      <section className="py-section bg-[#111] px-0 md:px-6 mt-12 mb-12 relative z-10">
         <div className="absolute inset-0 bg-linear-to-b from-black via-black/95 to-black -z-10 pointer-events-none" />
-        <div className="container mx-auto">
+        <div className="container mx-auto relative z-20">
           <FadeIn className="text-center mb-10 pt-12">
             <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-gold uppercase mb-8">
               <GsapRevealTitle text="Gallery" />
