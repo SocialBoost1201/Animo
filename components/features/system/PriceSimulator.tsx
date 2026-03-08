@@ -63,7 +63,7 @@ export const PriceSimulator = () => {
   }) => (
     <button
       onClick={onClick}
-      className={`relative px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-serif tracking-widest transition-all duration-500 overflow-hidden outline-none ${
+      className={`relative w-full px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-serif tracking-widest transition-all duration-500 overflow-hidden outline-none ${
         active 
           ? 'text-[#171717] bg-gold/90 shadow-aura' 
           : 'text-foreground/70 border border-white/20 hover:border-gold/40 bg-white/10 hover:bg-white/20'
@@ -90,15 +90,9 @@ export const PriceSimulator = () => {
           {/* 来店タイプ */}
           <FadeIn delay={0.2} className="flex flex-col space-y-4">
             <span className="text-sm font-serif text-gold uppercase luxury-tracking">Customer Type <span className="text-[10px] text-gray-400 ml-2">来店タイプ</span></span>
-            <div className="flex flex-col md:flex-row gap-4 w-full">
-              <div className="flex-1 flex w-full">
-                <div className="w-1/2 pr-2">
-                  <ToggleButton active={customerType === 'member'} onClick={() => setCustomerType('member')}>Member</ToggleButton>
-                </div>
-                <div className="w-1/2 pl-2">
-                  <ToggleButton active={customerType === 'visitor'} onClick={() => setCustomerType('visitor')}>Visitor</ToggleButton>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ToggleButton active={customerType === 'member'} onClick={() => setCustomerType('member')}>Member</ToggleButton>
+              <ToggleButton active={customerType === 'visitor'} onClick={() => setCustomerType('visitor')}>Visitor</ToggleButton>
             </div>
           </FadeIn>
 
