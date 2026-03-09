@@ -122,7 +122,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* 源氏名 + slug */}
+          {/* 源氏名 + フリガナ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClass}>源氏名 (Stage Name) *</label>
@@ -135,6 +135,24 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 placeholder="あいか"
               />
             </div>
+            <div>
+              <label className={labelClass}>フリガナ (Name Kana) *</label>
+              <input
+                name="name_kana"
+                type="text"
+                defaultValue={initialData?.name_kana}
+                required
+                pattern="^[ぁ-んァ-ンー]+$"
+                className={inputClass}
+                placeholder="アイカ"
+                title="ひらがな・カタカナのみ"
+              />
+              <p className="text-[10px] text-gray-400 mt-1">あいうえお順の並び替えに使用します</p>
+            </div>
+          </div>
+
+          {/* スラグ + 表示順 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClass}>スラグ (URL用) *</label>
               <input
@@ -149,9 +167,14 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               />
               <p className="text-[10px] text-gray-400 mt-1">/cast/aika のように URL になります</p>
             </div>
+            <div>
+              <label className={labelClass}>表示順 (Order)</label>
+              <input name="display_order" type="number" min="0"
+                defaultValue={initialData?.display_order ?? 0} className={inputClass} placeholder="0" />
+            </div>
           </div>
 
-          {/* 年齢 + 表示順 */}
+          {/* 年齢 + 身長 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClass}>年齢 (Age)</label>
@@ -159,9 +182,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 defaultValue={initialData?.age} className={inputClass} placeholder="22" />
             </div>
             <div>
-              <label className={labelClass}>表示順 (Order)</label>
-              <input name="display_order" type="number" min="0"
-                defaultValue={initialData?.display_order ?? 0} className={inputClass} placeholder="0" />
+              <label className={labelClass}>身長 (Height) / cm</label>
+              <input name="height" type="number" min="130" max="220"
+                defaultValue={initialData?.height} className={inputClass} placeholder="160" />
             </div>
           </div>
 

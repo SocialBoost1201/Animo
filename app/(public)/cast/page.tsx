@@ -110,6 +110,8 @@ export default async function CastPage({
                     <h3 className="font-serif luxury-tracking text-lg md:text-xl text-[#171717]">{cast.stage_name}</h3>
                     <div className="flex justify-center items-center mt-3 gap-2 text-[10px] text-gray-400 font-serif luxury-tracking">
                       {cast.age && <span>{cast.age}歳</span>}
+                      {cast.age && cast.height && <span className="text-gray-300">|</span>}
+                      {cast.height && <span>T{cast.height}</span>}
                     </div>
                     {cast.hobby && (
                       <p className="text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1">

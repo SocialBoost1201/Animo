@@ -113,6 +113,10 @@ export default async function CastDetailPage({
                   <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Age</span>
                   <span className="text-[#171717] font-bold">{cast.age ? `${cast.age}歳` : '-'}</span>
                 </div>
+                <div className="flex items-center">
+                  <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Height</span>
+                  <span className="text-[#171717] font-bold">{cast.height ? `T ${cast.height} cm` : '-'}</span>
+                </div>
                 {cast.hobby && (
                   <div className="flex items-start col-span-2">
                     <span className="w-20 text-gray-400 tracking-widest uppercase text-xs pt-0.5">Hobby</span>

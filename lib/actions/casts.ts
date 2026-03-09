@@ -16,6 +16,7 @@ export async function getCasts() {
     .from('casts')
     .select('*, cast_images(image_url, is_primary)')
     .order('display_order', { ascending: true })
+    .order('name_kana', { ascending: true })
     .order('created_at', { ascending: false })
   if (error) throw new Error(error.message)
   return data
@@ -36,8 +37,10 @@ export async function createCast(formData: FormData) {
   const supabase = await createClient()
 
   const stage_name = formData.get('stage_name') as string
+  const name_kana = formData.get('name_kana') as string
   const slug = formData.get('slug') as string
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
+  const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string || null
   const comment = formData.get('comment') as string || null
   const is_active = formData.get('is_active') !== 'false'
@@ -46,7 +49,7 @@ export async function createCast(formData: FormData) {
   const image_file = formData.get('image_file') as File | null
 
   const { data, error } = await supabase.from('casts').insert({
-    stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags
+    stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags
   }).select('id, slug').single()
 
   if (error) return { error: error.message }
@@ -88,8 +91,10 @@ export async function updateCast(id: string, formData: FormData) {
   const supabase = await createClient()
 
   const stage_name = formData.get('stage_name') as string
+  const name_kana = formData.get('name_kana') as string
   const slug = formData.get('slug') as string
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
+  const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string || null
   const comment = formData.get('comment') as string || null
   const is_active = formData.get('is_active') !== 'false'
@@ -98,7 +103,7 @@ export async function updateCast(id: string, formData: FormData) {
   const image_file = formData.get('image_file') as File | null
 
   const { error } = await supabase.from('casts').update({
-    stage_name, slug, age, hobby, comment, is_active, display_order, quiz_tags,
+    stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
     updated_at: new Date().toISOString()
   }).eq('id', id)
 
