@@ -151,25 +151,10 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             </div>
           </div>
 
-          {/* スラグ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className={labelClass}>スラグ (URL用) *</label>
-              <input
-                name="slug"
-                type="text"
-                defaultValue={initialData?.slug}
-                required
-                pattern="^[a-zA-Z0-9-]+$"
-                className={inputClass}
-                placeholder="aika"
-                title="半角英数字とハイフンのみ"
-              />
-              <p className="text-[10px] text-gray-400 mt-1">/cast/aika のように URL になります</p>
-            </div>
-            {/* 右側は空けておく */}
-            <div></div>
-          </div>
+          {/* スラグ（自動生成または既存値引き継ぎ） */}
+          {initialData?.slug && (
+            <input type="hidden" name="slug" value={initialData.slug} />
+          )}
 
           {/* 年齢 + 身長 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -38,7 +38,10 @@ export async function createCast(formData: FormData) {
 
   const stage_name = formData.get('stage_name') as string
   const name_kana = formData.get('name_kana') as string
-  const slug = formData.get('slug') as string
+  let slug = formData.get('slug') as string
+  if (!slug) {
+    slug = crypto.randomUUID().split('-')[0]
+  }
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
   const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string || null
@@ -92,7 +95,8 @@ export async function updateCast(id: string, formData: FormData) {
 
   const stage_name = formData.get('stage_name') as string
   const name_kana = formData.get('name_kana') as string
-  const slug = formData.get('slug') as string
+  let slug = formData.get('slug') as string
+  
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
   const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
   const hobby = formData.get('hobby') as string || null
@@ -102,10 +106,15 @@ export async function updateCast(id: string, formData: FormData) {
   const quiz_tags = formData.getAll('quiz_tags') as string[]
   const image_file = formData.get('image_file') as File | null
 
-  const { error } = await supabase.from('casts').update({
-    stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
+  const updateData: any = {
+    stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
     updated_at: new Date().toISOString()
-  }).eq('id', id)
+  }
+  if (slug) {
+    updateData.slug = slug
+  }
+
+  const { error } = await supabase.from('casts').update(updateData).eq('id', id)
 
   if (error) return { error: error.message }
 
