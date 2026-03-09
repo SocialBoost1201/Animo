@@ -151,7 +151,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             </div>
           </div>
 
-          {/* スラグ + 表示順 */}
+          {/* スラグ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelClass}>スラグ (URL用) *</label>
@@ -167,11 +167,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               />
               <p className="text-[10px] text-gray-400 mt-1">/cast/aika のように URL になります</p>
             </div>
-            <div>
-              <label className={labelClass}>表示順 (Order)</label>
-              <input name="display_order" type="number" min="0"
-                defaultValue={initialData?.display_order ?? 0} className={inputClass} placeholder="0" />
-            </div>
+            {/* 右側は空けておく */}
+            <div></div>
           </div>
 
           {/* 年齢 + 身長 */}
