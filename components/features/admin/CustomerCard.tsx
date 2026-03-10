@@ -1,15 +1,18 @@
 import { Phone, Mail, Smartphone, Calendar, Users, CheckCircle } from 'lucide-react';
 import { ReplyForm } from '@/components/features/admin/ReplyForm';
 
+type ContactData = { id: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
+type CustomerData = { id: string; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
+
 export function CustomerCard({ 
   customer, 
   handleMarkAsRead 
 }: { 
-  customer: any, 
+  customer: CustomerData, 
   handleMarkAsRead: (formData: FormData) => void 
 }) {
   const { primaryName, phone, email, lineId, contacts, reserveCount, contactCount, lastContact } = customer;
-  const hasUnread = contacts.some((c: any) => !c.is_read);
+  const hasUnread = contacts.some((c: ContactData) => !c.is_read);
 
   return (
     <div className={`bg-white border shadow-sm transition-all ${hasUnread ? 'border-amber-200' : 'border-gray-100'}`}>
@@ -47,7 +50,7 @@ export function CustomerCard({
       <div className="border-t border-gray-50 bg-gray-50/50 p-6 space-y-6">
         <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">対応履歴</p>
         <div className="space-y-4">
-          {contacts.map((contact: any) => (
+          {contacts.map((contact: ContactData) => (
             <div key={contact.id} className="bg-white border border-gray-100 p-4 rounded-sm shadow-xs">
               {/* Card Header for each history item */}
               <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-50">

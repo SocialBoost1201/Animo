@@ -3,6 +3,36 @@
 import { createClient } from '@/lib/supabase/server'
 import { sendAdminNotification } from '@/lib/mail'
 
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
+
+async function verifyRecaptcha(token: string | null): Promise<boolean> {
+  if (!RECAPTCHA_SECRET_KEY) {
+    // 開発環境などでキーがない場合はパスさせる（必要に応じて調整）
+    if (process.env.NODE_ENV === 'development') return true;
+    console.warn('RECAPTCHA_SECRET_KEY is not set');
+    return false;
+  }
+  
+  if (!token) return false;
+
+  try {
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${RECAPTCHA_SECRET_KEY}&response=${token}`,
+    });
+    
+    const data = await res.json();
+    // v3はスコア(0.0 ~ 1.0)が返る。0.5以上を合格とする（厳しくするなら0.7など）
+    return data.success && data.score >= 0.5;
+  } catch (err) {
+    console.error('reCAPTCHA verification error:', err);
+    return false;
+  }
+}
+
 export async function submitContact(formData: FormData) {
   const supabase = await createClient()
 
@@ -19,6 +49,13 @@ export async function submitContact(formData: FormData) {
   const timeStr = formData.get('time') as string
   const people = parseInt(formData.get('people') as string, 10)
   const castName = formData.get('castName') as string
+  const recaptchaToken = formData.get('recaptchaToken') as string | null
+
+  // reCAPTCHA検証
+  const isValid = await verifyRecaptcha(recaptchaToken);
+  if (!isValid) {
+    return { error: '不正なリクエストとしてブロックされました。' };
+  }
 
   // DBの contacts テーブルに挿入
   const { error } = await supabase.from('contacts').insert({
@@ -62,6 +99,13 @@ export async function submitRecruitApplication(formData: FormData) {
   const experience = formData.get('experience') as string
   const schedule = formData.get('schedule') as string
   const message = formData.get('message') as string
+  const recaptchaToken = formData.get('recaptchaToken') as string | null
+
+  // reCAPTCHA検証
+  const isValid = await verifyRecaptcha(recaptchaToken);
+  if (!isValid) {
+    return { error: '不正なリクエストとしてブロックされました。' };
+  }
 
   const { error } = await supabase.from('recruit_applications').insert({
     type,

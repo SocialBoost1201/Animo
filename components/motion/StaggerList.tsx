@@ -12,7 +12,7 @@ interface StaggerListProps extends HTMLMotionProps<"ul"> {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: (custom: any) => ({
+  visible: (custom: { staggerDelay?: number; delayChildren?: number }) => ({
     opacity: 1,
     transition: {
       staggerChildren: custom.staggerDelay,

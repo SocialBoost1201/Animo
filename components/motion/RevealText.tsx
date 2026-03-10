@@ -1,7 +1,13 @@
 'use client';
 
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 interface RevealTextProps {
   text: string;
@@ -16,58 +22,54 @@ export const RevealText: React.FC<RevealTextProps> = ({
   className = '',
   viewportOnce = true,
 }) => {
-  // 文字列を分割
+  const containerRef = useRef<HTMLDivElement>(null);
   const characters = Array.from(text);
 
-  const container: Variants = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.04,
-        delayChildren: delay,
+  useGSAP(() => {
+    if (!containerRef.current) return;
+    
+    const chars = containerRef.current.querySelectorAll('.reveal-char');
+    
+    gsap.fromTo(chars, 
+      {
+        opacity: 0,
+        y: 20,
+        rotateX: -45,
+        filter: 'blur(10px)'
       },
-    }),
-  };
-
-  const child: Variants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      rotateX: -45,
-      filter: 'blur(10px)',
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      filter: 'blur(0px)',
-      transition: {
-        ease: [0.16, 1, 0.3, 1], // Expo out
+      {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        filter: 'blur(0px)',
         duration: 1.5,
-      } as any,
-    },
-  };
+        ease: 'power3.out',
+        stagger: 0.04,
+        delay: delay,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 85%',
+          once: viewportOnce,
+        }
+      }
+    );
+  }, { scope: containerRef });
 
   return (
-    <motion.div
+    <div
+      ref={containerRef}
       style={{ display: 'inline-block', overflow: 'hidden' }}
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: viewportOnce, margin: '-50px' }}
-      // span は inline 要素のため block 的な処理が必要な場合あり
       className={`inline-flex flex-wrap ${className}`}
     >
       {characters.map((char, index) => (
-        <motion.span
-          variants={child}
+        <span
+          className="reveal-char"
           style={{ display: 'inline-block', whiteSpace: char === ' ' ? 'pre' : 'normal' }}
           key={index}
         >
           {char}
-        </motion.span>
+        </span>
       ))}
-    </motion.div>
+    </div>
   );
 };

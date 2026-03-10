@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HeroMediaLayer } from './HeroMediaLayer';
 import { HeroVideoRotatorProps } from './types';
-import { motion } from 'framer-motion';
-import { HeroMedia } from './types';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 interface ExtendedHeroProps extends HeroVideoRotatorProps {
   cta?: React.ReactNode;
@@ -23,10 +28,13 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setIsReducedMotion(mediaQuery.matches);
+    const timer = setTimeout(() => setIsReducedMotion(mediaQuery.matches), 0);
     const handleChange = (e: MediaQueryListEvent) => setIsReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => {
+      clearTimeout(timer);
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -38,8 +46,61 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
     return () => clearTimeout(interval);
   }, [media, activeIndex, durationMs, isReducedMotion]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!containerRef.current || isReducedMotion) return;
+
+    const tl = gsap.timeline();
+    const texts = containerRef.current.querySelectorAll('.hero-text');
+    const ctaEl = containerRef.current.querySelector('.hero-cta');
+    const indicator = containerRef.current.querySelector('.hero-indicator');
+    const line = containerRef.current.querySelector('.hero-line');
+
+    // 初期化
+    gsap.set(texts, { opacity: 0, y: 30 });
+    if (ctaEl) gsap.set(ctaEl, { opacity: 0, y: 20 });
+    gsap.set(indicator, { opacity: 0 });
+
+    // アニメーションシーケンス
+    tl.to(texts[0], { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }, '+=0.8')
+      .to(texts[1], { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }, '-=0.8');
+    
+    if (ctaEl) {
+      tl.to(ctaEl, { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' }, '-=0.8');
+    }
+
+    tl.to(indicator, { opacity: 1, duration: 1.0 }, '-=0.5');
+
+    // スクロールインジケーターのループアニメーション
+    if (line) {
+      gsap.to(line, {
+        height: '48px',
+        opacity: 0,
+        y: 48,
+        duration: 2,
+        ease: 'power1.inOut',
+        repeat: -1,
+      });
+    }
+
+    // スクロール時のパララックス効果
+    gsap.to(containerRef.current.querySelector('.hero-content'), {
+      yPercent: 30,
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      }
+    });
+
+  }, { scope: containerRef, dependencies: [isReducedMotion] });
+
   return (
-    <div className="relative h-screen min-h-[500px] w-full overflow-hidden bg-black flex items-center justify-center">
+    <div ref={containerRef} className="relative h-screen min-h-[500px] w-full overflow-hidden bg-black flex items-center justify-center">
       {/* 1. Media Layer */}
       <HeroMediaLayer
         media={media}
@@ -56,51 +117,28 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
       />
 
       {/* 3. Copy & CTA */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
-          className="text-white font-serif luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-normal mb-6"
-        >
+      <div className="hero-content relative z-20 flex flex-col items-center justify-center h-full text-center px-4 w-full">
+        <h1 className="hero-text text-white font-serif luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-normal mb-6">
           CLUB Animo
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
-          className="text-white/80 font-serif luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10"
-        >
+        </h1>
+        <p className="hero-text text-white/80 font-serif luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10">
           煌びやかなシャンデリアの下で<br />
           特別な時間を
-        </motion.p>
+        </p>
 
         {/* CTA slot (propsから受け取る) */}
         {cta && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.0, ease: 'easeOut' }}
-          >
+          <div className="hero-cta">
             {cta}
-          </motion.div>
+          </div>
         )}
       </div>
 
       {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
-      >
-        <span className="text-white/50 text-[9px] uppercase luxury-tracking mb-3 font-serif">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-          className="w-[1px] h-12 bg-linear-to-b from-white to-transparent"
-        />
-      </motion.div>
+      <div className="hero-indicator absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
+        <span className="text-white/50 text-[9px] uppercase luxury-tracking mb-3 font-serif tracking-widest">Scroll</span>
+        <div className="w-px h-0 bg-linear-to-b from-white to-transparent hero-line" />
+      </div>
     </div>
   );
 };

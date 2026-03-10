@@ -3,14 +3,21 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { MapPin, Phone, Clock, Train, Building2 } from 'lucide-react';
 
-export const metadata = {
-  title: 'Access | Club Animo',
-  description: '関内の高級クラブ「Club Animo」へのアクセス方法・店舗情報。〒231-0012 神奈川県横浜市中区相生町3丁目53 グランドパークビル2F',
+import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'アクセス案内｜関内キャバクラ CLUB Animo',
+  description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」へのアクセス方法・店舗情報。関内駅から徒歩5分の洗練された大人の社交場でお待ちしております。',
 };
 
 export default function AccessPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
+      <BreadcrumbSchema breadcrumbs={[
+        { name: 'HOME', item: 'https://club-animo.com/' },
+        { name: 'ACCESS', item: 'https://club-animo.com/access' }
+      ]} />
       {/* Header */}
       <section className="bg-transparent pt-32 pb-16 px-6 relative">
         <div className="container mx-auto relative z-10">
@@ -18,7 +25,7 @@ export default function AccessPage() {
             <h1 className="text-foreground font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="Access" />
             </h1>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
             <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               アクセス・店舗情報
             </p>
@@ -131,7 +138,7 @@ export default function AccessPage() {
           </div>
 
           {/* Divider */}
-          <div className="w-full h-[1px] bg-linear-to-r from-transparent via-gold/30 to-transparent mt-24 mb-16" />
+          <div className="w-full h-px bg-linear-to-r from-transparent via-gold/30 to-transparent mt-24 mb-16" />
 
           {/* 周辺情報（最寄駅アクセス詳細） */}
           <FadeIn delay={0.3} className="max-w-2xl mx-auto">

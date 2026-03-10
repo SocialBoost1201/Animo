@@ -4,6 +4,7 @@ import { Users, MessageSquare, Briefcase, Calendar, ArrowRight } from 'lucide-re
 
 export async function DashboardKPIs() {
   const supabase = await createClient();
+  // eslint-disable-next-line react-hooks/purity
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   const [

@@ -6,6 +6,7 @@ import { RevealText } from '@/components/motion/RevealText';
 import { Button } from '@/components/ui/Button';
 import { CalendarHeart } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { submitContact } from '@/lib/actions/public/submit';
 
 function ReserveForm() {
@@ -48,7 +49,7 @@ function ReserveForm() {
             追ってスタッフより予約確定のご連絡を申し上げます。
           </p>
           <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <a href="/">トップページへ戻る</a>
+            <Link href="/">トップページへ戻る</Link>
           </Button>
         </div>
       </div>
@@ -64,7 +65,7 @@ function ReserveForm() {
             <h1 className="text-[#171717] font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="Reserve" />
             </h1>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
             <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               来店予約
             </p>
@@ -181,7 +182,7 @@ function ReserveForm() {
                   {isSubmitting ? 'Sending...' : '予約をリクエストする'}
                 </Button>
                 <p className="text-[10px] text-gray-400 mt-6 font-serif luxury-tracking">
-                  送信ボタンを押すことで、<a href="/privacy" className="underline hover:text-gold">プライバシーポリシー</a>に同意したものとみなされます。
+                  送信ボタンを押すことで、<Link href="/privacy" className="underline hover:text-gold">プライバシーポリシー</Link>に同意したものとみなされます。
                 </p>
               </div>
             </form>

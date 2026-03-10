@@ -25,7 +25,7 @@ export const CastCard: React.FC<CastCardProps> = ({
 }) => {
   return (
     <Link href={`/cast/${slug}`} className="group block relative h-full">
-      <div className="flex flex-col h-full bg-white rounded-sm overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex flex-col h-full bg-white rounded-sm overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-gold/30 border border-transparent transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]">
         
         {/* Image Container */}
         <div className="relative overflow-hidden">
@@ -59,7 +59,7 @@ export const CastCard: React.FC<CastCardProps> = ({
             {tags.slice(0, 3).map((tag, idx) => (
               <span 
                 key={idx} 
-                className="text-[10px] text-gray-500 border border-gray-200 px-2 py-0.5 rounded-sm"
+                className="text-[10px] text-gray-500 border border-gray-200 px-2 py-0.5 rounded-sm transition-colors duration-500 group-hover:border-gold/30 group-hover:text-gold/80"
               >
                 {tag}
               </span>

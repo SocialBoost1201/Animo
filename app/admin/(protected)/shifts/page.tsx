@@ -18,7 +18,7 @@ export default async function ShiftsPage({
         </div>
       </div>
 
-      <ShiftManager initialData={weeklyData} />
+      <ShiftManager initialData={{ casts: weeklyData.casts, shifts: weeklyData.schedules, dates: weeklyData.dates }} />
     </div>
   )
 }

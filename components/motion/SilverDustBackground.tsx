@@ -102,7 +102,7 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [particleCount, opacity]);
+  }, [particleCount, opacity, minSize, maxSize]);
 
   return (
     <canvas

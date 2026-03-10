@@ -23,6 +23,49 @@ function calcPrice(
   return Math.round(total / 1000) * 1000;
 }
 
+type CastData = {
+  id: string;
+  image_url: string | null;
+  stage_name: string;
+  age?: string | number | null;
+  hobby?: string | null;
+  [key: string]: unknown;
+};
+
+type ShiftData = {
+  cast_id: string;
+  work_date: string;
+  start_time: string | null;
+  end_time: string | null;
+  [key: string]: unknown;
+};
+
+const ToggleGroup = <T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { label: string; value: T }[];
+  value: T;
+  onChange: (v: T) => void;
+}) => (
+  <div className="flex gap-1 flex-wrap">
+    {options.map((o) => (
+      <button
+        key={o.value}
+        onClick={() => onChange(o.value)}
+        className={`px-3 py-1.5 text-[10px] font-serif luxury-tracking border transition-all ${
+          value === o.value
+            ? 'bg-[#171717] text-white border-[#171717]'
+            : 'bg-white text-gray-500 border-gray-200 hover:border-gold'
+        }`}
+      >
+        {o.label}
+      </button>
+    ))}
+  </div>
+);
+
 // ── インライン料金シミュレーター ──────────────────────────────
 function MiniSimulator({ castName }: { castName: string }) {
   const [type, setType] = useState<'member' | 'visitor'>('visitor');
@@ -31,31 +74,7 @@ function MiniSimulator({ castName }: { castName: string }) {
 
   const price = calcPrice(type, duration, nom);
 
-  const ToggleGroup = ({
-    options,
-    value,
-    onChange,
-  }: {
-    options: { label: string; value: string }[];
-    value: string;
-    onChange: (v: any) => void;
-  }) => (
-    <div className="flex gap-1 flex-wrap">
-      {options.map((o) => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={`px-3 py-1.5 text-[10px] font-serif luxury-tracking border transition-all ${
-            value === o.value
-              ? 'bg-[#171717] text-white border-[#171717]'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-gold'
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
+
 
   return (
     <div className="mt-4 p-4 bg-gold/5 border border-gold/20 space-y-4">
@@ -123,10 +142,10 @@ function MiniSimulator({ castName }: { castName: string }) {
 }
 
 // ── メインコンポーネント ────────────────────────────────────
-export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: any[]; initialShifts: any[] }) {
+export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: CastData[]; initialShifts: ShiftData[] }) {
   const [activeDayIndex, setActiveDayIndex] = useState(0);
-  const [casts] = useState<any[]>(initialCasts);
-  const [shifts] = useState<any[]>(initialShifts);
+  const [casts] = useState<CastData[]>(initialCasts);
+  const [shifts] = useState<ShiftData[]>(initialShifts);
   const [openSimulator, setOpenSimulator] = useState<string | null>(null);
 
   // 今日から7日間の日付配列（JST）

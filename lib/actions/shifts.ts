@@ -81,17 +81,18 @@ export async function updateShifts(formData: FormData) {
     revalidatePath('/shift')
     revalidatePath('/cast')
     // キャストslugを取得して詳細ページもrevalidate
-    const castIds = [...new Set(updates.map((u: any) => u.cast_id).filter(Boolean))]
+    const castIds = [...new Set(updates.map((u: { cast_id: string }) => u.cast_id).filter(Boolean))]
     if (castIds.length > 0) {
       const supabaseForSlugs = await createClient()
       const { data: castsData } = await supabaseForSlugs
         .from('casts').select('slug').in('id', castIds)
       if (castsData) {
-        castsData.forEach((c: any) => revalidatePath(`/cast/${c.slug}`))
+        castsData.forEach((c: { slug?: string }) => { if (c.slug) revalidatePath(`/cast/${c.slug}`) })
       }
     }
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message || 'シフト更新に失敗しました' }
+  } catch (error: unknown) {
+    const err = error as Error;
+    return { error: err.message || 'シフト更新に失敗しました' }
   }
 }

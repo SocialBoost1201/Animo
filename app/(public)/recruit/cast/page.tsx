@@ -8,10 +8,12 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import {
   ArrowRight, CheckCircle2, Phone, Instagram,
-  ChevronDown, ChevronUp, CalendarHeart, Star, MapPin
+  ChevronRight, CalendarHeart, Star, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
+import { trackRecruitSubmit } from '@/lib/analytics';
 
 // ─── データ定義 ────────────────────────────────────────────────
 
@@ -95,7 +97,7 @@ const CAST_POINTS = [
 const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
   { label: '仕事内容', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
   { label: '給与', value: '時給 4,000円〜 + 各種バック\n※経験や能力により優遇いたします。\n■日払い可（規定あり）\n■体験入店時の時給保証あり\n■ノルマ一切なし' },
-  { label: '応募条件', value: '18歳以上（高校生不可）\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
+  { label: '応募条件', value: '20歳以上\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
   { label: '勤務時間', value: '21:00〜LAST\n（週1日・3時間〜OK）\n※シフトは完全自由の自己申告制\n※終電上がりOK、遅出出勤OK' },
 ];
 
@@ -125,18 +127,37 @@ export default function CastRecruitPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!executeRecaptcha) {
+      setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage('');
-    const formData = new FormData(e.currentTarget);
-    formData.append('type', 'cast');
-    const result = await submitRecruitApplication(formData);
-    setIsSubmitting(false);
-    if (result.error) {
-      setErrorMessage(result.error);
-    } else {
-      setIsSuccess(true);
+    
+    try {
+      const token = await executeRecaptcha('recruit_submit');
+      const formData = new FormData(e.currentTarget);
+      formData.append('type', 'cast');
+      formData.append('recaptchaToken', token);
+      
+      const result = await submitRecruitApplication(formData);
+      setIsSubmitting(false);
+      
+      if (result.error) {
+        setErrorMessage(result.error);
+      } else {
+        setIsSuccess(true);
+        trackRecruitSubmit('cast');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('予期せぬエラーが発生しました。');
+      setIsSubmitting(false);
     }
   };
 
@@ -151,7 +172,7 @@ export default function CastRecruitPage() {
             2営業日以内に採用担当よりご連絡いたします。
           </p>
           <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <a href="/">トップページへ戻る</a>
+            <Link href="/">トップページへ戻る</Link>
           </Button>
         </div>
       </div>
@@ -523,6 +544,9 @@ export default function CastRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
+                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
+                  送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
+                </p>
                 <Button type="submit" disabled={isSubmitting} size="lg"
                   className="w-full md:w-auto md:min-w-[300px] text-xs font-serif luxury-tracking uppercase px-12 py-4">
                   {isSubmitting ? 'Sending...' : '応募して面接に進む'}

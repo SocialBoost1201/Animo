@@ -1,9 +1,15 @@
 'use client';
 
-import React from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-interface FadeInProps extends HTMLMotionProps<"div"> {
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
+
+interface FadeInProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   delay?: number;
   duration?: number;
@@ -15,43 +21,57 @@ interface FadeInProps extends HTMLMotionProps<"div"> {
 export const FadeIn: React.FC<FadeInProps> = ({
   children,
   delay = 0,
-  duration = 0.8,
+  duration = 1.2,
   direction = 'up',
   distance = 30,
   viewportOnce = true,
   className,
   ...props
 }) => {
-  const getInitialPosition = () => {
-    switch (direction) {
-      case 'up':
-        return { y: distance, opacity: 0, filter: 'blur(12px)' };
-      case 'down':
-        return { y: -distance, opacity: 0, filter: 'blur(12px)' };
-      case 'left':
-        return { x: distance, opacity: 0, filter: 'blur(12px)' };
-      case 'right':
-        return { x: -distance, opacity: 0, filter: 'blur(12px)' };
-      case 'none':
-      default:
-        return { opacity: 0, filter: 'blur(12px)' };
-    }
-  };
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <motion.div
-      initial={getInitialPosition()}
-      whileInView={{ x: 0, y: 0, opacity: 1, filter: 'blur(0px)' }}
-      viewport={{ once: viewportOnce, margin: '-50px' }}
-      transition={{
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    let x = 0;
+    let y = 0;
+
+    switch (direction) {
+      case 'up': y = distance; break;
+      case 'down': y = -distance; break;
+      case 'left': x = distance; break;
+      case 'right': x = -distance; break;
+      case 'none':
+      default: break;
+    }
+
+    gsap.fromTo(containerRef.current,
+      {
+        opacity: 0,
+        x,
+        y,
+        filter: 'blur(12px)'
+      },
+      {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        filter: 'blur(0px)',
         duration: duration,
         delay: delay,
-        ease: [0.16, 1, 0.3, 1], // Expo Out近似の最高級イージング
-      }}
-      className={className}
-      {...props}
-    >
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 85%',
+          once: viewportOnce,
+        }
+      }
+    );
+  }, { scope: containerRef });
+
+  return (
+    <div ref={containerRef} className={className} {...props}>
       {children}
-    </motion.div>
+    </div>
   );
 };

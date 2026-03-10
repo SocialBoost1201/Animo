@@ -28,8 +28,9 @@ export default function NewHeroMediaPage() {
       } else {
         router.push('/admin/hero')
       }
-    } catch (error: any) {
-      alert(error.message)
+    } catch (error: unknown) {
+      const err = error as Error;
+      alert(err.message)
     } finally {
       setIsPending(false)
     }

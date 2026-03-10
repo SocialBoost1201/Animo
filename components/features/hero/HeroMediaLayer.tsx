@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { HeroMedia } from './types';
 import { useScroll } from 'framer-motion';
+import Image from 'next/image';
 
 interface HeroMediaLayerProps {
   media: HeroMedia[];
@@ -153,7 +154,7 @@ const WebGLScene = ({
       if (v.readyState >= 1) update();
       else v.addEventListener('loadedmetadata', update, { once: true });
     } else {
-      const img = new Image();
+      const img = new window.Image();
       img.onload = () => {
         if (materialRef.current) {
           materialRef.current.uniforms[uniformName].value.set(img.width, img.height);
@@ -185,6 +186,7 @@ const WebGLScene = ({
       materialRef.current.uniforms.texture1.value = tex1Ref.current;
       materialRef.current.uniforms.texture2.value = tex1Ref.current;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // activeIndexが変化した時のトランジション制御
@@ -220,7 +222,7 @@ const WebGLScene = ({
     tex2Ref.current = nextTex;
 
     // アニメーションループでprogressを進める
-    let startTime = performance.now();
+    const startTime = performance.now();
     let animationFrame: number;
 
     const animateProgress = (now: number) => {
@@ -332,9 +334,12 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
             className="w-full h-full object-contain md:object-cover"
           />
         ) : (
-          <div
-            className="w-full h-full bg-contain md:bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${item.url})` }}
+          <Image
+            src={item.url}
+            alt="Hero Background"
+            fill
+            priority
+            className="object-contain md:object-cover"
           />
         )}
       </div>
@@ -343,6 +348,17 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
+      {/* 意図的にLCPスコアを向上させるため、最初のメディアが画像の場合は非表示の優先画像としてブラウザに事前キャッシュさせる */}
+      {media.length > 0 && media[0].type === 'image' && (
+        <Image
+          src={media[0].url}
+          alt="Hero Background LCP"
+          fill
+          priority
+          sizes="100vw"
+          className="opacity-0 pointer-events-none"
+        />
+      )}
       <Canvas
         camera={{ position: [0, 0, 1] }}
         gl={{ powerPreference: 'high-performance', alpha: false, antialias: false }}

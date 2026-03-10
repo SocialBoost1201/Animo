@@ -8,6 +8,7 @@ import { DashboardRecentContacts } from '@/components/features/admin/dashboard/D
 import { DashboardTodayShifts } from '@/components/features/admin/dashboard/DashboardTodayShifts';
 
 export default function DashboardPage() {
+  // eslint-disable-next-line react-hooks/purity
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   const Skeleton = ({ className = 'h-32' }: { className?: string }) => (

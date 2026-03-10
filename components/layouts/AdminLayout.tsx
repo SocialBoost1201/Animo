@@ -15,7 +15,6 @@ import {
   UserCheck,
   Briefcase,
   Menu,
-  X,
   ChevronRight,
   Bell,
 } from 'lucide-react';
@@ -52,11 +51,16 @@ export function AdminLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // ルート変更でモバイルメニューを閉じる
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMobileOpen(false);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   const sections = ['main', 'crm', 'content', 'system'];
 
-  const SidebarContent = () => (
+  const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="h-16 flex items-center justify-between px-6 border-b border-white/5">
@@ -140,7 +144,7 @@ export function AdminLayout({
     <div className="min-h-screen flex bg-[#f5f5f7]">
       {/* ─── Desktop Sidebar ─── */}
       <aside className="w-60 bg-[#0f0f0f] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
       {/* ─── Mobile: Overlay + Drawer ─── */}
@@ -155,7 +159,7 @@ export function AdminLayout({
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
       {/* ─── Main Content ─── */}

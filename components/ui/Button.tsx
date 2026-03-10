@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Ripple } from "@/components/motion/Ripple"
 
 const buttonVariants = {
-  base: "relative overflow-hidden inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  base: "relative overflow-hidden inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] text-sm font-medium transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:-translate-y-[1px] hover:shadow-md active:translate-y-0 active:shadow-sm",
   variants: {
     variant: {
       default:

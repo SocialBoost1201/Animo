@@ -8,8 +8,11 @@ import {
 import "./globals.css";
 import { Analytics } from "@/components/seo/Analytics";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
+import { ReviewSchema } from "@/components/seo/ReviewSchema";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
 import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
+import { LoadingScreen } from "@/components/motion/LoadingScreen";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -38,34 +41,31 @@ const zenKaku = Zen_Kaku_Gothic_New({
 export const metadata: Metadata = {
   metadataBase: new URL('https://club-animo.com'),
   title: {
-    default: 'Club Animo | 関内の高級キャバクラ',
-    template: '%s | Club Animo 関内',
+    default: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
+    template: '%s | CLUB Animo 関内キャバクラ',
   },
   description:
-    '関内の大人の社交場、Club Animo（クラブアニモ）。煌びやかなシャンデリアの下で特別な時間をお過ごしください。極上のキャストがおもてなしいたします。横浜・関内駅 徒歩5分。',
+    '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。料金システムや在籍キャスト、出勤情報を掲載。',
   keywords: [
     'Club Animo', 'クラブアニモ', 'キャバクラ', '関内', '横浜',
     '横浜キャバクラ', '関内キャバクラ', '高級キャバクラ', 'キャバ',
     '馬車道', '日本大通り', 'ナイトクラブ',
   ],
   openGraph: {
-    title: 'Club Animo | 関内の高級キャバクラ',
+    title: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
     description:
-      '関内の大人の社交場、Club Animo。煌びやかなシャンデリアの下で特別な時間を。横浜・関内駅 徒歩5分。',
+      '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。',
     images: ['/images/ogp.jpg'],
     url: 'https://club-animo.com',
-    siteName: 'Club Animo',
+    siteName: 'CLUB Animo',
     locale: 'ja_JP',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Club Animo | 関内の高級キャバクラ',
-    description: '関内の大人の社交場、Club Animo。煌びやかなシャンデリアの下で特別な時間を。横浜・関内駅 徒歩5分。',
+    title: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
+    description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。',
     images: ['/images/ogp.jpg'],
-  },
-  alternates: {
-    canonical: 'https://club-animo.com',
   },
   robots: {
     index: true,
@@ -86,14 +86,18 @@ export default function RootLayout({
     <html lang="ja">
       <head>
         <LocalBusinessSchema />
+        <ReviewSchema ratingValue={4.8} reviewCount={124} />
       </head>
       <body
-        className={`${cormorant.variable} ${shippori.variable} ${montserrat.variable} ${zenKaku.variable} antialiased bg-background text-foreground`}
+        className={`${cormorant.variable} ${shippori.variable} ${montserrat.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
-        <SmoothScrollProvider>
-          {children}
-          <LuxuryBackground />
-        </SmoothScrollProvider>
+        <ReCaptchaProvider>
+          <SmoothScrollProvider>
+            <LoadingScreen />
+            {children}
+            <LuxuryBackground />
+          </SmoothScrollProvider>
+        </ReCaptchaProvider>
         <Analytics 
           gaId={process.env.NEXT_PUBLIC_GA_ID} 
           clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} 

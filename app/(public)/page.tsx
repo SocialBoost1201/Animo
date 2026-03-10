@@ -58,7 +58,7 @@ const HOW_TO_EXAMPLES = [
 ];
 
 export default async function HomePage() {
-  const [dbHeroMedia, dbCasts, dbGallery, dbNews, settings] = await Promise.all([
+  const [dbHeroMedia, dbCasts, , dbNews, settings] = await Promise.all([
     getPublicHeroMedia(),
     getPublicCasts(),
     getPublicContents('gallery', 9),
@@ -132,7 +132,7 @@ export default async function HomePage() {
             <FadeIn>
               <div className="inline-flex items-center justify-center space-x-3 mb-4">
                 <div className="h-[1px] w-8 bg-gold"></div>
-                <span className="text-[10px] font-serif text-gold luxury-tracking uppercase tracking-widest">Today's Mood</span>
+                <span className="text-[10px] font-serif text-gold luxury-tracking uppercase tracking-widest">Today&apos;s Mood</span>
                 <div className="h-[1px] w-8 bg-gold"></div>
               </div>
               <p className="text-sm md:text-base font-serif tracking-widest leading-loose text-white/90 max-w-2xl mx-auto">
@@ -150,7 +150,7 @@ export default async function HomePage() {
             <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
               <GsapRevealTitle text="Today's Cast" />
             </h2>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
             <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
             <Link href="/shift" className="inline-flex items-center text-gold text-[10px] font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
               View Schedule →
@@ -242,14 +242,14 @@ export default async function HomePage() {
           </FadeIn>
 
           <div className="space-y-0">
-            {dbNews.length > 0 ? dbNews.map((news: any) => (
+            {dbNews.length > 0 ? dbNews.map((news: { id: string; title?: string; category?: string; content_date?: string; created_at?: string }) => (
               <FadeIn key={news.id}>
                 <Link
                   href={`/news/${news.id}`}
                   className="flex items-baseline gap-6 py-6 border-b border-gold/10 group hover:bg-gold/5 transition-colors px-4 -mx-4"
                 >
                   <time className="text-[11px] text-gold font-serif luxury-tracking shrink-0 tabular-nums">
-                    {new Date(news.content_date || news.created_at).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                    {new Date(news.content_date || news.created_at || new Date()).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                   </time>
                   <span className="text-sm font-serif text-foreground group-hover:text-gold transition-colors luxury-tracking line-clamp-1">
                     {news.title}

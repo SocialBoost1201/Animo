@@ -2,12 +2,13 @@
 
 import React, { ReactNode, useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
+import { EmblaOptionsType } from 'embla-carousel'
 import Autoplay from 'embla-carousel-autoplay'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface LuxuryCarouselProps {
   slides: ReactNode[]
-  options?: any
+  options?: EmblaOptionsType
   autoplay?: boolean
 }
 

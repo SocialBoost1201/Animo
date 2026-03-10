@@ -5,7 +5,12 @@ import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 import { Check, Loader2 } from 'lucide-react'
 
-export function SettingsForm({ initialData }: { initialData?: any }) {
+type SettingsData = {
+  today_mood?: string;
+  hero_transition_mode?: string;
+};
+
+export function SettingsForm({ initialData }: { initialData?: SettingsData | null }) {
   const [isPending, setIsPending] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -21,8 +26,9 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
       } else {
         alert('サイト設定を更新しました。')
       }
-    } catch (error: any) {
-      alert(error.message)
+    } catch (error: unknown) {
+      const err = error as Error;
+      alert(err.message)
     } finally {
       setIsPending(false)
     }
@@ -34,7 +40,7 @@ export function SettingsForm({ initialData }: { initialData?: any }) {
         
         {/* 全体告知（今日の気分など） */}
         <div>
-          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Today's Mood / Headline</h3>
+          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Today&apos;s Mood / Headline</h3>
           <p className="text-xs text-gray-500 mb-4">トップページなどに表示される、本日の一言メッセージです。</p>
           <input 
             name="today_mood"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useMemo, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -8,14 +8,19 @@ function GoldDust({ count = 2000 }) {
   const points = useRef<THREE.Points>(null!)
   
   // Create random positions for particles
-  const particlesPosition = useMemo(() => {
-    const positions = new Float32Array(count * 3)
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 15     // x
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 15 // y
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15 // z
-    }
-    return positions
+  const [particlesPosition, setParticlesPosition] = useState<Float32Array | null>(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const positions = new Float32Array(count * 3)
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 15     // x
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 15 // y
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 15 // z
+      }
+      setParticlesPosition(positions)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [count])
 
   // Slowly rotate the whole particle system
@@ -27,6 +32,8 @@ function GoldDust({ count = 2000 }) {
       points.current.position.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.5
     }
   })
+
+  if (!particlesPosition) return null
 
   return (
     <points ref={points}>
@@ -54,9 +61,13 @@ export function LuxuryBackground() {
 
   useEffect(() => {
     // スマホなど画面幅が狭い場合はパーティクルを3分の1に減らして負荷軽減
-    if (window.innerWidth < 768) {
-      setParticleCount(1000)
-    }
+    // set-state-in-effectによるカスケードレンダリングを避けるため遅延させる
+    const timer = setTimeout(() => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        setParticleCount(1000)
+      }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   return (

@@ -51,7 +51,7 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 1.2, delay: 0.8, ease: "easeOut" }}
           className="text-white font-serif tracking-widest text-4xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-lg"
         >
           {title}
@@ -59,7 +59,7 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+          transition={{ duration: 1.2, delay: 1.2, ease: "easeOut" }}
           className="text-white/90 font-sans tracking-[0.2em] text-sm md:text-base max-w-lg leading-loose drop-shadow-md"
         >
           {subtitle.split('\n').map((line, i) => (
@@ -75,14 +75,14 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
+        transition={{ delay: 2.0, duration: 1 }}
         className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
       >
-        <span className="text-white/70 text-[10px] uppercase tracking-widest mb-2 font-mono">Scroll</span>
+        <span className="text-white/70 text-[10px] uppercase luxury-tracking mb-3 font-serif">Scroll</span>
         <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-[1px] h-12 bg-linear-to-b from-white to-transparent"
+          animate={{ height: [0, 48, 0], opacity: [0, 1, 0], y: [0, 24, 48] }}
+          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+          className="w-px h-12 bg-linear-to-b from-white to-transparent"
         />
       </motion.div>
     </div>

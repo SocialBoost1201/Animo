@@ -4,8 +4,15 @@ import { CastFavoriteButton } from '@/components/features/system/CastFavoriteBut
 import Link from 'next/link';
 import { getPublicCasts } from '@/lib/actions/public/data';
 import { Sparkles } from 'lucide-react';
+import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: '在籍キャスト一覧｜関内キャバクラ CLUB Animo',
+  description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」の在籍キャスト一覧。極上の時間をお届けするこだわりのキャストたちをご確認ください。',
+};
 
 // サーバーコンポーネントとしてキャスト一覧を取得
 export default async function CastPage({
@@ -39,6 +46,10 @@ export default async function CastPage({
 
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
+      <BreadcrumbSchema breadcrumbs={[
+        { name: 'HOME', item: 'https://club-animo.com/' },
+        { name: 'CAST', item: 'https://club-animo.com/cast' }
+      ]} />
       <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent pointer-events-none h-[50vh]" />
       <div className="container mx-auto relative z-10">
         <FadeIn className="text-center mb-16">

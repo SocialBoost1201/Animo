@@ -25,9 +25,12 @@ export default async function CustomersPage({
   const { data: contacts } = await query;
 
   // CRM: 顧客（phone または contact_method）単位でグループ化する処理
-  const customersMap = new Map<string, any>();
+  type ContactData = { id: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
+  type CustomerData = { id: string; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
 
-  contacts?.forEach((c: any) => {
+  const customersMap = new Map<string, CustomerData>();
+
+  contacts?.forEach((c: ContactData) => {
     // 同一人物の識別キー（電話番号、なければメールアドレス、どちらもなければ名前＋IDで仮設定）
     const key = c.phone || c.contact_method || `unknown-${c.name}-${c.id}`;
 

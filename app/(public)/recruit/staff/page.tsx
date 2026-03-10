@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
 import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
+import { trackRecruitSubmit } from '@/lib/analytics';
 
 // ─── データ定義 ────────────────────────────────────────────────
 
@@ -83,7 +85,7 @@ const POSITIONS = {
     tableData: [
       { label: '仕事内容', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
       { label: '給与', value: '【正社員】月給 25万円〜35万円以上\n【アルバイト】1,400円〜（研修期間あり）\n■昇給・昇格随時\n■深夜手当あり\n■大入賞・各種歩合あり' },
-      { label: '応募条件', value: '18歳以上（高校生不可）\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
+      { label: '応募条件', value: '20歳以上\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
       { label: '勤務時間', value: '19:00〜LAST\n（実働8時間 / アルバイトは週1・3h〜）' },
     ] as RecruitTableData[],
     tableTags: [
@@ -140,7 +142,7 @@ const POSITIONS = {
     tableData: [
       { label: '仕事内容', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
       { label: '給与', value: '時給 1,400円〜\n■昇給随時' },
-      { label: '応募条件', value: '18歳以上（高校生不可）\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
+      { label: '応募条件', value: '20歳以上\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
       { label: '勤務時間', value: '19:30〜LAST\n（週1日・3時間〜OK）\n※シフト自由の自己申告制\n※終電時間での退勤OK\n※週末のみの勤務も歓迎' },
     ] as RecruitTableData[],
     tableTags: [
@@ -178,6 +180,7 @@ export default function StaffRecruitPage() {
       setErrorMessage(result.error);
     } else {
       setIsSuccess(true);
+      trackRecruitSubmit('staff');
     }
   };
 
@@ -191,7 +194,7 @@ export default function StaffRecruitPage() {
             2営業日以内に採用担当よりご連絡いたします。
           </p>
           <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <a href="/">トップページへ戻る</a>
+            <Link href="/">トップページへ戻る</Link>
           </Button>
         </div>
       </div>
@@ -474,7 +477,7 @@ export default function StaffRecruitPage() {
                   <label htmlFor="age" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
                     年齢 <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="age" name="age" type="number" min="18"
+                  <input required id="age" name="age" type="number" min="20"
                     className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
                     placeholder="25" />
                 </div>
@@ -528,6 +531,9 @@ export default function StaffRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
+                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
+                  送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
+                </p>
                 <Button
                   type="submit"
                   disabled={isSubmitting}

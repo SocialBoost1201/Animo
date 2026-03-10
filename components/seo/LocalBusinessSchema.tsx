@@ -45,6 +45,11 @@ export function LocalBusinessSchema() {
       "@type": "City",
       "name": "横浜"
     },
+    "sameAs": [
+      "https://www.instagram.com/kannai_club_animo/",
+      "https://line.me/R/ti/p/@animo_kannai",
+      "https://maps.app.goo.gl/placeholder_for_animo"
+    ],
     "hasMap": "https://maps.google.com/maps?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3%E4%B8%81%E7%9B%AE53+%E3%82%B0%E3%83%A9%E3%83%B3%E3%83%89%E3%83%91%E3%83%BC%E3%82%AF%E3%83%93%E3%83%AB"
   };
 

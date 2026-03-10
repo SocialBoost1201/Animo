@@ -6,8 +6,21 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
+import Image from 'next/image'
 
-type Cast = any
+type Cast = {
+  id: string;
+  stage_name?: string;
+  name?: string;
+  name_kana?: string;
+  slug?: string;
+  age?: number | string;
+  height?: number | string;
+  hobby?: string;
+  comment?: string;
+  is_active?: boolean;
+  cast_images?: { is_primary: boolean; image_url: string }[];
+}
 
 export function CastForm({ initialData }: { initialData?: Cast }) {
   const router = useRouter()
@@ -16,7 +29,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const [compressedImage, setCompressedImage] = useState<Blob | null>(null)
   const isEditing = !!initialData
 
-  const primaryImage = initialData?.cast_images?.find((img: any) => img.is_primary) || initialData?.cast_images?.[0]
+  const primaryImage = initialData?.cast_images?.find((img: { is_primary: boolean; image_url: string }) => img.is_primary) || initialData?.cast_images?.[0]
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -30,13 +43,14 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     }
 
     try {
-      const result = isEditing
+      const result = isEditing && initialData?.id
         ? await updateCast(initialData.id, formData)
         : await createCast(formData)
       if (result.error) alert(result.error)
       else router.push('/admin/casts')
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const error = err as Error;
+      alert(error.message)
     } finally {
       setIsPending(false)
     }
@@ -70,7 +84,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = (event) => {
-        const img = new Image()
+        const img = new window.Image()
         img.onload = () => {
           const canvas = document.createElement('canvas')
           let width = img.width
@@ -189,13 +203,15 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <label className={labelClass}>プロフィール画像 (Profile Image) {isEditing ? '' : '*'}</label>
             <div className="flex items-start gap-4">
               {(imagePreview || primaryImage?.image_url) && (
-                <div className="shrink-0 mb-4 md:mb-0">
-                  <img 
-                    src={imagePreview || primaryImage?.image_url} 
+                <div className="shrink-0 mb-4 md:mb-0 relative w-24 h-24">
+                  <Image 
+                    src={imagePreview || primaryImage?.image_url || ''} 
                     alt="プレビュー" 
-                    className="w-24 h-24 object-cover rounded shadow-sm border border-gray-100" 
+                    fill
+                    unoptimized
+                    className="object-cover rounded shadow-sm border border-gray-100" 
                   />
-                  <p className="text-[10px] text-gray-400 mt-1 text-center">プレビュー</p>
+                  <p className="text-[10px] text-gray-400 mt-28 text-center">プレビュー</p>
                 </div>
               )}
               <div className="flex-1">

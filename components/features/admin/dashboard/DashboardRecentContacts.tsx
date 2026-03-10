@@ -1,6 +1,14 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 
+type RecentContact = {
+  id: string;
+  name: string;
+  type: string;
+  created_at: string;
+  is_read: boolean;
+};
+
 export async function DashboardRecentContacts() {
   const supabase = await createClient();
 
@@ -18,7 +26,7 @@ export async function DashboardRecentContacts() {
       </div>
       <div className="divide-y divide-gray-50">
         {recentContacts && recentContacts.length > 0 ? (
-          recentContacts.map((c: any) => (
+          recentContacts.map((c: RecentContact) => (
             <div key={c.id} className="px-6 py-3 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 {!c.is_read && <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />}

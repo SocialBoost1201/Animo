@@ -40,9 +40,12 @@ export const Header = () => {
 
   // Close mobile menu when pathname changes
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-    setIsRecruitOpen(false);
-    setIsMobileRecruitOpen(false);
+    const timer = setTimeout(() => {
+      setIsMobileMenuOpen(false);
+      setIsRecruitOpen(false);
+      setIsMobileRecruitOpen(false);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   // Close recruit dropdown when clicking outside
@@ -175,10 +178,10 @@ export const Header = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
+            initial={{ opacity: 0, x: '10%' }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
+            exit={{ opacity: 0, x: '10%' }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-[60] bg-white flex flex-col"
           >
             <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
@@ -223,7 +226,7 @@ export const Header = () => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
                       <div className="pt-4 pl-4 space-y-4">

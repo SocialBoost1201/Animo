@@ -16,7 +16,7 @@ export default async function NewsPage() {
           <h1 className="text-3xl md:text-5xl font-serif luxury-tracking-super text-[#171717] uppercase mb-6">
             News
           </h1>
-          <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+          <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
           <p className="text-xs text-gold font-serif luxury-tracking uppercase">
             店舗からのお知らせ
           </p>

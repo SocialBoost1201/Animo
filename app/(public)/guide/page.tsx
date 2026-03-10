@@ -68,7 +68,7 @@ export default function GuidePage() {
             <h1 className="text-foreground font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="First Visit Guide" />
             </h1>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
             <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               初めての方へ
             </p>

@@ -83,11 +83,14 @@ export const NightStyleQuiz = () => {
       answers.talk ? `talk_${answers.talk}` : null,
     ].filter(Boolean) as string[];
 
-    setIsLoading(true);
-    getMatchedCasts(tags, 4).then((casts) => {
-      setMatchedCasts(casts as MatchedCast[]);
-      setIsLoading(false);
-    });
+    const timer = setTimeout(() => {
+      setIsLoading(true);
+      getMatchedCasts(tags, 4).then((casts) => {
+        setMatchedCasts(casts as MatchedCast[]);
+        setIsLoading(false);
+      });
+    }, 0);
+    return () => clearTimeout(timer);
   }, [isFinished, answers]);
 
   const handleSelect = (questionId: string, value: string) => {

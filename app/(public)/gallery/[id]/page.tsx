@@ -5,7 +5,7 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { getPublicContents } from '@/lib/actions/public/data';
 
 interface Props {
@@ -14,14 +14,14 @@ interface Props {
 
 export default async function GalleryDetailPage({ params }: Props) {
   const allItems = await getPublicContents('gallery');
-  const item = allItems.find((g: any) => g.id === params.id);
+  const item = allItems.find((g: { id: string; image_url: string; title?: string; description?: string }) => g.id === params.id);
 
   if (!item) {
     notFound();
   }
 
   // 前後ナビゲーション
-  const currentIndex = allItems.findIndex((g: any) => g.id === params.id);
+  const currentIndex = allItems.findIndex((g: { id: string }) => g.id === params.id);
   const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
   const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
 

@@ -90,7 +90,7 @@ export default async function ApplicationsPage({
       {/* Application List */}
       <div className="space-y-3">
         {apps && apps.length > 0 ? (
-          apps.map((app: any) => {
+          apps.map((app: { id: string; is_read: boolean; created_at: string; type: string; status?: string; name?: string; age?: number | string; phone?: string; email?: string; line_id?: string; experience?: string; schedule?: string; message?: string; replied_at?: string; reply_text?: string; }) => {
             const isUnread = !app.is_read;
             const dateStr = app.created_at.slice(0, 10);
             const typeConfig = TYPE_MAP[app.type] ?? { label: app.type, color: 'bg-gray-100 text-gray-600' };

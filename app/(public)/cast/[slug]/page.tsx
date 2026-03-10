@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ArrowLeft, CalendarHeart, Sparkles } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
+import { CastViewTracker } from '@/components/features/analytics/CastViewTracker';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,12 +42,16 @@ export default async function CastDetailPage({
   const isMatched = hasDiagnostic && matchScore >= 1;
 
   // 代表画像取得
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const primaryImage = cast.cast_images?.find((img: any) => img.is_primary) || cast.cast_images?.[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const subImages = cast.cast_images?.filter((img: any) => !img.is_primary) || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tags = cast.cast_tag_relations?.map((r: any) => r.cast_tags).filter(Boolean) || [];
 
   return (
     <div className="bg-background min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
+      <CastViewTracker castId={cast.id} castName={cast.stage_name} />
       <div className="container mx-auto max-w-5xl">
         <div className="mb-8">
           <Link href="/cast" className="inline-flex items-center text-sm font-sans tracking-widest text-gray-400 hover:text-gold transition-colors">
@@ -73,6 +78,7 @@ export default async function CastDetailPage({
               {/* サブ画像 */}
               {subImages.length > 0 && (
                 <div className="grid grid-cols-3 gap-2 mt-2">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {subImages.slice(0, 3).map((img: any, i: number) => (
                     <div key={i} className="rounded-sm overflow-hidden bg-gray-100">
                       <PlaceholderImage src={img.image_url} alt={`${cast.stage_name} ${i + 2}`} ratio="square" placeholderText="" />
@@ -98,6 +104,7 @@ export default async function CastDetailPage({
                 <h1 className="text-4xl md:text-5xl font-serif text-[#171717] mb-2">{cast.stage_name}</h1>
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {tags.map((tag: any) => (
                       <span key={tag.id} className="text-[10px] font-serif tracking-widest text-gold border border-gold/40 px-3 py-1">
                         {tag.name}
@@ -145,11 +152,13 @@ export default async function CastDetailPage({
                 </h3>
                 {cast.upcomingSchedules?.length > 0 ? (
                   <ul className="space-y-2">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {cast.upcomingSchedules.map((schedule: any, i: number) => {
                       const dateObj = new Date(schedule.work_date + 'T00:00:00+09:00');
                       const mmdd = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
                       const days = ['日', '月', '火', '水', '木', '金', '土'];
                       const dayStr = days[dateObj.getDay()];
+                      // eslint-disable-next-line react-hooks/purity
                       const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
                       const isToday = schedule.work_date === today;
                       const startTime = schedule.start_time?.slice(0, 5) || '21:00';

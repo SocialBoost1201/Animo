@@ -28,19 +28,27 @@ export function PlaceholderImage({
     'square': 'aspect-square',
   };
 
-  const hasImage = Boolean(src && src.trim() !== '');
+  const fallbackImages: Record<string, string> = {
+    '4:5': '/images/placeholders/cast.png',
+    '3:2': '/images/placeholders/gallery.png',
+    '16:9': '/images/placeholders/event.png',
+    'square': '/images/placeholders/cast.png',
+    '4:3': '/images/placeholders/gallery.png',
+  };
+
+  const finalSrc = src && src.trim() !== '' ? src : fallbackImages[ratio];
 
   return (
     <div
       className={cn(
-        'relative w-full overflow-hidden bg-[var(--color-gray-light)] flex flex-col items-center justify-center text-center p-4',
+        'relative w-full overflow-hidden bg-[var(--color-gray-light)] flex flex-col items-center justify-center text-center',
         ratioClasses[ratio],
         className
       )}
     >
-      {hasImage ? (
+      {finalSrc ? (
         <Image
-          src={src as string}
+          src={finalSrc}
           alt={alt}
           fill
           priority={priority}

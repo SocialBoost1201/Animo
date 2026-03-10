@@ -12,6 +12,20 @@ const TIME_OPTIONS = [
   '22:00', '22:30', '23:00', '23:30', '00:00', '00:30', '01:00', 'LAST'
 ]
 
+type CastData = {
+  id: string;
+  stage_name: string;
+  [key: string]: unknown;
+}
+
+type ShiftData = {
+  cast_id: string;
+  date: string;
+  start_time: string | null;
+  end_time: string | null;
+  [key: string]: unknown;
+}
+
 type ShiftEntry = {
   cast_id: string
   date: string
@@ -20,12 +34,12 @@ type ShiftEntry = {
   isNew?: boolean
 }
 
-export function ShiftManager({ initialData }: { initialData: any }) {
+export function ShiftManager({ initialData }: { initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[] } }) {
   const { casts, shifts, dates } = initialData
   
   // Build initial entries from DB shifts
   const [entries, setEntries] = useState<ShiftEntry[]>(() => {
-    return (shifts || []).map((s: any) => ({
+    return (shifts || []).map((s: ShiftData) => ({
       cast_id: s.cast_id,
       date: s.date,
       start_time: s.start_time || '21:00',
@@ -60,9 +74,9 @@ export function ShiftManager({ initialData }: { initialData: any }) {
 
   // Compute updates for save
   const getUpdates = () => {
-    const updates: any[] = []
+    const updates: Record<string, unknown>[] = []
     const originalKeys = new Set(
-      (shifts || []).map((s: any) => `${s.cast_id}_${s.date}`)
+      (shifts || []).map((s: ShiftData) => `${s.cast_id}_${s.date}`)
     )
     const currentKeys = new Set(
       entries.map(e => `${e.cast_id}_${e.date}`)
@@ -83,7 +97,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
     })
 
     // Deletes: in original but not in current
-    ;(shifts || []).forEach((s: any) => {
+    ;(shifts || []).forEach((s: ShiftData) => {
       const key = `${s.cast_id}_${s.date}`
       if (!currentKeys.has(key)) {
         updates.push({
@@ -199,7 +213,7 @@ export function ShiftManager({ initialData }: { initialData: any }) {
                       onChange={e => updateEntry(index, 'cast_id', e.target.value)}
                       className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
                     >
-                      {casts?.map((cast: any) => (
+                      {casts?.map((cast: CastData) => (
                         <option key={cast.id} value={cast.id}>{cast.stage_name}</option>
                       ))}
                     </select>

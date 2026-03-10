@@ -7,7 +7,16 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 
-export function ContentForm({ initialData }: { initialData?: any }) {
+type ContentData = {
+  type?: string;
+  content_date?: string;
+  category?: string;
+  title?: string;
+  description?: string;
+  is_published?: boolean;
+};
+
+export function ContentForm({ initialData }: { initialData?: ContentData | null }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const isEditing = !!initialData
@@ -39,8 +48,9 @@ export function ContentForm({ initialData }: { initialData?: any }) {
       } else {
         router.push(contentType === 'gallery' ? '/admin/gallery' : '/admin/contents')
       }
-    } catch (error: any) {
-      alert(error.message)
+    } catch (error: unknown) {
+      const err = error as Error;
+      alert(err.message)
     } finally {
       setIsPending(false)
     }

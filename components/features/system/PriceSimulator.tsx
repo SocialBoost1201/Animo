@@ -12,6 +12,37 @@ type Duration = 60 | 90 | 120 | 150 | 180;
 type Nomination = 'none' | 'inside' | 'main' | 'escort';
 type Accompaniment = boolean;
 
+// Luxury Toggle Button Component
+const ToggleButton = ({ 
+  active, 
+  onClick, 
+  children 
+}: { 
+  active: boolean, 
+  onClick: () => void, 
+  children: React.ReactNode 
+}) => (
+  <button
+    onClick={onClick}
+    className={`relative w-full px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-serif tracking-widest transition-all duration-500 overflow-hidden outline-none ${
+      active 
+        ? 'text-[#171717] bg-gold/90 shadow-aura' 
+        : 'text-foreground/70 border border-white/20 hover:border-gold/40 bg-white/10 hover:bg-white/20'
+    }`}
+  >
+    <span className="relative z-10">{children}</span>
+    {active && (
+      <motion.div
+        layoutId="active-bg"
+        className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent w-full h-full"
+        initial={{ x: '-100%' }}
+        animate={{ x: '100%' }}
+        transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+      />
+    )}
+  </button>
+);
+
 export const PriceSimulator = () => {
   const [customerType, setCustomerType] = useState<CustomerType>('visitor');
   const [duration, setDuration] = useState<Duration>(60);
@@ -51,36 +82,7 @@ export const PriceSimulator = () => {
     return roundedTotal;
   }, [customerType, duration, nomination, accompaniment]);
 
-  // Luxury Toggle Button Component
-  const ToggleButton = ({ 
-    active, 
-    onClick, 
-    children 
-  }: { 
-    active: boolean, 
-    onClick: () => void, 
-    children: React.ReactNode 
-  }) => (
-    <button
-      onClick={onClick}
-      className={`relative w-full px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-serif tracking-widest transition-all duration-500 overflow-hidden outline-none ${
-        active 
-          ? 'text-[#171717] bg-gold/90 shadow-aura' 
-          : 'text-foreground/70 border border-white/20 hover:border-gold/40 bg-white/10 hover:bg-white/20'
-      }`}
-    >
-      <span className="relative z-10">{children}</span>
-      {active && (
-        <motion.div
-          layoutId="active-bg"
-          className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent w-full h-full"
-          initial={{ x: '-100%' }}
-          animate={{ x: '100%' }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-        />
-      )}
-    </button>
-  );
+
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">

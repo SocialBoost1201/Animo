@@ -64,16 +64,16 @@ export async function createCast(formData: FormData) {
     
     // Storageにアップロード
     const { error: uploadError } = await supabase.storage
-      .from('cast-images')
-      .upload(fileName, image_file, { cacheControl: '3600', upsert: false })
+      .from('images')
+      .upload(`casts/${fileName}`, image_file, { cacheControl: '3600', upsert: false })
 
     if (uploadError) {
       console.error('Image Upload Error:', uploadError)
     } else {
       // 成功したら公開URLを取得してDB登録
       const { data: { publicUrl } } = supabase.storage
-        .from('cast-images')
-        .getPublicUrl(fileName)
+        .from('images')
+        .getPublicUrl(`casts/${fileName}`)
 
       await supabase.from('cast_images').insert({
         cast_id: data.id,
@@ -95,7 +95,7 @@ export async function updateCast(id: string, formData: FormData) {
 
   const stage_name = formData.get('stage_name') as string
   const name_kana = formData.get('name_kana') as string
-  let slug = formData.get('slug') as string
+  const slug = formData.get('slug') as string
   
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
   const height = formData.get('height') ? parseInt(formData.get('height') as string) : null
@@ -106,7 +106,7 @@ export async function updateCast(id: string, formData: FormData) {
   const quiz_tags = formData.getAll('quiz_tags') as string[]
   const image_file = formData.get('image_file') as File | null
 
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
     updated_at: new Date().toISOString()
   }
@@ -127,15 +127,15 @@ export async function updateCast(id: string, formData: FormData) {
     // ここでは複雑になるため省略（または保持）し、新しい画像をis_primaryとして登録・上書きします。
     
     const { error: uploadError } = await supabase.storage
-      .from('cast-images')
-      .upload(fileName, image_file, { cacheControl: '3600', upsert: false })
+      .from('images')
+      .upload(`casts/${fileName}`, image_file, { cacheControl: '3600', upsert: false })
 
     if (uploadError) {
       console.error('Image Upload Error:', uploadError)
     } else {
       const { data: { publicUrl } } = supabase.storage
-        .from('cast-images')
-        .getPublicUrl(fileName)
+        .from('images')
+        .getPublicUrl(`casts/${fileName}`)
 
       // 古い is_primary を削除（またはダウングレード）してから新しいものを登録
       await supabase.from('cast_images').delete().eq('cast_id', id).eq('is_primary', true)

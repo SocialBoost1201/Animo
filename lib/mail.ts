@@ -8,7 +8,7 @@ function getResend() {
 
 export async function sendAdminNotification(payload: {
   type: 'reserve' | 'contact' | 'cast' | 'staff';
-  data: any;
+  data: Record<string, unknown>;
 }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('RESEND_API_KEY is not set. Email notification skipped.');
@@ -63,7 +63,7 @@ export async function sendAdminNotification(payload: {
   `;
 
   try {
-    const { data: result, error } = await getResend().emails.send({
+    const { error } = await getResend().emails.send({
       from: 'Animo Notification <onboarding@resend.dev>',
       to: adminEmail,
       subject: subject,
@@ -136,8 +136,9 @@ ${replyText}
     }
 
     return { success: true };
-  } catch (err: any) {
-    console.error('Failed to send reply email:', err);
-    return { success: false, error: err.message };
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error('Failed to send reply email:', error);
+    return { success: false, error: error.message };
   }
 }

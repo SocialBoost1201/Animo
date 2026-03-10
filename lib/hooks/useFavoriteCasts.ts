@@ -10,15 +10,18 @@ export function useFavoriteCasts() {
 
   useEffect(() => {
     // 初回マウント時に LocalStorage から読み込み
-    try {
-      const stored = localStorage.getItem(FAVORITES_KEY);
-      if (stored) {
-        setFavorites(JSON.parse(stored));
+    const timer = setTimeout(() => {
+      try {
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        if (stored) {
+          setFavorites(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.warn('Failed to parse favorite casts from localStorage', e);
       }
-    } catch (e) {
-      console.warn('Failed to parse favorite casts from localStorage', e);
-    }
-    setIsLoaded(true);
+      setIsLoaded(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleFavorite = (castId: string) => {

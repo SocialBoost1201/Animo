@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { GalleryItemData } from './data';
 
 interface GalleryItemProps {
@@ -18,11 +19,13 @@ export function GalleryItem({ item, index, onClick, isPriority = false }: Galler
       aria-label={`View ${item.title}`}
     >
       {/* 画像本体：親のGridセルの形に合わせてカバーする */}
-      <img
+      <Image
         src={item.src}
         alt={item.alt}
-        loading={isPriority ? "eager" : "lazy"}
-        className="w-full h-full block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
+        fill
+        sizes="(max-width: 768px) 50vw, 33vw"
+        priority={isPriority}
+        className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
       />
 
       {/* グラデーションオーバーレイ */}

@@ -4,30 +4,49 @@ import React, { useState } from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { submitContact } from '@/lib/actions/public/submit';
+import { trackContactSubmit } from '@/lib/analytics';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!executeRecaptcha) {
+      setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage('');
 
-    const formData = new FormData(e.currentTarget);
-    formData.append('type', 'contact');
-    
-    // Server Action呼び出し
-    const result = await submitContact(formData);
+    try {
+      const token = await executeRecaptcha('contact_submit');
+      const formData = new FormData(e.currentTarget);
+      formData.append('type', 'contact');
+      formData.append('recaptchaToken', token);
+      
+      // Server Action呼び出し
+      const result = await submitContact(formData);
     
     setIsSubmitting(false);
 
-    if (result.error) {
-      setErrorMessage(result.error);
-    } else {
-      setIsSuccess(true);
+      if (result.error) {
+        setErrorMessage(result.error);
+      } else {
+        setIsSuccess(true);
+        trackContactSubmit();
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('予期せぬエラーが発生しました。');
+      setIsSubmitting(false);
     }
   };
 
@@ -42,7 +61,7 @@ export default function ContactPage() {
             数日以内に担当スタッフよりご連絡いたします。
           </p>
           <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <a href="/">トップページへ戻る</a>
+            <Link href="/">トップページへ戻る</Link>
           </Button>
         </div>
       </div>
@@ -58,7 +77,7 @@ export default function ContactPage() {
             <h1 className="text-[#171717] font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="Contact" />
             </h1>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
             <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               お問い合わせ
             </p>
@@ -126,7 +145,7 @@ export default function ContactPage() {
                   {isSubmitting ? 'Sending...' : '送信する'}
                 </Button>
                 <p className="text-[10px] text-gray-400 mt-6 font-serif luxury-tracking">
-                  送信ボタンを押すことで、<a href="/privacy" className="underline hover:text-gold">プライバシーポリシー</a>に同意したものとみなされます。
+                  送信ボタンを押すことで、<Link href="/privacy" className="underline hover:text-gold">プライバシーポリシー</Link>に同意したものとみなされます。
                 </p>
               </div>
             </form>

@@ -1,6 +1,16 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 
+type ShiftWithCast = {
+  id: string;
+  start_time: string | null;
+  end_time: string | null;
+  casts: {
+    stage_name: string;
+    slug: string | null;
+  } | null;
+};
+
 export async function DashboardTodayShifts({ date }: { date: string }) {
   const supabase = await createClient();
 
@@ -17,7 +27,7 @@ export async function DashboardTodayShifts({ date }: { date: string }) {
       </div>
       <div className="divide-y divide-gray-50">
         {todayShifts && todayShifts.length > 0 ? (
-          todayShifts.map((shift: any) => (
+          todayShifts.map((shift: ShiftWithCast) => (
             <div key={shift.id} className="px-6 py-3 flex items-center justify-between">
               <span className="font-bold text-sm text-[#171717]">{shift.casts?.stage_name ?? '—'}</span>
               <span className="text-xs text-gray-500 font-mono">

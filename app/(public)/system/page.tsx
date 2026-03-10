@@ -8,14 +8,21 @@ import { CalendarHeart } from 'lucide-react';
 import { SystemPriceGrid } from '@/components/features/system/SystemPriceGrid';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
 
-export const metadata = {
-  title: 'System | Club Animo',
-  description: 'Club Animoの料金システム。明朗会計で安心してご利用いただけます。',
+import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: '料金システム・相場｜関内キャバクラ CLUB Animo',
+  description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」の料金システム。関内キャバクラの相場や、初めての方でも安心な明朗会計についてご案内します。',
 };
 
 export default function SystemPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
+      <BreadcrumbSchema breadcrumbs={[
+        { name: 'HOME', item: 'https://club-animo.com/' },
+        { name: 'SYSTEM', item: 'https://club-animo.com/system' }
+      ]} />
       {/* Header Section */}
       <section className="bg-transparent pt-32 pb-16 px-6 relative">
         <div className="container mx-auto relative z-10">
@@ -23,7 +30,7 @@ export default function SystemPage() {
             <h1 className="text-foreground font-serif text-3xl md:text-5xl mb-6 luxury-tracking-super uppercase">
               <RevealText text="System" />
             </h1>
-            <div className="w-[1px] h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+            <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
             <p className="text-gold font-serif luxury-tracking text-xs md:text-sm uppercase">
               料金システム
             </p>

@@ -45,7 +45,7 @@ export default async function InquiriesPage() {
 
       <div className="space-y-3">
         {contacts && contacts.length > 0 ? (
-          contacts.map((c: any) => {
+          contacts.map((c: { id: string; is_read: boolean; created_at: string; type: string; name: string; contact_method?: string; date?: string; time?: string; people?: number; message?: string; replied_at?: string; reply_text?: string; }) => {
             const isUnread = !c.is_read;
             const dateStr = c.created_at.slice(0, 16).replace('T', ' ');
             return (
