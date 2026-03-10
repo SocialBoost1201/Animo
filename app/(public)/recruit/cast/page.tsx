@@ -34,7 +34,7 @@ const MERITS = [
 ];
 
 const BENEFITS = [
-  '送迎完備（終電後もOK）',
+  '送迎完備',
   '学生・Wワーク歓迎',
   '研修制度あり（未経験歓迎）',
   '個人ロッカー・更衣室完備',
@@ -209,7 +209,7 @@ export default function CastRecruitPage() {
               { label: '体験入店', value: '時給保証', unit: '日払いOK' },
               { label: 'シフト', value: '週1日〜', unit: '3時間〜OK' },
               { label: '同伴・アフター', value: 'ノルマ', unit: '一切なし' },
-              { label: '送り', value: '毎回完備', unit: '終電後もOK' },
+              { label: '送り', value: '毎回完備' },
             ].map((item, i) => (
               <div key={i} className="text-center py-6 px-4">
                 <p className="text-gold font-serif text-[10px] luxury-tracking uppercase mb-2">{item.label}</p>
