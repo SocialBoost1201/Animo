@@ -170,16 +170,16 @@ export default function CastRecruitPage() {
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/30 to-white" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/50 to-white" />
         <div className="relative z-10 text-center px-6">
           <FadeIn>
-            <p className="text-gold font-serif luxury-tracking text-xs uppercase tracking-widest mb-4">
+            <p className="text-white/90 font-serif luxury-tracking text-xs uppercase tracking-widest mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
               Cast Recruit
             </p>
-            <h1 className="text-gold font-serif text-4xl md:text-6xl lg:text-7xl luxury-tracking-super mb-4 drop-shadow-md">
+            <h1 className="text-gold font-serif text-4xl md:text-6xl lg:text-7xl luxury-tracking-super mb-4 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
               <RevealText text="CAST RECRUIT" />
             </h1>
-            <p className="text-white font-serif luxury-tracking text-xs md:text-sm drop-shadow mb-10">
+            <p className="text-white font-serif luxury-tracking text-xs md:text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mb-10">
               もっと輝く、新しい私へ。
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">

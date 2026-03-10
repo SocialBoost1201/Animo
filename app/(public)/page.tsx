@@ -75,6 +75,7 @@ export default async function HomePage() {
         title: m.title,
       }))
     : [
+        { id: 'v0', type: 'video', url: '/videos/kannai-street.mov', posterUrl: '/videos/kannai-street.mov' },
         { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/videos/movie01_chandelier.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
         { id: 'v3', type: 'video', url: '/videos/movie03_bar.mp4', posterUrl: '/videos/movie03_bar.mp4' },
