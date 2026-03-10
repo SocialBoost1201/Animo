@@ -148,7 +148,7 @@ export const PriceSimulator = () => {
             </AnimatePresence>
           </div>
           <p className="text-[10px] md:text-xs text-gray-400 font-serif option-tracking leading-[2] mb-12">
-            ※ 税・サービス料（32%）込みの金額です。<br />
+            ※ 税・サービス料（30%）込みの金額です。<br />
             ※ キャストドリンク代やボトルの別注文料金は含まれておりません。<br />
             ※ あくまで目安料金となりますので、あらかじめご了承ください。
           </p>
