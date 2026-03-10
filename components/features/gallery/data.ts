@@ -18,7 +18,7 @@ export const GALLERY_DATA: GalleryItemData[] = [
   { id: 'dec-3', category: 'interior', title: 'Bar Counter', src: '/images/bar-counter.jpg', alt: 'Bar Counter' },
 
   // SEATING
-  { id: 'seat-1', category: 'seating', title: 'Curtain Room', src: '/images/curtain_room.jpg', alt: 'Curtain Room', featured: true },
+  { id: 'seat-1', category: 'seating', title: 'Curtain Room', src: '/images/curtain_room.JPG', alt: 'Curtain Room', featured: true },
   { id: 'seat-3', category: 'seating', title: 'Sofa Seating', src: '/images/animo-main-sofa-seating.jpg', alt: 'Sofa Seating' },
   { id: 'seat-4', category: 'seating', title: 'Floor Seating Area', src: '/images/animo-main-floor-seating-area.jpg', alt: 'Floor Seating Area' },
   { id: 'seat-5', category: 'seating', title: 'Luxury Lounge', src: '/images/animo-luxury-lounge-seating.jpg', alt: 'Luxury Lounge' },

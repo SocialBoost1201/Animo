@@ -1,16 +1,16 @@
 import React from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { GalleryGrid } from '@/components/features/gallery/GalleryGrid';
-import { getPublicContents } from '@/lib/actions/public/data';
+import { GALLERY_DATA } from '@/components/features/gallery/data';
 
 // サーバーコンポーネントとしてギャラリーデータを取得
 export default async function GalleryPage() {
-  const galleryItems = await getPublicContents('gallery');
+  const galleryItems = GALLERY_DATA;
 
   return (
     <div className="bg-[var(--color-gray-light)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
       <div className="container mx-auto">
-        <FadeIn className="text-center mb-16">
+        <FadeIn className="text-center mb-16 mt-8">
           <h1 className="text-3xl md:text-5xl font-serif tracking-widest text-[#171717] uppercase mb-4">
             Gallery
           </h1>
