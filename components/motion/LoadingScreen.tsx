@@ -1,26 +1,26 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const LoadingScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Has the user visited already?
+    // セッション内で1度だけ表示（再訪問時はスキップ）
     const hasVisited = sessionStorage.getItem('visited_animo');
-    
+
     if (hasVisited) {
-      // setTimeoutを使って同期的なsetStateによる警告を回避
-      const immediateTimer = setTimeout(() => setIsLoading(false), 0);
-      return () => clearTimeout(immediateTimer);
+      setIsLoading(false);
+      return;
     }
 
-    // Hide loading screen after artificial delay for the very first visit
+    // ロゴを3秒かけてフェードイン → その後0.8sかけてスクリーン自体をフェードアウト
     const timer = setTimeout(() => {
       setIsLoading(false);
       sessionStorage.setItem('visited_animo', 'true');
-    }, 2800); // 2.8s total loading experience
+    }, 3800); // 3s logo fade-in + 0.8s screen fade-out buffer
 
     return () => clearTimeout(timer);
   }, []);
@@ -32,43 +32,31 @@ export const LoadingScreen = () => {
           key="loading"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-black"
+          transition={{ duration: 0.8, ease: 'easeInOut' }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#000',
+          }}
         >
-          <div className="relative flex flex-col items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-              className="mb-8"
-            >
-              {/* Luxury Logo Display */}
-              <h1 className="font-serif text-3xl md:text-5xl tracking-[0.3em] uppercase text-white font-medium">
-                Club Animo
-              </h1>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-              className="flex items-center gap-4"
-            >
-              <div className="w-px h-4 bg-gold/50" />
-              <p className="font-serif text-[10px] md:text-xs tracking-[0.4em] text-gold uppercase whitespace-nowrap">
-                関内の大人の社交場
-              </p>
-              <div className="w-px h-4 bg-gold/50" />
-            </motion.div>
-
-            {/* Subtle loading indicator */}
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 2, ease: "easeInOut" }}
-              className="absolute -bottom-12 w-full h-px bg-linear-to-r from-transparent via-gold to-transparent origin-left"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 3, ease: 'easeInOut' }}
+          >
+            <Image
+              src="/Animo-logo2.png"
+              alt="CLUB ANIMO"
+              width={320}
+              height={160}
+              priority
+              style={{ objectFit: 'contain' }}
             />
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
