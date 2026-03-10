@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useMemo } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { PointMaterial, Points } from '@react-three/drei';
@@ -16,10 +16,11 @@ const ParticleField: React.FC<ParticlesProps> = ({
 }) => {
   const pointsRef = useRef<THREE.Points>(null);
 
-  // ランダムな位置情報を持つパーティクル群を生成
-  const positions = useMemo(() => {
-    const p = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
+  // 初回マウント時のみ乱数を生成してパーティクルの初期位置を計算する
+  const [particles] = useState(() => {
+    const fixedCount = 300; // Use a fixed count for particle generation
+    const p = new Float32Array(fixedCount * 3);
+    for (let i = 0; i < fixedCount; i++) {
       const radius = 2 + Math.random() * 8; // 半径
       const theta = Math.random() * 2 * Math.PI; // 角度
       const phi = Math.acos(2 * Math.random() - 1); // 仰角
@@ -33,17 +34,18 @@ const ParticleField: React.FC<ParticlesProps> = ({
       p[i * 3 + 2] = z;
     }
     return p;
-  }, [count]);
+  });
 
   useFrame((state, delta) => {
     if (pointsRef.current) {
+      // ゆっくりと全体を回転させる
       pointsRef.current.rotation.y += delta * 0.05;
-      pointsRef.current.rotation.x -= delta * 0.02;
+      pointsRef.current.rotation.x += delta * 0.02;
     }
   });
 
   return (
-    <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
+    <Points ref={pointsRef} positions={particles} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
         color={color}

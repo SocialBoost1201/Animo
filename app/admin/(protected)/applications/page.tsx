@@ -3,6 +3,7 @@ import { markAsRead } from '@/lib/actions/inquiries';
 import { revalidatePath } from 'next/cache';
 import { ReplyForm } from '@/components/features/admin/ReplyForm';
 import { StatusSelect } from '@/components/features/admin/StatusSelect';
+import { SearchBar } from '@/components/features/admin/SearchBar';
 import {
   Phone, Mail, Smartphone, Briefcase, Filter, CheckCircle,
 } from 'lucide-react';
@@ -24,9 +25,9 @@ const TYPE_MAP: Record<string, { label: string; color: string }> = {
 export default async function ApplicationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string }>;
+  searchParams: Promise<{ filter?: string; q?: string }>;
 }) {
-  const { filter = 'all' } = await searchParams;
+  const { filter = 'all', q } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
@@ -37,6 +38,11 @@ export default async function ApplicationsPage({
   if (filter === 'cast') query = query.eq('type', 'cast');
   else if (filter === 'staff') query = query.eq('type', 'staff');
   else if (filter === 'unread') query = query.eq('is_read', false);
+
+  if (q) {
+    // 名前・メール・電話番号・LINE IDなどでの部分一致検索
+    query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%,line_id.ilike.%${q}%`);
+  }
 
   const { data: apps } = await query;
 
@@ -60,14 +66,19 @@ export default async function ApplicationsPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-serif tracking-widest text-[#171717]">求人応募管理</h1>
-        <p className="text-sm text-gray-400 mt-1">
-          {apps?.length ?? 0}件のデータ
-          {unreadCount > 0 && (
-            <span className="ml-2 text-amber-600 font-bold">（未読 {unreadCount}件）</span>
-          )}
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">求人応募管理</h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {apps?.length ?? 0}件のデータ
+            {unreadCount > 0 && (
+              <span className="ml-2 text-amber-600 font-bold">（未読 {unreadCount}件）</span>
+            )}
+          </p>
+        </div>
+        <div className="w-full md:w-64">
+          <SearchBar placeholder="名前・連絡先で検索..." />
+        </div>
       </div>
 
       {/* Filter Tabs */}

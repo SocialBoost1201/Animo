@@ -10,14 +10,22 @@ function revalidateAll(slug?: string) {
   if (slug) revalidatePath(`/cast/${slug}`)
 }
 
-export async function getCasts() {
+export async function getCasts(query?: string) {
   const supabase = await createClient()
-  const { data, error } = await supabase
+  let sql = supabase
     .from('casts')
     .select('*, cast_images(image_url, is_primary)')
     .order('display_order', { ascending: true })
     .order('name_kana', { ascending: true })
     .order('created_at', { ascending: false })
+
+  if (query) {
+    // stage_name または name にクエリが含まれるか検索
+    sql = sql.or(`stage_name.ilike.%${query}%,name.ilike.%${query}%`)
+  }
+
+  const { data, error } = await sql
+
   if (error) throw new Error(error.message)
   return data
 }

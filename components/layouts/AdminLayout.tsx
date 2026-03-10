@@ -62,13 +62,21 @@ export function AdminLayout({
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(false);
-    const t = setTimeout(() => setIsVisible(true), 20);
-    return () => clearTimeout(t);
+    // pathnameが変わったら即座にいったん非表示（トランジション発動用）
+    // NOTE: レンダリングのカスケードを防ぐため setTimeout で処理をずらす
+    const tHide = setTimeout(() => setIsVisible(false), 0);
+    const tShow = setTimeout(() => setIsVisible(true), 10);
+    return () => {
+      clearTimeout(tHide);
+      clearTimeout(tShow);
+    };
   }, [pathname]);
 
   useEffect(() => {
-    setMobileOpen(false);
+    // ページ遷移時にモバイルメニューを閉じる
+    // NOTE: レンダリングのカスケードを防ぐため setTimeout で処理をずらす
+    const t = setTimeout(() => setMobileOpen(false), 0);
+    return () => clearTimeout(t);
   }, [pathname]);
 
   const sections = ['main', 'crm', 'content', 'system'];

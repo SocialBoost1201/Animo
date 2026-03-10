@@ -4,6 +4,7 @@ import { Plus, Calendar } from 'lucide-react';
 
 import { DashboardKPIs } from '@/components/features/admin/dashboard/DashboardKPIs';
 import { DashboardTotals } from '@/components/features/admin/dashboard/DashboardTotals';
+import { DashboardCharts } from '@/components/features/admin/dashboard/DashboardCharts';
 import { DashboardRecentContacts } from '@/components/features/admin/dashboard/DashboardRecentContacts';
 import { DashboardTodayShifts } from '@/components/features/admin/dashboard/DashboardTodayShifts';
 
@@ -12,7 +13,7 @@ export default function DashboardPage() {
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   const Skeleton = ({ className = 'h-32' }: { className?: string }) => (
-    <div className={`w-full bg-gray-100 animate-pulse ${className}`} />
+    <div className={`w-full bg-gray-100 animate-pulse rounded-sm ${className}`} />
   );
 
   return (
@@ -26,13 +27,13 @@ export default function DashboardPage() {
         <div className="flex gap-2 w-full md:w-auto">
           <Link
             href="/admin/casts/new"
-            className="flex-1 md:flex-none justify-center flex items-center gap-2 text-xs bg-[#171717] text-white px-4 py-3 md:py-2.5 hover:bg-gold transition-colors"
+            className="flex-1 md:flex-none justify-center flex items-center gap-2 text-xs bg-[#171717] text-white px-4 py-3 md:py-2.5 hover:bg-gold transition-colors rounded-sm"
           >
             <Plus size={14} /> キャスト追加
           </Link>
           <Link
             href="/admin/shifts"
-            className="flex-1 md:flex-none justify-center flex items-center gap-2 text-xs border border-gray-200 text-gray-600 px-4 py-3 md:py-2.5 hover:border-gray-400 transition-colors"
+            className="flex-1 md:flex-none justify-center flex items-center gap-2 text-xs border border-gray-200 text-gray-600 px-4 py-3 md:py-2.5 hover:border-gray-400 transition-colors rounded-sm"
           >
             <Calendar size={14} /> シフト登録
           </Link>
@@ -47,6 +48,11 @@ export default function DashboardPage() {
       {/* 累計サマリー */}
       <Suspense fallback={<Skeleton className="h-28" />}>
         <DashboardTotals />
+      </Suspense>
+
+      {/* 月次推移グラフ */}
+      <Suspense fallback={<Skeleton className="h-72" />}>
+        <DashboardCharts />
       </Suspense>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

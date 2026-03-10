@@ -1,26 +1,44 @@
 import { createClient } from '@/lib/supabase/server';
 import { RealtimeInbox } from '@/components/features/admin/RealtimeInbox';
 import { ReplyForm } from '@/components/features/admin/ReplyForm';
+import { SearchBar } from '@/components/features/admin/SearchBar';
 
 export const dynamic = 'force-dynamic';
 
-export default async function InquiriesPage() {
+export default async function InquiriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const supabase = await createClient();
+  const { q } = await searchParams;
 
-  const { data: contacts } = await supabase
+  let query = supabase
     .from('contacts')
     .select('*')
     .order('created_at', { ascending: false });
 
+  if (q) {
+    // 名前 または 連絡先方法 にクエリが含まれるかを検索
+    query = query.or(`name.ilike.%${q}%,contact_method.ilike.%${q}%`);
+  }
+
+  const { data: contacts } = await query;
+
   return (
     <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-serif tracking-widest text-[#171717]">受信箱</h1>
-        <p className="text-sm text-gray-400 mt-1">
-          予約・お問い合わせの受信箱。求人応募は
-          <a href="/admin/applications" className="underline text-gold ml-1">求人応募管理</a>
-          をご覧ください。
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">受信箱</h1>
+          <p className="text-sm text-gray-400 mt-1">
+            予約・お問い合わせの受信箱。求人応募は
+            <a href="/admin/applications" className="underline text-gold ml-1">求人応募管理</a>
+            をご覧ください。
+          </p>
+        </div>
+        <div className="w-full md:w-64">
+          <SearchBar placeholder="名前・連絡先で検索..." />
+        </div>
       </div>
 
       {/* Realtime リスト（新規着信を自動反映） */}
@@ -50,3 +68,4 @@ export default async function InquiriesPage() {
     </div>
   );
 }
+

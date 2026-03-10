@@ -1,111 +1,54 @@
-import { getCasts, deleteCast } from '@/lib/actions/casts'
-import Link from 'next/link'
-import { Trash2, Eye, EyeOff, Edit2, Plus, Sparkles } from 'lucide-react'
-import { DeleteCastButton } from '@/components/features/admin/DeleteCastButton'
+import { getCasts } from '@/lib/actions/casts';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
+import { DraggableCastList } from '@/components/features/admin/casts/DraggableCastList';
+import { SearchBar } from '@/components/features/admin/SearchBar';
 
-export default async function CastsPage() {
-  const casts = await getCasts()
+// propsに searchParams を追加
+export default async function CastsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const casts = await getCasts(q);
 
-
+  // 必要なプロパティだけをマッピング
+  const mappedCasts = (casts || []).map(cast => ({
+    id: cast.id,
+    stage_name: cast.stage_name,
+    name: cast.name,
+    image_url: cast.cast_images?.find((img: { is_primary: boolean, image_url: string }) => img.is_primary)?.image_url || null,
+    age: cast.age,
+    hobby: cast.hobby,
+    quiz_tags: cast.quiz_tags || [],
+    is_active: cast.is_active,
+    status: cast.status,
+    display_order: cast.display_order ?? 0,
+  }));
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Casts Management</h1>
           <p className="text-sm text-gray-500 mt-2">在籍キャストの登録・編集・表示順の管理</p>
         </div>
-        <Link
-          href="/admin/casts/new"
-          className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors"
-        >
-          <Plus size={16} />
-          新規登録
-        </Link>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex-1 md:w-64">
+            <SearchBar placeholder="源氏名・名前で検索..." />
+          </div>
+          <Link
+            href="/admin/casts/new"
+            className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors whitespace-nowrap"
+          >
+            <Plus size={16} />
+            新規登録
+          </Link>
+        </div>
       </div>
 
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100 text-xs tracking-widest text-gray-500 uppercase">
-              <th className="px-6 py-4 font-bold">順</th>
-              <th className="px-6 py-4 font-bold">Image</th>
-              <th className="px-6 py-4 font-bold">源氏名</th>
-              <th className="px-6 py-4 font-bold">年齢</th>
-              <th className="px-6 py-4 font-bold">診断</th>
-              <th className="px-6 py-4 font-bold">在籍</th>
-              <th className="px-6 py-4 font-bold text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {casts?.map((cast) => (
-              <tr key={cast.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 text-sm text-gray-400 w-12">
-                  {cast.display_order ?? 0}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
-                    {cast.image_url
-                      ? <img src={cast.image_url} alt={cast.stage_name} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">{(cast.stage_name || cast.name || '?')[0]}</div>
-                    }
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <p className="font-bold text-[#171717]">{cast.stage_name || cast.name}</p>
-                  {cast.hobby && <p className="text-xs text-gray-400 mt-0.5">趣味: {cast.hobby}</p>}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {cast.age ? `${cast.age}歳` : '-'}
-                </td>
-                <td className="px-6 py-4">
-                  {cast.quiz_tags && cast.quiz_tags.length > 0 ? (
-                    <div className="flex items-center gap-1.5 text-gold">
-                      <Sparkles size={14} />
-                      <span className="text-xs font-bold">{cast.quiz_tags.length} tags</span>
-                    </div>
-                  ) : (
-                    <span className="text-[10px] text-gray-300 flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-200" /> 未設定
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
-                    (cast.is_active ?? cast.status === 'public')
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-500'
-                  }`}>
-                    {(cast.is_active ?? cast.status === 'public')
-                      ? <><Eye size={10} /> 公開</>
-                      : <><EyeOff size={10} /> 非公開</>
-                    }
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end items-center gap-2">
-                    <Link
-                      href={`/admin/casts/${cast.id}`}
-                      className="p-2 text-gray-400 hover:text-[#171717] transition-colors rounded hover:bg-gray-100"
-                    >
-                      <Edit2 size={16} />
-                    </Link>
-                    <DeleteCastButton castId={cast.id} castName={cast.stage_name || cast.name || '名前なし'} />
-                  </div>
-                </td>
-              </tr>
-            ))}
-
-            {(!casts || casts.length === 0) && (
-              <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
-                  キャストが登録されていません。<br />右上の「新規登録」ボタンから追加してください。
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <DraggableCastList initialCasts={mappedCasts} />
     </div>
-  )
+  );
 }

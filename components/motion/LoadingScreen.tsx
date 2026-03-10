@@ -12,8 +12,9 @@ export const LoadingScreen = () => {
     const hasVisited = sessionStorage.getItem('visited_animo');
 
     if (hasVisited) {
-      setIsLoading(false);
-      return;
+      // NOTE: レンダリングのカスケードを防ぐため setTimeout で遅延実行
+      const t = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(t);
     }
 
     // ロゴを3秒かけてフェードイン → その後0.8sかけてスクリーン自体をフェードアウト
