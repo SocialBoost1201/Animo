@@ -34,12 +34,11 @@ const MERITS = [
 ];
 
 const BENEFITS = [
-  '送り完備（終電を過ぎてもスタッフが送迎）',
-  '終電上がりOK',
-  'ノルマ・強制なし',
+  '送迎完備（終電後もOK）',
+  '学生・Wワーク歓迎',
+  '研修制度あり（未経験歓迎）',
   '個人ロッカー・更衣室完備',
   '女性専用トイレ完備',
-  '体験入店の当日日払い対応',
 ];
 
 const VOICES = [
@@ -66,7 +65,7 @@ const VOICES = [
 const TRIAL_STEPS = [
   { step: '01', title: 'WEB応募または電話', desc: 'フォームまたはお電話から。お名前と電話番号のみでOKです。' },
   { step: '02', title: '採用担当よりご連絡', desc: '2営業日以内にLINEまたはお電話でご連絡いたします。' },
-  { step: '03', title: '面接（服装自由・場所相談可）', desc: '関内の店舗またはご希望の場所で。気になることを何でもご質問ください。' },
+  { step: '03', title: '面接', desc: '関内の店舗またはご希望の場所で。気になることを何でもご質問ください。' },
   { step: '04', title: '体験入店', desc: '実際の雰囲気を体感。当日の時給は全額日払いでお渡しします。' },
   { step: '05', title: '本入店', desc: 'シフトはご自身のペースで決めていただけます。' },
 ];
@@ -94,31 +93,10 @@ const CAST_POINTS = [
 ];
 
 const RECRUIT_DETAILS_DATA: RecruitTableData[] = [
-  { label: '業種', value: 'キャバクラ / ラウンジ' },
-  { label: '職種', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
-  { label: '住所', value: (
-    <span className="flex flex-wrap items-start sm:items-center justify-between gap-2 w-full">
-      <span className="flex items-start gap-2 text-xs leading-relaxed">
-        <MapPin className="text-gold w-4 h-4 shrink-0 mt-0.5"/>
-        <span>神奈川県横浜市中区相生町3-53 グランドパークビル2F</span>
-      </span>
-      <a
-        href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53"
-        target="_blank" rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-1 hover:bg-gold/10 transition-colors shrink-0"
-      >
-        <MapPin className="w-3 h-3" /> MAP
-      </a>
-    </span>
-  ) },
-  { label: '給与', value: '時給 4,000円〜 + 各種バック\n※経験や能力により優遇いたします。' },
-  { label: '給与詳細', value: '■全額日払い可(規定あり)\n■各種バックあり（指名・同伴・ドリンク・ボトル等）\n■体験入店時の時給保証あり\n■ノルマ一切なし' },
-  { label: '応募資格', value: '18歳以上（高校生不可）\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
-  { label: '勤務時間', value: '20:00〜LAST\n（週1日・3時間〜OK）' },
-  { label: '勤務時間詳細', value: '※シフトは完全自由の自己申告制\n※終電上がりOK、遅出出勤OK' },
-  { label: '契約期間', value: '短期勤務もOK！お気軽にご相談ください。\n\n学生さんの長期休暇中のみ・1ヶ月限定など、働き方はご相談可能です。\n\n長期・レギュラー勤務できる方も大歓迎！' },
-  { label: '休日', value: '日曜日・祝日休業\n（ご自身のペースで出勤日を決めていただけます）' },
-  { label: '待遇', value: '■無料送迎完備\n■ドレス・靴レンタル無料\n■個人ロッカー完備\n■日払い・週払い対応\n■体験入店は2回まで可能' },
+  { label: '仕事内容', value: 'フロアレディ（キャスト）', subColumn: { label: 'エリア', value: '関内' } },
+  { label: '給与', value: '時給 4,000円〜 + 各種バック\n※経験や能力により優遇いたします。\n■全額日払い可(規定あり)\n■体験入店時の時給保証あり\n■ノルマ一切なし' },
+  { label: '応募条件', value: '18歳以上（高校生不可）\n【未経験者・経験者ともに大歓迎！】\n■学生・Wワークの方、フリーターの方歓迎\n■お酒が飲めなくてもOK\n■友達同士の応募も歓迎' },
+  { label: '勤務時間', value: '20:00〜LAST\n（週1日・3時間〜OK）\n※シフトは完全自由の自己申告制\n※終電上がりOK、遅出出勤OK' },
 ];
 
 const RECRUIT_DETAILS_TAGS: RecruitTag[] = [
@@ -135,7 +113,6 @@ const RECRUIT_DETAILS_TAGS: RecruitTag[] = [
   { label: '寮紹介あり', active: false },
   { label: '託児所紹介あり', active: false },
   { label: '駅近', active: true },
-  { label: '髪型自由', active: true },
   { label: '短期可', active: true },
   { label: '手ぶら出勤可', active: true },
 ];

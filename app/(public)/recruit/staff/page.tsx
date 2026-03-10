@@ -43,7 +43,6 @@ const POSITIONS = {
           '未経験者大歓迎',
           '月給25万円〜',
           '昇給あり',
-          '交通費支給',
         ],
       },
       {
@@ -55,17 +54,14 @@ const POSITIONS = {
           '週1日・3時間〜OK',
           '1,400円〜（研修期間あり）',
           '学生・Wワーク歓迎',
-          '服装・髪色自由',
           '終電上がりOK',
         ],
       },
     ],
     benefits: [
-      '送り完備（終電後もOK）',
+      '送迎完備（終電後もOK）',
       '学生・Wワーク歓迎',
-      '昇進・昇給あり（幹部登用実績あり）',
-      '服装・髪型自由',
-      '交通費支給',
+      '昇進・昇給あり',
       '研修・OJT制度あり',
     ],
     faq: [
@@ -85,32 +81,14 @@ const POSITIONS = {
       'スマホ応募・WEB面接・LINE面接',
     ],
     tableData: [
-      { label: '業種', value: 'キャバクラ / ラウンジ' },
-      { label: '職種', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
-      { label: '住所', value: (
-        <span className="flex flex-wrap items-start sm:items-center justify-between gap-2 w-full">
-          <span className="flex items-start gap-2 text-xs leading-relaxed">
-            <MapPin className="text-gold w-4 h-4 shrink-0 mt-0.5"/>
-            <span>神奈川県横浜市中区相生町3-53 グランドパークビル2F</span>
-          </span>
-          <a href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-1 hover:bg-gold/10 transition-colors shrink-0">
-            <MapPin className="w-3 h-3" /> MAP
-          </a>
-        </span>
-      ) },
-      { label: '給与', value: '【正社員】月給 25万円〜35万円以上\n【アルバイト】1,400円〜（研修期間あり）' },
-      { label: '給与詳細', value: '■昇給・昇格随時\n■交通費規定内支給\n■深夜手当あり\n■大入賞・各種歩合あり' },
-      { label: '応募資格', value: '18歳以上（高校生不可）\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
+      { label: '仕事内容', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
+      { label: '給与', value: '【正社員】月給 25万円〜35万円以上\n【アルバイト】1,400円〜（研修期間あり）\n■昇給・昇格随時\n■深夜手当あり\n■大入賞・各種歩合あり' },
+      { label: '応募条件', value: '18歳以上（高校生不可）\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
       { label: '勤務時間', value: '18:00〜LAST\n（実働8時間 / アルバイトは週1・3h〜）' },
-      { label: '契約期間', value: '短期勤務もOK！お気軽にご相談ください。\n\n正社員・アルバイトともに長期勤務歓迎。\n将来的な独立・幹部昇格を目指す方も大歓迎！' },
-      { label: '休日', value: '日曜日・祝日休業\n※夏季・年末年始・GW休暇あり' },
-      { label: '待遇', value: '■交通費支給\n■送り完備\n■独立支援制度あり\n■制服貸与' },
     ] as RecruitTableData[],
     tableTags: [
       { label: '未経験者歓迎', active: true },
       { label: '経験者優遇', active: true },
-      { label: '交通費支給', active: true },
       { label: '独立支援あり', active: true },
       { label: '日払い可(規定)', active: true },
       { label: '駅近', active: true },
@@ -139,13 +117,11 @@ const POSITIONS = {
     ],
     benefits: [
       '制服貸与（スーツ）',
-      '送り完備（終電後もOK）',
+      '送迎完備（終電後もOK）',
       '週1日・3時間〜OK',
       '学生・Wワーク歓迎',
-      'ヘアメイクサポートあり',
       'キャストとは別の立場で働ける',
       '接客経験が積める',
-      '服装は制服のみでOK（私服不要）',
     ],
     faq: [
       { q: 'キャストと何が違いますか？', a: 'エスコートはお客様をお席へご案内・ご予約受付・お荷物お預かりが主な業務です。お客様の横に座ることはありません。接客業に自信がない方や、水商売は初めての方にもおすすめです。' },
@@ -165,27 +141,10 @@ const POSITIONS = {
       'スマホ応募・WEB応募・履歴書不要',
     ],
     tableData: [
-      { label: '業種', value: 'キャバクラ / ラウンジ' },
-      { label: '職種', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
-      { label: '住所', value: (
-        <span className="flex flex-wrap items-start sm:items-center justify-between gap-2 w-full">
-          <span className="flex items-start gap-2 text-xs leading-relaxed">
-            <MapPin className="text-gold w-4 h-4 shrink-0 mt-0.5"/>
-            <span>神奈川県横浜市中区相生町3-53 グランドパークビル2F</span>
-          </span>
-          <a href="https://maps.google.com/?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3-53" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[10px] font-serif text-gold border border-gold/40 px-2 py-1 hover:bg-gold/10 transition-colors shrink-0">
-            <MapPin className="w-3 h-3" /> MAP
-          </a>
-        </span>
-      ) },
-      { label: '給与', value: '時給 1,500円〜' },
-      { label: '給与詳細', value: '■昇給随時\n■交通費一部支給\n■日払い対応可（要相談）' },
-      { label: '応募資格', value: '18歳以上（高校生不可）\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
-      { label: '勤務時間', value: '19:30〜LAST\n（週1日・3時間〜OK）' },
-      { label: '勤務時間詳細', value: '※シフト自由の自己申告制\n※終電時間での退勤OK\n※週末のみの勤務も歓迎' },
-      { label: '契約期間', value: '短期勤務もOK！長期休暇中のみ・単発でもご相談ください。\n\n授業・他のお仕事との両立歓迎！' },
-      { label: '待遇', value: '■制服貸与（スーツ等）\n■送り完備\n■ヘアメイクサポート（希望者）\n■個人ロッカー完備\n■ノルマ一切なし' },
+      { label: '仕事内容', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
+      { label: '給与', value: '時給 1,500円〜\n■昇給随時\n■日払い対応可（要相談）' },
+      { label: '応募条件', value: '18歳以上（高校生不可）\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
+      { label: '勤務時間', value: '19:30〜LAST\n（週1日・3時間〜OK）\n※シフト自由の自己申告制\n※終電時間での退勤OK\n※週末のみの勤務も歓迎' },
     ] as RecruitTableData[],
     tableTags: [
       { label: '未経験者歓迎', active: true },
