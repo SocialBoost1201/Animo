@@ -31,11 +31,12 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
 
   useEffect(() => {
     if (media.length <= 1 || isReducedMotion) return;
-    const interval = setInterval(() => {
+    const currentDurationMs = media[activeIndex]?.durationMs || durationMs;
+    const interval = setTimeout(() => {
       setActiveIndex((current) => (current + 1) % media.length);
-    }, durationMs);
-    return () => clearInterval(interval);
-  }, [media.length, durationMs, isReducedMotion]);
+    }, currentDurationMs);
+    return () => clearTimeout(interval);
+  }, [media, activeIndex, durationMs, isReducedMotion]);
 
   return (
     <div className="relative h-screen min-h-[500px] w-full overflow-hidden bg-black flex items-center justify-center">

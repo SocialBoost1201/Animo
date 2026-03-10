@@ -6,6 +6,7 @@ export interface HeroMedia {
   url: string;
   posterUrl?: string; // fallback or poster image
   title?: string;
+  durationMs?: number; // ←追加：このメディア固有の表示時間
 }
 
 export interface HeroVideoRotatorProps {

@@ -407,14 +407,14 @@ export default function CastRecruitPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xl mx-auto">
             <a
               href="#form"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-4 bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-foreground transition-all duration-300"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-gold bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-foreground hover:border-white transition-all duration-300"
             >
               <CalendarHeart className="w-4 h-4" />
               WEBで今すぐ応募
             </a>
             <a
               href="tel:045-263-6961"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-white/30 bg-white/5 text-white/90 font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors"
             >
               <Phone className="w-4 h-4" />
               電話で相談（無料）
@@ -423,7 +423,7 @@ export default function CastRecruitPage() {
               href="https://ig.me/m/kannai_club_animo"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-4 border border-white/10 bg-transparent text-white/70 font-serif luxury-tracking text-xs uppercase hover:bg-white/5 hover:text-white transition-colors"
             >
               <Instagram className="w-4 h-4" />
               DMで相談
