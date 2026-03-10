@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
-import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import {
   ArrowRight, CheckCircle2, Phone, Instagram,
@@ -163,11 +163,12 @@ export default function CastRecruitPage() {
 
       {/* ① Hero */}
       <section className="relative h-[60vh] md:h-[80vh] w-full flex items-center justify-center overflow-hidden">
-        <PlaceholderImage
-          ratio="16:9"
-          alt="Recruit Hero"
-          placeholderText="Elegant Chandelier"
-          className="absolute inset-0 w-full h-full object-cover"
+        <Image
+          src="/images/cast-recruit-hero.png"
+          alt="Cast Recruit Hero"
+          fill
+          priority
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/30 to-white" />
         <div className="relative z-10 text-center px-6">
