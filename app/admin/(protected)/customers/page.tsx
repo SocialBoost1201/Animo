@@ -25,8 +25,8 @@ export default async function CustomersPage({
   const { data: contacts } = await query;
 
   // CRM: 顧客（phone または contact_method）単位でグループ化する処理
-  type ContactData = { id: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
-  type CustomerData = { id: string; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
+  type ContactData = { id: string; customer_id?: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
+  type CustomerData = { id: string; customerId?: string | null; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
 
   const customersMap = new Map<string, CustomerData>();
 
@@ -37,6 +37,7 @@ export default async function CustomersPage({
     if (!customersMap.has(key)) {
       customersMap.set(key, {
         id: key,
+        customerId: null,
         primaryName: c.name,
         phone: c.phone,
         email: c.contact_method?.includes('@') ? c.contact_method : null,
@@ -55,6 +56,7 @@ export default async function CustomersPage({
     if (c.type === 'contact') customer.contactCount++;
     
     // 名前の更新（より新しいデータがあれば上書き、今回は降順取得なので最初の1件が最新）
+    if (!customer.customerId && c.customer_id) customer.customerId = c.customer_id;
     if (!customer.phone && c.phone) customer.phone = c.phone;
     if (!customer.email && c.contact_method?.includes('@')) customer.email = c.contact_method;
     if (!customer.lineId && c.line_id) customer.lineId = c.line_id;

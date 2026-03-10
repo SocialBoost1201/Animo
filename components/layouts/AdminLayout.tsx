@@ -24,6 +24,7 @@ import { logout } from '@/lib/actions/auth';
 const NAV_ITEMS = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard',   section: 'main' },
   { href: '/admin/casts',     icon: Users,           label: 'キャスト管理', section: 'main' },
+  { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
   { href: '/admin/shifts',    icon: Calendar,        label: 'シフト',       section: 'main' },
   { href: '/admin/customers',    icon: UserCheck,    label: '顧客',         badge: 'contacts',  section: 'crm' },
   { href: '/admin/applications', icon: Briefcase,    label: '求人応募',     badge: 'applications', section: 'crm' },
@@ -31,7 +32,7 @@ const NAV_ITEMS = [
   { href: '/admin/contents',  icon: FileText,        label: 'ニュース',      section: 'content' },
   { href: '/admin/gallery',   icon: ImageIcon,       label: 'ギャラリー',   section: 'content' },
   { href: '/admin/hero',      icon: ImageIcon,       label: 'ヒーロー',     section: 'content' },
-  { href: '/admin/settings',  icon: Settings,        label: '設定',         section: 'system' },
+  { href: '/admin/settings',  icon: Settings,        label: '設定',         section: 'system', roles: ['owner', 'manager'] },
 ];
 
 const SECTION_LABELS: Record<string, string> = {
@@ -53,9 +54,11 @@ const BOTTOM_TAB_ITEMS = [
 export function AdminLayout({
   children,
   unreadCount = 0,
+  role = 'staff',
 }: {
   children: React.ReactNode;
   unreadCount?: number;
+  role?: string;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -107,7 +110,15 @@ export function AdminLayout({
       {/* Nav */}
       <nav className="flex-1 py-4 px-3 overflow-y-auto space-y-5">
         {sections.map((section) => {
-          const items = NAV_ITEMS.filter((i) => i.section === section);
+          const items = NAV_ITEMS.filter((i) => {
+            if (i.section !== section) return false;
+            // 権限設定がある場合はチェック
+            const itemRoles = (i as { roles?: string[] }).roles;
+            if (itemRoles && !itemRoles.includes(role)) return false;
+            return true;
+          });
+          if (items.length === 0) return null; // セクション内に表示アイテムがない場合はセクション自体を非表示
+
           return (
             <div key={section}>
               <p className="text-[9px] font-bold tracking-[0.2em] text-white/25 uppercase px-3 mb-1.5">

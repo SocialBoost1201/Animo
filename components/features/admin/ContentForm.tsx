@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { Sparkles, Loader2 } from 'lucide-react'
 
 type ContentData = {
   type?: string;
@@ -19,7 +20,9 @@ type ContentData = {
 export function ContentForm({ initialData }: { initialData?: ContentData | null }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
+  const [isAiGenerating, setIsAiGenerating] = useState(false)
   const isEditing = !!initialData
+  const formRef = useRef<HTMLFormElement>(null)
 
   const [contentType, setContentType] = useState(initialData?.type || 'news')
 
@@ -56,6 +59,46 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
     }
   }
 
+  async function handleGenerateAI() {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const title = formData.get('title') as string;
+    const typeLabel = contentType === 'news' ? 'ニュース' : 'イベント';
+    const dateStr = formData.get('content_date') as string;
+
+    const baseInfo = [
+      `種別: ${typeLabel}`,
+      title ? `記事タイトル: ${title}` : '',
+      dateStr ? `開催日: ${dateStr}` : ''
+    ].filter(Boolean).join('\n');
+
+    if (!title) {
+      alert('自動生成には「タイトル」の入力が必要です。');
+      return;
+    }
+
+    setIsAiGenerating(true);
+    try {
+      const res = await fetch('/api/admin/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: baseInfo, type: 'news' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'API Error');
+      
+      const descInput = formRef.current.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+      if (descInput) {
+        descInput.value = data.text;
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      alert(`自動生成に失敗しました: ${error.message}`);
+    } finally {
+      setIsAiGenerating(false);
+    }
+  }
+
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
@@ -72,7 +115,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
           {isEditing ? 'Edit Content' : 'New Content'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -134,13 +177,24 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
           {contentType !== 'gallery' && (
             <div>
-              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Description / Content</label>
+              <div className="flex justify-between items-end mb-2">
+                <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase">Description / Content</label>
+                <button 
+                  type="button" 
+                  onClick={handleGenerateAI}
+                  disabled={isAiGenerating}
+                  className="flex items-center gap-1.5 text-xs font-bold text-gold hover:text-yellow-600 transition-colors disabled:opacity-50"
+                >
+                  {isAiGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                  AIで自動生成
+                </button>
+              </div>
               <textarea 
                 name="description"
                 rows={8}
                 defaultValue={initialData?.description}
                 className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
-                placeholder="本文を入力してください"
+                placeholder="本文を入力してください。タイトル等を入力してからAIボタンを押すと自動作成されます。"
               />
             </div>
           )}

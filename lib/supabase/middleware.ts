@@ -54,6 +54,24 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/admin/dashboard'
       return NextResponse.redirect(url)
     }
+
+    // Role-based Access Control for restricted routes
+    if (
+      request.nextUrl.pathname.startsWith('/admin/settings') ||
+      request.nextUrl.pathname.startsWith('/admin/staffs')
+    ) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+      
+      if (!profile || (profile.role !== 'owner' && profile.role !== 'manager')) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/admin/dashboard'
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   // Redirect logged in users away from login page

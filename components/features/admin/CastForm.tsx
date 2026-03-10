@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { Sparkles, Loader2 } from 'lucide-react'
 
 type Cast = {
   id: string;
@@ -25,8 +26,10 @@ type Cast = {
 export function CastForm({ initialData }: { initialData?: Cast }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
+  const [isAiGenerating, setIsAiGenerating] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [compressedImage, setCompressedImage] = useState<Blob | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const isEditing = !!initialData
 
   const primaryImage = initialData?.cast_images?.find((img: { is_primary: boolean; image_url: string }) => img.is_primary) || initialData?.cast_images?.[0]
@@ -53,6 +56,46 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       alert(error.message)
     } finally {
       setIsPending(false)
+    }
+  }
+
+  async function handleGenerateAI() {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const stageName = formData.get('stage_name') as string;
+    const age = formData.get('age') as string;
+    const hobby = formData.get('hobby') as string;
+
+    const baseInfo = [
+      stageName ? `源氏名: ${stageName}` : '',
+      age ? `年齢: ${age}歳` : '',
+      hobby ? `趣味・特技: ${hobby}` : ''
+    ].filter(Boolean).join('\n');
+
+    if (!baseInfo) {
+      alert('自動生成には「源氏名」や「趣味」などの入力が必要です。');
+      return;
+    }
+
+    setIsAiGenerating(true);
+    try {
+      const res = await fetch('/api/admin/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: baseInfo, type: 'cast' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'API Error');
+      
+      const commentInput = formRef.current.querySelector('textarea[name="comment"]') as HTMLTextAreaElement;
+      if (commentInput) {
+        commentInput.value = data.text;
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      alert(`自動生成に失敗しました: ${error.message}`);
+    } finally {
+      setIsAiGenerating(false);
     }
   }
 
@@ -134,7 +177,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {isEditing ? 'Edit Cast' : 'New Cast'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
 
           {/* 源氏名 + フリガナ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -193,9 +236,20 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
           {/* コメント */}
           <div>
-            <label className={labelClass}>一言コメント (Comment)</label>
-            <textarea name="comment" rows={4} defaultValue={initialData?.comment}
-              className={inputClass} placeholder="お客様へのメッセージ" />
+            <div className="flex items-end justify-between mb-2">
+              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase">一言コメント (Comment)</label>
+              <button 
+                type="button" 
+                onClick={handleGenerateAI}
+                disabled={isAiGenerating}
+                className="flex items-center gap-1.5 text-xs font-bold text-gold hover:text-yellow-600 transition-colors disabled:opacity-50"
+              >
+                {isAiGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                AIで自動生成
+              </button>
+            </div>
+            <textarea name="comment" rows={6} defaultValue={initialData?.comment}
+              className={inputClass} placeholder="お客様へのメッセージやプロフィール文" />
           </div>
 
           {/* 画像 アップロード */}

@@ -13,6 +13,7 @@ import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvide
 import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
 import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
+import { AIConcierge } from "@/components/features/chat/AIConcierge";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -96,6 +97,7 @@ export default function RootLayout({
             <LoadingScreen />
             {children}
             <LuxuryBackground />
+            <AIConcierge />
           </SmoothScrollProvider>
         </ReCaptchaProvider>
         <Analytics 

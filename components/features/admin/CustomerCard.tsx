@@ -1,8 +1,10 @@
-import { Phone, Mail, Smartphone, Calendar, Users, CheckCircle } from 'lucide-react';
+import { Phone, Mail, Smartphone, Calendar, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import { ReplyForm } from '@/components/features/admin/ReplyForm';
+import { LinkCustomerButton } from '@/components/features/admin/LinkCustomerButton';
+import Link from 'next/link';
 
 type ContactData = { id: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
-type CustomerData = { id: string; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
+type CustomerData = { id: string; customerId?: string | null; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
 
 export function CustomerCard({ 
   customer, 
@@ -11,7 +13,7 @@ export function CustomerCard({
   customer: CustomerData, 
   handleMarkAsRead: (formData: FormData) => void 
 }) {
-  const { primaryName, phone, email, lineId, contacts, reserveCount, contactCount, lastContact } = customer;
+  const { id, customerId, primaryName, phone, email, lineId, contacts, reserveCount, contactCount, lastContact } = customer;
   const hasUnread = contacts.some((c: ContactData) => !c.is_read);
 
   return (
@@ -43,7 +45,45 @@ export function CustomerCard({
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">最終コンタクト</p>
             <p className="text-gray-600 text-xs">{lastContact}</p>
           </div>
+          <div className="pl-4 border-l border-gray-100 hidden sm:block">
+            {customerId ? (
+              <Link 
+                href={`/admin/customers/${customerId}`} 
+                className="flex items-center gap-1 text-xs font-bold text-gold hover:text-yellow-600 transition-colors"
+              >
+                詳細を表示 <ArrowRight size={14} />
+              </Link>
+            ) : (
+              <LinkCustomerButton 
+                contactGroupId={id} 
+                name={primaryName} 
+                phone={phone || null} 
+                email={email || null} 
+                lineId={lineId || null} 
+              />
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* モバイル用のCRM連携ボタン行（sm以下） */}
+      <div className="sm:hidden px-6 pb-4 flex justify-end border-t border-gray-50 pt-3">
+        {customerId ? (
+          <Link 
+            href={`/admin/customers/${customerId}`} 
+            className="flex items-center gap-1 text-xs font-bold text-gold hover:text-yellow-600 transition-colors"
+          >
+            顧客詳細を表示 <ArrowRight size={14} />
+          </Link>
+        ) : (
+          <LinkCustomerButton 
+            contactGroupId={id} 
+            name={primaryName} 
+            phone={phone || null} 
+            email={email || null} 
+            lineId={lineId || null} 
+          />
+        )}
       </div>
 
       {/* 履歴リスト (History Details) - 常に表示または詳細コンポーネントで展開 */}
