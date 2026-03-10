@@ -182,8 +182,8 @@ export default function CastRecruitPage() {
             <p className="text-white font-serif luxury-tracking text-xs md:text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mb-10">
               もっと輝く、新しい私へ。
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button asChild size="lg" className="px-10 py-5 text-xs font-serif luxury-tracking uppercase bg-white text-foreground hover:bg-white/90">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-lg mx-auto">
+              <Button asChild size="lg" className="flex-1 w-full px-6 py-6 text-xs font-serif luxury-tracking uppercase bg-white text-foreground hover:bg-white/90 drop-shadow-md">
                 <a href="#form">
                   <CalendarHeart className="w-4 h-4 mr-2" />
                   今すぐWEB応募
@@ -191,7 +191,7 @@ export default function CastRecruitPage() {
               </Button>
               <a
                 href="tel:045-263-6961"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/60 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors"
+                className="flex-1 w-full inline-flex items-center justify-center gap-2 px-6 py-6 border border-white bg-white/10 backdrop-blur-sm text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/30 transition-all drop-shadow-md"
               >
                 <Phone className="w-4 h-4" />
                 電話で相談
