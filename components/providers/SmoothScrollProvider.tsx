@@ -2,6 +2,7 @@
 
 import { ReactLenis } from 'lenis/react'
 import { ReactNode } from 'react'
+import { GSAPScrollIntegration } from '@/components/providers/GSAPScrollIntegration'
 
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   return (
@@ -14,7 +15,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         syncTouch: false,  // タッチスクロール時はネイティブ動作を優先
       }}
     >
+      <GSAPScrollIntegration />
       {children}
     </ReactLenis>
   )
 }
+

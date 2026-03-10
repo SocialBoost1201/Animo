@@ -1,4 +1,4 @@
-export type HeroTransitionMode = 'fade' | 'slide';
+export type HeroTransitionMode = 'ripple' | 'fade' | 'slide' | 'zoom' | 'burn';
 
 export interface HeroMedia {
   id: string;

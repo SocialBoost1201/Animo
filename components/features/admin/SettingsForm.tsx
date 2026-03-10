@@ -57,17 +57,23 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
           <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Hero Section Settings</h3>
           <p className="text-xs text-gray-500 mb-4">トップページ上部の動画ローテーション設定</p>
           
-          <div>
-             <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Transition Mode</label>
-             <select 
-              name="hero_transition_mode"
-              defaultValue={initialData?.hero_transition_mode || 'fade'}
-              className="w-full md:w-1/2 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
-            >
-              <option value="fade">Fade Out (フェード切替)</option>
-              <option value="slide">Slide Out (スライド切替)</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Transition Mode</label>
+          <select
+            name="hero_transition_mode"
+            defaultValue={initialData?.hero_transition_mode || 'ripple'}
+            className="w-full md:w-2/3 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
+          >
+            <option value="ripple">Ripple（波紋クロスフェード）★ デフォルト・最高品質</option>
+            <option value="fade">Fade（シンプルなフェード）</option>
+            <option value="slide">Slide（横スライド）</option>
+            <option value="zoom">Zoom（ズームアウトして切替）</option>
+            <option value="burn">Burn（明転して切替）</option>
+          </select>
+          <p className="text-[11px] text-gray-400 mt-2">
+            ※ ripple は WebGL シェーダーによる高品質エフェクトです。slide / zoom / burn は CSS アニメーションで動作します。
+          </p>
+        </div>
         </div>
 
         <div className="pt-6 border-t border-gray-100">

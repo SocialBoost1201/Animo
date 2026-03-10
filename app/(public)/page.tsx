@@ -118,7 +118,7 @@ export default async function HomePage() {
       {/* 1. Hero */}
       <HeroVideoRotator
         media={heroMediaData}
-        transitionMode={(settings?.hero_transition_mode || 'fade') as 'fade' | 'slide'}
+        transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
         durationMs={8000}
         transitionMs={800}
         cta={heroCta}

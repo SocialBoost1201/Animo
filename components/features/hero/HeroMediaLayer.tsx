@@ -311,6 +311,7 @@ const WebGLScene = ({
 export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   media,
   activeIndex,
+  transitionMode,
   transitionMs,
   isReducedMotion,
 }) => {
@@ -318,37 +319,24 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     return <div className="absolute inset-0 bg-gray-900" />;
   }
 
-  // 負荷軽減設定の場合は従来のCSSベースフォールバックを表示（WebGLを避ける）
-  if (isReducedMotion) {
-    const item = media[activeIndex];
+  // ripple モードのみ WebGL シェーダーを使用
+  const useWebGL = transitionMode === 'ripple' || transitionMode === 'fade';
+
+  // 負荷軽減 or CSS モードの場合はCSSベースで描画
+  if (isReducedMotion || !useWebGL) {
     return (
-      <div className="absolute inset-0 bg-black overflow-hidden">
-        {item.type === 'video' ? (
-          <video
-            src={item.url}
-            poster={item.posterUrl}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-contain md:object-cover"
-          />
-        ) : (
-          <Image
-            src={item.url}
-            alt="Hero Background"
-            fill
-            priority
-            className="object-contain md:object-cover"
-          />
-        )}
-      </div>
+      <CSSHeroTransition
+        media={media}
+        activeIndex={activeIndex}
+        transitionMode={transitionMode}
+        transitionMs={transitionMs}
+        isReducedMotion={isReducedMotion}
+      />
     );
   }
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
-      {/* 意図的にLCPスコアを向上させるため、最初のメディアが画像の場合は非表示の優先画像としてブラウザに事前キャッシュさせる */}
       {media.length > 0 && media[0].type === 'image' && (
         <Image
           src={media[0].url}
@@ -362,7 +350,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
       <Canvas
         camera={{ position: [0, 0, 1] }}
         gl={{ powerPreference: 'high-performance', alpha: false, antialias: false }}
-        dpr={1} // モバイル等のパフォーマンスを最優先するためdprは常に1に固定
+        dpr={1}
       >
         <WebGLScene
           media={media}
@@ -373,3 +361,77 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     </div>
   );
 };
+
+// ─────────────────────────────────────────────────────────────
+// CSS ベーストランジション（slide / zoom / burn / fade）
+// ─────────────────────────────────────────────────────────────
+function CSSHeroTransition({
+  media,
+  activeIndex,
+  transitionMode,
+  transitionMs,
+}: {
+  media: HeroMedia[];
+  activeIndex: number;
+  transitionMode: string;
+  transitionMs: number;
+  isReducedMotion: boolean;
+}) {
+  const durationSec = `${transitionMs / 1000}s`;
+
+  const getEnterStyle = (): React.CSSProperties => {
+    switch (transitionMode) {
+      case 'slide': return { transform: 'translateX(0)', opacity: 1 };
+      case 'zoom':  return { transform: 'scale(1)',      opacity: 1 };
+      case 'burn':  return { filter: 'brightness(1)',   opacity: 1 };
+      default:      return { opacity: 1 };
+    }
+  };
+
+  const getExitStyle = (): React.CSSProperties => {
+    switch (transitionMode) {
+      case 'slide': return { transform: 'translateX(-5%)',  opacity: 0 };
+      case 'zoom':  return { transform: 'scale(1.08)',      opacity: 0 };
+      case 'burn':  return { filter: 'brightness(3)',       opacity: 0 };
+      default:      return { opacity: 0 };
+    }
+  };
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
+      {media.map((item, i) => {
+        const isActive = i === activeIndex;
+        const style: React.CSSProperties = {
+          position: 'absolute',
+          inset: 0,
+          transition: `all ${durationSec} cubic-bezier(0.4, 0, 0.2, 1)`,
+          ...(isActive ? getEnterStyle() : getExitStyle()),
+        };
+
+        return (
+          <div key={item.id} style={style}>
+            {item.type === 'video' ? (
+              <video
+                src={item.url}
+                poster={item.posterUrl}
+                autoPlay={isActive}
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={item.url}
+                alt={item.title ?? 'Hero Background'}
+                fill
+                priority={i === 0}
+                className="object-cover"
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
