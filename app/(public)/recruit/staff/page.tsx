@@ -90,7 +90,7 @@ const POSITIONS = {
       { label: '未経験者歓迎', active: true },
       { label: '経験者優遇', active: true },
       { label: '独立支援あり', active: true },
-      { label: '日払い可(規定)', active: true },
+
       { label: '駅近', active: true },
     ] as RecruitTag[],
   },
@@ -135,11 +135,11 @@ const POSITIONS = {
       'お客様と接する接客スキルが自然に身につく',
       '終電上がりOK＋毎回送迎完備',
       'ノルマ一切なし・安心の勤務環境',
-      'スマホ応募・WEB応募・履歴書不要',
+      'スマホ応募OK・履歴書不要（要身分証）',
     ],
     tableData: [
       { label: '仕事内容', value: 'エスコートレディ（女性アルバイト）', subColumn: { label: 'エリア', value: '関内' } },
-      { label: '給与', value: '時給 1,400円〜\n■昇給随時\n■日払い対応可（要相談）' },
+      { label: '給与', value: '時給 1,400円〜\n■昇給随時' },
       { label: '応募条件', value: '18歳以上（高校生不可）\n■ナイトワーク未経験の方・お酒が飲めない方大歓迎！\n■学生・Wワーク希望の方歓迎\n■接客業の経験がある方優遇。' },
       { label: '勤務時間', value: '19:30〜LAST\n（週1日・3時間〜OK）\n※シフト自由の自己申告制\n※終電時間での退勤OK\n※週末のみの勤務も歓迎' },
     ] as RecruitTableData[],
