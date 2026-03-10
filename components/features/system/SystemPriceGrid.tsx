@@ -11,7 +11,7 @@ export const SystemPriceGrid = () => {
             Open Hours
           </h2>
           <p className="text-2xl md:text-3xl font-serif text-foreground tracking-widest">
-            19:00 <span className="text-sm md:text-lg text-gray-400 mx-2">～</span> LAST
+            21:00 <span className="text-sm md:text-lg text-gray-400 mx-2">～</span> LAST
           </p>
         </div>
       </FadeIn>
@@ -76,7 +76,7 @@ export const SystemPriceGrid = () => {
             <li className="flex flex-col md:flex-row md:items-center justify-between pt-2">
               <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Tax / Service Charge <span className="text-[10px] text-gray-400 ml-2">税・サービス料</span></span>
               <span className="text-xl md:text-2xl font-normal font-sans tracking-wide text-foreground">
-                32%
+                30%
               </span>
             </li>
           </ul>

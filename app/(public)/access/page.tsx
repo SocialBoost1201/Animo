@@ -84,7 +84,7 @@ export default function AccessPage() {
                   </dt>
                   <dd className="leading-loose">
                     <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Open Hours</span>
-                    19:00 – LAST
+                    21:00 – LAST
                   </dd>
                 </div>
 

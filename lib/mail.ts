@@ -96,7 +96,7 @@ export async function sendUserReply({
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <p style="font-size: 22px; font-weight: bold; letter-spacing: 0.2em; color: #171717;">CLUB ANIMO</p>
+        <p style="font-size: 22px; font-weight: bold; letter-spacing: 0.2em; color: #171717;">CLUB Animo</p>
         <div style="width: 40px; height: 1px; background: #B39257; margin: 10px auto;"></div>
       </div>
       
@@ -116,7 +116,7 @@ ${replyText}
       </p>
 
       <div style="margin-top: 20px; font-size: 12px; color: #aaa; text-align: center;">
-        <p style="letter-spacing: 0.15em;">CLUB ANIMO</p>
+        <p style="letter-spacing: 0.15em;">CLUB Animo</p>
         <p>〒231-0023 神奈川県横浜市中区山下町</p>
       </div>
     </div>
