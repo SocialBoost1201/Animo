@@ -24,12 +24,12 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
   return (
     <>
       {filteredItems.length > 0 ? (
-        <div className="columns-2 sm:columns-3 lg:columns-4 gap-2 md:gap-4 w-full max-w-[1600px] mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-[1400px] mx-auto">
           {filteredItems.map((item, i) => (
               <FadeIn
                 key={`${item.id}-${activeCategory}`}
                 delay={Math.min(i * 0.05, 0.4)}
-                className="break-inside-avoid relative w-full mb-2 md:mb-4 overflow-hidden rounded-none"
+                className="relative w-full overflow-hidden"
               >
                 <GalleryItem
                   item={item}

@@ -17,12 +17,12 @@ export function GalleryItem({ item, index, onClick, isPriority = false }: Galler
       className="group relative block w-full overflow-hidden bg-[#111] cursor-pointer rounded-sm"
       aria-label={`View ${item.title}`}
     >
-      {/* 画像本体：自然寸法を尊重するimgタグ */}
+      {/* 画像本体：アスペクト比を固定して統一感を出す */}
       <img
         src={item.src}
         alt={item.alt}
         loading="lazy"
-        className="w-full h-auto block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
+        className="w-full h-full aspect-[4/3] block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
       />
 
       {/* グラデーションオーバーレイ */}
