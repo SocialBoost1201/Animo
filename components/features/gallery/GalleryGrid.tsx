@@ -24,12 +24,30 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
   return (
     <>
       {filteredItems.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-[1400px] mx-auto">
-          {filteredItems.map((item, i) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-4 w-full max-w-[1600px] mx-auto auto-rows-[160px] sm:auto-rows-[220px] md:auto-rows-[280px] grid-flow-dense">
+          {filteredItems.map((item, i) => {
+            let spanClass = 'col-span-1 row-span-1';
+            
+            // 全て表示時のみイレギュラーなスパンを適用し、カテゴリ絞り込み時は整然と並べる
+            if (activeCategory === 'all') {
+              if (item.featured) {
+                spanClass = 'col-span-2 row-span-2';
+              } else if (i === 1 || i === 8) {
+                spanClass = 'col-span-2 row-span-1';
+              } else if (i === 4 || i === 11) {
+                spanClass = 'col-span-1 row-span-2';
+              }
+            } else {
+              if (item.featured) {
+                spanClass = 'col-span-2 row-span-2';
+              }
+            }
+
+            return (
               <FadeIn
-                key={`${item.id}-${activeCategory}`}
+                key={`${item.id}-${activeCategory}-${i}`}
                 delay={Math.min(i * 0.05, 0.4)}
-                className="relative w-full overflow-hidden"
+                className={`relative w-full h-full overflow-hidden ${spanClass}`}
               >
                 <GalleryItem
                   item={item}
@@ -38,7 +56,8 @@ export function GalleryGrid({ items, activeCategory }: GalleryGridProps) {
                   isPriority={i === 0}
                 />
               </FadeIn>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="py-32 text-center w-full block">

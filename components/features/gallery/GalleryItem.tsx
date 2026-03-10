@@ -14,15 +14,15 @@ export function GalleryItem({ item, index, onClick, isPriority = false }: Galler
   return (
     <button
       onClick={() => onClick(index)}
-      className="group relative block w-full overflow-hidden bg-[#111] cursor-pointer rounded-sm"
+      className="group absolute inset-0 block w-full h-full overflow-hidden bg-[#111] cursor-pointer"
       aria-label={`View ${item.title}`}
     >
-      {/* 画像本体：アスペクト比を固定して統一感を出す */}
+      {/* 画像本体：親のGridセルの形に合わせてカバーする */}
       <img
         src={item.src}
         alt={item.alt}
-        loading="lazy"
-        className="w-full h-full aspect-[4/3] block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
+        loading={isPriority ? "eager" : "lazy"}
+        className="w-full h-full block object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
       />
 
       {/* グラデーションオーバーレイ */}
