@@ -1,267 +1,274 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition, useCallback } from 'react'
 import { saveSchedules } from '@/lib/actions/schedules'
-import { Button } from '@/components/ui/Button'
-import { Check, Loader2, Plus, Trash2 } from 'lucide-react'
-
-const DAYS = ['月', '火', '水', '木', '金', '土', '日']
+import { toast } from 'sonner'
+import { ChevronLeft, ChevronRight, Clock, Save, Loader2, Check } from 'lucide-react'
 
 const TIME_OPTIONS = [
   '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
   '22:00', '22:30', '23:00', '23:30', '00:00', '00:30', '01:00', 'LAST'
 ]
 
-type CastData = {
-  id: string;
-  stage_name: string;
-  [key: string]: unknown;
-}
+const DAYS_SHORT = ['月', '火', '水', '木', '金', '土', '日']
 
-type ShiftData = {
-  cast_id: string;
-  date: string;
-  start_time: string | null;
-  end_time: string | null;
-  [key: string]: unknown;
-}
+type CastData = { id: string; stage_name: string; [key: string]: unknown }
+type ShiftData = { cast_id: string; date?: string; work_date?: string; start_time: string | null; end_time: string | null; [key: string]: unknown }
 
-type ShiftEntry = {
-  cast_id: string
-  date: string
-  start_time: string
-  end_time: string
-  isNew?: boolean
-}
+type ShiftKey = string // `${castId}_${date}`
+type ShiftMap = Map<ShiftKey, { start_time: string; end_time: string }>
 
-export function ShiftManager({ initialData }: { initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[] } }) {
+export function ShiftManager({ initialData }: {
+  initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[] }
+}) {
   const { casts, shifts, dates } = initialData
-  
-  // Build initial entries from DB shifts
-  const [entries, setEntries] = useState<ShiftEntry[]>(() => {
-    return (shifts || []).map((s: ShiftData) => ({
-      cast_id: s.cast_id,
-      date: s.date,
-      start_time: s.start_time || '21:00',
-      end_time: s.end_time || 'LAST',
-    }))
+  const [isPending, startTransition] = useTransition()
+
+  // Build edit map from existing shifts
+  const [shiftMap, setShiftMap] = useState<ShiftMap>(() => {
+    const map = new Map<ShiftKey, { start_time: string; end_time: string }>()
+    ;(shifts || []).forEach((s) => {
+      const d = s.work_date || s.date || ''
+      map.set(`${s.cast_id}_${d}`, {
+        start_time: s.start_time || '21:00',
+        end_time: s.end_time || 'LAST',
+      })
+    })
+    return map
   })
 
-  const [isPending, setIsPending] = useState(false)
-  
-  // Track which date is selected for adding new entries (mobile-friendly)
-  const [selectedDate, setSelectedDate] = useState<string>(dates[0])
+  const [editingCell, setEditingCell] = useState<{ castId: string; date: string } | null>(null)
 
-  // Add a new entry
-  const addEntry = () => {
-    if (!casts || casts.length === 0) return
-    setEntries(prev => [...prev, {
-      cast_id: casts[0].id,
-      date: selectedDate,
-      start_time: '21:00',
-      end_time: 'LAST',
-      isNew: true,
-    }])
-  }
+  const toggleShift = useCallback((castId: string, date: string) => {
+    setShiftMap(prev => {
+      const next = new Map(prev)
+      const key = `${castId}_${date}`
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.set(key, { start_time: '21:00', end_time: 'LAST' })
+      }
+      return next
+    })
+  }, [])
 
-  const removeEntry = (index: number) => {
-    setEntries(prev => prev.filter((_, i) => i !== index))
-  }
+  const updateTime = useCallback((castId: string, date: string, field: 'start_time' | 'end_time', value: string) => {
+    setShiftMap(prev => {
+      const next = new Map(prev)
+      const key = `${castId}_${date}`
+      const existing = next.get(key)
+      if (existing) {
+        next.set(key, { ...existing, [field]: value })
+      }
+      return next
+    })
+  }, [])
 
-  const updateEntry = (index: number, field: keyof ShiftEntry, value: string) => {
-    setEntries(prev => prev.map((e, i) => i === index ? { ...e, [field]: value } : e))
-  }
+  const handleSave = () => {
+    startTransition(async () => {
+      // Build diff vs original shifts
+      const originalMap = new Map<string, true>()
+      ;(shifts || []).forEach((s) => {
+        const d = s.work_date || s.date || ''
+        originalMap.set(`${s.cast_id}_${d}`, true)
+      })
 
-  // Compute updates for save
-  const getUpdates = () => {
-    const updates: Record<string, unknown>[] = []
-    const originalKeys = new Set(
-      (shifts || []).map((s: ShiftData) => `${s.cast_id}_${s.date}`)
-    )
-    const currentKeys = new Set(
-      entries.map(e => `${e.cast_id}_${e.date}`)
-    )
+      const updates: Record<string, unknown>[] = []
 
-    // Inserts: in current but not in original
-    entries.forEach(e => {
-      const key = `${e.cast_id}_${e.date}`
-      if (!originalKeys.has(key)) {
-        updates.push({
-          action: 'insert',
-          cast_id: e.cast_id,
-          date: e.date,
-          start_time: e.start_time,
-          end_time: e.end_time,
-        })
+      // Insertions (new shifts)
+      for (const [key, val] of shiftMap.entries()) {
+        if (!originalMap.has(key)) {
+          const [castId, date] = key.split('_')
+          updates.push({ action: 'insert', cast_id: castId, date, ...val })
+        }
+      }
+
+      // Deletions (removed shifts)
+      for (const [key] of originalMap.entries()) {
+        if (!shiftMap.has(key)) {
+          const s = (shifts || []).find(s => {
+            const d = s.work_date || s.date || ''
+            return `${s.cast_id}_${d}` === key
+          })
+          if (s) {
+            const d = s.work_date || s.date || ''
+            updates.push({ action: 'delete', cast_id: s.cast_id, date: d })
+          }
+        }
+      }
+
+      if (updates.length === 0) {
+        toast.info('変更はありません')
+        return
+      }
+
+      const fd = new FormData()
+      fd.append('updates', JSON.stringify(updates))
+      const result = await saveSchedules(fd)
+      if (result?.error) {
+        toast.error('保存に失敗しました: ' + result.error)
+      } else {
+        toast.success(`${updates.length}件のシフトを保存しました`)
       }
     })
-
-    // Deletes: in original but not in current
-    ;(shifts || []).forEach((s: ShiftData) => {
-      const key = `${s.cast_id}_${s.date}`
-      if (!currentKeys.has(key)) {
-        updates.push({
-          action: 'delete',
-          cast_id: s.cast_id,
-          date: s.date,
-        })
-      }
-    })
-
-    return updates
   }
-
-  async function handleSave() {
-    setIsPending(true)
-    const updates = getUpdates()
-
-    if (updates.length === 0) {
-      alert('変更されたシフトはありません')
-      setIsPending(false)
-      return
-    }
-
-    const formData = new FormData()
-    formData.append('updates', JSON.stringify(updates))
-
-    const result = await saveSchedules(formData)
-    if (result.error) {
-      alert(result.error)
-    } else {
-      alert('シフトを更新しました')
-    }
-
-    setIsPending(false)
-  }
-
-  const hasChanges = getUpdates().length > 0
-
-  // Group entries by date for display
-  const entriesByDate = (date: string) => entries.filter(e => e.date === date)
 
   return (
-    <div className="bg-white border border-gray-100 shadow-sm rounded-sm">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-bold tracking-widest text-[#171717] uppercase">Week Schedule</h2>
-          <p className="text-xs text-gray-500 mt-1">{dates[0]} 〜 {dates[6]}</p>
+          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Shifts</h1>
+          <p className="text-sm text-gray-400 mt-1">
+            セルをタップして出勤ON/OFF。時計アイコンで時間を調整。
+          </p>
         </div>
-        <Button 
-          onClick={handleSave} 
-          disabled={!hasChanges || isPending}
-          className="text-sm font-bold tracking-widest px-6 w-full sm:w-auto"
+        <button
+          onClick={handleSave}
+          disabled={isPending}
+          className="flex items-center gap-2 bg-[#171717] hover:bg-gold text-white px-5 py-2.5 text-sm font-bold tracking-wider transition-all duration-200 disabled:opacity-60"
         >
-          {isPending ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : <Check className="w-4 h-4 mr-2" />}
-          変更を保存
-        </Button>
+          {isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+          {isPending ? '保存中...' : '保存する'}
+        </button>
       </div>
 
-      {/* Date Tabs (モバイルフレンドリー) */}
-      <div className="flex border-b border-gray-100 overflow-x-auto">
-        {dates.map((date: string, i: number) => {
-          const count = entriesByDate(date).length
-          return (
-            <button
-              key={date}
-              onClick={() => setSelectedDate(date)}
-              className={`flex-1 min-w-[60px] py-3 px-2 text-center text-xs tracking-widest transition-colors border-b-2 ${
-                selectedDate === date
-                  ? 'border-gold text-gold bg-gold/5 font-bold'
-                  : 'border-transparent text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <div className="font-bold">{DAYS[i]}</div>
-              <div className="text-[10px] mt-0.5">{date.slice(5).replace('-', '/')}</div>
-              {count > 0 && (
-                <div className="text-[9px] mt-1 text-gold">{count}名</div>
-              )}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Selected Date Entries */}
-      <div className="p-4 md:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-bold tracking-widest text-gray-500 uppercase">
-            {selectedDate} のシフト
-          </h3>
-          <button
-            onClick={addEntry}
-            className="flex items-center gap-1 text-xs text-gold hover:underline font-bold tracking-widest"
-          >
-            <Plus className="w-3 h-3" /> 追加
-          </button>
+      {/* Legend */}
+      <div className="flex items-center gap-4 text-xs text-gray-400">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded bg-gold/20 border border-gold/40" />
+          <span>出勤あり</span>
         </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded bg-gray-100" />
+          <span>未設定</span>
+        </div>
+      </div>
 
-        {entriesByDate(selectedDate).length === 0 ? (
-          <div className="py-8 text-center text-sm text-gray-400">
-            この日のシフトはまだ登録されていません。
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {entries.map((entry, index) => {
-              if (entry.date !== selectedDate) return null
-              return (
-                <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 border border-gray-100 rounded-sm bg-gray-50/50">
-                  {/* キャスト選択 */}
-                  <div className="flex-1">
-                    <label className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Cast</label>
-                    <select
-                      value={entry.cast_id}
-                      onChange={e => updateEntry(index, 'cast_id', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
-                    >
-                      {casts?.map((cast: CastData) => (
-                        <option key={cast.id} value={cast.id}>{cast.stage_name}</option>
-                      ))}
-                    </select>
-                  </div>
+      {/* Calendar Grid */}
+      <div className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="px-4 py-3 text-xs text-gray-400 font-normal w-32 bg-gray-50/70">
+                キャスト
+              </th>
+              {dates.map((date, i) => {
+                const d = new Date(date)
+                const isSat = d.getDay() === 6
+                const isSun = d.getDay() === 0
+                return (
+                  <th key={date} className="px-2 py-3 text-center bg-gray-50/70 border-l border-gray-50">
+                    <p className={`text-[10px] font-bold tracking-widest ${isSat ? 'text-blue-500' : isSun ? 'text-red-500' : 'text-gray-500'}`}>
+                      {DAYS_SHORT[i]}
+                    </p>
+                    <p className="text-sm font-serif text-[#171717] mt-0.5">{d.getDate()}</p>
+                  </th>
+                )
+              })}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {casts?.map((cast) => (
+              <tr key={cast.id} className="hover:bg-gray-50/40 transition-colors">
+                {/* Cast Name */}
+                <td className="px-4 py-3">
+                  <p className="text-sm font-bold text-[#171717] truncate max-w-[120px]">
+                    {cast.stage_name}
+                  </p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">
+                    {dates.filter(d => shiftMap.has(`${cast.id}_${d}`)).length}日出勤
+                  </p>
+                </td>
+                {/* Date Cells */}
+                {dates.map((date) => {
+                  const key = `${cast.id}_${date}`
+                  const hasShift = shiftMap.has(key)
+                  const shift = shiftMap.get(key)
+                  const isEditing = editingCell?.castId === cast.id && editingCell?.date === date
 
-                  {/* 出勤時間 */}
-                  <div className="w-full sm:w-32">
-                    <label className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">From</label>
-                    <select
-                      value={entry.start_time}
-                      onChange={e => updateEntry(index, 'start_time', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
-                    >
-                      {TIME_OPTIONS.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
+                  return (
+                    <td key={date} className="px-2 py-2 border-l border-gray-50 text-center align-middle">
+                      {isEditing && hasShift ? (
+                        /* Time Picker Popup */
+                        <div className="flex flex-col gap-1 items-center">
+                          <select
+                            value={shift?.start_time}
+                            onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
+                            className="text-[10px] border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                          >
+                            {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                          <select
+                            value={shift?.end_time}
+                            onChange={e => updateTime(cast.id, date, 'end_time', e.target.value)}
+                            className="text-[10px] border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                          >
+                            {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                          <button
+                            onClick={() => setEditingCell(null)}
+                            className="text-[10px] text-gold font-bold flex items-center gap-1"
+                          >
+                            <Check size={10} /> 完了
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          {/* Toggle button */}
+                          <button
+                            onClick={() => toggleShift(cast.id, date)}
+                            className={`w-9 h-9 rounded-md transition-all duration-200 flex items-center justify-center text-[10px] font-bold ${
+                              hasShift
+                                ? 'bg-gold/15 border border-gold/40 text-gold hover:bg-gold/25'
+                                : 'bg-gray-50 border border-gray-200 text-gray-300 hover:border-gray-300'
+                            }`}
+                          >
+                            {hasShift ? <Check size={14} strokeWidth={3} /> : <span className="text-base">+</span>}
+                          </button>
+                          {/* Time display + edit button */}
+                          {hasShift && (
+                            <button
+                              onClick={() => setEditingCell({ castId: cast.id, date })}
+                              className="flex items-center gap-0.5 text-[9px] text-gray-400 hover:text-gold transition-colors"
+                            >
+                              <Clock size={9} />
+                              {shift?.start_time?.slice(0, 5)}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
 
-                  {/* 退勤時間 */}
-                  <div className="w-full sm:w-32">
-                    <label className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">To</label>
-                    <select
-                      value={entry.end_time}
-                      onChange={e => updateEntry(index, 'end_time', e.target.value)}
-                      className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
-                    >
-                      {TIME_OPTIONS.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
+            {(!casts || casts.length === 0) && (
+              <tr>
+                <td colSpan={8} className="px-6 py-10 text-center text-sm text-gray-400">
+                  キャストが登録されていません
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-                  {/* 削除 */}
-                  <div className="flex items-end">
-                    <button
-                      onClick={() => removeEntry(index)}
-                      className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                      title="削除"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+      {/* Summary Footer */}
+      <div className="flex items-center justify-between text-xs text-gray-400 pt-2">
+        <span>
+          {casts?.length ?? 0}名 / 週合計{' '}
+          {[...shiftMap.keys()].length}枠登録済み
+        </span>
+        <button
+          onClick={handleSave}
+          disabled={isPending}
+          className="flex items-center gap-1.5 text-gold hover:text-gold/80 font-bold transition-colors"
+        >
+          {isPending ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+          保存
+        </button>
       </div>
     </div>
   )
