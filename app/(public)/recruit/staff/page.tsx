@@ -84,7 +84,7 @@ const POSITIONS = {
       { label: '仕事内容', value: '店長候補・マネージャー(正社員)\nホールスタッフ(正社員/アルバイト)', subColumn: { label: 'エリア', value: '関内' } },
       { label: '給与', value: '【正社員】月給 25万円〜35万円以上\n【アルバイト】1,400円〜（研修期間あり）\n■昇給・昇格随時\n■深夜手当あり\n■大入賞・各種歩合あり' },
       { label: '応募条件', value: '18歳以上（高校生不可）\n【学歴・職歴・業界経験一切不問！】\n■ナイトワーク未経験の方も歓迎します。\n■異業種からの転職者も多数活躍中！\n■接客やマネジメントに興味がある方歓迎。' },
-      { label: '勤務時間', value: '18:00〜LAST\n（実働8時間 / アルバイトは週1・3h〜）' },
+      { label: '勤務時間', value: '19:00〜LAST\n（実働8時間 / アルバイトは週1・3h〜）' },
     ] as RecruitTableData[],
     tableTags: [
       { label: '未経験者歓迎', active: true },
@@ -226,12 +226,12 @@ export default function StaffRecruitPage() {
             <p className="text-white font-serif luxury-tracking text-sm md:text-base leading-loose max-w-xl mx-auto mb-10">
               {data.hero}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="#form" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-foreground transition-all duration-300">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
+              <a href="#form" className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-foreground transition-all duration-300">
                 <CalendarHeart className="w-4 h-4" />
                 今すぐWEB応募
               </a>
-              <a href="tel:045-263-6961" className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors">
+              <a href="tel:045-263-6961" className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors">
                 <Phone className="w-4 h-4" />
                 電話で相談
               </a>
