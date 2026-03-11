@@ -114,7 +114,9 @@ export function CustomerCard({
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {!contact.is_read && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                      contact.type === 'reserve' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                      contact.type === 'reserve'
+                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                        : 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300'
                     }`}>
                       {contact.type === 'reserve' ? '予約' : '問い合わせ'}
                     </span>
@@ -136,9 +138,9 @@ export function CustomerCard({
                 {contact.type === 'reserve' ? (
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-3 sm:gap-6">
-                      <div className="flex items-center gap-2 bg-purple-50/50 px-2.5 py-1.5 rounded-sm">
+                      <div className="flex items-center gap-2 bg-purple-50/50 dark:bg-purple-900/20 px-2.5 py-1.5 rounded-sm">
                          <Calendar className="text-purple-400 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                         <span className="font-serif text-[#171717] text-sm sm:text-base">{contact.date ?? '未定'} {contact.time?.slice(0, 5) ?? ''}</span>
+                         <span className="font-serif text-[#171717] dark:text-gray-200 text-sm sm:text-base">{contact.date ?? '未定'} {contact.time?.slice(0, 5) ?? ''}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                          <span>人数: {contact.people ?? '-'}名</span>
@@ -150,7 +152,7 @@ export function CustomerCard({
                       )}
                     </div>
                     {contact.message && (
-                      <p className="text-[13px] sm:text-sm text-gray-600 bg-gray-50 p-3 rounded-sm leading-relaxed whitespace-pre-wrap">
+                      <p className="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-white/5 p-3 rounded-sm leading-relaxed whitespace-pre-wrap">
                         {contact.message}
                       </p>
                     )}
@@ -158,7 +160,7 @@ export function CustomerCard({
                 ) : (
                   <div className="space-y-3">
                     {contact.message && (
-                      <p className="text-[13px] sm:text-sm text-[#171717] leading-relaxed whitespace-pre-wrap">
+                      <p className="text-[13px] sm:text-sm text-[#171717] dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
                         {contact.message}
                       </p>
                     )}
@@ -166,7 +168,7 @@ export function CustomerCard({
                 )}
 
                 {/* Reply Component */}
-                <div className="mt-4 pt-4 border-t border-gray-50">
+                <div className="mt-4 pt-4 border-t border-gray-50 dark:border-white/5">
                   <ReplyForm
                     id={contact.id}
                     table="contacts"

@@ -118,11 +118,13 @@ export function RealtimeInbox({ initialContacts }: { initialContacts: Contact[] 
                   <div className="flex items-center gap-3">
                     {isUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />}
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                      c.type === 'reserve' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300'
+                      c.type === 'reserve'
+                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                        : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300'
                     }`}>
                       {c.type === 'reserve' ? '予約' : 'お問い合わせ'}
                     </span>
-                    <h3 className={`text-base ${isUnread ? 'font-bold text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                    <h3 className={`text-base ${isUnread ? 'font-bold text-[#171717] dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
                       {c.name} 様
                     </h3>
                   </div>
@@ -142,20 +144,20 @@ export function RealtimeInbox({ initialContacts }: { initialContacts: Contact[] 
                 <div className="px-5 pb-4 border-t border-gray-50 dark:border-white/5">
                   <div className="grid grid-cols-2 gap-2 py-3 text-sm">
                     {c.contact_method && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Mail size={13} className="text-gray-300" />
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                        <Mail size={13} className="text-gray-300 dark:text-gray-500" />
                         {c.contact_method}
                       </div>
                     )}
                     {c.date && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Calendar size={13} className="text-gray-300" />
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                        <Calendar size={13} className="text-gray-300 dark:text-gray-500" />
                         {c.date} {c.time?.slice(0, 5)}
                       </div>
                     )}
                     {c.people && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Users size={13} className="text-gray-300" />
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                        <Users size={13} className="text-gray-300 dark:text-gray-500" />
                         {c.people}名
                       </div>
                     )}

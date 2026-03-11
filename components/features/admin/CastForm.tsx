@@ -173,7 +173,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
         </Link>
       </div>
 
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm p-5 md:p-8">
+      <div className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm p-5 md:p-8">
         <h2 className="text-xl font-serif tracking-widest text-[#171717] mb-8">
           {isEditing ? 'Edit Cast' : 'New Cast'}
         </h2>

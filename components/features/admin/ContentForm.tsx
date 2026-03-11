@@ -111,7 +111,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
         </Link>
       </div>
 
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm p-8">
+      <div className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm p-8">
         <h2 className="text-xl font-serif tracking-widest text-[#171717] mb-6">
           {isEditing ? 'Edit Content' : 'New Content'}
         </h2>
