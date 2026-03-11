@@ -343,6 +343,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
           alt="Hero Background LCP"
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="opacity-0 pointer-events-none"
         />

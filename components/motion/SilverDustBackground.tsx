@@ -34,10 +34,14 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
+    // Performance optimization: reduce particles and disable expensive shadows on mobile
+    const isMobile = width < 768;
+    const actualParticleCount = isMobile ? Math.floor(particleCount * 0.4) : particleCount;
+
     const particles: { x: number; y: number; size: number; speedX: number; speedY: number; opacity: number; angle: number; angleSpeed: number }[] = [];
 
     // Initialize particles
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < actualParticleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -51,8 +55,18 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
     }
 
     let animationFrameId: number;
+    let lastTime = 0;
+    const fpsLimit = isMobile ? 30 : 60; // Limit FPS on mobile
+    const frameInterval = 1000 / fpsLimit;
 
-    const render = () => {
+    const render = (time: number) => {
+      animationFrameId = requestAnimationFrame(render);
+      
+      const deltaTime = time - lastTime;
+      if (deltaTime < frameInterval) return;
+      
+      lastTime = time - (deltaTime % frameInterval);
+
       // Clear with transparent black
       ctx.clearRect(0, 0, width, height);
 
@@ -77,17 +91,22 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(220, 220, 230, ${clampedOpacity})`;
-        // Add subtle glow
-        ctx.shadowBlur = p.size * 2;
-        ctx.shadowColor = `rgba(255, 255, 255, ${clampedOpacity * 0.8})`;
+        
+        // Add subtle glow (expensive. disable on mobile)
+        if (!isMobile) {
+          ctx.shadowBlur = p.size * 2;
+          ctx.shadowColor = `rgba(255, 255, 255, ${clampedOpacity * 0.8})`;
+        }
+        
         ctx.fill();
-        ctx.shadowBlur = 0; // reset for next
+        
+        if (!isMobile) {
+          ctx.shadowBlur = 0; // reset for next
+        }
       });
-
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    animationFrameId = requestAnimationFrame(render);
 
     const handleResize = () => {
       width = canvas.offsetWidth;
@@ -97,10 +116,18 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
       ctx.scale(dpr, dpr);
     };
 
-    window.addEventListener('resize', handleResize);
+    // Use debounce or throttle for resize in production if needed
+    let resizeTimer: NodeJS.Timeout;
+    const throttledResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleResize, 200);
+    };
+
+    window.addEventListener('resize', throttledResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', throttledResize);
       cancelAnimationFrame(animationFrameId);
+      clearTimeout(resizeTimer);
     };
   }, [particleCount, opacity, minSize, maxSize]);
 
