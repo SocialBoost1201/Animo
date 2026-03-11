@@ -3,7 +3,8 @@
 import { useState, useTransition, useCallback } from 'react'
 import { saveSchedules } from '@/lib/actions/schedules'
 import { toast } from 'sonner'
-import { ChevronLeft, ChevronRight, Clock, Save, Loader2, Check } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, Save, Loader2, Check, CalendarDays, List } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const TIME_OPTIONS = [
   '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
@@ -18,11 +19,13 @@ type ShiftData = { cast_id: string; date?: string; work_date?: string; start_tim
 type ShiftKey = string // `${castId}_${date}`
 type ShiftMap = Map<ShiftKey, { start_time: string; end_time: string }>
 
-export function ShiftManager({ initialData }: {
+export function ShiftManager({ initialData, viewType = 'week' }: {
   initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[] }
+  viewType?: 'week' | 'month'
 }) {
   const { casts, shifts, dates } = initialData
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   // Build edit map from existing shifts
   const [shiftMap, setShiftMap] = useState<ShiftMap>(() => {
@@ -120,17 +123,39 @@ export function ShiftManager({ initialData }: {
         <div>
           <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Shifts</h1>
           <p className="text-sm text-gray-400 mt-1">
-            セルをタップして出勤ON/OFF。時計アイコンで時間を調整。
+            セル・日付をタップして出勤ON/OFF切替。時間は時計アイコンで調整。
           </p>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={isPending}
-          className="flex items-center gap-2 bg-[#171717] hover:bg-gold text-white px-5 py-2.5 text-sm font-bold tracking-wider transition-all duration-200 disabled:opacity-60"
-        >
-          {isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-          {isPending ? '保存中...' : '保存する'}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* View Toggle */}
+          <div className="flex bg-gray-100/80 p-1 rounded-sm border border-gray-200/50">
+            <button
+              onClick={() => router.push('?view=week')}
+              className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
+                viewType === 'week' ? 'bg-white shadow-sm text-[#171717]' : 'text-gray-500 hover:text-[#171717]'
+              }`}
+            >
+              <List size={13} /> 1週間
+            </button>
+            <button
+              onClick={() => router.push('?view=month')}
+              className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
+                viewType === 'month' ? 'bg-white shadow-sm text-[#171717]' : 'text-gray-500 hover:text-[#171717]'
+              }`}
+            >
+              <CalendarDays size={13} /> 1ヶ月
+            </button>
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={isPending}
+            className="flex items-center gap-2 bg-[#171717] hover:bg-gold text-white px-5 py-2 text-sm font-bold tracking-wider transition-all duration-200 disabled:opacity-60 rounded-sm shadow-sm"
+          >
+            {isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {isPending ? '保存中...' : '保存する'}
+          </button>
+        </div>
       </div>
 
       {/* Legend */}
@@ -145,8 +170,8 @@ export function ShiftManager({ initialData }: {
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
+      {/* Desktop Calendar Grid */}
+      <div className="hidden md:block bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b border-gray-100">
@@ -253,6 +278,98 @@ export function ShiftManager({ initialData }: {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card UI */}
+      <div className="md:hidden space-y-4">
+        {(!casts || casts.length === 0) ? (
+          <div className="bg-white border text-center py-10 text-sm text-gray-400">キャストが登録されていません</div>
+        ) : casts.map((cast) => {
+          const shiftCount = dates.filter(d => shiftMap.has(`${cast.id}_${d}`)).length;
+          return (
+            <div key={cast.id} className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-hidden">
+              <div className="bg-gray-50/50 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                <span className="font-bold text-[#171717] text-sm tracking-widest">{cast.stage_name}</span>
+                <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded-full text-gray-500 font-bold">
+                  {shiftCount}枠 / {dates.length}日
+                </span>
+              </div>
+              <div className="p-3">
+                <div className="flex flex-wrap gap-2">
+                  {dates.map((date) => {
+                     const key = `${cast.id}_${date}`;
+                     const hasShift = shiftMap.has(key);
+                     const shift = shiftMap.get(key);
+                     const isEditing = editingCell?.castId === cast.id && editingCell?.date === date;
+                     const dObj = new Date(date);
+                     const dDay = dObj.getDay() === 0 ? 6 : dObj.getDay() - 1; // Mon=0, Sun=6
+                     const dLabel = DAYS_SHORT[dDay] || '';
+                     const isWeekend = dObj.getDay() === 0 || dObj.getDay() === 6;
+
+                     // スマホ用は月次モードだと枠が多すぎるため、コンパクトなバッジ形式にする
+                     return (
+                       <div key={date} className="relative flex flex-col items-center">
+                         {isEditing && hasShift ? (
+                           <div className="absolute top-0 left-0 bg-white border border-gray-200 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-[100px]">
+                             <p className="text-[10px] text-gray-500 font-bold border-b pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
+                             <select
+                               value={shift?.start_time}
+                               onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
+                               className="text-xs border border-gray-200 rounded px-1 py-1 w-full text-center"
+                             >
+                               {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                             </select>
+                             <select
+                               value={shift?.end_time}
+                               onChange={e => updateTime(cast.id, date, 'end_time', e.target.value)}
+                               className="text-xs border border-gray-200 rounded px-1 py-1 w-full text-center"
+                             >
+                               {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                             </select>
+                             <button
+                               onClick={() => setEditingCell(null)}
+                               className="w-full bg-gold text-black text-[10px] font-bold py-1 rounded-sm mt-1"
+                             >
+                               完了
+                             </button>
+                           </div>
+                         ) : null}
+
+                         <div className="flex flex-col items-center gap-1 group">
+                            {/* Toggle Body */}
+                            <button
+                              onClick={() => toggleShift(cast.id, date)}
+                              className={`w-11 h-11 rounded border transition-colors flex flex-col items-center justify-center ${
+                                hasShift 
+                                  ? 'bg-gold/10 border-gold text-gold' 
+                                  : 'bg-gray-50 border-gray-100 text-gray-400'
+                              }`}
+                            >
+                              <span className={`text-[9px] font-bold mb-0.5 ${!hasShift && isWeekend ? (dObj.getDay()===0?'text-red-400':'text-blue-400') : ''}`}>
+                                {dObj.getDate()}{dLabel}
+                              </span>
+                              {hasShift ? <Check size={12} strokeWidth={3} /> : <span className="text-gray-300 text-xs">+</span>}
+                            </button>
+                            {/* Time Display */}
+                            <div className="h-4">
+                              {hasShift && (
+                                <button
+                                  onClick={() => setEditingCell({ castId: cast.id, date })}
+                                  className="flex items-center gap-0.5 text-[9px] text-gray-400 px-1 hover:text-gold"
+                                >
+                                  <Clock size={8} />{shift?.start_time?.slice(0, 5)}
+                                </button>
+                              )}
+                            </div>
+                         </div>
+                       </div>
+                     );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Summary Footer */}

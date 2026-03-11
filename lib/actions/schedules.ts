@@ -17,6 +17,19 @@ function getWeekDates(startDate = new Date()): string[] {
   return dates
 }
 
+function getMonthDates(targetMonth = new Date()): string[] {
+  const dates: string[] = []
+  const year = targetMonth.getFullYear()
+  const month = targetMonth.getMonth()
+  const lastDay = new Date(year, month + 1, 0).getDate()
+  for (let i = 1; i <= lastDay; i++) {
+    const d = new Date(year, month, i)
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset()) // Avoid UTC shift issues
+    dates.push(d.toISOString().split('T')[0])
+  }
+  return dates
+}
+
 export async function getWeeklySchedules(targetDate = new Date()) {
   const supabase = await createClient()
   const dates = getWeekDates(targetDate)
@@ -33,6 +46,27 @@ export async function getWeeklySchedules(targetDate = new Date()) {
     .select('*')
     .gte('work_date', dates[0])
     .lte('work_date', dates[6])
+  if (schedulesError) throw new Error(schedulesError.message)
+
+  return { casts, schedules, dates }
+}
+
+export async function getMonthlySchedules(targetDate = new Date()) {
+  const supabase = await createClient()
+  const dates = getMonthDates(targetDate)
+
+  const { data: casts, error: castsError } = await supabase
+    .from('casts')
+    .select('id, stage_name, slug')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true })
+  if (castsError) throw new Error(castsError.message)
+
+  const { data: schedules, error: schedulesError } = await supabase
+    .from('cast_schedules')
+    .select('*')
+    .gte('work_date', dates[0])
+    .lte('work_date', dates[dates.length - 1])
   if (schedulesError) throw new Error(schedulesError.message)
 
   return { casts, schedules, dates }
