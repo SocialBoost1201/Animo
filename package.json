@@ -27,6 +27,8 @@
     "@tiptap/react": "^3.20.1",
     "@tiptap/starter-kit": "^3.20.1",
     "@types/three": "^0.183.1",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.36.4",
     "ai": "^6.0.116",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -46,7 +48,8 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "three": "^0.183.2",
-    "use-debounce": "^10.1.0"
+    "use-debounce": "^10.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

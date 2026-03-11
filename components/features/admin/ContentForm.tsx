@@ -3,6 +3,7 @@
 import { createContent } from '@/lib/actions/contents'
 import { Button } from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
+import { showToast } from '@/components/ui/Toast'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState, useRef } from 'react'
@@ -47,13 +48,13 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
       }
 
       if (result.error) {
-        alert(result.error)
+        showToast(result.error, 'error')
       } else {
         router.push(contentType === 'gallery' ? '/admin/gallery' : '/admin/contents')
       }
     } catch (error: unknown) {
       const err = error as Error;
-      alert(err.message)
+      showToast(err.message, 'error')
     } finally {
       setIsPending(false)
     }
@@ -73,7 +74,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
     ].filter(Boolean).join('\n');
 
     if (!title) {
-      alert('自動生成には「タイトル」の入力が必要です。');
+      showToast('自動生成には「タイトル」の入力が必要です。', 'warning');
       return;
     }
 
@@ -93,7 +94,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
       }
     } catch (err: unknown) {
       const error = err as Error;
-      alert(`自動生成に失敗しました: ${error.message}`);
+      showToast(`自動生成に失敗しました: ${error.message}`, 'error');
     } finally {
       setIsAiGenerating(false);
     }

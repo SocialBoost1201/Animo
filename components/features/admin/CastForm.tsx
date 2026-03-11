@@ -2,6 +2,7 @@
 
 import { createCast, updateCast } from '@/lib/actions/casts'
 import { Button } from '@/components/ui/Button'
+import { showToast } from '@/components/ui/Toast'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -49,11 +50,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       const result = isEditing && initialData?.id
         ? await updateCast(initialData.id, formData)
         : await createCast(formData)
-      if (result.error) alert(result.error)
+      if (result.error) showToast(result.error, 'error')
       else router.push('/admin/casts')
     } catch (err: unknown) {
       const error = err as Error;
-      alert(error.message)
+      showToast(error.message, 'error')
     } finally {
       setIsPending(false)
     }
@@ -73,7 +74,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     ].filter(Boolean).join('\n');
 
     if (!baseInfo) {
-      alert('自動生成には「源氏名」や「趣味」などの入力が必要です。');
+      showToast('自動生成には「源氏名」や「趣味」などの入力が必要です。', 'warning');
       return;
     }
 
@@ -93,7 +94,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       }
     } catch (err: unknown) {
       const error = err as Error;
-      alert(`自動生成に失敗しました: ${error.message}`);
+      showToast(`自動生成に失敗しました: ${error.message}`, 'error');
     } finally {
       setIsAiGenerating(false);
     }
@@ -115,7 +116,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       setImagePreview(dataUrl)
       setCompressedImage(blob)
     } catch (error) {
-      alert('画像の処理に失敗しました。別の画像をお試しください。')
+      showToast('画像の処理に失敗しました。別の画像をお試しください。', 'error')
       e.target.value = ''
       setImagePreview(null)
       setCompressedImage(null)

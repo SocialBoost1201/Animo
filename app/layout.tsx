@@ -14,6 +14,7 @@ import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
 import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { AIConcierge } from "@/components/features/chat/AIConcierge";
+import { ToastContainer } from "@/components/ui/Toast";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -98,6 +99,7 @@ export default function RootLayout({
             {children}
             <LuxuryBackground />
             <AIConcierge />
+            <ToastContainer />
           </SmoothScrollProvider>
         </ReCaptchaProvider>
         <Analytics 

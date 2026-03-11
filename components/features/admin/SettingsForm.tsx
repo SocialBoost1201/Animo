@@ -4,6 +4,7 @@ import { updateSiteSettings } from '@/lib/actions/contents'
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 import { Check, Loader2 } from 'lucide-react'
+import { showToast } from '@/components/ui/Toast'
 
 type SettingsData = {
   today_mood?: string;
@@ -22,13 +23,13 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
     try {
       const result = await updateSiteSettings(formData)
       if (result.error) {
-        alert(result.error)
+        showToast(result.error, 'error')
       } else {
-        alert('サイト設定を更新しました。')
+        showToast('サイト設定を更新しました。', 'success')
       }
     } catch (error: unknown) {
       const err = error as Error;
-      alert(err.message)
+      showToast(err.message, 'error')
     } finally {
       setIsPending(false)
     }

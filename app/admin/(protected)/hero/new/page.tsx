@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
+import { showToast } from '@/components/ui/Toast'
 
 export default function NewHeroMediaPage() {
   const router = useRouter()
@@ -24,13 +25,13 @@ export default function NewHeroMediaPage() {
     try {
       const result = await createHeroMedia(formData)
       if (result.error) {
-        alert(result.error)
+        showToast(result.error, 'error')
       } else {
         router.push('/admin/hero')
       }
     } catch (error: unknown) {
       const err = error as Error;
-      alert(err.message)
+      showToast(err.message, 'error')
     } finally {
       setIsPending(false)
     }
