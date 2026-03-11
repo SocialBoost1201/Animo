@@ -50,7 +50,7 @@ export const LoadingScreen = () => {
             transition={{ duration: 3, ease: 'easeInOut' }}
           >
             <Image
-              src="/Animo-logo2.png"
+              src="/animo-logo3.png"
               alt="CLUB ANIMO"
               width={320}
               height={160}
