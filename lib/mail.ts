@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const adminEmail = process.env.ADMIN_EMAIL || 'animo4266@gmaill.com';
+const adminEmail = process.env.ADMIN_EMAIL || 'animo4266@gmail.com';
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
