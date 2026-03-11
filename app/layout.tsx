@@ -46,6 +46,13 @@ export const metadata: Metadata = {
     default: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
     template: '%s | CLUB Animo 関内キャバクラ',
   },
+  alternates: {
+    canonical: '/',
+    languages: {
+      'ja': '/',
+      'en': '/en',
+    },
+  },
   description:
     '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。料金システムや在籍キャスト、出勤情報を掲載。',
   keywords: [

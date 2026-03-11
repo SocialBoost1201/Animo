@@ -3,41 +3,12 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { Accordion } from '@/components/ui/Accordion';
 
+import { FAQ_CATEGORIES } from '@/lib/data/faq';
+
 export const metadata = {
   title: 'FAQ | Club Animo',
   description: 'Club Animoのご利用に関するよくある質問。初めての方でも安心してご利用いただけます。',
 };
-
-const FAQ_ITEMS = [
-  {
-    question: '初めての利用ですが、システムについて教えてもらえますか？',
-    answer: 'ご来店時にスタッフが料金システムやお店のルールについて丁寧にご説明させていただきます。明朗会計を心がれておりますので、ご不明点がございましたらお気軽にスタッフへお尋ねください。',
-  },
-  {
-    question: '予約は必要ですか？',
-    answer: 'ご予約なしでもご案内可能ですが、週末（金曜・土曜）やイベント開催日は混雑が予想されます。お席を確実にご用意するためにも、事前のご予約をお勧めしております。WEB予約またはお電話にて承っております。',
-  },
-  {
-    question: 'ドレスコードはありますか？',
-    answer: '特に厳しいドレスコードはございませんが、スマートカジュアルを推奨しております。スウェットやジャージ、サンダル等、極度にラフな服装でのご入店はお断りさせていただく場合がございますのでご了承ください。',
-  },
-  {
-    question: 'クレジットカードやQR決済は使えますか？',
-    answer: 'はい、各種主要クレジットカード（VISA, MasterCard, JCB, AMEX, Diners）および、PayPay等のQRコード決済をご利用いただけます。',
-  },
-  {
-    question: '領収書の発行は可能ですか？',
-    answer: 'はい、お会計時にスタッフへお申し付けください。「飲食代」として発行させていただきます。手書きの領収書やインボイス対応領収書の発行も可能です。',
-  },
-  {
-    question: '女性だけでも利用できますか？',
-    answer: 'はい、女性のお客様だけでのご利用も大歓迎です。女子会や二次会など、様々なシーンでご活用ください。女性向けの特典をご用意している時期もございます。',
-  },
-  {
-    question: '気になるキャストがいるのですが、出勤状況はどうやって確認できますか？',
-    answer: '当サイトの「本日の出勤（Today\'s Shift）」ページにて当日の出勤予定キャストをご確認いただけます。また、確実なご指名の場合は事前のご予約をお勧めしております。',
-  },
-];
 
 export default function FAQPage() {
   return (
@@ -74,7 +45,7 @@ export default function FAQPage() {
                 __html: JSON.stringify({
                   "@context": "https://schema.org",
                   "@type": "FAQPage",
-                  "mainEntity": FAQ_ITEMS.map(item => ({
+                  "mainEntity": FAQ_CATEGORIES.flatMap(cat => cat.items).map(item => ({
                     "@type": "Question",
                     "name": item.question,
                     "acceptedAnswer": {
@@ -86,7 +57,18 @@ export default function FAQPage() {
               }}
             />
             
-            <Accordion items={FAQ_ITEMS} />
+            <div className="space-y-16">
+              {FAQ_CATEGORIES.map((category) => (
+                <div key={category.title}>
+                  <h2 className="text-xl font-serif text-[#171717] mb-8 text-center flex items-center justify-center gap-4">
+                    <span className="w-8 h-px bg-gold/50"></span>
+                    <span className="tracking-widest">{category.title}</span>
+                    <span className="w-8 h-px bg-gold/50"></span>
+                  </h2>
+                  <Accordion items={category.items} />
+                </div>
+              ))}
+            </div>
           </FadeIn>
         </div>
       </section>

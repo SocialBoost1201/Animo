@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '横浜・関内の高級ラウンジおすすめランキングと選び方｜CLUB Animo',
     description: '接客、内装、客層の良さで選ぶ、本当に上質なナイトスポットのおすすめランキング基準。',
-  }
+  
+    images: ['/api/og?title=%E6%A8%AA%E6%B5%9C%E3%83%BB%E9%96%A2%E5%86%85%E3%81%AE%E9%AB%98%E7%B4%9A%E3%83%A9%E3%82%A6%E3%83%B3%E3%82%B8%E3%81%8A%E3%81%99%E3%81%99%E3%82%81%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0%E3%81%A8%E9%81%B8%E3%81%B3%E6%96%B9%EF%BD%9CCLUB%20Animo&category=Blog'],}
 };
 
 const LOUNGE_RANKING_CRITERIA = [

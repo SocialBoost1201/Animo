@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '関内の夜遊びスポット特集｜大人が通う名店たち',
     description: '関内・馬車道エリアでおすすめの夜遊びスポットを特集。',
-  }
+  
+    images: ['/api/og?title=%E9%96%A2%E5%86%85%E3%81%AE%E5%A4%9C%E9%81%8A%E3%81%B3%E3%82%B9%E3%83%9D%E3%83%83%E3%83%88%E7%89%B9%E9%9B%86%EF%BD%9C%E5%A4%A7%E4%BA%BA%E3%81%8C%E9%80%9A%E3%81%86%E5%90%8D%E5%BA%97%E3%81%9F%E3%81%A1&category=Blog'],}
 };
 
 const NIGHTSPOT_FEATURES = [

@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '接待で使える関内ラウンジ・キャバクラの選び方｜CLUB Animo',
     description: '大事な取引先や接待で失敗しないための関内の高級ラウンジ・優良キャバクラの選び方。',
-  }
+  
+    images: ['/api/og?title=%E6%8E%A5%E5%BE%85%E3%81%A7%E4%BD%BF%E3%81%88%E3%82%8B%E9%96%A2%E5%86%85%E3%83%A9%E3%82%A6%E3%83%B3%E3%82%B8%E3%83%BB%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9%EF%BD%9CCLUB%20Animo&category=Blog'],}
 };
 
 const ENTERTAINMENT_CHECKLIST = [

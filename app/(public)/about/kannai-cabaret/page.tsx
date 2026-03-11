@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '関内キャバクラとは・特徴と魅力｜CLUB Animo',
     description: '横浜・関内エリアのキャバクラの歴史や特徴、客層について解説。',
-  }
+  
+    images: ['/api/og?title=%E9%96%A2%E5%86%85%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9%E3%81%A8%E3%81%AF%E3%83%BB%E7%89%B9%E5%BE%B4%E3%81%A8%E9%AD%85%E5%8A%9B%EF%BD%9CCLUB%20Animo&category=About'],}
 };
 
 const KANNAI_FEATURES = [

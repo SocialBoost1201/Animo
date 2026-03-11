@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '関内キャバクラ徹底比較・CLUB Animoの強み｜関内キャバクラ',
     description: '関内エリアのキャバクラ相場、接客レベル、雰囲気の違いを徹底比較。',
-  }
+  
+    images: ['/api/og?title=%E9%96%A2%E5%86%85%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9%E5%BE%B9%E5%BA%95%E6%AF%94%E8%BC%83%E3%83%BBCLUB%20Animo%E3%81%AE%E5%BC%B7%E3%81%BF%EF%BD%9C%E9%96%A2%E5%86%85%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9&category=Area Info'],}
 };
 
 const KANNAI_COMPARE_TABLE = [

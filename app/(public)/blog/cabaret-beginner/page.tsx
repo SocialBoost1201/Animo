@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'キャバクラ初心者ガイド｜初めての来店マナーと遊び方',
     description: '初めてキャバクラに行く方へ。入店からの流れ、料金体系、キャストとの会話のコツ、スマートな遊び方。',
-  }
+  
+    images: ['/api/og?title=%E3%82%AD%E3%83%A3%E3%83%90%E3%82%AF%E3%83%A9%E5%88%9D%E5%BF%83%E8%80%85%E3%82%AC%E3%82%A4%E3%83%89%EF%BD%9C%E5%88%9D%E3%82%81%E3%81%A6%E3%81%AE%E6%9D%A5%E5%BA%97%E3%83%9E%E3%83%8A%E3%83%BC%E3%81%A8%E9%81%8A%E3%81%B3%E6%96%B9&category=Blog'],}
 };
 
 const BEGINNER_QA = [

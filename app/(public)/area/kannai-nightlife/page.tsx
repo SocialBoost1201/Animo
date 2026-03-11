@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: '関内夜遊びガイド・おすすめナイトスポット｜CLUB Animo',
     description: '横浜・関内エリアの夜遊びガイド。接待やデートの二次会で使える高級キャバクラ、おすすめのバーをご紹介します。',
-  }
+  
+    images: ['/api/og?title=%E9%96%A2%E5%86%85%E5%A4%9C%E9%81%8A%E3%81%B3%E3%82%AC%E3%82%A4%E3%83%89%E3%83%BB%E3%81%8A%E3%81%99%E3%81%99%E3%82%81%E3%83%8A%E3%82%A4%E3%83%88%E3%82%B9%E3%83%9D%E3%83%83%E3%83%88%EF%BD%9CCLUB%20Animo&category=Area Info'],}
 };
 
 const KANNAI_NIGHTSPOTS = [
