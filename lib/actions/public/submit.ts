@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { sendAdminNotification } from '@/lib/mail'
+import { sendAdminNotification, sendGuestConfirmation } from '@/lib/mail'
+import { sendLineNotification } from '@/app/api/line/route'
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -83,6 +84,20 @@ export async function submitContact(formData: FormData) {
     type: type as 'reserve' | 'contact',
     data: { name, phone, contact_method, date: dateStr, time: timeStr, people, castName, message }
   });
+
+  // D-1: お客様へ自動確認メールを送信（Email が入力されている場合のみ）
+  if (contact_method && contact_method.includes('@')) {
+    await sendGuestConfirmation({
+      type: type as 'reserve' | 'contact',
+      email: contact_method,
+      name,
+      date: dateStr || undefined,
+      time: timeStr || undefined,
+      people: isNaN(people) ? null : people,
+      castName: castName || undefined,
+      message: message || undefined,
+    });
+  }
 
   return { success: true }
 }

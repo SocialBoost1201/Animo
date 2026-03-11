@@ -142,3 +142,80 @@ ${replyText}
     return { success: false, error: error.message };
   }
 }
+
+// ── D-1: お客様へのフォーム送信後自動確認メール ──────────────────────────────
+export async function sendGuestConfirmation(payload: {
+  type: 'reserve' | 'contact';
+  email: string;
+  name: string;
+  date?: string;
+  time?: string;
+  people?: number | null;
+  castName?: string;
+  message?: string;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY is not set. Guest confirmation email skipped.');
+    return;
+  }
+
+  const { type, email, name, date, time, people, castName, message } = payload;
+
+  const isReserve = type === 'reserve';
+  const subject = isReserve
+    ? `【予約受付完了】CLUB Animo — ${name} 様`
+    : `【お問い合わせ受付完了】CLUB Animo — ${name} 様`;
+
+  const headerTitle = isReserve
+    ? '予約リクエストを受け付けました'
+    : 'お問い合わせを受け付けました';
+
+  const bodyText = isReserve
+    ? `${name} 様よりのご予約リクエストを受け付けました。<br />内容を確認の上、担当スタッフより確定のご連絡を差し上げます。<br />当日のご予約やお急ぎの場合は、お電話でのご連絡をお勧めいたします。`
+    : `${name} 様よりのお問い合わせを受け付けました。<br />数日以内に担当スタッフよりご連絡いたします。<br />お急ぎの場合はお電話にてお問い合わせください。`;
+
+  const detailRows = [
+    isReserve && date ? `<tr><th style="text-align:left;padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;color:#888;white-space:nowrap;">来店希望日</th><td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#333;">${date}${time ? ` ${time.slice(0, 5)}` : ''}</td></tr>` : '',
+    isReserve && people ? `<tr><th style="text-align:left;padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;color:#888;white-space:nowrap;">人数</th><td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#333;">${people}名</td></tr>` : '',
+    isReserve && castName ? `<tr><th style="text-align:left;padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;color:#888;white-space:nowrap;">指名キャスト</th><td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#333;">${castName}</td></tr>` : '',
+    message ? `<tr><th style="text-align:left;padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;color:#888;white-space:nowrap;">メッセージ</th><td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px;color:#333;white-space:pre-wrap;">${message}</td></tr>` : '',
+  ].filter(Boolean).join('');
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #e8e8e8;">
+      <div style="background: #0a0a0a; padding: 36px 40px; text-align: center;">
+        <p style="font-size: 20px; letter-spacing: 0.3em; color: #C4A05A; margin: 0; font-weight: 300;">CLUB ANIMO</p>
+        <div style="width: 40px; height: 1px; background: #C4A05A; opacity: 0.5; margin: 12px auto;"></div>
+        <p style="font-size: 12px; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); margin: 0; text-transform: uppercase;">Kannai — Yokohama</p>
+      </div>
+      <div style="padding: 40px;">
+        <h2 style="font-size: 18px; color: #171717; font-weight: bold; margin: 0 0 20px;">${headerTitle}</h2>
+        <p style="font-size: 14px; color: #555; line-height: 2; margin-bottom: 28px;">${bodyText}</p>
+        ${detailRows ? `<table style="width:100%;border-collapse:collapse;margin-bottom:28px;">${detailRows}</table>` : ''}
+        <div style="background:#f9f7f2;border-left:3px solid #C4A05A;padding:16px 20px;font-size:13px;color:#888;line-height:1.8;">
+          このメールは自動送信です。このメールアドレスへの返信は受け付けておりません。<br />
+          お問い合わせはお電話（<a href="tel:0800-888-8788" style="color:#C4A05A;">0800-888-8788</a>）または公式サイトのフォームよりお願いいたします。
+        </div>
+      </div>
+      <div style="background:#fafafa;border-top:1px solid #eee;padding:20px 40px;font-size:12px;color:#aaa;text-align:center;line-height:1.8;">
+        <p style="margin:0;">CLUB Animo — 〒231-0023 神奈川県横浜市中区山下町</p>
+        <p style="margin:4px 0 0;"><a href="https://club-animo.com" style="color:#C4A05A;text-decoration:none;">club-animo.com</a></p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const { error } = await getResend().emails.send({
+      from: 'CLUB Animo <onboarding@resend.dev>',
+      to: email,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('Guest confirmation email error:', error);
+    }
+  } catch (err) {
+    console.error('Failed to send guest confirmation email:', err);
+  }
+}
