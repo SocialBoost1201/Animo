@@ -12,8 +12,8 @@ export const Footer = () => {
           {/* Brand Info */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <Link href="/" className="inline-block mb-8">
-              <span className="font-serif luxury-tracking-super uppercase text-xl font-normal">
-                Club Animo
+              <span className="font-serif luxury-tracking-super text-xl font-normal">
+                CLUB Animo
               </span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">

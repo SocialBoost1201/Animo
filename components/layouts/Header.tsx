@@ -85,9 +85,9 @@ export const Header = () => {
         <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <span
-              className="font-serif luxury-tracking-super uppercase transition-colors duration-500 font-normal text-[#171717] text-lg"
+              className="font-serif luxury-tracking-super transition-colors duration-500 font-normal text-[#171717] text-lg"
             >
-              Club Animo
+              CLUB Animo
             </span>
           </Link>
 
@@ -185,8 +185,8 @@ export const Header = () => {
             className="fixed inset-0 z-[60] bg-white flex flex-col"
           >
             <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
-              <span className="font-serif luxury-tracking-super uppercase text-lg text-[#171717]">
-                Club Animo
+              <span className="font-serif luxury-tracking-super text-lg text-[#171717]">
+                CLUB Animo
               </span>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
