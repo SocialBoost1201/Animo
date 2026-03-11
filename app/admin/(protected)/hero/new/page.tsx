@@ -51,8 +51,9 @@ export default function NewHeroMediaPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Type *</label>
+              <label htmlFor="hero_type" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Type *</label>
               <select 
+                id="hero_type"
                 name="type"
                 required
                 className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
@@ -62,8 +63,9 @@ export default function NewHeroMediaPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Title (管理用) *</label>
+              <label htmlFor="hero_title" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Title (管理用) *</label>
               <input 
+                id="hero_title"
                 name="title"
                 type="text" 
                 required
@@ -74,8 +76,9 @@ export default function NewHeroMediaPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Media URL (mp4 / webm / jpg) *</label>
+            <label htmlFor="hero_url" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Media URL (mp4 / webm / jpg) *</label>
             <input 
+              id="hero_url"
               name="url"
               type="url" 
               required
@@ -86,8 +89,9 @@ export default function NewHeroMediaPage() {
           </div>
           
           <div>
-            <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Poster Image URL (動画用)</label>
+            <label htmlFor="hero_poster_url" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Poster Image URL (動画用)</label>
             <input 
+              id="hero_poster_url"
               name="poster_url"
               type="url"
               className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
@@ -98,8 +102,9 @@ export default function NewHeroMediaPage() {
 
           <div className="border-t border-gray-100 pt-6 mt-6">
             <div className="flex items-center h-full">
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label htmlFor="is_active" className="flex items-center gap-3 cursor-pointer">
                 <input 
+                  id="is_active"
                   type="checkbox" 
                   name="is_active"
                   defaultChecked={true}

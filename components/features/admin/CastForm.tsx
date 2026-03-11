@@ -183,8 +183,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* 源氏名 + フリガナ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className={labelClass}>源氏名 (Stage Name) *</label>
+              <label htmlFor="stage_name" className={labelClass}>源氏名 (Stage Name) *</label>
               <input
+                id="stage_name"
                 name="stage_name"
                 type="text"
                 defaultValue={initialData?.stage_name || initialData?.name}
@@ -194,8 +195,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               />
             </div>
             <div>
-              <label className={labelClass}>フリガナ (Name Kana) *</label>
+              <label htmlFor="name_kana" className={labelClass}>フリガナ (Name Kana) *</label>
               <input
+                id="name_kana"
                 name="name_kana"
                 type="text"
                 defaultValue={initialData?.name_kana}
@@ -217,45 +219,46 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* 年齢 + 身長 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className={labelClass}>年齢 (Age)</label>
-              <input name="age" type="number" min="18" max="99"
+              <label htmlFor="cast_age" className={labelClass}>年齢 (Age)</label>
+              <input id="cast_age" name="age" type="number" min="18" max="99"
                 defaultValue={initialData?.age} className={inputClass} placeholder="22" />
             </div>
             <div>
-              <label className={labelClass}>身長 (Height) / cm</label>
-              <input name="height" type="number" min="130" max="220"
+              <label htmlFor="cast_height" className={labelClass}>身長 (Height) / cm</label>
+              <input id="cast_height" name="height" type="number" min="130" max="220"
                 defaultValue={initialData?.height} className={inputClass} placeholder="160" />
             </div>
           </div>
 
           {/* 趣味 */}
           <div>
-            <label className={labelClass}>趣味 (Hobby)</label>
-            <input name="hobby" type="text" defaultValue={initialData?.hobby}
+            <label htmlFor="hobby" className={labelClass}>趣味 (Hobby)</label>
+            <input id="hobby" name="hobby" type="text" defaultValue={initialData?.hobby}
               className={inputClass} placeholder="旅行、カフェ巡り" />
           </div>
 
           {/* コメント */}
           <div>
             <div className="flex items-end justify-between mb-2">
-              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase">一言コメント (Comment)</label>
+              <label htmlFor="comment_input" className="block text-xs font-bold tracking-widest text-gray-500 uppercase">一言コメント (Comment)</label>
               <button 
                 type="button" 
                 onClick={handleGenerateAI}
                 disabled={isAiGenerating}
+                aria-label="AIで自動生成"
                 className="flex items-center gap-1.5 text-xs font-bold text-gold hover:text-yellow-600 transition-colors disabled:opacity-50"
               >
                 {isAiGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
                 AIで自動生成
               </button>
             </div>
-            <textarea name="comment" rows={6} defaultValue={initialData?.comment}
+            <textarea id="comment_input" name="comment" rows={6} defaultValue={initialData?.comment}
               className={inputClass} placeholder="お客様へのメッセージやプロフィール文" />
           </div>
 
           {/* 画像 アップロード */}
           <div>
-            <label className={labelClass}>プロフィール画像 (Profile Image) {isEditing ? '' : '*'}</label>
+            <label htmlFor="image_file" className={labelClass}>プロフィール画像 (Profile Image) {isEditing ? '' : '*'}</label>
             <div className="flex items-start gap-4">
               {(imagePreview || primaryImage?.image_url) && (
                 <div className="shrink-0 mb-4 md:mb-0 relative w-24 h-24">
@@ -271,6 +274,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               )}
               <div className="flex-1">
                 <input 
+                  id="image_file"
                   name="image_file" 
                   type="file" 
                   accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
@@ -289,8 +293,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
           {/* 在籍フラグ */}
           <div className="border-t border-gray-100 pt-6">
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label htmlFor="is_active" className="flex items-center gap-3 cursor-pointer">
               <input
+                id="is_active"
                 type="checkbox"
                 name="is_active"
                 defaultChecked={initialData ? (initialData.is_active ?? true) : true}

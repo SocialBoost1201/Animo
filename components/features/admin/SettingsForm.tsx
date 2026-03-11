@@ -41,9 +41,10 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
         
         {/* 全体告知（今日の気分など） */}
         <div>
-          <h3 className="text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Today&apos;s Mood / Headline</h3>
+          <label htmlFor="today_mood" className="block text-sm font-bold tracking-widest text-[#171717] uppercase mb-1">Today&apos;s Mood / Headline</label>
           <p className="text-xs text-gray-500 mb-4">トップページなどに表示される、本日の一言メッセージです。</p>
           <input 
+            id="today_mood"
             name="today_mood"
             type="text" 
             defaultValue={initialData?.today_mood || ''}
@@ -59,8 +60,9 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
           <p className="text-xs text-gray-500 mb-4">トップページ上部の動画ローテーション設定</p>
           
         <div>
-          <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Transition Mode</label>
+          <label htmlFor="hero_transition_mode" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Transition Mode</label>
           <select
+            id="hero_transition_mode"
             name="hero_transition_mode"
             defaultValue={initialData?.hero_transition_mode || 'ripple'}
             className="w-full md:w-2/3 border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"

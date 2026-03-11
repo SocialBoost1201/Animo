@@ -21,15 +21,15 @@ export function CustomerCard({
   const [isExpanded, setIsExpanded] = useState(hasUnread); // 未読時は最初から開く
 
   return (
-    <div className={`bg-white border shadow-sm transition-all rounded-sm ${hasUnread ? 'border-amber-200' : 'border-gray-100'}`}>
+    <div className={`bg-white dark:bg-[#141414] border shadow-sm transition-all rounded-sm ${hasUnread ? 'border-amber-200 dark:border-amber-900/50 ring-1 ring-amber-100 dark:ring-amber-900/30' : 'border-gray-100 dark:border-white/5'}`}>
       <div className="px-6 py-4 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
           {hasUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />}
           <div>
-            <h3 className={`text-lg font-serif ${hasUnread ? 'text-[#171717] font-bold' : 'text-gray-700'}`}>
+            <h3 className={`text-lg font-serif ${hasUnread ? 'text-[#171717] dark:text-gray-100 font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
               {primaryName} 様
             </h3>
-            <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 font-sans">
+            <div className="flex items-center gap-3 mt-1 text-xs text-gray-400 dark:text-gray-500 font-sans">
               {phone && <span className="flex items-center gap-1"><Phone size={12} /> {phone}</span>}
               {email && <span className="flex items-center gap-1"><Mail size={12} /> {email}</span>}
               {lineId && <span className="flex items-center gap-1"><Smartphone size={12} /> {lineId}</span>}
@@ -46,10 +46,10 @@ export function CustomerCard({
             <p className="font-serif text-[#171717]">{contactCount} <span className="text-xs text-gray-400 font-sans">回</span></p>
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">最終コンタクト</p>
-            <p className="text-gray-600 text-xs">{lastContact}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mb-0.5">最終コンタクト</p>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">{lastContact}</p>
           </div>
-          <div className="pl-4 border-l border-gray-100 hidden sm:block">
+          <div className="pl-4 border-l border-gray-100 dark:border-white/5 hidden sm:block">
             {customerId ? (
               <Link 
                 href={`/admin/customers/${customerId}`} 
@@ -71,7 +71,7 @@ export function CustomerCard({
       </div>
 
       {/* モバイル用のCRM連携ボタン行（sm以下） */}
-      <div className="sm:hidden px-6 pb-4 flex justify-end border-t border-gray-50 pt-3">
+      <div className="sm:hidden px-6 pb-4 flex justify-end border-t border-gray-50 dark:border-white/5 pt-3">
         {customerId ? (
           <Link 
             href={`/admin/customers/${customerId}`} 
@@ -93,7 +93,7 @@ export function CustomerCard({
       {/* Accordion Toggle Bar */}
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-center gap-2 py-3 border-t border-gray-50 bg-gray-50/30 text-xs font-bold tracking-widest text-gray-400 hover:text-[#171717] hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-3 border-t border-gray-50 dark:border-white/5 bg-gray-50/30 dark:bg-white/5 text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 hover:text-[#171717] dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
       >
         {isExpanded ? (
           <><ChevronUp size={14} /> 履歴を閉じる</>
@@ -104,13 +104,13 @@ export function CustomerCard({
 
       {/* 履歴リスト (History Details) - アコーディオン展開 */}
       {isExpanded && (
-        <div className="border-t border-gray-100 bg-gray-50/50 p-4 sm:p-6 space-y-6">
-          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">対応履歴</p>
+        <div className="border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-[#0a0a0a] p-4 sm:p-6 space-y-6">
+          <p className="text-xs font-bold tracking-widest text-gray-400 dark:text-gray-500 uppercase">対応履歴</p>
           <div className="space-y-4">
             {contacts.map((contact: ContactData) => (
-              <div key={contact.id} className="bg-white border border-gray-100 p-4 rounded-sm shadow-xs">
+              <div key={contact.id} className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 p-4 rounded-sm shadow-xs">
                 {/* Card Header for each history item */}
-                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-50">
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-50 dark:border-white/5">
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {!contact.is_read && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${

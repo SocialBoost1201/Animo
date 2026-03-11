@@ -121,18 +121,18 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Shifts</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="text-2xl font-serif tracking-widest text-[#171717] dark:text-gray-100">Shifts</h1>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
             セル・日付をタップして出勤ON/OFF切替。時間は時計アイコンで調整。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* View Toggle */}
-          <div className="flex bg-gray-100/80 p-1 rounded-sm border border-gray-200/50">
+          <div className="flex bg-gray-100/80 dark:bg-black/50 p-1 rounded-sm border border-gray-200/50 dark:border-white/10">
             <button
               onClick={() => router.push('?view=week')}
               className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
-                viewType === 'week' ? 'bg-white shadow-sm text-[#171717]' : 'text-gray-500 hover:text-[#171717]'
+                viewType === 'week' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
               }`}
             >
               <List size={13} /> 1週間
@@ -140,7 +140,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
             <button
               onClick={() => router.push('?view=month')}
               className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
-                viewType === 'month' ? 'bg-white shadow-sm text-[#171717]' : 'text-gray-500 hover:text-[#171717]'
+                viewType === 'month' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
               }`}
             >
               <CalendarDays size={13} /> 1ヶ月
@@ -171,11 +171,11 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       </div>
 
       {/* Desktop Calendar Grid */}
-      <div className="hidden md:block bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
+      <div className="hidden md:block bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="px-4 py-3 text-xs text-gray-400 font-normal w-32 bg-gray-50/70">
+            <tr className="border-b border-gray-100 dark:border-white/5">
+              <th className="px-4 py-3 text-xs text-gray-400 dark:text-gray-500 font-normal w-32 bg-gray-50/70 dark:bg-white/5">
                 キャスト
               </th>
               {dates.map((date, i) => {
@@ -283,14 +283,14 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       {/* Mobile Card UI */}
       <div className="md:hidden space-y-4">
         {(!casts || casts.length === 0) ? (
-          <div className="bg-white border text-center py-10 text-sm text-gray-400">キャストが登録されていません</div>
+          <div className="bg-white dark:bg-[#141414] border dark:border-white/5 text-center py-10 text-sm text-gray-400 dark:text-gray-500">キャストが登録されていません</div>
         ) : casts.map((cast) => {
           const shiftCount = dates.filter(d => shiftMap.has(`${cast.id}_${d}`)).length;
           return (
-            <div key={cast.id} className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-hidden">
-              <div className="bg-gray-50/50 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                <span className="font-bold text-[#171717] text-sm tracking-widest">{cast.stage_name}</span>
-                <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded-full text-gray-500 font-bold">
+            <div key={cast.id} className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm overflow-hidden">
+              <div className="bg-gray-50/50 dark:bg-[#0a0a0a] px-4 py-3 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+                <span className="font-bold text-[#171717] dark:text-gray-100 text-sm tracking-widest">{cast.stage_name}</span>
+                <span className="text-[10px] bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400 font-bold">
                   {shiftCount}枠 / {dates.length}日
                 </span>
               </div>
@@ -310,7 +310,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                      return (
                        <div key={date} className="relative flex flex-col items-center">
                          {isEditing && hasShift ? (
-                           <div className="absolute top-0 left-0 bg-white border border-gray-200 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-[100px]">
+                           <div className="absolute top-0 left-0 bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-white/10 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-section-mobile">
                              <p className="text-[10px] text-gray-500 font-bold border-b pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
                              <select
                                value={shift?.start_time}

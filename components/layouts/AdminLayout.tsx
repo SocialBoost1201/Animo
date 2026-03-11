@@ -180,7 +180,7 @@ export function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen flex bg-[#f5f5f7]">
+    <div className="min-h-screen flex bg-[#f5f5f7] dark:bg-[#0c0c0c] dark:text-gray-100">
       {/* ─── Desktop Sidebar ─── */}
       <aside className="w-60 bg-[#0f0f0f] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
         {renderSidebarContent()}
@@ -204,18 +204,19 @@ export function AdminLayout({
       {/* ─── Main Content ─── */}
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
         {/* Mobile Header */}
-        <header className="h-14 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 md:hidden sticky top-0 z-30 shadow-sm">
+        <header className="h-14 bg-white/80 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-b border-gray-100 dark:border-white/5 flex items-center justify-between px-4 md:hidden sticky top-0 z-30 shadow-sm">
           <button
             onClick={() => setMobileOpen(true)}
-            className="p-2 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+            aria-label="メニューを開く"
           >
             <Menu size={20} />
           </button>
-          <Link href="/admin/dashboard" className="font-serif tracking-widest text-sm font-bold">
+          <Link href="/admin/dashboard" className="font-serif tracking-widest text-sm font-bold dark:text-white">
             ANIMO <span className="text-gold">CMS</span>
           </Link>
-          <Link href="/admin/inquiries" className="relative p-2">
-            <Bell size={18} className="text-gray-500" />
+          <Link href="/admin/inquiries" className="relative p-2" aria-label="受信箱へ">
+            <Bell size={18} className="text-gray-500 dark:text-gray-400" />
             {unreadCount > 0 && (
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             )}
@@ -223,16 +224,16 @@ export function AdminLayout({
         </header>
 
         {/* Desktop Header Bar */}
-        <header className="h-14 bg-white/80 backdrop-blur-md border-b border-gray-100 hidden md:flex items-center justify-between px-8 sticky top-0 z-30">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+        <header className="h-14 bg-white/80 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-b border-gray-100 dark:border-white/5 hidden md:flex items-center justify-between px-8 sticky top-0 z-30">
+          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
             <span>Club ANIMO</span>
             <span>/</span>
-            <span className="text-[#171717] font-medium">
+            <span className="text-[#171717] dark:text-gray-200 font-medium">
               {NAV_ITEMS.find((i) => pathname.startsWith(i.href))?.label ?? 'Admin'}
             </span>
           </div>
           {unreadCount > 0 && (
-            <Link href="/admin/inquiries" className="flex items-center gap-2 text-xs text-red-500 hover:text-red-600 transition-colors">
+            <Link href="/admin/inquiries" className="flex items-center gap-2 text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
               <Bell size={14} className="animate-pulse" />
               <span className="font-bold">未読 {unreadCount}件</span>
             </Link>
@@ -253,7 +254,7 @@ export function AdminLayout({
       </main>
 
       {/* ─── Mobile Bottom Tab ─── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/90 backdrop-blur-md border-t border-gray-100 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-t border-gray-100 dark:border-white/5 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] dark:shadow-none">
         <div className="flex items-center">
           {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -264,7 +265,7 @@ export function AdminLayout({
                 key={item.href}
                 href={item.href}
                 className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-1 transition-colors relative ${
-                  isActive ? 'text-[#171717]' : 'text-gray-400'
+                  isActive ? 'text-[#171717] dark:text-gold' : 'text-gray-400 dark:text-gray-500'
                 }`}
               >
                 {/* Active indicator */}

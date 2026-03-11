@@ -120,8 +120,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Type *</label>
+              <label htmlFor="contentType" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Type *</label>
               <select 
+                id="contentType"
                 name="type"
                 value={contentType}
                 onChange={(e) => setContentType(e.target.value)}
@@ -136,8 +137,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
             {contentType === 'event' && (
               <div>
-                <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Event Date</label>
+                <label htmlFor="content_date" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Event Date</label>
                 <input 
+                  id="content_date"
                   name="content_date"
                   type="date" 
                   defaultValue={initialData?.content_date?.slice(0, 10)}
@@ -148,8 +150,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
             
             {contentType === 'gallery' && (
               <div>
-                <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Category (Tag)</label>
+                <label htmlFor="category" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Category (Tag)</label>
                 <select 
+                  id="category"
                   name="category"
                   defaultValue={initialData?.category || 'floor'}
                   className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors bg-white"
@@ -163,10 +166,11 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
           </div>
 
           <div>
-            <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">
+            <label htmlFor="title" className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">
               {contentType === 'gallery' ? 'Caption' : 'Title *'}
             </label>
             <input 
+              id="title"
               name="title"
               type="text" 
               defaultValue={initialData?.title}
@@ -179,11 +183,12 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
           {contentType !== 'gallery' && (
             <div>
               <div className="flex justify-between items-end mb-2">
-                <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase">Description / Content</label>
+                <label htmlFor="description" className="block text-xs font-bold tracking-widest text-gray-500 uppercase">Description / Content</label>
                 <button 
                   type="button" 
                   onClick={handleGenerateAI}
                   disabled={isAiGenerating}
+                  aria-label="AIで自動生成"
                   className="flex items-center gap-1.5 text-xs font-bold text-gold hover:text-yellow-600 transition-colors disabled:opacity-50"
                 >
                   {isAiGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
@@ -191,6 +196,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
                 </button>
               </div>
               <textarea 
+                id="description"
                 name="description"
                 rows={8}
                 defaultValue={initialData?.description}
@@ -202,8 +208,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
           <div className="border-t border-gray-100 pt-6 mt-6">
             <div className="flex items-center h-full">
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label htmlFor="is_published" className="flex items-center gap-3 cursor-pointer">
                 <input 
+                  id="is_published"
                   type="checkbox" 
                   name="is_published"
                   defaultChecked={initialData?.is_published ?? true}
