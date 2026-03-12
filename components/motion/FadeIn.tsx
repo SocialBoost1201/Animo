@@ -49,14 +49,12 @@ export const FadeIn: React.FC<FadeInProps> = ({
       {
         opacity: 0,
         x,
-        y,
-        filter: 'blur(12px)'
+        y
       },
       {
         opacity: 1,
         x: 0,
         y: 0,
-        filter: 'blur(0px)',
         duration: duration,
         delay: delay,
         ease: 'power3.out',

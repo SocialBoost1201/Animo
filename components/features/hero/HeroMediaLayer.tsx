@@ -319,11 +319,20 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     return <div className="absolute inset-0 bg-gray-900" />;
   }
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // ripple モードのみ WebGL シェーダーを使用
   const useWebGL = transitionMode === 'ripple' || transitionMode === 'fade';
 
-  // 負荷軽減 or CSS モードの場合はCSSベースで描画
-  if (isReducedMotion || !useWebGL) {
+  // 負荷軽減 or CSS モード、あるいはモバイルの場合はCSSベースで描画
+  if (isReducedMotion || !useWebGL || isMobile) {
     return (
       <CSSHeroTransition
         media={media}
