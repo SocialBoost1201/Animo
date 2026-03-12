@@ -76,10 +76,10 @@ export default async function HomePage() {
       }))
     : [
         { id: 'v0', type: 'video', url: '/videos/kannai-street.mov', posterUrl: '/videos/kannai-street.mov', durationMs: 5000 },
-        { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/videos/movie01_chandelier.mp4' },
+        { id: 'v1', type: 'video', url: '/videos/movie08_chandelier..mov', posterUrl: '/videos/movie08_chandelier..mov' },
+        { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
         { id: 'v3', type: 'video', url: '/videos/movie03_bar.mp4', posterUrl: '/videos/movie03_bar.mp4' },
-        { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v5', type: 'video', url: '/videos/movie05_floor.mp4', posterUrl: '/videos/movie05_floor.mp4' },
         { id: 'v6', type: 'video', url: '/videos/movie06_flower.mp4', posterUrl: '/videos/movie06_flower.mp4' },
         { id: 'v7', type: 'video', url: '/videos/movie07_flower.mp4', posterUrl: '/videos/movie07_flower.mp4' },
