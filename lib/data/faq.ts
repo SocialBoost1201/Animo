@@ -46,8 +46,8 @@ export const FAQ_CATEGORIES: FAQCategory[] = [
         answer: '基本セット料金は1時間 8,000円〜となっております（時間帯や曜日により異なります）。サービス料、消費税が別途加算されます。詳細はご来店時またはお電話にてご説明いたします。',
       },
       {
-        question: 'クレジットカードやQR決済は使えますか？',
-        answer: 'はい、各種主要クレジットカード（VISA, MasterCard, JCB, AMEX, Diners）および、PayPay等の主要なQRコード決済をご利用いただけます。',
+        question: 'クレジットカードは使えますか？',
+        answer: 'はい、現金および各種主要クレジットカード（VISA, MasterCard, JCB, AMEX, Diners）をご利用いただけます。誠に恐れ入りますが、QR決済や電子マネーは現在対応しておりません。',
       },
       {
         question: '領収書の発行は可能ですか？',
