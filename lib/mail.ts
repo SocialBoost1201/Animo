@@ -163,15 +163,15 @@ export async function sendGuestConfirmation(payload: {
 
   const isReserve = type === 'reserve';
   const subject = isReserve
-    ? `【予約受付完了】CLUB Animo — ${name} 様`
+    ? `【自動返信】ご予約リクエストを承りました（※未確定） — CLUB Animo`
     : `【お問い合わせ受付完了】CLUB Animo — ${name} 様`;
 
   const headerTitle = isReserve
-    ? '予約リクエストを受け付けました'
+    ? 'ご予約リクエストを受け付けました'
     : 'お問い合わせを受け付けました';
 
   const bodyText = isReserve
-    ? `${name} 様よりのご予約リクエストを受け付けました。<br />内容を確認の上、担当スタッフより確定のご連絡を差し上げます。<br />当日のご予約やお急ぎの場合は、お電話でのご連絡をお勧めいたします。`
+    ? `${name} 様<br /><br />ご予約のリクエストをいただき、誠にありがとうございます。<br /><span style="color:#d9534f;font-weight:bold;">※現時点ではまだご予約は確定しておりません。</span><br /><br />空席状況などを確認の上、担当スタッフより折り返し確定のご連絡を差し上げます。恐れ入りますが、今しばらくお待ちくださいませ。<br />万が一、当日のご予約やお急ぎの場合は、お手数ですがお電話にてご連絡をお願いいたします。`
     : `${name} 様よりのお問い合わせを受け付けました。<br />数日以内に担当スタッフよりご連絡いたします。<br />お急ぎの場合はお電話にてお問い合わせください。`;
 
   const detailRows = [

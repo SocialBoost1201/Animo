@@ -13,6 +13,15 @@ function ReserveForm() {
   const searchParams = useSearchParams();
   const defaultCastName = searchParams.get('cast') || '';
 
+  // JSTの明日の日付を取得（当日のWeb予約を不可にするため）
+  const getTomorrowJST = () => {
+    const d = new Date();
+    d.setUTCHours(d.getUTCHours() + 9);
+    d.setUTCDate(d.getUTCDate() + 1);
+    return d.toISOString().split('T')[0];
+  };
+  const minDate = getTomorrowJST();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -76,10 +85,12 @@ function ReserveForm() {
       <section className="py-24 px-6">
         <div className="container mx-auto max-w-3xl">
           <FadeIn delay={0.2} className="bg-white p-8 md:p-16 shadow-luxury border-y border-gold/20 md:border md:rounded-sm relative">
-            <p className="text-xs text-gold mb-12 leading-[2] text-center font-serif luxury-tracking">
-              以下のフォームよりご予約リクエストを承ります。<br />
-              当日のご予約はお電話にてお問い合わせくださいませ。
-            </p>
+            <div className="mb-12 text-center font-serif luxury-tracking">
+              <p className="text-xs text-gold mb-4 leading-[2]">
+                以下のフォームよりご予約リクエストを承ります。<br />
+                <span className="text-red-500 font-bold">当日のご予約はお手数ですが直接お電話にてお問い合わせくださいませ。</span>
+              </p>
+            </div>
 
             {errorMessage && (
               <div className="mb-8 p-4 bg-red-50/50 text-red-600 text-xs font-serif luxury-tracking border border-red-100 text-center">
@@ -126,7 +137,7 @@ function ReserveForm() {
                   <label htmlFor="date" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
                     Reserve Date <span className="text-gold ml-1">*</span>
                   </label>
-                  <input required id="date" name="date" type="date" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]" />
+                  <input required min={minDate} id="date" name="date" type="date" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none text-[#171717]" />
                 </div>
                 <div>
                   <label htmlFor="time" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
@@ -156,9 +167,10 @@ function ReserveForm() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="castName" className="block text-xs font-serif luxury-tracking text-[#171717] mb-3 uppercase">
+                  <label htmlFor="castName" className="block text-xs font-serif luxury-tracking text-[#171717] mb-1 uppercase">
                     Cast Nomination
                   </label>
+                  <p className="text-[10px] text-gray-500 font-serif mb-2">※キャストの出勤状況等によりご要望に沿えない場合がございます</p>
                   <input id="castName" name="castName" defaultValue={defaultCastName} type="text" className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none" placeholder="指名 キャスト名（任意）" />
                 </div>
               </div>
@@ -171,15 +183,23 @@ function ReserveForm() {
                 <textarea id="message" name="message" rows={4} className="w-full bg-gray-50/30 border border-gray-200 p-4 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none resize-none" placeholder="ご要望やご質問がございましたらご記入ください" />
               </div>
 
+              {/* 予約未確定への同意チェック */}
+              <div className="flex items-start gap-3 mt-8 bg-red-50/30 p-4 border border-red-100">
+                <input required id="agree" name="agree" type="checkbox" className="mt-0.5 w-4 h-4 text-gold focus:ring-gold border-gray-300 rounded" />
+                <label htmlFor="agree" className="text-xs font-serif luxury-tracking text-red-600 leading-relaxed">
+                  ※本フォームの送信時点では予約は確定しておりません。<br className="hidden sm:block" />店舗からの電話またはメールによる折り返し連絡をもって予約確定となることに同意します。
+                </label>
+              </div>
+
               {/* Submit */}
               <div className="pt-8 text-center">
                 <Button 
                   type="submit" 
                   disabled={isSubmitting} 
                   size="lg" 
-                  className="w-full md:w-auto md:min-w-[300px] text-xs font-serif luxury-tracking uppercase px-12 py-4"
+                  className="w-full md:w-auto md:min-w-[400px] text-xs font-serif luxury-tracking uppercase px-12 py-4"
                 >
-                  {isSubmitting ? 'Sending...' : '予約をリクエストする'}
+                  {isSubmitting ? 'Sending...' : '仮予約リクエストを送信する'}
                 </Button>
                 <p className="text-[10px] text-gray-400 mt-6 font-serif luxury-tracking">
                   送信ボタンを押すことで、<Link href="/privacy" className="underline hover:text-gold">プライバシーポリシー</Link>に同意したものとみなされます。

@@ -11,8 +11,8 @@
   --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
   /* Brand Typography */
-  --font-serif: var(--font-cormorant), var(--font-shippori), serif;
-  --font-sans: var(--font-montserrat), var(--font-zen-kaku), sans-serif;
+  --font-serif: "Times New Roman", Times, var(--font-shippori), serif;
+  --font-sans: "Times New Roman", Times, var(--font-zen-kaku), sans-serif;
 
   /* Brand Spacing & Border Radius */
   --spacing-section: 160px;

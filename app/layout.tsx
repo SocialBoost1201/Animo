@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import {
-  Cormorant_Garamond,
   Shippori_Mincho,
-  Montserrat,
   Zen_Kaku_Gothic_New,
 } from "next/font/google";
 import "./globals.css";
@@ -15,22 +13,10 @@ import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { ToastContainer } from "@/components/ui/Toast";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-});
-
 const shippori = Shippori_Mincho({
   variable: "--font-shippori",
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
 });
 
 const zenKaku = Zen_Kaku_Gothic_New({
@@ -97,7 +83,7 @@ export default function RootLayout({
         <ReviewSchema ratingValue={4.8} reviewCount={124} />
       </head>
       <body
-        className={`${cormorant.variable} ${shippori.variable} ${montserrat.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <ReCaptchaProvider>
           <SmoothScrollProvider>
