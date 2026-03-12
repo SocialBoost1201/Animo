@@ -10,6 +10,19 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { Sparkles, Loader2 } from 'lucide-react'
 
+const QUIZ_TAG_OPTIONS = [
+  { value: 'gentle', label: '癒し系・優しい' },
+  { value: 'cool', label: 'クール・大人っぽい' },
+  { value: 'energetic', label: '元気・明るい' },
+  { value: 'intellectual', label: 'インテリ・話が弾む' },
+  { value: 'cute', label: 'キュート・ガーリー' },
+  { value: 'sexy', label: 'セクシー・魅力的' },
+  { value: 'funny', label: '笑いが絶えない' },
+  { value: 'outdoor', label: 'アウトドア・スポーティ' },
+  { value: 'music', label: '音楽好き' },
+  { value: 'fashion', label: 'ファッション・おしゃれ' },
+]
+
 type Cast = {
   id: string;
   stage_name?: string;
@@ -21,6 +34,7 @@ type Cast = {
   hobby?: string;
   comment?: string;
   is_active?: boolean;
+  quiz_tags?: string[];
   cast_images?: { is_primary: boolean; image_url: string }[];
 }
 
@@ -30,6 +44,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const [isAiGenerating, setIsAiGenerating] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [compressedImage, setCompressedImage] = useState<Blob | null>(null)
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.quiz_tags || [])
   const formRef = useRef<HTMLFormElement>(null)
   const isEditing = !!initialData
 
@@ -237,6 +252,43 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               className={inputClass} placeholder="旅行、カフェ巡り" />
           </div>
 
+          {/* AI診断タグ */}
+          <div>
+            <label className={labelClass}>AI診断タグ (Quiz Tags)</label>
+            <p className="text-[10px] text-gray-400 mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
+            <div className="grid grid-cols-2 gap-2">
+              {QUIZ_TAG_OPTIONS.map((tag) => {
+                const isChecked = selectedTags.includes(tag.value)
+                return (
+                  <label
+                    key={tag.value}
+                    className={`flex items-center gap-2 px-3 py-2 border rounded-sm cursor-pointer text-sm transition-colors ${
+                      isChecked
+                        ? 'border-gold bg-gold/5 text-[#171717]'
+                        : 'border-gray-200 text-gray-500 hover:border-gold/50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      name="quiz_tags"
+                      value={tag.value}
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedTags(prev => [...prev, tag.value])
+                        } else {
+                          setSelectedTags(prev => prev.filter(t => t !== tag.value))
+                        }
+                      }}
+                      className="accent-gold"
+                    />
+                    {tag.label}
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+
           {/* コメント */}
           <div>
             <div className="flex items-end justify-between mb-2">
@@ -258,7 +310,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
           {/* 画像 アップロード */}
           <div>
-            <label htmlFor="image_file" className={labelClass}>プロフィール画像 (Profile Image) {isEditing ? '' : '*'}</label>
+            <label htmlFor="image_file" className={labelClass}>プロフィール画像 (Profile Image)</label>
             <div className="flex items-start gap-4">
               {(imagePreview || primaryImage?.image_url) && (
                 <div className="shrink-0 mb-4 md:mb-0 relative w-24 h-24">
@@ -278,14 +330,12 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   name="image_file" 
                   type="file" 
                   accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-
                   onChange={handleImageChange}
-                  required={!isEditing}
                   className={inputClass} 
                 />
                 <p className="text-[10px] text-gray-400 mt-2">
-                  ※ 5MB以下の JPEG, PNG, WEBP 画像<br />
-                  ※ {isEditing ? '新しい画像を選択すると上書きされます。' : '最低1枠登録が必要です。'}
+                  ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
+                  ※ {isEditing ? '新しい画像を選択すると上書きされます。' : '後から追加することもできます。'}
                 </p>
               </div>
             </div>
