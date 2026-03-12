@@ -13,56 +13,71 @@ export default async function CustomersPage({
   const { filter = 'all' } = await searchParams;
   const supabase = await createClient();
 
-  let query = supabase
-    .from('contacts')
-    .select('*')
+  // 顧客リストとそれに紐づく連絡履歴の取得
+  const { data: customersData, error } = await supabase
+    .from('customers')
+    .select('*, contacts(*)')
     .order('created_at', { ascending: false });
 
-  if (filter === 'reserve') query = query.eq('type', 'reserve');
-  else if (filter === 'contact') query = query.eq('type', 'contact');
-  else if (filter === 'unread') query = query.eq('is_read', false);
+  if (error) {
+    console.error('Error fetching customers:', error);
+  }
 
-  const { data: contacts } = await query;
-
-  // CRM: 顧客（phone または contact_method）単位でグループ化する処理
   type ContactData = { id: string; customer_id?: string; name: string; phone?: string; contact_method?: string; line_id?: string; created_at: string; type: string; is_read: boolean; message?: string; date?: string; time?: string; people?: number; replied_at?: string; reply_text?: string; cast_name?: string };
   type CustomerData = { id: string; customerId?: string | null; primaryName: string; phone?: string | null; email?: string | null; lineId?: string | null; contacts: ContactData[]; reserveCount: number; contactCount: number; lastContact: string };
+  
+  type CustomerRow = {
+    id: string;
+    name: string;
+    phone: string | null;
+    email: string | null;
+    line_id: string | null;
+    rank: string;
+    total_visits: number;
+    notes: string | null;
+    created_at: string;
+    contacts: ContactData[];
+  };
 
-  const customersMap = new Map<string, CustomerData>();
+  const customers = (customersData as CustomerRow[]) || [];
 
-  contacts?.forEach((c: ContactData) => {
-    // 同一人物の識別キー（電話番号、なければメールアドレス、どちらもなければ名前＋IDで仮設定）
-    const key = c.phone || c.contact_method || `unknown-${c.name}-${c.id}`;
-
-    if (!customersMap.has(key)) {
-      customersMap.set(key, {
-        id: key,
-        customerId: null,
-        primaryName: c.name,
-        phone: c.phone,
-        email: c.contact_method?.includes('@') ? c.contact_method : null,
-        lineId: c.line_id,
-        contacts: [],
-        reserveCount: 0,
-        contactCount: 0,
-        lastContact: c.created_at.slice(0, 16).replace('T', ' '),
-      });
-    }
-
-    const customer = customersMap.get(key)!;
-    customer.contacts.push(c);
+  let customerList = customers.map(c => {
+    // 連絡履歴を降順ソート
+    const sortedContacts = [...(c.contacts || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     
-    if (c.type === 'reserve') customer.reserveCount++;
-    if (c.type === 'contact') customer.contactCount++;
-    
-    // 名前の更新（より新しいデータがあれば上書き、今回は降順取得なので最初の1件が最新）
-    if (!customer.customerId && c.customer_id) customer.customerId = c.customer_id;
-    if (!customer.phone && c.phone) customer.phone = c.phone;
-    if (!customer.email && c.contact_method?.includes('@')) customer.email = c.contact_method;
-    if (!customer.lineId && c.line_id) customer.lineId = c.line_id;
+    const reserveCount = sortedContacts.filter(ct => ct.type === 'reserve').length;
+    const contactCount = sortedContacts.filter(ct => ct.type === 'contact').length;
+    const hasUnread = sortedContacts.some(ct => !ct.is_read);
+    const lastContact = sortedContacts.length > 0
+      ? sortedContacts[0].created_at.slice(0, 16).replace('T', ' ')
+      : c.created_at.slice(0, 16).replace('T', ' ');
+
+    return {
+      id: c.id,
+      customerId: c.id,
+      primaryName: c.name,
+      phone: c.phone,
+      email: c.email,
+      lineId: c.line_id,
+      contacts: sortedContacts,
+      reserveCount,
+      contactCount,
+      lastContact,
+      hasUnread
+    };
   });
 
-  const customerList = Array.from(customersMap.values());
+  // フィルタリング
+  if (filter === 'reserve') {
+    customerList = customerList.filter(c => c.reserveCount > 0);
+  } else if (filter === 'contact') {
+    customerList = customerList.filter(c => c.contactCount > 0);
+  } else if (filter === 'unread') {
+    customerList = customerList.filter(c => c.hasUnread);
+  }
+
+  // 最新の連絡が上のものから順に表示
+  customerList.sort((a,b) => new Date(b.lastContact).getTime() - new Date(a.lastContact).getTime());
 
   async function handleMarkAsRead(formData: FormData) {
     'use server';
@@ -79,7 +94,7 @@ export default async function CustomersPage({
     { key: 'unread', label: '未読のみ' },
   ];
 
-  const unreadCount = contacts?.filter((c) => !c.is_read).length ?? 0;
+  const unreadCount = customers.reduce((acc, c) => acc + (c.contacts?.filter(ct => !ct.is_read).length || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -88,7 +103,7 @@ export default async function CustomersPage({
         <div>
           <h1 className="text-2xl font-serif tracking-widest text-[#171717]">顧客リスト</h1>
           <p className="text-sm text-gray-400 mt-1">
-            {contacts?.length ?? 0}件のデータ
+            {customerList.length}件のデータ
             {unreadCount > 0 && <span className="ml-2 text-amber-600 font-bold">（未読 {unreadCount}件）</span>}
           </p>
         </div>

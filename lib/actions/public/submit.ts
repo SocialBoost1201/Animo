@@ -58,6 +58,43 @@ export async function submitContact(formData: FormData) {
     return { error: '不正なリクエストとしてブロックされました。' };
   }
 
+  // --- 顧客データの自動保存または紐付け ---
+  let customerId = null;
+  const email = (contact_method && contact_method.includes('@')) ? contact_method : null;
+
+  if (phone) {
+    const { data: custData } = await supabase.from('customers').select('id').eq('phone', phone).single();
+    if (custData) customerId = custData.id;
+  }
+  
+  if (!customerId && email) {
+    const { data: custData } = await supabase.from('customers').select('id').eq('email', email).single();
+    if (custData) customerId = custData.id;
+  }
+
+  // 新規なら顧客データを作成
+  if (!customerId) {
+    const { data: newCustomer, error: insertCustomerError } = await supabase
+      .from('customers')
+      .insert({
+        name,
+        phone: phone || null,
+        email,
+        line_id: line_id || null,
+        rank: 'normal',
+        total_visits: 0
+      })
+      .select('id')
+      .single();
+
+    // エラーがなければ新しく採番されたIDを使用
+    if (!insertCustomerError && newCustomer) {
+      customerId = newCustomer.id;
+    } else if (insertCustomerError) {
+      console.warn('Customer auto-creation failed:', insertCustomerError);
+    }
+  }
+
   // DBの contacts テーブルに挿入
   const { error } = await supabase.from('contacts').insert({
     type,
@@ -70,6 +107,7 @@ export async function submitContact(formData: FormData) {
     time: timeStr ? `${timeStr}:00` : null,
     people: isNaN(people) ? null : people,
     cast_name: castName || null,
+    customer_id: customerId,
     is_read: false
   })
 
