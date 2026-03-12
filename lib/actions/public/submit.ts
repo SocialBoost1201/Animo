@@ -52,10 +52,12 @@ export async function submitContact(formData: FormData) {
   const castName = formData.get('castName') as string
   const recaptchaToken = formData.get('recaptchaToken') as string | null
 
-  // reCAPTCHA検証
+  // reCAPTCHA検証 (Vercel環境などで稀に失敗や低スコア・トークン未指定になるケースを考慮し、一旦ブロックはせずログ記録のみにする)
   const isValid = await verifyRecaptcha(recaptchaToken);
   if (!isValid) {
-    return { error: '不正なリクエストとしてブロックされました。' };
+    console.warn(`[Contact] reCAPTCHA validation failed or score too low for: ${name} (${contact_method || phone})`);
+    // 現状はスパム対策が厳しすぎるため、ブロックせずに送信を許可する（将来的に対応）
+    // return { error: '不正なリクエストとしてブロックされました。' };
   }
 
   // --- 顧客データの自動保存または紐付け ---
@@ -157,7 +159,9 @@ export async function submitRecruitApplication(formData: FormData) {
   // reCAPTCHA検証
   const isValid = await verifyRecaptcha(recaptchaToken);
   if (!isValid) {
-    return { error: '不正なリクエストとしてブロックされました。' };
+    console.warn(`[Recruit] reCAPTCHA validation failed or score too low for: ${name} (${email || phone})`);
+    // 同様にブロック解除
+    // return { error: '不正なリクエストとしてブロックされました。' };
   }
 
   const { error } = await supabase.from('recruit_applications').insert({
