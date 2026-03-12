@@ -75,7 +75,7 @@ export default async function HomePage() {
         title: m.title,
       }))
     : [
-        { id: 'v0', type: 'video', url: '/videos/animo-hero.mov', posterUrl: '/images/ogp.jpg', durationMs: 8000 },
+        { id: 'v0', type: 'video', url: '/videos/animo-hero.mov', posterUrl: '/images/ogp.jpg', durationMs: 5000 },
         { id: 'v1', type: 'video', url: '/videos/movie08_chandelier..mov', posterUrl: '/videos/movie08_chandelier..mov' },
         { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
@@ -119,7 +119,7 @@ export default async function HomePage() {
       <HeroVideoRotator
         media={heroMediaData}
         transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
-        durationMs={8000}
+        durationMs={5000}
         transitionMs={800}
         cta={heroCta}
       />
