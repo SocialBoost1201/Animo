@@ -75,7 +75,7 @@ export default async function HomePage() {
         title: m.title,
       }))
     : [
-        { id: 'v0', type: 'video', url: '/videos/kannai-street.mov', posterUrl: '/videos/kannai-street.mov', durationMs: 5000 },
+        { id: 'v0', type: 'video', url: '/videos/animo-hero.mov', posterUrl: '/images/ogp.jpg', durationMs: 8000 },
         { id: 'v1', type: 'video', url: '/videos/movie08_chandelier..mov', posterUrl: '/videos/movie08_chandelier..mov' },
         { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
