@@ -7,7 +7,6 @@ import { DashboardTotals } from '@/components/features/admin/dashboard/Dashboard
 import { DashboardCharts } from '@/components/features/admin/dashboard/DashboardCharts';
 import { DashboardRecentContacts } from '@/components/features/admin/dashboard/DashboardRecentContacts';
 import { DashboardTodayShifts } from '@/components/features/admin/dashboard/DashboardTodayShifts';
-import { AvailabilityToggle } from '@/components/features/admin/dashboard/AvailabilityToggle';
 import { DashboardFollowUpAlerts } from '@/components/features/admin/dashboard/DashboardFollowUpAlerts';
 import { DashboardAIPrediction } from '@/components/features/admin/dashboard/DashboardAIPrediction';
 import { createClient } from '@/lib/supabase/server';
@@ -15,12 +14,6 @@ import { createClient } from '@/lib/supabase/server';
 export default async function DashboardPage() {
   const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
   const supabase = await createClient();
-  const { data: siteSettings } = await supabase
-    .from('site_settings').select('availability').eq('id', 1).single();
-  const rawAvailability = siteSettings?.availability ?? 'available';
-  const availability = (['available', 'limited', 'full', 'closed'].includes(rawAvailability)
-    ? rawAvailability
-    : 'available') as 'available' | 'limited' | 'full' | 'closed';
 
   const Skeleton = ({ className = 'h-32' }: { className?: string }) => (
     <div className={`w-full bg-gray-100 animate-pulse rounded-sm ${className}`} />
@@ -28,9 +21,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* 空席状況ワンタップ切替 */}
-      <AvailabilityToggle initialValue={availability} />
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div>
