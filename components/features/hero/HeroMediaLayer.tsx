@@ -34,10 +34,10 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
       const videoEl = videoRefs.current[i];
       if (!videoEl || item.type !== 'video') return;
 
-      // 現在再生中、または次に再生される予定の動画のみ src を設定して遅延読み込み (Lazy Loading)
       const isVisible = i === activeIndex;
       const isNext = i === (activeIndex + 1) % media.length;
       
+      // 遅延読み込み (Lazy Loading)
       if ((isVisible || isNext) && !videoEl.getAttribute('src')) {
         videoEl.setAttribute('src', item.url);
         videoEl.load();
@@ -53,7 +53,12 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
           });
         }
       } else {
-        videoEl.pause();
+        // フェードアウトのトランジション中（transitionMs）は動画を止めないための遅延停止
+        setTimeout(() => {
+          if (videoRefs.current[i]) {
+             videoRefs.current[i]?.pause();
+          }
+        }, transitionMs);
       }
     });
   }, [activeIndex, isMounted, media, isReducedMotion]);
@@ -95,7 +100,6 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
               exitStyle  = { transform: 'translateX(-5%)', opacity: 0 };
               break;
             case 'zoom':
-            case 'ripple': // rippleモードは廃止されたためzoomにフォールバック
               enterStyle = { transform: 'scale(1)', opacity: 1 };
               exitStyle  = { transform: 'scale(1.08)', opacity: 0 };
               break;
@@ -103,6 +107,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
               enterStyle = { filter: 'brightness(1)', opacity: 1 };
               exitStyle  = { filter: 'brightness(3)', opacity: 0 };
               break;
+            case 'ripple': // 旧エフェクトの互換性維持のため、フェードクロスに変更
             case 'fade':
             default:
               enterStyle = { opacity: 1 };
