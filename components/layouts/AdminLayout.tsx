@@ -26,7 +26,7 @@ const NAV_ITEMS = [
   { href: '/admin/casts',     icon: Users,           label: 'キャスト管理', section: 'main' },
   { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
   { href: '/admin/shifts',    icon: Calendar,        label: 'シフト',       section: 'main' },
-  { href: '/admin/customers',    icon: UserCheck,    label: '顧客',         badge: 'contacts',  section: 'crm' },
+  { href: '/admin/customers',    icon: UserCheck,    label: '顧客データ',       badge: 'contacts',  section: 'crm' },
   { href: '/admin/applications', icon: Briefcase,    label: '求人応募',     badge: 'applications', section: 'crm' },
   { href: '/admin/inquiries',    icon: MessageSquare,label: '受信箱',       badge: 'all',       section: 'crm' },
   { href: '/admin/contents',  icon: FileText,        label: 'ニュース',      section: 'content' },
