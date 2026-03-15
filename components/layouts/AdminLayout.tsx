@@ -27,7 +27,7 @@ const NAV_ITEMS = [
   { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
   { href: '/admin/shifts',    icon: Calendar,        label: 'シフト',       section: 'main' },
   { href: '/admin/applications', icon: Briefcase,    label: '求人応募',     badge: 'applications', section: 'crm' },
-  { href: '/admin/posts',        icon: MessageSquare, label: 'キャスト投稿', section: 'content' },
+  { href: '/admin/posts',        icon: MessageSquare, label: 'キャスト投稿', badge: 'posts', section: 'content' },
   { href: '/admin/contents',  icon: FileText,        label: 'ニュース',      section: 'content' },
   { href: '/admin/gallery',   icon: ImageIcon,       label: 'ギャラリー',   section: 'content' },
   { href: '/admin/hero',      icon: ImageIcon,       label: 'ヒーロー',     section: 'content' },
@@ -51,10 +51,12 @@ const BOTTOM_TAB_ITEMS = [
 export function AdminLayout({
   children,
   unreadCount = 0,
+  pendingPostsCount = 0,
   role = 'staff',
 }: {
   children: React.ReactNode;
   unreadCount?: number;
+  pendingPostsCount?: number;
   role?: string;
 }) {
   const pathname = usePathname();
@@ -125,7 +127,10 @@ export function AdminLayout({
                 {items.map((item) => {
                   const isActive = pathname.startsWith(item.href);
                   const Icon = item.icon;
-                  const badgeCount = item.badge === 'all' ? unreadCount : 0;
+                  const badgeCount = 
+                    item.badge === 'all' ? unreadCount :
+                    item.badge === 'posts' ? pendingPostsCount :
+                    0;
 
                   return (
                     <Link

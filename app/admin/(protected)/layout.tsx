@@ -19,10 +19,17 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   const unreadCount = await getUnreadCounts();
+
+  // 承認待ちのキャスト投稿件数を取得
+  const { count: pendingPostsCount } = await supabase
+    .from('cast_posts')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
   return (
     <>
       <AdminToaster />
-      <AdminLayout unreadCount={unreadCount} role={role}>{children}</AdminLayout>
+      <AdminLayout unreadCount={unreadCount} pendingPostsCount={pendingPostsCount || 0} role={role}>{children}</AdminLayout>
     </>
   );
 }
