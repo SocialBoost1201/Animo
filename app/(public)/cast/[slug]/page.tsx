@@ -8,6 +8,8 @@ import { ArrowLeft, CalendarHeart, Sparkles } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
 import { CastViewTracker } from '@/components/features/analytics/CastViewTracker';
+import { getPublishedPosts } from '@/lib/actions/cast-posts';
+import { CastPostFeed } from '@/components/features/cast/CastPostFeed';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +30,9 @@ export default async function CastDetailPage({
   const cast = await getPublicCastBySlug(slug);
 
   if (!cast) notFound();
+
+  // 該当キャストの投稿を取得（最大20件）
+  const { data: posts } = await getPublishedPosts(20, cast.id);
 
   // 診断マッチング判定
   const { purpose, atmosphere, look, talk } = sParams;
@@ -144,6 +149,22 @@ export default async function CastDetailPage({
                   </p>
                 </div>
               )}
+
+              {/* CAST JOURNAL (キャスト日記) */}
+              <div className="mb-10">
+                <h3 className="text-xs font-bold tracking-widest text-[#171717] uppercase mb-4 flex items-center gap-4">
+                  Cast Journal <div className="h-px flex-1 bg-gray-100" />
+                </h3>
+                {posts && posts.length > 0 ? (
+                  <CastPostFeed posts={posts} />
+                ) : (
+                  <div className="py-12 text-center">
+                    <p className="text-sm text-gray-400 font-serif italic">
+                      最新の投稿は順次公開いたします。
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* 直近のスケジュール */}
               <div className="mb-10">

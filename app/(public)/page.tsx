@@ -13,7 +13,9 @@ import { GallerySection } from '@/components/features/gallery/GallerySection';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
+import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { getSiteSettings } from '@/lib/actions/contents';
+import { CastPostSlider } from '@/components/features/cast/CastPostSlider';
 import { Magnetic } from '@/components/motion/Magnetic';
 import { SilverDustBackground } from '@/components/motion/SilverDustBackground';
 
@@ -58,13 +60,15 @@ const HOW_TO_EXAMPLES = [
 ];
 
 export default async function HomePage() {
-  const [dbHeroMedia, dbCasts, , dbNews, settings] = await Promise.all([
+  const [dbHeroMedia, dbCasts, dbNews, settings, dbPosts] = await Promise.all([
     getPublicHeroMedia(),
     getPublicCasts(),
-    getPublicContents('gallery', 9),
     getPublicContents('news', 3),
     getSiteSettings().catch(() => null),
+    getPublishedPosts(10)
   ]);
+
+  const recentPosts = dbPosts.data || [];
 
   const heroMediaData: HeroMedia[] = dbHeroMedia.length > 0
     ? dbHeroMedia.map((m) => ({
@@ -351,7 +355,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. CAST */}
+      {/* 6. CAST POSTS (キャスト日記) */}
+      {recentPosts.length > 0 && (
+        <section className="py-24 bg-transparent px-6 border-b border-gold/10">
+          <div className="container mx-auto">
+            <FadeIn className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
+                <GsapRevealTitle text="Timeline" />
+              </h2>
+              <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-6 opacity-50" />
+              <p className="text-xs text-gray-500 font-serif luxury-tracking uppercase">キャスト日記</p>
+            </FadeIn>
+            
+            <div className="max-w-6xl mx-auto">
+              <CastPostSlider posts={recentPosts} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 7. CAST */}
       <section className="py-section bg-[#f9f7f4] px-6">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-16">
