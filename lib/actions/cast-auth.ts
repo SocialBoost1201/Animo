@@ -32,8 +32,9 @@ export async function castRegister(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
+  const stageName = (formData.get('stageName') as string)?.trim();
 
-  if (!email || !password) {
+  if (!email || !password || !stageName) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
   if (password !== confirmPassword) {
@@ -44,21 +45,53 @@ export async function castRegister(formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // 源氏名と一致するキャストを事前に確認
+  const { data: existingCast } = await supabase
+    .from('casts')
+    .select('id, stage_name, auth_user_id')
+    .eq('stage_name', stageName)
+    .maybeSingle();
+
+  if (!existingCast) {
+    return {
+      success: false,
+      error: `「${stageName}」に一致するキャスト情報が見つかりませんでした。源氏名をご確認いただくか、管理者にお問い合わせください。`,
+    };
+  }
+
+  if (existingCast.auth_user_id) {
+    return {
+      success: false,
+      error: 'このキャスト名はすでに登録済みです。ご不明な場合は管理者にお問い合わせください。',
+    };
+  }
+
+  // Supabase Auth に登録
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
     return { success: false, error: error.message };
   }
 
-  // user_roles に cast ロールを追加
   if (data.user) {
+    // user_roles に cast ロールを追加
     await supabase.from('user_roles').insert({
       user_id: data.user.id,
       role: 'cast',
     });
+
+    // casts テーブルの auth_user_id を自動紐付け
+    await supabase
+      .from('casts')
+      .update({ auth_user_id: data.user.id })
+      .eq('id', existingCast.id);
   }
 
-  return { success: true, message: '登録が完了しました。メールをご確認の上、ログインしてください。' };
+  return {
+    success: true,
+    message: `「${stageName}」として登録しました。確認メールをご確認の上、ログインしてください。`,
+  };
 }
 
 /**

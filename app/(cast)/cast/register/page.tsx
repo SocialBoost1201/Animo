@@ -53,6 +53,15 @@ export default function CastRegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 源氏名 - castsテーブルとの自動紐付けに使用 */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Stage Name（源氏名）</label>
+            <input name="stageName" type="text" required autoComplete="off"
+              className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
+              placeholder="りん" />
+            <p className="text-[9px] text-gray-300 mt-1.5">プロフィールページで使用している源氏名を入力してください</p>
+          </div>
+
           <div>
             <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
             <input name="email" type="email" required autoComplete="email"
