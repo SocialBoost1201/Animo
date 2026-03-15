@@ -5,10 +5,7 @@ import { Plus, Calendar } from 'lucide-react';
 import { DashboardKPIs } from '@/components/features/admin/dashboard/DashboardKPIs';
 import { DashboardTotals } from '@/components/features/admin/dashboard/DashboardTotals';
 import { DashboardCharts } from '@/components/features/admin/dashboard/DashboardCharts';
-import { DashboardRecentContacts } from '@/components/features/admin/dashboard/DashboardRecentContacts';
 import { DashboardTodayShifts } from '@/components/features/admin/dashboard/DashboardTodayShifts';
-import { DashboardFollowUpAlerts } from '@/components/features/admin/dashboard/DashboardFollowUpAlerts';
-import { DashboardAIPrediction } from '@/components/features/admin/dashboard/DashboardAIPrediction';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function DashboardPage() {
@@ -58,25 +55,12 @@ export default async function DashboardPage() {
         <DashboardCharts />
       </Suspense>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 最新問い合わせ */}
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardRecentContacts />
-        </Suspense>
-
+      <div className="grid grid-cols-1 gap-6">
         {/* 本日の出勤 */}
         <Suspense fallback={<Skeleton className="h-64" />}>
           <DashboardTodayShifts date={today} />
         </Suspense>
       </div>
-
-      {/* 失客フォローアップアラート */}
-      <Suspense fallback={<Skeleton className="h-48" />}>
-        <DashboardFollowUpAlerts />
-      </Suspense>
-
-      {/* AIレコメンデーション */}
-      <DashboardAIPrediction />
     </div>
   );
 }

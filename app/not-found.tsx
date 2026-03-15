@@ -38,13 +38,6 @@ export default function NotFound() {
             トップページへ
           </Link>
           <Link
-            href="/reserve"
-            className="flex items-center justify-center gap-2 px-6 py-3 border border-white/20 text-white/70 text-xs tracking-widest uppercase hover:border-gold hover:text-gold transition-colors font-serif"
-          >
-            <CalendarHeart size={14} />
-            ご予約はこちら
-          </Link>
-          <Link
             href="/cast"
             className="flex items-center justify-center gap-2 px-6 py-3 border border-white/20 text-white/70 text-xs tracking-widest uppercase hover:border-gold hover:text-gold transition-colors font-serif"
           >

@@ -72,12 +72,6 @@ export default function BusinessEntertainmentPage() {
             </p>
             <div className="flex justify-center flex-wrap gap-4">
               <Link 
-                href="/reserve" 
-                className="inline-block border border-gold text-white bg-gold hover:bg-white hover:text-gold px-8 py-3 font-serif transition-colors text-xs tracking-widest uppercase"
-              >
-                WEB予約フォーム
-              </Link>
-              <Link 
                 href="/gallery" 
                 className="inline-block border border-gold text-gold hover:bg-gold hover:text-white px-8 py-3 font-serif transition-colors text-xs tracking-widest uppercase"
               >

@@ -228,19 +228,13 @@ export default function GuidePage() {
         <div className="container mx-auto max-w-2xl text-center">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-serif luxury-tracking-super text-foreground uppercase mb-6">
-              Reserve
+              Contact
             </h2>
             <p className="text-sm text-gray-500 font-serif luxury-tracking leading-relaxed mb-10">
-              ご予約・お問い合わせはこちらから。<br />
-              皆様のご来店をお待ちしております。
+              お問い合わせはお電話にて承っております。<br />
+              皆様からのご連絡をお待ちしております。
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button asChild size="lg" className="luxury-tracking font-medium bg-[#171717] text-white border-transparent hover:bg-gold hover:border-gold">
-                <Link href="/reserve">
-                  <CalendarHeart className="mr-3 w-4 h-4" />
-                  WEB予約
-                </Link>
-              </Button>
               <Button asChild variant="outline" size="lg" className="luxury-tracking font-medium border-[#171717] text-[#171717] hover:bg-[#171717] hover:text-white">
                 <a href="tel:045-263-6961">
                   <Phone className="mr-3 w-4 h-4" />

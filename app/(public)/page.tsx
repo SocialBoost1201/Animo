@@ -75,9 +75,9 @@ export default async function HomePage() {
         title: m.title,
       }))
     : [
-        { id: 'v0', type: 'video', url: '/videos/animo-hero.mov', posterUrl: '/images/ogp.jpg', durationMs: 5000 },
+        { id: 'v0', type: 'video', url: '/videos/animo-hero.mp4', posterUrl: '/images/ogp.jpg', durationMs: 5000 },
         { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/videos/movie01_chandelier.mp4' },
-        { id: 'v0_5', type: 'video', url: '/videos/movie09_soumei.mov', posterUrl: '/videos/movie09_soumei.mov' },
+        { id: 'v0_5', type: 'video', url: '/videos/movie09_soumei.mp4', posterUrl: '/videos/movie09_soumei.mp4' },
         { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
         { id: 'v3', type: 'video', url: '/videos/movie03_bar.mp4', posterUrl: '/videos/movie03_bar.mp4' },
@@ -203,13 +203,6 @@ export default async function HomePage() {
                         className="w-full py-2.5 border border-gray-200 text-[9px] font-serif luxury-tracking text-gray-600 uppercase hover:border-gold hover:text-gold transition-colors"
                       >
                         プロフィールを見る
-                      </Link>
-                      <Link
-                        href={`/reserve?cast=${encodeURIComponent(cast.name)}`}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#171717] text-white text-[9px] font-serif luxury-tracking uppercase hover:bg-gold transition-colors"
-                      >
-                        <CalendarHeart className="w-3 h-3" />
-                        指名して予約
                       </Link>
                     </div>
                   </div>

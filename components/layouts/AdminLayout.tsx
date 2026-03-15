@@ -26,9 +26,7 @@ const NAV_ITEMS = [
   { href: '/admin/casts',     icon: Users,           label: 'キャスト管理', section: 'main' },
   { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
   { href: '/admin/shifts',    icon: Calendar,        label: 'シフト',       section: 'main' },
-  { href: '/admin/customers',    icon: UserCheck,    label: '顧客データ',       badge: 'contacts',  section: 'crm' },
   { href: '/admin/applications', icon: Briefcase,    label: '求人応募',     badge: 'applications', section: 'crm' },
-  { href: '/admin/inquiries',    icon: MessageSquare,label: '受信箱',       badge: 'all',       section: 'crm' },
   { href: '/admin/contents',  icon: FileText,        label: 'ニュース',      section: 'content' },
   { href: '/admin/gallery',   icon: ImageIcon,       label: 'ギャラリー',   section: 'content' },
   { href: '/admin/hero',      icon: ImageIcon,       label: 'ヒーロー',     section: 'content' },
@@ -42,12 +40,10 @@ const SECTION_LABELS: Record<string, string> = {
   system:  'システム',
 };
 
-// スマホ BottomTab に表示するアイテム（5つまで）
 const BOTTOM_TAB_ITEMS = [
   { href: '/admin/dashboard',    icon: LayoutDashboard, label: 'Home' },
   { href: '/admin/casts',        icon: Users,           label: 'キャスト' },
   { href: '/admin/shifts',       icon: Calendar,        label: 'シフト' },
-  { href: '/admin/inquiries',    icon: MessageSquare,   label: '受信箱' },
   { href: '/admin/applications', icon: Briefcase,       label: '応募' },
 ];
 

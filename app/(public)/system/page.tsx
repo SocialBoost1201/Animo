@@ -49,15 +49,14 @@ export default function SystemPage() {
           <PriceSimulator />
 
           <FadeIn delay={0.6} className="text-center mt-32 mb-10 py-16 px-6 relative overflow-hidden bg-white/40 backdrop-blur-md shadow-aura border border-white/20 max-w-4xl mx-auto rounded-sm">
-            <h3 className="text-xl font-serif text-foreground mb-6 luxury-tracking uppercase">Reservation</h3>
+            <h3 className="text-xl font-serif text-foreground mb-6 luxury-tracking uppercase">Recruit</h3>
             <p className="text-xs text-gray-500 mb-10 max-w-md mx-auto leading-[2.5] font-serif luxury-tracking">
-              週末は混雑が予想されます。<br/>
-              ゆったりとしたお席をご用意するため、<br/>事前にご予約されることをお勧めいたします。
+              一緒にお店を盛り上げてくれる<br/>
+              キャスト・スタッフを募集しています。
             </p>
             <Button asChild size="lg" className="btn-sheen px-12">
-              <Link href="/reserve">
-                <CalendarHeart className="mr-2 w-5 h-5" />
-                WEB予約はこちら
+              <Link href="/recruit/cast">
+                求人情報を見る
               </Link>
             </Button>
           </FadeIn>

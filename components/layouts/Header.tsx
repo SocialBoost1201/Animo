@@ -155,10 +155,10 @@ export const Header = () => {
 
             <Magnetic strength={0.2} className="ml-4">
               <Link
-                href="/reserve"
-                className="block px-6 py-2 border border-gold text-gold text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-gold hover:text-white"
+                href="/recruit/cast"
+                className="block px-6 py-2 border border-gold bg-gold text-[#171717] font-bold text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-transparent hover:text-gold"
               >
-                Reserve
+                Cast Recruit
               </Link>
             </Magnetic>
           </nav>
@@ -248,20 +248,18 @@ export const Header = () => {
                 </AnimatePresence>
               </div>
 
-              <div className="mt-8 flex flex-col gap-4">
                 <Link
-                  href="/reserve"
-                  className="w-full text-center py-4 border border-gold text-gold text-xs font-serif luxury-tracking uppercase"
+                  href="/recruit/cast"
+                  className="w-full text-center py-4 border border-gold bg-gold text-[#171717] font-bold text-xs font-serif luxury-tracking uppercase"
                 >
-                  Reserve
+                  Cast Recruit
                 </Link>
-                <a
-                  href="tel:045-263-6961"
+                <Link
+                  href="/recruit/staff"
                   className="w-full text-center py-4 border border-[#171717] text-[#171717] text-xs font-serif luxury-tracking uppercase"
                 >
-                  Call Now
-                </a>
-              </div>
+                  Staff Recruit
+                </Link>
             </nav>
           </motion.div>
         )}

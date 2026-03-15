@@ -177,13 +177,6 @@ export default async function CastDetailPage({
                   <p className="text-sm text-gray-400">現在公開されている出勤予定はありません。</p>
                 )}
               </div>
-
-              <Button asChild className="w-full font-bold tracking-widest text-sm py-6">
-                <Link href={`/reserve?cast=${encodeURIComponent(cast.stage_name)}`}>
-                  <CalendarHeart className="mr-2 w-5 h-5" />
-                  指名してWEB予約
-                </Link>
-              </Button>
             </FadeIn>
           </div>
         </div>

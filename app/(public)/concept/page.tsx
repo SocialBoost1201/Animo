@@ -140,9 +140,8 @@ export default function ConceptPage() {
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="px-12">
-              <Link href="/reserve">
-                <CalendarHeart className="w-4 h-4 mr-2" />
-                WEB予約
+              <Link href="/cast">
+                キャスト一覧
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="px-12">
