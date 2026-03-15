@@ -136,7 +136,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 // ※ ここで src={item.url} と書かないことでLazy Loadを実現
               />
             ) : (
