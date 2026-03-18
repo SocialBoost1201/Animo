@@ -14,18 +14,6 @@ export type DailyShiftData = {
 
 export type WeeklyShiftSubmission = Record<string, DailyShiftData>;
 
-/**
- * 対象週月曜日を取得するユーティリティ
- */
-export function getTargetWeekMonday(baseDate: Date = new Date()): Date {
-  const date = new Date(baseDate);
-  const day = date.getDay();
-  // day: 0=Sun, 1=Mon, ..., 6=Sat
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(date.setDate(diff));
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-}
 
 /**
  * キャスト本人の特定の週のシフト提出状況を取得する

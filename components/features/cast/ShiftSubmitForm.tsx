@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getTargetWeekMonday, getMyShiftSubmission, submitMyShift, WeeklyShiftSubmission, ShiftType } from '@/lib/actions/cast-shifts';
+import { getTargetWeekMonday } from '@/lib/shift-utils';
+import { getMyShiftSubmission, submitMyShift, WeeklyShiftSubmission, ShiftType } from '@/lib/actions/cast-shifts';
 import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';

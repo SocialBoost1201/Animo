@@ -1,6 +1,6 @@
 import React from 'react';
 import { getShiftSubmissions, getAllCastShiftStatuses } from '@/lib/actions/admin-shifts';
-import { getTargetWeekMonday } from '@/lib/actions/cast-shifts';
+import { getTargetWeekMonday } from '@/lib/shift-utils';
 import { getAdminShiftChangeRequests } from '@/lib/actions/admin-change-requests';
 import { ShiftRequestList } from '@/components/features/admin/ShiftRequestList';
 import { UnsubmittedCastsList } from '@/components/features/admin/UnsubmittedCastsList';
