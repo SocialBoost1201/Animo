@@ -34,7 +34,7 @@ export default function CastRegisterPage() {
           <h2 className="font-serif text-xl tracking-widest text-[#171717] mb-4">登録完了</h2>
           <p className="text-sm text-gray-500 leading-relaxed mb-8">
             本登録メールを送信しました。<br />
-            メール内のリンクから本登録を完了し、<br/>再設定したパスワードでログインしてください。
+            メール内のリンクから本登録を完了し、<br />再設定したパスワードでログインしてください。
           </p>
           <Link href="/cast/login" className="inline-block px-8 py-3 bg-[#171717] text-white text-xs tracking-[0.2em] uppercase rounded-xl hover:bg-gold transition-all">
             ログインへ戻る
@@ -60,38 +60,82 @@ export default function CastRegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 源氏名 - castsテーブルとの自動紐付けに使用 */}
+
+          {/* 本名（Real Name） */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Stage Name（源氏名）</label>
-            <input name="stageName" type="text" required autoComplete="off"
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+              本名（Real Name）
+            </label>
+            <input
+              name="realName"
+              type="text"
+              required
+              autoComplete="name"
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
-              placeholder="りん" />
-            <p className="text-[9px] text-gray-300 mt-1.5">プロフィールページで使用している源氏名を入力してください</p>
+              placeholder="山田 花子"
+            />
+            <p className="text-[9px] text-gray-300 mt-1.5">店舗に届け出た本名を入力してください（外部には一切表示されません）</p>
           </div>
 
+          {/* 生年月日（Date of Birth） */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+              生年月日（Date of Birth）
+            </label>
+            <input
+              name="dateOfBirth"
+              type="date"
+              required
+              className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
+            />
+          </div>
+
+          {/* メールアドレス */}
           <div>
             <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
-            <input name="email" type="email" required autoComplete="email"
+            <input
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
-              placeholder="cast@example.com" />
+              placeholder="cast@example.com"
+            />
           </div>
 
+          {/* パスワード */}
           <div>
             <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Password</label>
-            <input name="password" type="password" required minLength={8} autoComplete="new-password"
+            <input
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
-              placeholder="8文字以上" />
+              placeholder="8文字以上"
+            />
           </div>
 
+          {/* パスワード確認 */}
           <div>
             <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Confirm Password</label>
-            <input name="confirmPassword" type="password" required minLength={8} autoComplete="new-password"
+            <input
+              name="confirmPassword"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
-              placeholder="再入力" />
+              placeholder="再入力"
+            />
           </div>
 
-          <button type="submit" disabled={isLoading}
-            className="w-full py-4 bg-[#171717] hover:bg-gold text-white font-bold tracking-[0.2em] uppercase text-xs rounded-xl transition-all disabled:opacity-50">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-4 bg-[#171717] hover:bg-gold text-white font-bold tracking-[0.2em] uppercase text-xs rounded-xl transition-all disabled:opacity-50"
+          >
             {isLoading ? '登録中...' : '登録する'}
           </button>
         </form>
@@ -103,6 +147,7 @@ export default function CastRegisterPage() {
         </div>
 
         <p className="mt-6 text-center text-[9px] text-gray-300 leading-relaxed">
+          ※ 本名・生年月日は本人確認のみに使用し、外部には一切表示されません。<br />
           ※ 登録後、管理者による確認が完了するまで一部機能が制限されます。
         </p>
       </div>

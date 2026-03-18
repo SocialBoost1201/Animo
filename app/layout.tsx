@@ -17,12 +17,14 @@ const shippori = Shippori_Mincho({
   variable: "--font-shippori",
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
+  display: 'swap',
 });
 
 const zenKaku = Zen_Kaku_Gothic_New({
   variable: "--font-zen-kaku",
   weight: ["300", "400", "500"],
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

@@ -59,7 +59,14 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
     const fpsLimit = isMobile ? 30 : 60; // Limit FPS on mobile
     const frameInterval = 1000 / fpsLimit;
 
+    let isIntersecting = false;
+
     const render = (time: number) => {
+      if (!isIntersecting) {
+        animationFrameId = 0;
+        return;
+      }
+      
       animationFrameId = requestAnimationFrame(render);
       
       const deltaTime = time - lastTime;
@@ -106,7 +113,15 @@ export const SilverDustBackground: React.FC<SilverDustBackgroundProps> = ({
       });
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry.isIntersecting;
+      if (isIntersecting && !animationFrameId) {
+        lastTime = performance.now();
+        animationFrameId = requestAnimationFrame(render);
+      }
+    }, { rootMargin: '100px' });
+    
+    observer.observe(canvas);
 
     const handleResize = () => {
       width = canvas.offsetWidth;

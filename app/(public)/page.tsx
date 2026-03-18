@@ -8,10 +8,12 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
 import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
-import { GallerySection } from '@/components/features/gallery/GallerySection';
+import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
+import { LazyGoogleMap } from '@/components/ui/LazyGoogleMap';
+import { DynamicGallerySection } from '@/components/features/gallery/DynamicGallerySection';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { getSiteSettings } from '@/lib/actions/contents';
 import { CastPostSlider } from '@/components/features/cast/CastPostSlider';
@@ -460,7 +462,7 @@ export default async function HomePage() {
             <p className="text-xs text-gold font-serif luxury-tracking uppercase mt-8">The Atmosphere of Club Animo</p>
           </FadeIn>
 
-          <GallerySection />
+          <DynamicGallerySection />
 
           <FadeIn delay={0.4} className="mt-16 text-center pb-12">
             <Button asChild variant="outline" className="border-gold text-gold hover:bg-gold hover:text-black">
@@ -514,15 +516,9 @@ export default async function HomePage() {
 
             <FadeIn delay={0.2}>
               <div className="overflow-hidden border border-gold/20 shadow-aura w-full h-[300px] md:h-[360px]">
-                <iframe
+                <LazyGoogleMap
                   title="Club Animo アクセスマップ"
                   src="https://maps.google.com/maps?q=%E7%A5%9E%E5%A5%88%E5%B7%9D%E7%9C%8C%E6%A8%AA%E6%B5%9C%E5%B8%82%E4%B8%AD%E5%8C%BA%E7%9B%B8%E7%94%9F%E7%94%BA3%E4%B8%81%E7%9B%AE53+%E3%82%B0%E3%83%A9%E3%83%B3%E3%83%89%E3%83%91%E3%83%BC%E3%82%AF%E3%83%93%E3%83%AB&output=embed&hl=ja"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
             </FadeIn>

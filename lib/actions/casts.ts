@@ -95,6 +95,20 @@ export async function createCast(formData: FormData) {
 
   revalidatePath('/admin/casts')
   revalidateAll(data?.slug)
+
+  // cast_private_info に本名・生年月日を保存（別テーブル・RLS: 管理者のみ）
+  if (data?.id) {
+    const real_name = formData.get('real_name') as string
+    const date_of_birth = formData.get('date_of_birth') as string
+    if (real_name && date_of_birth) {
+      await supabase.from('cast_private_info').upsert({
+        cast_id: data.id,
+        real_name,
+        date_of_birth,
+      }, { onConflict: 'cast_id' })
+    }
+  }
+
   return { success: true, id: data?.id }
 }
 
@@ -155,6 +169,18 @@ export async function updateCast(id: string, formData: FormData) {
 
   revalidatePath('/admin/casts')
   revalidateAll(slug)
+
+  // cast_private_info を更新（upsertで存在しなければ作成）
+  const real_name = formData.get('real_name') as string
+  const date_of_birth = formData.get('date_of_birth') as string
+  if (real_name && date_of_birth) {
+    await supabase.from('cast_private_info').upsert({
+      cast_id: id,
+      real_name,
+      date_of_birth,
+    }, { onConflict: 'cast_id' })
+  }
+
   return { success: true }
 }
 

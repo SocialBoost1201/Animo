@@ -36,6 +36,8 @@ type Cast = {
   is_active?: boolean;
   quiz_tags?: string[];
   cast_images?: { is_primary: boolean; image_url: string }[];
+  // 非公開個人情報（管理者のみ参照可能）
+  cast_private_info?: { real_name: string; date_of_birth: string } | null;
 }
 
 export function CastForm({ initialData }: { initialData?: Cast }) {
@@ -232,6 +234,43 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               <label htmlFor="cast_height" className={labelClass}>身長 (Height) / cm</label>
               <input id="cast_height" name="height" type="number" min="130" max="220"
                 defaultValue={initialData?.height} className={inputClass} placeholder="160" />
+            </div>
+          </div>
+
+          {/* === 個人情報エリア（管理者専用・外部非公開） === */}
+          <div className="border border-amber-200 bg-amber-50 rounded-sm p-4 space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-amber-800 tracking-widest uppercase">🔐 個人情報（管理者専用 / 非公開）</span>
+            </div>
+            <p className="text-[10px] text-amber-700 leading-relaxed">
+              本名・生年月日はサイトおよびキャストダッシュボードには一切表示されません。<br />
+              同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、キャストアカウントの発行に使用します。
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="real_name" className={labelClass}>本名 (Real Name) *</label>
+                <input
+                  id="real_name"
+                  name="real_name"
+                  type="text"
+                  defaultValue={initialData?.cast_private_info?.real_name || ''}
+                  required
+                  className={inputClass}
+                  placeholder="山田 花子"
+                  autoComplete="off"
+                />
+              </div>
+              <div>
+                <label htmlFor="date_of_birth" className={labelClass}>生年月日 (Date of Birth) *</label>
+                <input
+                  id="date_of_birth"
+                  name="date_of_birth"
+                  type="date"
+                  defaultValue={initialData?.cast_private_info?.date_of_birth || ''}
+                  required
+                  className={inputClass}
+                />
+              </div>
             </div>
           </div>
 

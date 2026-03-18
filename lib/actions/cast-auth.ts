@@ -32,9 +32,10 @@ export async function castRegister(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
-  const stageName = (formData.get('stageName') as string)?.trim();
+  const realName = (formData.get('realName') as string)?.trim();
+  const dateOfBirth = formData.get('dateOfBirth') as string;
 
-  if (!email || !password || !stageName) {
+  if (!email || !password || !realName || !dateOfBirth) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
   if (password !== confirmPassword) {
@@ -46,28 +47,32 @@ export async function castRegister(formData: FormData) {
 
   const supabase = await createClient();
 
-  // 源氏名と一致するキャストを事前に確認
-  const { data: existingCast } = await supabase
-    .from('casts')
-    .select('id, stage_name, auth_user_id')
-    .eq('stage_name', stageName)
+  // 本名 + 生年月日の完全一致でキャストを特定
+  const { data: privateInfo } = await supabase
+    .from('cast_private_info')
+    .select('cast_id, casts!inner(id, stage_name, auth_user_id)')
+    .eq('real_name', realName)
+    .eq('date_of_birth', dateOfBirth)
     .maybeSingle();
 
-  if (!existingCast) {
+  if (!privateInfo) {
     return {
       success: false,
-      error: `「${stageName}」に一致するキャスト情報が見つかりませんでした。源氏名をご確認いただくか、管理者にお問い合わせください。`,
+      error: '入力された本名・生年月日に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
     };
   }
 
-  if (existingCast.auth_user_id) {
+  // TypeScriptの型安全のためにキャスト
+  const castRecord = privateInfo.casts as unknown as { id: string; stage_name: string; auth_user_id: string | null };
+
+  if (castRecord.auth_user_id) {
     return {
       success: false,
-      error: 'このキャスト名はすでに登録済みです。ご不明な場合は管理者にお問い合わせください。',
+      error: 'このキャストのアカウントはすでに登録済みです。担当者にお問い合わせください。',
     };
   }
 
-  // Supabase Auth に登録
+  // Supabase Auth にアカウント登録
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app';
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -96,14 +101,15 @@ export async function castRegister(formData: FormData) {
     await serviceRoleClient
       .from('casts')
       .update({ auth_user_id: data.user.id })
-      .eq('id', existingCast.id);
+      .eq('id', castRecord.id);
   }
 
   return {
     success: true,
-    message: `「${stageName}」として登録しました。確認メールをご確認の上、ログインしてください。`,
+    message: `アカウントを登録しました。確認メールをご確認の上、ログインしてください。`,
   };
 }
+
 
 /**
  * パスワード再設定メール送信
