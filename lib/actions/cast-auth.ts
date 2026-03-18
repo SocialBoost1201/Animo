@@ -68,7 +68,14 @@ export async function castRegister(formData: FormData) {
   }
 
   // Supabase Auth に登録
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app';
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${siteUrl}/cast/login`,
+    },
+  });
 
   if (error) {
     return { success: false, error: error.message };
