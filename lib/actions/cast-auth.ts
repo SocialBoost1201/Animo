@@ -113,7 +113,7 @@ export async function castForgotPassword(formData: FormData) {
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://club-animo.com'}/cast/login`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app'}/cast/reset-password`,
   });
 
   if (error) {
