@@ -73,7 +73,7 @@ export async function castRegister(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${siteUrl}/cast/login`,
+      emailRedirectTo: `${siteUrl}/cast/reset-password`,
     },
   });
 
@@ -82,14 +82,18 @@ export async function castRegister(formData: FormData) {
   }
 
   if (data.user) {
+    // RLSをバイパスするため、ここからサービスロールを使用（サインアップ直後はまだログイン状態ではないため）
+    const { createServiceClient } = await import('@/lib/supabase/service');
+    const serviceRoleClient = createServiceClient();
+
     // user_roles に cast ロールを追加
-    await supabase.from('user_roles').insert({
+    await serviceRoleClient.from('user_roles').insert({
       user_id: data.user.id,
       role: 'cast',
     });
 
     // casts テーブルの auth_user_id を自動紐付け
-    await supabase
+    await serviceRoleClient
       .from('casts')
       .update({ auth_user_id: data.user.id })
       .eq('id', existingCast.id);

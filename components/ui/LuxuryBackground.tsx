@@ -56,23 +56,40 @@ function GoldDust({ count = 2000 }) {
 
 export function LuxuryBackground() {
   const [particleCount, setParticleCount] = useState(3000)
+  // モバイルファーストで初期状態はスマホ判定（SSR/Hydration時にWebGLを重く起動させない）
+  const [isMobile, setIsMobile] = useState(true)
   const pathname = usePathname()
 
-  // /cast/* および /admin/* ではThree.jsを非描画（スマホ負荷対策）
+  // /cast/* および /admin/* ではThree.jsを非描画
   const isLightPage =
     pathname?.startsWith('/cast') || pathname?.startsWith('/admin')
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        setParticleCount(1000)
+    if (typeof window !== 'undefined') {
+      // マウント後に実際の画面幅を確認
+      const checkMobile = () => {
+        const mobile = window.innerWidth < 768
+        setIsMobile(mobile)
+        setParticleCount(mobile ? 1000 : 3000)
       }
-    }, 0)
-    return () => clearTimeout(timer)
+      checkMobile()
+
+      let timeoutId: NodeJS.Timeout
+      const handleResize = () => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(checkMobile, 150)
+      }
+      window.addEventListener('resize', handleResize)
+      return () => {
+        clearTimeout(timeoutId)
+        window.removeEventListener('resize', handleResize)
+      }
+    }
   }, [])
 
-  if (isLightPage) {
-    return <div className="fixed inset-0 z-[-1] pointer-events-none bg-white" />
+  // キャスト画面、管理画面、またはスマホ端末では単色背景のみでWebGLを一切起動しない
+  if (isLightPage || isMobile) {
+    return <div className="fixed inset-0 z-[-1] pointer-events-none bg-white lg:bg-[#FDFBF7]" />
   }
 
   return (

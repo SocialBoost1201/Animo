@@ -74,9 +74,9 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
       {/* 最初の画像の先読み用 (LCP最適化) */}
-      {media.length > 0 && media[0].type === 'image' && (
+      {media.length > 0 && (media[0].type === 'image' || media[0].posterUrl) && (
         <Image
-          src={media[0].url}
+          src={media[0].type === 'image' ? media[0].url : (media[0].posterUrl as string)}
           alt="Hero Background LCP"
           fill
           priority
@@ -133,10 +133,11 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
                 }}
                 poster={item.posterUrl}
                 autoPlay={false} // useEffect側で明示的にコントロールするため初期はfalse
+                preload={i === 0 ? "metadata" : "none"}
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
                 // ※ ここで src={item.url} と書かないことでLazy Loadを実現
               />
             ) : (

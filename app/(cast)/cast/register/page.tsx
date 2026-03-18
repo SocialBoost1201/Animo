@@ -26,15 +26,15 @@ export default function CastRegisterPage() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6 py-24">
-        <div className="w-full max-w-sm text-center">
+      <div className="min-h-screen flex items-center justify-center px-6 py-24 bg-[#FDFBF7]">
+        <div className="w-full max-w-sm text-center bg-white p-10 rounded-2xl shadow-luxury">
           <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
             <span className="text-gold text-2xl">✓</span>
           </div>
           <h2 className="font-serif text-xl tracking-widest text-[#171717] mb-4">登録完了</h2>
           <p className="text-sm text-gray-500 leading-relaxed mb-8">
-            確認メールを送信しました。<br />
-            メール内のリンクを開いて登録を完了してください。
+            本登録メールを送信しました。<br />
+            メール内のリンクから本登録を完了し、<br/>再設定したパスワードでログインしてください。
           </p>
           <Link href="/cast/login" className="inline-block px-8 py-3 bg-[#171717] text-white text-xs tracking-[0.2em] uppercase rounded-xl hover:bg-gold transition-all">
             ログインへ戻る
@@ -45,7 +45,14 @@ export default function CastRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-24">
+    <div className="min-h-screen flex items-center justify-center px-6 py-24 bg-[#FDFBF7] relative">
+      {/* 登録中のフルスクリーンオーバーレイ */}
+      {isLoading && (
+        <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-[2px] flex flex-col items-center justify-center">
+          <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-sm font-serif text-gold tracking-widest">登録処理中...</p>
+        </div>
+      )}
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <h1 className="font-serif text-2xl tracking-[0.3em] text-[#171717] font-bold">新規登録</h1>

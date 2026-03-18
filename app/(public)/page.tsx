@@ -78,8 +78,8 @@ export default async function HomePage() {
         title: m.title,
       }))
     : [
-        { id: 'v0', type: 'video', url: '/videos/animo-hero.mp4', posterUrl: '/images/ogp.jpg', durationMs: 5000 },
-        { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/videos/movie01_chandelier.mp4' },
+        { id: 'v0', type: 'video', url: '/videos/animo-hero.mp4', posterUrl: '/images/hero-poster.webp', durationMs: 5000 },
+        { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/images/hero-poster.webp' },
         { id: 'v0_5', type: 'video', url: '/videos/movie09_soumei.mp4', posterUrl: '/videos/movie09_soumei.mp4' },
         { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
         { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
