@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, User } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { FadeIn } from '@/components/motion/FadeIn';
+import { PostTracker } from '@/components/features/cast/PostTracker';
 
 export const dynamic = 'force-dynamic';
 
@@ -92,6 +93,7 @@ export default async function CastPostDetailPage({ params }: { params: Promise<{
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <PostTracker postId={post.id} />
       
       <div className="container mx-auto max-w-2xl">
         <div className="mb-6">

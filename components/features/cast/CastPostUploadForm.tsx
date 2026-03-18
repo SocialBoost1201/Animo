@@ -8,14 +8,23 @@ import { createCastPost } from '@/lib/actions/cast-posts';
 import { toast } from 'sonner';
 
 /**
- * キャスト向け：10秒で投稿完了するInstagram風の投稿フォーム
+ * キャスト向け：投稿フォーム（プレビュー機能つき）
  */
 export const CastPostUploadForm = ({ castId }: { castId: string }) => {
+  const [step, setStep] = useState<'edit' | 'preview'>('edit');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const SUGGESTED_TAGS = ['#関内', '#横浜キャバクラ', '#関内キャバクラ', '#シャンパン', '#同伴', '#アフター', '#キャバ嬢', '#今日のおすすめ'];
+
+  const appendTag = (tag: string) => {
+    if (!content.includes(tag)) {
+      setContent(prev => prev ? `${prev} ${tag}` : tag);
+    }
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -63,6 +72,7 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
         setFile(null);
         setPreviewUrl(null);
         setContent('');
+        setStep('edit');
         if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
         toast.error(result.error || '投稿に失敗しました。');
@@ -94,7 +104,7 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
           
           <input 
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic"
+            accept="image/*"
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}
@@ -117,23 +127,81 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
             required
             maxLength={500}
           />
+          {/* SEO推奨タグサジェスト */}
+          <div className="mt-3">
+            <p className="text-[10px] text-gray-400 tracking-widest mb-2 font-bold uppercase">suggested tags / おすすめタグ</p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_TAGS.map(tag => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => appendTag(tag)}
+                  className={`text-[10px] px-2.5 py-1 rounded-full transition-colors border ${
+                    content.includes(tag) 
+                    ? 'bg-gold border-gold text-white font-bold' 
+                    : 'bg-white border-gray-200 text-gray-500 hover:border-gold hover:text-gold'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* 送信ボタン */}
-        <Button 
-          type="submit" 
-          disabled={!file || !content.trim() || isSubmitting}
-          className="w-full bg-[#171717] hover:bg-gold text-white font-bold tracking-widest uppercase py-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-              Posting...
-            </>
-          ) : (
-            '投稿する'
-          )}
-        </Button>
+        {/* ボタン周り */}
+        {step === 'edit' ? (
+          <Button 
+            type="button" 
+            disabled={!file || !content.trim()}
+            onClick={() => setStep('preview')}
+            className="w-full bg-[#171717] hover:bg-gold text-white font-bold tracking-widest uppercase py-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            プレビューを確認する
+          </Button>
+        ) : (
+          <div className="space-y-3">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+              <p className="text-xs text-center text-gray-500 font-bold mb-4">以下の内容で投稿をご提出しますか？</p>
+              
+              {/* 簡易プレビュー */}
+              <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
+                <div className="aspect-4/5 w-full bg-gray-100 relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={previewUrl!} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap wrap-break-word">{content}</p>
+                </div>
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full bg-gold hover:bg-gold/90 text-white font-bold tracking-widest uppercase py-6 rounded-xl transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                  Posting...
+                </>
+              ) : (
+                'この内容で投稿する'
+              )}
+            </Button>
+            
+            <Button 
+              type="button" 
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={() => setStep('edit')}
+              className="w-full bg-white text-gray-500 font-bold tracking-widest py-6 rounded-xl transition-all"
+            >
+              修正にもどる
+            </Button>
+          </div>
+        )}
       </form>
     </div>
   );

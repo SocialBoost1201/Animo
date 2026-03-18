@@ -14,7 +14,7 @@ export async function getCasts(query?: string) {
   const supabase = await createClient()
   let sql = supabase
     .from('casts')
-    .select('*, cast_images(image_url, is_primary)')
+    .select('*, cast_images(image_url, is_primary), cast_scores(total_score, current_level, target_month)')
     .order('display_order', { ascending: true })
     .order('name_kana', { ascending: true })
     .order('created_at', { ascending: false })
@@ -60,7 +60,7 @@ export async function createCast(formData: FormData) {
   const image_file = formData.get('image_file') as File | null
 
   const { data, error } = await supabase.from('casts').insert({
-    stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags
+    name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags
   }).select('id, slug').single()
 
   if (error) return { error: error.message }

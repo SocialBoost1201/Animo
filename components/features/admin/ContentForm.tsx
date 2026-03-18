@@ -7,7 +7,6 @@ import { showToast } from '@/components/ui/Toast'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState, useRef } from 'react'
-import { Sparkles, Loader2 } from 'lucide-react'
 
 type ContentData = {
   type?: string;
@@ -21,7 +20,6 @@ type ContentData = {
 export function ContentForm({ initialData }: { initialData?: ContentData | null }) {
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
-  const [isAiGenerating, setIsAiGenerating] = useState(false)
   const isEditing = !!initialData
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -60,45 +58,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
     }
   }
 
-  async function handleGenerateAI() {
-    if (!formRef.current) return;
-    const formData = new FormData(formRef.current);
-    const title = formData.get('title') as string;
-    const typeLabel = contentType === 'news' ? 'ニュース' : 'イベント';
-    const dateStr = formData.get('content_date') as string;
 
-    const baseInfo = [
-      `種別: ${typeLabel}`,
-      title ? `記事タイトル: ${title}` : '',
-      dateStr ? `開催日: ${dateStr}` : ''
-    ].filter(Boolean).join('\n');
-
-    if (!title) {
-      showToast('自動生成には「タイトル」の入力が必要です。', 'warning');
-      return;
-    }
-
-    setIsAiGenerating(true);
-    try {
-      const res = await fetch('/api/admin/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: baseInfo, type: 'news' })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'API Error');
-      
-      const descInput = formRef.current.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
-      if (descInput) {
-        descInput.value = data.text;
-      }
-    } catch (err: unknown) {
-      const error = err as Error;
-      showToast(`自動生成に失敗しました: ${error.message}`, 'error');
-    } finally {
-      setIsAiGenerating(false);
-    }
-  }
 
   return (
     <div className="max-w-3xl">
@@ -184,16 +144,6 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
             <div>
               <div className="flex justify-between items-end mb-2">
                 <label htmlFor="description" className="block text-xs font-bold tracking-widest text-gray-500 uppercase">Description / Content</label>
-                <button 
-                  type="button" 
-                  onClick={handleGenerateAI}
-                  disabled={isAiGenerating}
-                  aria-label="AIで自動生成"
-                  className="flex items-center gap-1.5 text-xs font-bold text-gold hover:text-yellow-600 transition-colors disabled:opacity-50"
-                >
-                  {isAiGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-                  AIで自動生成
-                </button>
               </div>
               <textarea 
                 id="description"
@@ -201,7 +151,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
                 rows={8}
                 defaultValue={initialData?.description}
                 className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
-                placeholder="本文を入力してください。タイトル等を入力してからAIボタンを押すと自動作成されます。"
+                placeholder="本文を入力してください。"
               />
             </div>
           )}

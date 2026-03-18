@@ -15,13 +15,28 @@ export async function getPublicCasts() {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('casts')
-    .select('*, cast_images(image_url, image_type, is_primary, sort_order)')
+    .select(`
+      *,
+      cast_images(image_url, image_type, is_primary, sort_order),
+      cast_posts(created_at)
+    `)
     .eq('is_active', true)
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
 
   if (error) { console.error('getPublicCasts:', error); return [] }
-  return data
+
+  // 各キャストの最終ブログ投稿日時を計算して付加
+  return data.map(cast => {
+    const posts = (cast.cast_posts ?? []) as { created_at: string }[]
+    const latest = posts
+      .map(p => new Date(p.created_at).getTime())
+      .sort((a, b) => b - a)[0]
+    return {
+      ...cast,
+      latest_post_at: latest ? new Date(latest).toISOString() : null,
+    }
+  })
 }
 
 // ─── Night Style 診断マッチキャスト（スコア順 top N）─────────

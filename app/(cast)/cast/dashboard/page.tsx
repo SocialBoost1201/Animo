@@ -1,12 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getCurrentCast } from '@/lib/actions/cast-auth';
-import { getMyCastPosts } from '@/lib/actions/cast-auth';
+import { getCurrentCast, getMyCastPosts, castLogout } from '@/lib/actions/cast-auth';
+import { getMyShiftSubmission, getTargetWeekMonday } from '@/lib/actions/cast-shifts';
+import { getMyConfirmedSchedules, getMyPendingChangeRequests } from '@/lib/actions/cast-change-requests';
+import { getCastPVStats } from '@/lib/actions/posts-analytics';
+import { getActiveShiftRequests, getMyShiftRequestResponses } from '@/lib/actions/cast-shift-requests';
+import { getCastScoreAndLogs } from '@/lib/actions/scores';
 import { createClient } from '@/lib/supabase/server';
-import { PenLine, FileText, User, LogOut, CalendarDays } from 'lucide-react';
-import { castLogout } from '@/lib/actions/cast-auth';
+import { PenLine, FileText, User, LogOut, CalendarDays, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
+import { CastScheduleList } from '@/components/features/cast/CastScheduleList';
+import { CastHelpRequestList } from '@/components/features/cast/CastHelpRequestList';
+import { CastScoreWidget } from '@/components/features/cast/CastScoreWidget';
+import { CastNoticeWidget } from '@/components/features/cast/CastNoticeWidget';
+import { getCastNotices } from '@/lib/actions/cast-notices';
 
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
@@ -25,14 +33,48 @@ export default async function CastDashboardPage() {
   // 本日の出勤
   const today = new Date().toISOString().split('T')[0];
   const { data: todayShift } = await supabase
-    .from('shifts')
+    .from('cast_schedules')
     .select('*')
     .eq('cast_id', cast.id)
-    .eq('date', today)
+    .eq('work_date', today)
     .maybeSingle();
 
+  // 直近の確定済みスケジュールと未承認の変更申請を取得
+  const { data: schedules } = await getMyConfirmedSchedules(cast.id, 14);
+  const { data: pendingRequests } = await getMyPendingChangeRequests(cast.id);
+
+  // 次週のシフト提出状況
+  const nextMondayDate = getTargetWeekMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+  const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  const { data: shiftSubmission } = await getMyShiftSubmission(nextMondayStr);
+
+  // PV統計情報
+  const pvStats = await getCastPVStats(cast.id);
+
+  // 期限判定（前週金曜の23:55）
+  const deadlineDate = new Date(nextMondayDate);
+  deadlineDate.setDate(deadlineDate.getDate() - 3); // 前週金曜
+  deadlineDate.setHours(23, 55, 0, 0); // 23:55
+  
+  const now = new Date();
+  const isPastDeadline = now > deadlineDate;
+  // 木・金は期限間近アラート
+  const isNearDeadline = !isPastDeadline && now.getDay() >= 4 && now < deadlineDate;
+
+  // 出勤要請（ヘルプ）の取得
+  const activeHelpRequests = await getActiveShiftRequests();
+  const myHelpResponses = await getMyShiftRequestResponses();
+
+  // スコアと履歴の取得
+  const currentMonth = new Date().toISOString().substring(0, 7);
+  const { score, logs } = await getCastScoreAndLogs(cast.id, currentMonth);
+
+  // 全体お知らせ一覧の取得
+  const notices = await getCastNotices(cast.id);
+
   const menuItems = [
-    { href: '/cast/post', icon: PenLine, label: '新規投稿', desc: '日記を投稿する', accent: true },
+    { href: '/cast/shift', icon: CalendarDays, label: 'シフト提出', desc: '来週のシフトを提出', accent: true },
+    { href: '/cast/post', icon: PenLine, label: '新規投稿', desc: '日記を投稿する', accent: false },
     { href: '/cast/posts', icon: FileText, label: '投稿一覧', desc: '過去の投稿を見る', accent: false },
     { href: '/cast/profile', icon: User, label: 'プロフィール', desc: '自分の情報を確認', accent: false },
   ];
@@ -52,6 +94,47 @@ export default async function CastDashboardPage() {
         </form>
       </div>
 
+      {/* アクセス分析ランキング */}
+      {pvStats.success && (
+        <div className="bg-linear-to-br from-[#171717] to-gray-800 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden transform transition-all hover:scale-[1.01]">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="flex items-start justify-between relative z-10">
+            <div>
+              <div className="flex items-center gap-2 text-gold mb-1">
+                <TrendingUp className="w-4 h-4" />
+                <span className="text-[10px] tracking-[0.2em] font-bold">ブログアクセス分析</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-2">
+                <span className="text-3xl font-serif font-bold tracking-wider">{pvStats.totalPV?.toLocaleString() || 0}</span>
+                <span className="text-xs text-gray-300">PV</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] text-gray-400 block mb-1">店舗内ランキング</span>
+              <div className="flex items-baseline justify-end gap-1">
+                <span className="text-2xl font-serif font-bold text-gold">{pvStats.rank}</span>
+                <span className="text-xs text-gray-300">位</span>
+                <span className="text-[10px] text-gray-500 ml-1">/ {pvStats.totalCasts}人中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 重要：未読お知らせウィジェット */}
+      <CastNoticeWidget notices={notices} castId={cast.id} />
+
+      {/* スコアウィジェット */}
+      <CastScoreWidget score={score} logs={logs} targetMonth={currentMonth} />
+
+      {/* 急募出勤リクエスト */}
+      {activeHelpRequests.length > 0 && (
+        <CastHelpRequestList 
+          activeRequests={activeHelpRequests} 
+          myResponses={myHelpResponses} 
+        />
+      )}
+
       {/* 本日の出勤 */}
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center gap-3 mb-3">
@@ -66,6 +149,72 @@ export default async function CastDashboardPage() {
           <p className="text-sm text-gray-400">本日の出勤予定はありません</p>
         )}
       </div>
+
+      {/* 確定済みシフト・変更申請 */}
+      <CastScheduleList 
+        castId={cast.id} 
+        schedules={schedules || []} 
+        pendingRequests={pendingRequests || []} 
+      />
+
+      {/* 来週のシフト提出状況・アラート */}
+      <Link href="/cast/shift" className="block relative overflow-hidden rounded-2xl border transition-all hover:scale-[0.98] shadow-sm">
+        {shiftSubmission ? (
+           shiftSubmission.status === 'approved' ? (
+             <div className="bg-green-50/50 border-green-200 p-5">
+               <div className="flex items-center gap-3">
+                 <CheckCircle2 className="w-5 h-5 text-green-500" />
+                 <div>
+                   <p className="text-sm font-bold text-green-800">来週のシフト: 承認済み</p>
+                   <p className="text-[10px] text-green-600 mt-1">公開シフト表に反映されています</p>
+                 </div>
+               </div>
+             </div>
+           ) : (
+             <div className="bg-gray-50 border-gray-200 p-5">
+               <div className="flex items-center gap-3">
+                 <div className="w-5 h-5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
+                 <div>
+                   <p className="text-sm font-bold text-gray-700">来週のシフト: 承認待ち</p>
+                   <p className="text-[10px] text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
+                 </div>
+               </div>
+             </div>
+           )
+        ) : (
+           isPastDeadline ? (
+             <div className="bg-red-50 border-red-200 p-5 ring-2 ring-red-500/20">
+               <div className="flex items-start gap-3">
+                 <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                 <div>
+                   <p className="text-sm font-bold text-red-700">【重要】シフト未提出（期限超過）</p>
+                   <p className="text-[10px] text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
+                 </div>
+               </div>
+             </div>
+           ) : isNearDeadline ? (
+             <div className="bg-yellow-50 border-yellow-200 p-5">
+               <div className="flex items-start gap-3">
+                 <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                 <div>
+                   <p className="text-sm font-bold text-yellow-800">シフト提出の期限が近づいています</p>
+                   <p className="text-[10px] text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
+                 </div>
+               </div>
+             </div>
+           ) : (
+             <div className="bg-white border-gray-100 p-5">
+               <div className="flex items-center gap-3">
+                 <CalendarDays className="w-5 h-5 text-gold" />
+                 <div>
+                   <p className="text-sm font-bold text-[#171717]">来週のシフトが未提出です</p>
+                   <p className="text-[10px] text-gray-500 mt-1">タップしてシフトを入力してください</p>
+                 </div>
+               </div>
+             </div>
+           )
+        )}
+      </Link>
 
       {/* Menu */}
       <div className="grid grid-cols-1 gap-3">

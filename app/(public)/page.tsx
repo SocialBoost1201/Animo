@@ -5,7 +5,6 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
 import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
 import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
@@ -90,9 +89,12 @@ export default async function HomePage() {
         { id: 'v7', type: 'video', url: '/videos/movie07_flower.mp4', posterUrl: '/videos/movie07_flower.mp4' },
       ];
 
-  // Today's Cast: is_todayフラグ優先。なければ最大5名表示
+  // Today's Cast: is_todayフラグ優先。なければ最大10名表示
   const todayCasts = dbCasts.filter((c) => c.is_today);
-  const displayCasts = todayCasts.length > 0 ? todayCasts : dbCasts.slice(0, 5);
+  const displayTodayCasts = todayCasts.length > 0 ? todayCasts.slice(0, 10) : dbCasts.slice(0, 10);
+  
+  // 在籍キャスト用 (最大10名表示)
+  const displayAllCasts = dbCasts.slice(0, 10);
 
   // HeroCTA
   const heroCta = (
@@ -162,60 +164,61 @@ export default async function HomePage() {
             </Link>
           </FadeIn>
 
-          <LuxuryCarousel
-            autoplay
-            options={{ loop: true, align: 'center', dragFree: true }}
-            slides={displayCasts.map((cast) => (
-              <div key={cast.id} className="group select-none">
-                <div className="overflow-hidden bg-white/40 backdrop-blur-md hover:shadow-aura transition-all duration-1000">
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
+            {displayTodayCasts.map((cast, index) => (
+              <FadeIn key={cast.id} delay={index * 0.04} className={`group ${index === 9 ? 'hidden md:block' : ''}`}>
+                <div className="overflow-hidden bg-white hover:shadow-luxury transition-all duration-700 h-full flex flex-col">
                   <Link href={`/cast/${cast.slug}`} className="block relative">
                     <PlaceholderImage
                       src={cast.image_url}
                       alt={cast.name}
-                      ratio="4:5"
+                      ratio="3:4"
                       placeholderText={cast.name}
                       className="group-hover:scale-105 duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     />
-                    <div className="absolute top-3 right-3 z-20">
+                    <div className="absolute top-1.5 right-1.5 md:top-2 md:right-2 z-20">
                       <CastFavoriteButton castId={cast.id} />
                     </div>
                     {cast.is_today && (
-                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[9px] font-serif luxury-tracking text-gold px-3 py-1 uppercase border border-gold/30">
-                        Today
+                      <div className="absolute top-0 left-0 right-0 bg-[#171717]/85 text-white text-[8px] font-sans tracking-widest px-2 py-1 text-center uppercase">
+                        本日出勤
                       </div>
                     )}
                   </Link>
-                  <div className="pt-6 pb-5 px-4 bg-white relative z-10 text-center">
+                  <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
                     <Link href={`/cast/${cast.slug}`}>
-                      <h3 className="font-serif luxury-tracking text-xl text-[#171717] hover:text-gold transition-colors">
+                      <p className="text-[7px] md:text-[9px] font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
+                        {cast.name_kana
+                          ? cast.name_kana
+                              .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
+                              .toUpperCase()
+                          : cast.name.toUpperCase()
+                        }
+                      </p>
+                      <h3 className="font-serif text-[11px] md:text-sm text-[#171717] hover:text-gold transition-colors leading-snug">
                         {cast.name}
                       </h3>
                     </Link>
-                    <div className="flex flex-col justify-center items-center mt-2 gap-1.5">
-                      <span className="text-xs text-gray-400 font-serif luxury-tracking">
-                        {cast.age ? `${cast.age}歳` : ''}{cast.height ? ` / ${cast.height}cm` : ''}
-                      </span>
-                      {cast.comment && (
-                        <span className="text-[10px] text-gray-400 font-serif luxury-tracking line-clamp-1 italic">
-                          &ldquo;{cast.comment}&rdquo;
-                        </span>
-                      )}
+                    <div className="flex justify-center items-center mt-1 gap-1 text-[8px] md:text-[9px] text-gray-400">
+                      {cast.age && <span>{cast.age}歳</span>}
+                      {cast.age && cast.height && <span className="text-gray-200">•</span>}
+                      {cast.height && <span>{cast.height}cm</span>}
                     </div>
-                    <div className="flex flex-col gap-2 mt-4">
-                      <Link
-                        href={`/cast/${cast.slug}`}
-                        className="w-full py-2.5 border border-gray-200 text-[9px] font-serif luxury-tracking text-gray-600 uppercase hover:border-gold hover:text-gold transition-colors"
-                      >
-                        プロフィールを見る
-                      </Link>
-                    </div>
+                    {/* 日記UPバッジ (72時間以内に投稿があれば表示) */}
+                    {cast.latest_post_at &&
+                      Date.now() - new Date(cast.latest_post_at).getTime() < 72 * 60 * 60 * 1000 && (
+                      <div className="mt-1.5 inline-flex items-center gap-1 bg-[#171717] text-white text-[8px] font-bold tracking-widest px-2 py-0.5">
+                        <span>📓</span>
+                        <span>日記UP</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              </FadeIn>
             ))}
-          />
+          </div>
 
-          {displayCasts.length === 0 && (
+          {displayTodayCasts.length === 0 && (
             <div className="py-12 text-center text-gray-400 font-serif luxury-tracking text-sm">
               本日の出勤予定はまだ公開されていません。
             </div>
@@ -385,11 +388,11 @@ export default async function HomePage() {
             <p className="text-xs text-gold font-serif luxury-tracking uppercase">在籍キャスト</p>
           </FadeIn>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-            {dbCasts.slice(0, 10).map((cast, index) => (
-              <FadeIn key={cast.id} delay={index * 0.05} className="group">
-                <Link href={`/cast/${cast.slug}`} className="block">
-                  <div className="overflow-hidden bg-white shadow-sm hover:shadow-luxury-hover transition-all duration-700 group-hover:-translate-y-1">
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-5">
+            {displayAllCasts.map((cast, index) => (
+              <FadeIn key={cast.id} delay={index * 0.05} className={`group ${index === 9 ? 'hidden md:block' : ''}`}>
+                <Link href={`/cast/${cast.slug}`} className="block h-full">
+                  <div className="overflow-hidden bg-white shadow-sm hover:shadow-luxury-hover transition-all duration-700 group-hover:-translate-y-1 border border-gold/10 h-full flex flex-col">
                     <div className="relative">
                       <PlaceholderImage
                         src={cast.image_url}
@@ -398,27 +401,29 @@ export default async function HomePage() {
                         placeholderText={cast.name}
                         className="group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                       />
-                      <div className="absolute top-3 right-3 z-20">
+                      <div className="absolute top-2 right-2 md:top-3 md:right-3 z-20">
                         <CastFavoriteButton castId={cast.id} />
                       </div>
                       {cast.is_today && (
-                        <div className="absolute top-3 left-3 bg-white text-[8px] font-serif luxury-tracking text-gold px-3 py-1 uppercase border border-gold/30">
+                        <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm text-[8px] md:text-[9px] font-serif luxury-tracking text-gold px-2 py-1 md:px-3 uppercase border border-gold/30">
                           Today
                         </div>
                       )}
                     </div>
-                    <div className="p-4 text-center bg-white border-t border-gray-50">
-                      <h3 className="font-serif luxury-tracking text-base text-foreground">{cast.name}</h3>
-                      <div className="flex justify-center items-center mt-1.5 gap-2 text-[10px] text-gray-400 font-serif">
-                        {cast.age && <span>{cast.age}歳</span>}
-                        {cast.age && cast.height && <span>·</span>}
-                        {cast.height && <span>{cast.height}cm</span>}
+                    <div className="p-3 md:p-4 text-center bg-white border-t border-gray-50 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-serif luxury-tracking text-sm md:text-base text-foreground group-hover:text-gold transition-colors">{cast.name}</h3>
+                        <div className="flex justify-center items-center mt-1.5 gap-1 text-[9px] md:text-[10px] text-gray-400 font-serif">
+                          {cast.age && <span>{cast.age}歳</span>}
+                          {cast.age && cast.height && <span className="text-gray-300">|</span>}
+                          {cast.height && <span>{cast.height}cm</span>}
+                        </div>
+                        {cast.comment && (
+                          <p className="text-[9px] md:text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1 italic">
+                            &ldquo;{cast.comment}&rdquo;
+                          </p>
+                        )}
                       </div>
-                      {cast.comment && (
-                        <p className="text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1 italic">
-                          &ldquo;{cast.comment}&rdquo;
-                        </p>
-                      )}
                     </div>
                   </div>
                 </Link>

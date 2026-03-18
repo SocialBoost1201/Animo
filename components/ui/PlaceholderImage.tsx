@@ -6,7 +6,7 @@ interface PlaceholderImageProps {
   src?: string | null;
   alt: string;
   placeholderText?: string;
-  ratio?: '16:9' | '4:5' | '3:2' | '4:3' | 'square';
+  ratio?: '16:9' | '4:5' | '3:2' | '4:3' | '3:4' | 'square';
   className?: string;
   priority?: boolean;
 }
@@ -24,12 +24,14 @@ export function PlaceholderImage({
     '16:9': 'aspect-video',
     '3:2': 'aspect-[3/2]',
     '4:5': 'aspect-[4/5]',
+    '3:4': 'aspect-[3/4]',
     '4:3': 'aspect-[4/3]',
     'square': 'aspect-square',
   };
 
   const fallbackImages: Record<string, string> = {
     '4:5': '/images/placeholders/cast.png',
+    '3:4': '/images/placeholders/cast.png',
     '3:2': '/images/placeholders/gallery.png',
     '16:9': '/images/placeholders/event.png',
     'square': '/images/placeholders/cast.png',

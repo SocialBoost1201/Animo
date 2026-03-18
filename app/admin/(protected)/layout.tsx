@@ -1,6 +1,5 @@
 import { AdminLayout } from '@/components/layouts/AdminLayout';
 import { AdminToaster } from '@/components/features/admin/AdminToaster';
-import { getUnreadCounts } from '@/lib/actions/inquiries';
 
 import { createClient } from '@/lib/supabase/server';
 
@@ -18,7 +17,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
     if (profile) role = profile.role;
   }
 
-  const unreadCount = await getUnreadCounts();
 
   // 承認待ちのキャスト投稿件数を取得
   const { count: pendingPostsCount } = await supabase
@@ -26,10 +24,22 @@ export default async function Layout({ children }: { children: React.ReactNode }
     .select('id', { count: 'exact', head: true })
     .eq('status', 'pending');
 
+  // 承認待ちのキャストシフト提出件数を取得
+  const { count: pendingShiftsCount } = await supabase
+    .from('shift_submissions')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
   return (
     <>
       <AdminToaster />
-      <AdminLayout unreadCount={unreadCount} pendingPostsCount={pendingPostsCount || 0} role={role}>{children}</AdminLayout>
+      <AdminLayout 
+          pendingPostsCount={pendingPostsCount || 0} 
+          pendingShiftsCount={pendingShiftsCount || 0}
+          role={role}
+      >
+          {children}
+      </AdminLayout>
     </>
   );
 }

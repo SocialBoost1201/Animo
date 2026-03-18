@@ -2,7 +2,7 @@ import React from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { updateCastPostStatus, deleteCastPost } from '@/lib/actions/cast-posts';
 import { Button } from '@/components/ui/Button';
-import { CheckCircle2, XCircle, Trash2, Clock, MessageSquare } from 'lucide-react';
+import { CheckCircle2, XCircle, Trash2, Clock, MessageSquare, Eye } from 'lucide-react';
 import Image from 'next/image';
 import { revalidatePath } from 'next/cache';
 
@@ -101,8 +101,12 @@ export default async function AdminCastPostsPage({ searchParams }: { searchParam
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-1 wrap-break-word whitespace-pre-wrap">{post.content}</p>
-                <div className="text-[10px] text-gray-400 mb-4 font-mono">
-                  {new Date(post.created_at).toLocaleString('ja-JP')}
+                <div className="flex justify-between items-center text-[10px] text-gray-400 mb-4 font-mono w-full">
+                  <span>{new Date(post.created_at).toLocaleString('ja-JP')}</span>
+                  <span className="flex items-center gap-1 font-bold text-gold" title="この記事の閲覧数（PV）">
+                    <Eye className="w-3.5 h-3.5" />
+                    {post.view_count?.toLocaleString() || 0} PV
+                  </span>
                 </div>
                 
                 <div className="flex gap-2 mt-auto pt-4 border-t border-gray-50">

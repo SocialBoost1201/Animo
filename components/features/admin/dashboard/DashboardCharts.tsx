@@ -15,24 +15,19 @@ export async function DashboardCharts() {
     };
   });
 
-  // contacts (inquiries/reserves) と recruit_applications を取得
+  // recruit_applications を取得
   const [
-    { data: contacts },
     { data: applications }
   ] = await Promise.all([
-    supabase.from('contacts').select('created_at, type').gte('created_at', months[0].start),
     supabase.from('recruit_applications').select('created_at').gte('created_at', months[0].start),
   ]);
 
   // 月ごとに集計
   const monthlyData = months.map(m => {
-    const monthContacts = contacts?.filter(c => c.created_at >= m.start && c.created_at <= m.end) || [];
     const monthApps = applications?.filter(a => a.created_at >= m.start && a.created_at <= m.end) || [];
 
     return {
       month: m.label,
-      inquiries: monthContacts.filter(c => c.type === 'contact').length,
-      reserves: monthContacts.filter(c => c.type === 'reserve').length,
       applications: monthApps.length,
     };
   });

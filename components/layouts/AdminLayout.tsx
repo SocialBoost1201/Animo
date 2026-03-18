@@ -16,8 +16,8 @@ import {
   Briefcase,
   Menu,
   ChevronRight,
-  Bell,
   X,
+  Bell,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 
@@ -25,8 +25,11 @@ const NAV_ITEMS = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard',   section: 'main' },
   { href: '/admin/casts',     icon: Users,           label: 'キャスト管理', section: 'main' },
   { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
-  { href: '/admin/shifts',    icon: Calendar,        label: 'シフト',       section: 'main' },
+  { href: '/admin/monthly-shifts',    icon: Calendar,        label: '月間シフト(β)',       section: 'main' },
+  { href: '/admin/template-shifts',    icon: Calendar,        label: 'Excelシフト',       section: 'main' },
   { href: '/admin/applications', icon: Briefcase,    label: '求人応募',     badge: 'applications', section: 'crm' },
+  { href: '/admin/shift-requests', icon: Calendar,  label: '出勤申請',   badge: 'shifts', section: 'crm' },
+  { href: '/admin/internal-notices', icon: Bell, label: 'お知らせ', section: 'crm' },
   { href: '/admin/posts',        icon: MessageSquare, label: 'キャスト投稿', badge: 'posts', section: 'content' },
   { href: '/admin/contents',  icon: FileText,        label: 'ニュース',      section: 'content' },
   { href: '/admin/gallery',   icon: ImageIcon,       label: 'ギャラリー',   section: 'content' },
@@ -44,19 +47,19 @@ const SECTION_LABELS: Record<string, string> = {
 const BOTTOM_TAB_ITEMS = [
   { href: '/admin/dashboard',    icon: LayoutDashboard, label: 'Home' },
   { href: '/admin/casts',        icon: Users,           label: 'キャスト' },
-  { href: '/admin/shifts',       icon: Calendar,        label: 'シフト' },
+  { href: '/admin/monthly-shifts',       icon: Calendar,        label: 'シフト' },
   { href: '/admin/applications', icon: Briefcase,       label: '応募' },
 ];
 
 export function AdminLayout({
   children,
-  unreadCount = 0,
   pendingPostsCount = 0,
+  pendingShiftsCount = 0,
   role = 'staff',
 }: {
   children: React.ReactNode;
-  unreadCount?: number;
   pendingPostsCount?: number;
+  pendingShiftsCount?: number;
   role?: string;
 }) {
   const pathname = usePathname();
@@ -91,12 +94,6 @@ export function AdminLayout({
           ANIMO <span className="text-gold">CMS</span>
         </Link>
         <div className="flex items-center gap-2">
-          {unreadCount > 0 && (
-            <div className="flex items-center gap-1">
-              <Bell size={13} className="text-gold animate-pulse" />
-              <span className="text-[11px] font-bold text-gold">{unreadCount}</span>
-            </div>
-          )}
           <button
             onClick={() => setMobileOpen(false)}
             className="md:hidden p-1 text-white/30 hover:text-white transition-colors"
@@ -128,8 +125,8 @@ export function AdminLayout({
                   const isActive = pathname.startsWith(item.href);
                   const Icon = item.icon;
                   const badgeCount = 
-                    item.badge === 'all' ? unreadCount :
                     item.badge === 'posts' ? pendingPostsCount :
+                    item.badge === 'shifts' ? pendingShiftsCount :
                     0;
 
                   return (
@@ -217,12 +214,6 @@ export function AdminLayout({
           <Link href="/admin/dashboard" className="font-serif tracking-widest text-sm font-bold dark:text-white">
             ANIMO <span className="text-gold">CMS</span>
           </Link>
-          <Link href="/admin/inquiries" className="relative p-2" aria-label="受信箱へ">
-            <Bell size={18} className="text-gray-500 dark:text-gray-400" />
-            {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            )}
-          </Link>
         </header>
 
         {/* Desktop Header Bar */}
@@ -234,12 +225,6 @@ export function AdminLayout({
               {NAV_ITEMS.find((i) => pathname.startsWith(i.href))?.label ?? 'Admin'}
             </span>
           </div>
-          {unreadCount > 0 && (
-            <Link href="/admin/inquiries" className="flex items-center gap-2 text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
-              <Bell size={14} className="animate-pulse" />
-              <span className="font-bold">未読 {unreadCount}件</span>
-            </Link>
-          )}
         </header>
 
         {/* Page Content with fade-in animation */}
@@ -261,7 +246,7 @@ export function AdminLayout({
           {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
-            const isInbox = item.href === '/admin/inquiries' || item.href === '/admin/applications';
+            const isInbox = item.href === '/admin/applications';
             return (
               <Link
                 key={item.href}
@@ -273,10 +258,6 @@ export function AdminLayout({
                 {/* Active indicator */}
                 {isActive && (
                   <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gold rounded-b" />
-                )}
-                {/* Unread badge */}
-                {isInbox && unreadCount > 0 && (
-                  <span className="absolute top-2 right-1/4 w-2 h-2 bg-red-500 rounded-full" />
                 )}
                 <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
                 <span className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : ''}`}>

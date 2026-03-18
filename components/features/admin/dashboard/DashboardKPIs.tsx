@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { Users, MessageSquare, Briefcase, Calendar, ArrowRight } from 'lucide-react';
+import { Users, Briefcase, Calendar, ArrowRight } from 'lucide-react';
 
 export async function DashboardKPIs() {
   const supabase = await createClient();
@@ -9,12 +9,10 @@ export async function DashboardKPIs() {
 
   const [
     { count: castsCount },
-    { count: unreadContacts },
     { count: unreadApps },
     { data: todayShifts },
   ] = await Promise.all([
     supabase.from('casts').select('*', { count: 'exact', head: true }).eq('is_active', true),
-    supabase.from('contacts').select('*', { count: 'exact', head: true }).eq('is_read', false),
     supabase.from('recruit_applications').select('*', { count: 'exact', head: true }).eq('is_read', false),
     supabase.from('cast_schedules').select('id').eq('work_date', today),
   ]);
@@ -28,15 +26,7 @@ export async function DashboardKPIs() {
       href: '/admin/casts',
       color: 'from-slate-800 to-slate-700',
     },
-    {
-      label: '未読の問い合わせ',
-      value: unreadContacts ?? 0,
-      unit: '件',
-      icon: MessageSquare,
-      href: '/admin/customers',
-      color: unreadContacts ? 'from-amber-700 to-amber-600' : 'from-slate-800 to-slate-700',
-      highlight: !!unreadContacts,
-    },
+
     {
       label: '未読の求人応募',
       value: unreadApps ?? 0,
@@ -57,7 +47,7 @@ export async function DashboardKPIs() {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
       {kpis.map((kpi) => {
         const Icon = kpi.icon;
         return (

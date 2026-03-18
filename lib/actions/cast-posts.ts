@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { addCastScore } from './scores';
 
 /**
  * キャスト日記を投稿するアクション
@@ -66,11 +67,17 @@ export async function createCastPost(formData: FormData) {
       return { success: false, error: '投稿データの保存に失敗しました。' };
     }
 
-    // 投稿成功後、管理者にメール通知（非同期・失敗しても投稿は通す）
     try {
       await sendCastPostNotification(castId, content);
     } catch (mailErr) {
       console.warn('Mail notification failed (non-critical):', mailErr);
+    }
+
+    // スコア付与 (+5pt)
+    try {
+      await addCastScore(castId, 5, 'blog_posted', 'ブログ日記を新規投稿しました');
+    } catch (scoreErr) {
+      console.warn('Failed to add score for blog post:', scoreErr);
     }
 
     return { success: true };
