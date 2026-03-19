@@ -4,7 +4,7 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { Button } from '@/components/ui/Button';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import Link from 'next/link';
-import { ArrowLeft, CalendarHeart, Sparkles } from 'lucide-react';
+import { ArrowLeft, CalendarHeart, Sparkles, Instagram, Twitter, Music } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
 import { CastViewTracker } from '@/components/features/analytics/CastViewTracker';
@@ -116,6 +116,24 @@ export default async function CastDetailPage({
                       </span>
                     ))}
                   </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-4 mb-6">
+                {cast.sns_instagram && (
+                  <a href={`https://instagram.com/${cast.sns_instagram.replace('@','')}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-pink-50 text-pink-600 rounded-full hover:bg-pink-100 transition-colors">
+                    <Instagram size={18} />
+                  </a>
+                )}
+                {cast.sns_x && (
+                  <a href={`https://x.com/${cast.sns_x.replace('@','')}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 text-[#171717] rounded-full hover:bg-gray-100 transition-colors">
+                    <Twitter size={18} />
+                  </a>
+                )}
+                {cast.sns_tiktok && (
+                  <a href={`https://tiktok.com/@${cast.sns_tiktok.replace('@','')}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-black text-white rounded-full hover:opacity-80 transition-opacity">
+                    <Music size={18} />
+                  </a>
                 )}
               </div>
 

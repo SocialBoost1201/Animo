@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/daily-checkin-reminder",
+      "schedule": "0 7 * * 1-6"
+    },
+    {
       "path": "/api/automation/birthday",
       "schedule": "0 0 * * *"
     },

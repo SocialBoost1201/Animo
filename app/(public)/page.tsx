@@ -5,20 +5,22 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
 import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { PriceSimulator } from '@/components/features/system/PriceSimulator';
-import { NightStyleQuiz } from '@/components/features/system/NightStyleQuiz';
-import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
 import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
 import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
 import { LazyGoogleMap } from '@/components/ui/LazyGoogleMap';
-import { DynamicGallerySection } from '@/components/features/gallery/DynamicGallerySection';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { getSiteSettings } from '@/lib/actions/contents';
-import { CastPostSlider } from '@/components/features/cast/CastPostSlider';
 import { Magnetic } from '@/components/motion/Magnetic';
-import { SilverDustBackground } from '@/components/motion/SilverDustBackground';
+
+// Heavy sections optimization
+const PriceSimulator = nextDynamic(() => import('@/components/features/system/PriceSimulator').then(m => m.PriceSimulator));
+const NightStyleQuiz = nextDynamic(() => import('@/components/features/system/NightStyleQuiz').then(m => m.NightStyleQuiz));
+const CastPostSlider = nextDynamic(() => import('@/components/features/cast/CastPostSlider').then(m => m.CastPostSlider));
+const DynamicGallerySection = nextDynamic(() => import('@/components/features/gallery/DynamicGallerySection').then(m => m.DynamicGallerySection));
+const SilverDustBackground = nextDynamic(() => import('@/components/motion/SilverDustBackground').then(m => m.SilverDustBackground));
+const CastFavoriteButton = nextDynamic(() => import('@/components/features/system/CastFavoriteButton').then(m => m.CastFavoriteButton));
 
 export const dynamic = 'force-dynamic';
 

@@ -83,6 +83,25 @@ export function TodayDashboard({ data, casts }: Props) {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pb-20">
+      {/* アクセス解析サマリー */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
+          <span className="text-[10px] text-gray-400 font-bold mb-1">本日のPV</span>
+          <span className="text-xl font-bold text-gold">{data.analytics.todayPv}</span>
+        </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
+          <span className="text-[10px] text-gray-400 font-bold mb-1">昨日のPV</span>
+          <span className="text-xl font-bold text-gray-600">{data.analytics.yesterdayPv}</span>
+        </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
+          <span className="text-[10px] text-gray-400 font-bold mb-1">アクティブ</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-xl font-bold text-[#171717]">{data.analytics.activeUsers}</span>
+          </div>
+        </div>
+      </div>
+
       {/* LINE共有ボタン */}
       <button
         onClick={handleCopy}
@@ -200,13 +219,35 @@ export function TodayDashboard({ data, casts }: Props) {
             <Plus size={14} /> スタッフを追加
           </button>
         ) : (
-          <form action={async (fd) => { fd.set('staff_date', data.date); await addStaffAttendance(fd); setShowStaffForm(false); router.refresh() }} className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <input name="display_name" type="text" placeholder="スタッフ名（例: なべちゃん）" required className={inputClass} />
+          <form 
+            action={async (fd) => { 
+              const sid = fd.get('staff_id') as string;
+              const s = data.allStaffs.find(x => x.id === sid);
+              if (s) fd.set('display_name', s.display_name);
+              fd.set('staff_date', data.date); 
+              await addStaffAttendance(fd); 
+              setShowStaffForm(false); 
+              router.refresh();
+            }} 
+            className="space-y-2 p-3 bg-gray-50 rounded-lg"
+          >
+            <select name="staff_id" required className={inputClass}>
+              <option value="">スタッフを選択</option>
+              {data.allStaffs.map(s => (
+                <option key={s.id} value={s.id}>{s.display_name} ({s.role || '役割なし'})</option>
+              ))}
+            </select>
             <input name="start_time" type="time" required className={inputClass} />
+            <input type="hidden" name="display_name" value="" />
             <div className="flex gap-2">
               <button type="submit" className="flex-1 py-2 bg-[#171717] text-white text-xs rounded-lg">追加</button>
               <button type="button" onClick={() => setShowStaffForm(false)} className="px-4 py-2 text-xs text-gray-500 rounded-lg border">戻る</button>
             </div>
+            {data.allStaffs.length === 0 && (
+              <p className="text-[10px] text-red-500 mt-1">
+                ※人材管理からスタッフを登録してください
+              </p>
+            )}
           </form>
         )}
       </div>
@@ -295,12 +336,24 @@ export function TodayDashboard({ data, casts }: Props) {
       {data.unconfirmedCasts.length > 0 && (
         <div className="bg-red-50 rounded-2xl border border-red-200 p-5">
           <SectionHeader icon={<AlertTriangle size={16} />} label="未確認キャスト" count={data.unconfirmedCasts.length} />
-          <div className="space-y-1">
-            {data.unconfirmedCasts.map(c => (
-              <div key={c.cast_id} className="text-sm font-bold text-red-600 py-1">{c.stage_name}</div>
-            ))}
+          <div className="space-y-1.5">
+            {data.unconfirmedCasts.map(c => {
+              const isMailSent = data.mailSentCastIds?.includes(c.cast_id)
+              return (
+                <div key={c.cast_id} className="flex items-center justify-between py-1">
+                  <span className="text-sm font-bold text-red-600">{c.stage_name}</span>
+                  {isMailSent ? (
+                    <span className="text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                      📧 16:00 メール済み
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-gray-400">未連絡</span>
+                  )}
+                </div>
+              )
+            })}
           </div>
-          <p className="text-[10px] text-red-400 mt-2">本日の確認フォームを未送信のキャストです</p>
+          <p className="text-[10px] text-red-400 mt-3">本日の確認フォームを未送信のキャストです</p>
         </div>
       )}
 

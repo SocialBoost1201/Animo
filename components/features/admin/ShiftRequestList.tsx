@@ -76,7 +76,7 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
               <div key={sub.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
                 <div className="p-5 border-b border-gray-100">
                   <div className="flex justify-between items-start mb-2">
-                    <Link href={`/admin/casts`} className="font-serif text-lg font-bold text-[#171717] hover:text-gold transition-colors">
+                    <Link href={`/admin/human-resources`} className="font-serif text-lg font-bold text-[#171717] hover:text-gold transition-colors">
                       {sub.casts?.stage_name}
                     </Link>
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${

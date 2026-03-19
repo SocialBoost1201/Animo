@@ -58,9 +58,13 @@ export async function createCast(formData: FormData) {
   const display_order = parseInt(formData.get('display_order') as string || '0')
   const quiz_tags = formData.getAll('quiz_tags') as string[]
   const image_file = formData.get('image_file') as File | null
+  const sns_x = formData.get('sns_x') as string || null
+  const sns_instagram = formData.get('sns_instagram') as string || null
+  const sns_tiktok = formData.get('sns_tiktok') as string || null
 
   const { data, error } = await supabase.from('casts').insert({
-    name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags
+    name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
+    sns_x, sns_instagram, sns_tiktok
   }).select('id, slug').single()
 
   if (error) return { error: error.message }
@@ -93,7 +97,7 @@ export async function createCast(formData: FormData) {
     }
   }
 
-  revalidatePath('/admin/casts')
+  revalidatePath('/admin/human-resources')
   revalidateAll(data?.slug)
 
   // cast_private_info に本名・生年月日を保存（別テーブル・RLS: 管理者のみ）
@@ -130,6 +134,9 @@ export async function updateCast(id: string, formData: FormData) {
 
   const updateData: Record<string, unknown> = {
     stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
+    sns_x: formData.get('sns_x') as string || null,
+    sns_instagram: formData.get('sns_instagram') as string || null,
+    sns_tiktok: formData.get('sns_tiktok') as string || null,
     updated_at: new Date().toISOString()
   }
   if (slug) {
@@ -167,7 +174,7 @@ export async function updateCast(id: string, formData: FormData) {
     }
   }
 
-  revalidatePath('/admin/casts')
+  revalidatePath('/admin/human-resources')
   revalidateAll(slug)
 
   // cast_private_info を更新（upsertで存在しなければ作成）
@@ -189,7 +196,7 @@ export async function deleteCast(id: string) {
   const { data: cast } = await supabase.from('casts').select('slug').eq('id', id).single()
   const { error } = await supabase.from('casts').delete().eq('id', id)
   if (error) return { error: error.message }
-  revalidatePath('/admin/casts')
+  revalidatePath('/admin/human-resources')
   revalidateAll(cast?.slug)
   return { success: true }
 }

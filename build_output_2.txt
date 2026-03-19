@@ -1,0 +1,5 @@
+
+> animo-web@0.1.0 build /Users/takumashinnyo/Workspace/projects/Animo
+> next build
+
+ ELIFECYCLE  Command failed.

@@ -3,8 +3,94 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+export type StaffSlave = {
+  id: string
+  name: string
+  display_name: string
+  role?: string
+  is_active: boolean
+  created_at: string
+}
+
 /**
- * スタッフの権限ロールを更新する
+ * スタッフマスタ（staffsテーブル）の取得
+ */
+export async function getStaffs(includeInactive = false) {
+  const supabase = await createClient()
+  let query = supabase.from('staffs').select('*').order('created_at', { ascending: false })
+  
+  if (!includeInactive) {
+    query = query.eq('is_active', true)
+  }
+  
+  const { data, error } = await query
+  if (error) {
+    console.error('Error fetching staffs:', error)
+    return []
+  }
+  return data as StaffSlave[]
+}
+
+/**
+ * スタッフマスタ登録
+ */
+export async function createStaff(formData: FormData) {
+  const supabase = await createClient()
+  const name = formData.get('name') as string
+  const display_name = formData.get('display_name') as string
+  const role = formData.get('role') as string || null
+  const is_active = formData.get('is_active') === 'true'
+
+  const { data, error } = await supabase.from('staffs').insert({
+    name,
+    display_name,
+    role,
+    is_active,
+  }).select().single()
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/human-resources')
+  return { success: true, data }
+}
+
+/**
+ * スタッフマスタ更新
+ */
+export async function updateStaff(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const name = formData.get('name') as string
+  const display_name = formData.get('display_name') as string
+  const role = formData.get('role') as string || null
+  const is_active = formData.get('is_active') === 'true'
+
+  const { error } = await supabase.from('staffs').update({
+    name,
+    display_name,
+    role,
+    is_active,
+  }).eq('id', id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/human-resources')
+  return { success: true }
+}
+
+/**
+ * スタッフマスタ削除
+ */
+export async function deleteStaff(id: string) {
+  const supabase = await createClient()
+  const { error } = await supabase.from('staffs').delete().eq('id', id)
+  if (error) return { error: error.message }
+  
+  revalidatePath('/admin/human-resources')
+  return { success: true }
+}
+
+/**
+ * スタッフの権限ロールを更新する (profilesテーブル)
  */
 export async function updateStaffRole(id: string, role: string) {
   const supabase = await createClient()
@@ -45,7 +131,7 @@ export async function updateStaffRole(id: string, role: string) {
 }
 
 /**
- * スタッフアカウントを削除する（Supabase AuthではなくProfileのみ削除）
+ * スタッフアカウントを削除する（profilesテーブル）
  */
 export async function removeStaff(id: string) {
   const supabase = await createClient()
@@ -77,3 +163,4 @@ export async function removeStaff(id: string) {
   revalidatePath('/admin/staffs')
   return { success: true }
 }
+

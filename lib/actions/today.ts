@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { StaffSlave } from './staffs'
+import { getAnalyticsSummary } from './analytics'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -59,6 +61,12 @@ export type StaffAttendance = {
   start_time: string
 }
 
+export type AnalyticsSummary = {
+  todayPv: number
+  yesterdayPv: number
+  activeUsers: number
+}
+
 export type TodayDashboardData = {
   date: string
   shifts: TodayShiftCast[]
@@ -70,6 +78,9 @@ export type TodayDashboardData = {
   staffAttendances: StaffAttendance[]
   absentCastIds: string[]
   unconfirmedCasts: { cast_id: string; stage_name: string }[]
+  allStaffs: StaffSlave[]
+  mailSentCastIds: string[]  // 当日に確認メールを送信済みのキャストID一覧
+  analytics: AnalyticsSummary
 }
 
 // ==========================================
@@ -176,9 +187,16 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // スタッフ出勤
   const { data: staffAttendances } = await supabase
     .from('daily_staff_attendances')
-    .select('id, display_name, start_time')
+    .select('id, display_name, start_time, staff_id')
     .eq('staff_date', today)
     .order('start_time')
+
+  // 全スタッフ（マスタ）
+  const { data: allStaffs } = await supabase
+    .from('staffs')
+    .select('*')
+    .eq('is_active', true)
+    .order('display_name')
 
   // 欠勤キャストID一覧
   const absentCastIds = checkins.filter(c => c.is_absent).map(c => c.cast_id)
@@ -188,6 +206,15 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   const unconfirmedCasts = todayShifts
     .filter(s => !checkedCastIds.has(s.cast_id))
     .map(s => ({ cast_id: s.cast_id, stage_name: s.stage_name }))
+
+  // 当日の確認メール送信済みキャストID
+  const { data: mailLogsRaw } = await supabase
+    .from('checkin_mail_logs')
+    .select('cast_id, sent_at')
+    .eq('sent_date', today)
+    .eq('status', 'sent')
+
+  const mailSentCastIds = (mailLogsRaw || []).map(l => l.cast_id)
 
   return {
     date: today,
@@ -200,6 +227,9 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
     staffAttendances: staffAttendances || [],
     absentCastIds,
     unconfirmedCasts,
+    allStaffs: allStaffs || [],
+    mailSentCastIds,
+    analytics: await getAnalyticsSummary(),
   }
 }
 
@@ -217,7 +247,7 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
 
   // 出勤キャスト（時間ごとグループ、欠勤除外）
   const activeCasts = data.shifts.filter(s => !data.absentCastIds.includes(s.cast_id))
-  if (activeCasts.length > 0) {
+  if (activeCasts.length > 0 || data.dispatches.length > 0) {
     const groups: Record<string, string[]> = {}
     for (const cast of activeCasts) {
       const time = cast.start_time.substring(0, 5)
@@ -230,8 +260,10 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
       if (!groups[time]) groups[time] = []
       groups[time].push(`${d.name}（派遣）`)
     }
+    
+    lines.push('')
+    lines.push('出勤キャスト')
     for (const time of Object.keys(groups).sort()) {
-      lines.push('')
       lines.push(`${time}〜`)
       for (const name of groups[time]) {
         lines.push(name)
@@ -379,6 +411,7 @@ export async function addStaffAttendance(formData: FormData) {
     staff_date: formData.get('staff_date') as string,
     display_name: formData.get('display_name') as string,
     start_time: formData.get('start_time') as string,
+    staff_id: (formData.get('staff_id') as string) || null,
   })
   if (error) return { error: error.message }
   revalidatePath('/admin/today')

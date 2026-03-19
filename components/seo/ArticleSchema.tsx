@@ -21,7 +21,7 @@ export function ArticleSchema({
   authorUrl = 'https://club-animo.com/system',
   authorJobTitle = 'CLUB Animo 店舗責任者',
   publisherName = 'CLUB Animo',
-  publisherLogo = 'https://club-animo.com/images/ogp.jpg',
+  publisherLogo = 'https://club-animo.com/images/ogp.webp',
 }: ArticleSchemaProps) {
   const schemaData = {
     '@context': 'https://schema.org',

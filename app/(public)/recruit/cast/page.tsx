@@ -185,7 +185,7 @@ export default function CastRecruitPage() {
       {/* ① Hero */}
       <section className="relative h-[60vh] md:h-[80vh] w-full flex items-center justify-center overflow-hidden">
         <Image
-          src="/images/cast-recruit-hero.png"
+          src="/images/cast-recruit-hero.webp"
           alt="Cast Recruit Hero"
           fill
           priority
@@ -544,7 +544,7 @@ export default function CastRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
-                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
+                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-loose mb-6">
                   送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
                 </p>
                 <Button type="submit" disabled={isSubmitting} size="lg"

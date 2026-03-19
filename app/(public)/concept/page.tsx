@@ -17,7 +17,7 @@ export default function ConceptPage() {
       {/* Hero */}
       <section className="relative h-[70vh] overflow-hidden">
         <PlaceholderImage
-          src="/images/chandelier.jpg"
+          src="/images/chandelier.webp"
           ratio="16:9"
           alt="Club Animo シャンデリア"
           className="absolute inset-0 w-full h-full object-cover"
@@ -105,7 +105,7 @@ export default function ConceptPage() {
             <FadeIn>
               <div className="overflow-hidden h-[300px] md:h-[400px]">
                 <PlaceholderImage
-                  src="/images/chandelier.jpg"
+                  src="/images/chandelier.webp"
                   ratio="4:3"
                   alt="メインシャンデリア"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
@@ -118,7 +118,7 @@ export default function ConceptPage() {
             <FadeIn delay={0.2}>
               <div className="overflow-hidden h-[300px] md:h-[400px]">
                 <PlaceholderImage
-                  src="/images/curtain_room.JPG"
+                  src="/images/curtain_room.webp"
                   ratio="4:3"
                   alt="カーテンルーム"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"

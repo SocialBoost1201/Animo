@@ -55,8 +55,8 @@ export async function uploadCastImages(castId: string, formData: FormData): Prom
     });
   }
 
-  revalidatePath(`/admin/casts/${castId}`);
-  revalidatePath('/admin/casts');
+  revalidatePath(`/admin/human-resources/${castId}`);
+  revalidatePath('/admin/human-resources');
   revalidatePath('/cast');
 
   if (errors.length > 0) {
@@ -69,7 +69,7 @@ export async function deleteCastImage(imageId: string, castId: string): Promise<
   const supabase = await createClient();
   const { error } = await supabase.from('cast_images').delete().eq('id', imageId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/casts/${castId}`);
+  revalidatePath(`/admin/human-resources/${castId}`);
   revalidatePath('/cast');
   return { success: true };
 }
@@ -81,7 +81,7 @@ export async function setPrimaryImage(imageId: string, castId: string): Promise<
   // 選択画像をプライマリに
   const { error } = await supabase.from('cast_images').update({ is_primary: true }).eq('id', imageId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/casts/${castId}`);
+  revalidatePath(`/admin/human-resources/${castId}`);
   revalidatePath('/cast');
   return { success: true };
 }

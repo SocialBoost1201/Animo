@@ -23,7 +23,7 @@ export async function DashboardKPIs() {
       value: castsCount ?? 0,
       unit: '名',
       icon: Users,
-      href: '/admin/casts',
+      href: '/admin/human-resources',
       color: 'from-slate-800 to-slate-700',
     },
 

@@ -36,6 +36,9 @@ type Cast = {
   is_active?: boolean;
   quiz_tags?: string[];
   cast_images?: { is_primary: boolean; image_url: string }[];
+  sns_x?: string;
+  sns_instagram?: string;
+  sns_tiktok?: string;
   // 非公開個人情報（管理者のみ参照可能）
   cast_private_info?: { real_name: string; date_of_birth: string } | null;
 }
@@ -91,7 +94,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
         ? await updateCast(initialData.id, formData)
         : await createCast(formData)
       if (result.error) showToast(result.error, 'error')
-      else router.push('/admin/casts')
+      else router.push('/admin/human-resources')
     } catch (err: unknown) {
       const error = err as Error;
       showToast(error.message, 'error')
@@ -170,7 +173,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link href="/admin/casts" className="inline-flex items-center text-sm text-gray-500 hover:text-[#171717] transition-colors">
+        <Link href="/admin/human-resources" className="inline-flex items-center text-sm text-gray-500 hover:text-[#171717] transition-colors">
           <ArrowLeft size={16} className="mr-1" /> 一覧へ戻る
         </Link>
       </div>
@@ -270,6 +273,30 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   required
                   className={inputClass}
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* SNS連携（任意） */}
+          <div className="bg-gray-50 border border-gray-100 rounded-sm p-4 space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">SNS連携 (Optional)</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="sns_x" className={labelClass}>X (Twitter) ID</label>
+                <input id="sns_x" name="sns_x" type="text" defaultValue={initialData?.sns_x}
+                  className={inputClass} placeholder="@username" />
+              </div>
+              <div>
+                <label htmlFor="sns_instagram" className={labelClass}>Instagram ID</label>
+                <input id="sns_instagram" name="sns_instagram" type="text" defaultValue={initialData?.sns_instagram}
+                  className={inputClass} placeholder="username" />
+              </div>
+              <div>
+                <label htmlFor="sns_tiktok" className={labelClass}>TikTok ID</label>
+                <input id="sns_tiktok" name="sns_tiktok" type="text" defaultValue={initialData?.sns_tiktok}
+                  className={inputClass} placeholder="username" />
               </div>
             </div>
           </div>

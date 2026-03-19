@@ -8,7 +8,7 @@ export function LocalBusinessSchema() {
     "alternateName": "クラブアニモ",
     "url": "https://club-animo.com/",
     "telephone": "045-263-6961",
-    "image": "https://club-animo.com/images/ogp.jpg",
+    "image": "https://club-animo.com/images/ogp.webp",
     "description": "関内の大人の社交場。煌びやかなシャンデリアの下で特別な時間をお過ごしください。",
     "address": {
       "@type": "PostalAddress",

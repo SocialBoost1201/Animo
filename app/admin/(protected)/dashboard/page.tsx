@@ -26,7 +26,7 @@ export default async function DashboardPage() {
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <Link
-            href="/admin/casts/new"
+            href="/admin/human-resources/new"
             className="flex-1 md:flex-none justify-center flex items-center gap-2 text-xs bg-[#171717] text-white px-4 py-3 md:py-2.5 hover:bg-gold transition-colors rounded-sm"
           >
             <Plus size={14} /> キャスト追加

@@ -16,7 +16,7 @@ export async function updateCastOrder(orders: { id: string; display_order: numbe
     }
   }
 
-  revalidatePath('/admin/casts');
+  revalidatePath('/admin/human-resources');
   revalidatePath('/cast');
   revalidatePath('/');
   return { success: true };

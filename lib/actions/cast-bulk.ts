@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 function revalidateAll() {
-  revalidatePath('/admin/casts');
+  revalidatePath('/admin/human-resources');
   revalidatePath('/cast');
   revalidatePath('/');
 }

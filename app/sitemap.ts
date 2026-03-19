@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 
-const BASE_URL = 'https://club-animo.com';
+const BASE_URL = 'https://club-animo.jp';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [casts, news, posts] = await Promise.all([

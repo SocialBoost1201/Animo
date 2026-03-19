@@ -9,9 +9,16 @@ import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { ReviewSchema } from "@/components/seo/ReviewSchema";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
-import { LuxuryBackground } from "@/components/ui/LuxuryBackground";
-import { LoadingScreen } from "@/components/motion/LoadingScreen";
+import dynamic from 'next/dynamic';
 import { ToastContainer } from "@/components/ui/Toast";
+
+const LuxuryBackground = dynamic(
+  () => import('@/components/ui/LuxuryBackground').then(m => m.LuxuryBackground)
+);
+
+const LoadingScreen = dynamic(
+  () => import('@/components/motion/LoadingScreen').then(m => m.LoadingScreen)
+);
 
 const shippori = Shippori_Mincho({
   variable: "--font-shippori",
@@ -28,7 +35,7 @@ const zenKaku = Zen_Kaku_Gothic_New({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://club-animo.com'),
+  metadataBase: new URL('https://club-animo.jp'),
   title: {
     default: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
     template: '%s | CLUB Animo 関内キャバクラ',
@@ -51,8 +58,8 @@ export const metadata: Metadata = {
     title: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
     description:
       '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。',
-    images: ['/images/ogp.jpg'],
-    url: 'https://club-animo.com',
+    images: ['/images/ogp.webp'],
+    url: 'https://club-animo.jp',
     siteName: 'CLUB Animo',
     locale: 'ja_JP',
     type: 'website',
@@ -61,7 +68,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '関内キャバクラ CLUB Animo｜馬車道・横浜エリアの高級ラウンジ',
     description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。',
-    images: ['/images/ogp.jpg'],
+    images: ['/images/ogp.webp'],
   },
   robots: {
     index: true,
