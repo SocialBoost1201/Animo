@@ -9,6 +9,7 @@ import { getCastPVStats } from '@/lib/actions/posts-analytics';
 import { getActiveShiftRequests, getMyShiftRequestResponses } from '@/lib/actions/cast-shift-requests';
 import { getCastScoreAndLogs } from '@/lib/actions/scores';
 import { createClient } from '@/lib/supabase/server';
+import { getCastTodayCheckin, getCastTodayReservations } from '@/lib/actions/today';
 import { PenLine, FileText, User, LogOut, CalendarDays, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import { CastScheduleList } from '@/components/features/cast/CastScheduleList';
@@ -16,6 +17,8 @@ import { CastHelpRequestList } from '@/components/features/cast/CastHelpRequestL
 import { CastScoreWidget } from '@/components/features/cast/CastScoreWidget';
 import { CastNoticeWidget } from '@/components/features/cast/CastNoticeWidget';
 import { getCastNotices } from '@/lib/actions/cast-notices';
+import { CheckinForm } from '@/components/features/today/CheckinForm';
+import { ReservationForm } from '@/components/features/today/ReservationForm';
 
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
@@ -73,6 +76,21 @@ export default async function CastDashboardPage() {
   // 全体お知らせ一覧の取得
   const notices = await getCastNotices(cast.id);
 
+  // 本日の確認・来店予定
+  const [todayCheckin, todayReservations] = await Promise.all([
+    getCastTodayCheckin(),
+    getCastTodayReservations(),
+  ]);
+
+  // reservationsを型に合わせて変換
+  const reservationsForForm = (todayReservations || []).map((r: any) => ({
+    id: r.id,
+    visit_time: r.visit_time,
+    guest_name: r.guest_name,
+    reservation_type: r.reservation_type,
+    note: r.note,
+  }));
+
   const menuItems = [
     { href: '/cast/shift', icon: CalendarDays, label: 'シフト提出', desc: '来週のシフトを提出', accent: true },
     { href: '/cast/post', icon: PenLine, label: '新規投稿', desc: '日記を投稿する', accent: false },
@@ -124,6 +142,13 @@ export default async function CastDashboardPage() {
 
       {/* 重要：未読お知らせウィジェット */}
       <CastNoticeWidget notices={notices} castId={cast.id} />
+
+      {/* === 本日の確認 & 来店予定 === */}
+      <div className="space-y-4">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-serif">本日の入力</p>
+        <CheckinForm existing={todayCheckin} />
+        <ReservationForm reservations={reservationsForForm} />
+      </div>
 
       {/* スコアウィジェット */}
       <CastScoreWidget score={score} logs={logs} targetMonth={currentMonth} />

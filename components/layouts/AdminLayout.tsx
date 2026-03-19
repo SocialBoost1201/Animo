@@ -18,10 +18,12 @@ import {
   ChevronRight,
   X,
   Bell,
+  ClipboardList,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 
 const NAV_ITEMS = [
+  { href: '/admin/today',     icon: ClipboardList,   label: '🗓 本日の営業状況', section: 'main' },
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard',   section: 'main' },
   { href: '/admin/casts',     icon: Users,           label: 'キャスト管理', section: 'main' },
   { href: '/admin/staffs',    icon: Users,           label: 'スタッフ管理', section: 'main', roles: ['owner', 'manager'] },
@@ -45,6 +47,7 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 const BOTTOM_TAB_ITEMS = [
+  { href: '/admin/today',        icon: ClipboardList,   label: '今日' },
   { href: '/admin/dashboard',    icon: LayoutDashboard, label: 'Home' },
   { href: '/admin/casts',        icon: Users,           label: 'キャスト' },
   { href: '/admin/monthly-shifts',       icon: Calendar,        label: 'シフト' },
