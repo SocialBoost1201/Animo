@@ -98,11 +98,6 @@ export default async function CastPage({
         <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
           {sortedCasts.map((cast, index) => {
             const displayName = cast.display_name || cast.stage_name || cast.name || 'CAST';
-            const displayKana = cast.name_kana
-              ? cast.name_kana
-                  .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
-                  .toUpperCase()
-              : displayName.toUpperCase();
 
             return (
               <FadeIn key={cast.id} delay={index * 0.04} className="group relative">
@@ -135,10 +130,6 @@ export default async function CastPage({
                     </div>
                     {/* テキスト部分 */}
                     <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
-                      {/* 英語整形名 */}
-                      <p className="text-xs md:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
-                        {displayKana}
-                      </p>
                       {/* 源氏名 */}
                       <h3 className="font-serif text-xs md:text-sm lg:text-base text-[#171717] leading-snug">
                         {displayName}
