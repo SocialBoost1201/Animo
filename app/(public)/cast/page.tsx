@@ -20,17 +20,17 @@ export default async function CastPage({
 }: {
   searchParams: Promise<{ purpose?: string; atmosphere?: string }>;
 }) {
-  const casts = await getPublicCasts();
-
-  const purpose = (await searchParams)?.purpose;
-  const atmosphere = (await searchParams)?.atmosphere;
+  const casts = await getPublicCasts().catch(() => []);
+  const resolvedSearchParams = await searchParams;
+  const purpose = resolvedSearchParams?.purpose;
+  const atmosphere = resolvedSearchParams?.atmosphere;
   const hasDiagnostic = !!(purpose && atmosphere);
 
   // ─── quiz_tags マッチングスコア計算 ─────────────────────────
   // 目的タグ=2点 / 雰囲気タグ=2点 / 本日出勤=1点ボーナス
   const matchScore = (cast: (typeof casts)[number]) => {
     if (!hasDiagnostic) return cast.is_today ? 1 : 0;
-    const tags: string[] = cast.quiz_tags ?? [];
+    const tags = cast.quiz_tags ?? [];
     let score = 0;
     if (purpose && tags.includes(`purpose_${purpose}`)) score += 2;
     if (atmosphere && tags.includes(`atm_${atmosphere}`)) score += 2;
@@ -44,19 +44,11 @@ export default async function CastPage({
   const isRecommended = (cast: (typeof casts)[number]) =>
     hasDiagnostic && matchScore(cast) >= 2;
 
-  // 日記UP表示判定（72時間以内に投稿があるか）
-  const DIARY_HOURS = 72;
-  const hasDiaryUpdate = (latest_post_at: string | null): boolean => {
-    if (!latest_post_at) return false;
-    const diff = Date.now() - new Date(latest_post_at).getTime();
-    return diff < DIARY_HOURS * 60 * 60 * 1000;
-  };
-
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'CAST', item: 'https://club-animo.com/cast' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'CAST', item: 'https://club-animo.jp/cast' }
       ]} />
       <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent pointer-events-none h-[50vh]" />
       <div className="container mx-auto relative z-10">
@@ -85,10 +77,10 @@ export default async function CastPage({
                 特別なひとときを、彼女たちとともにお過ごしください。
               </p>
               <div className="flex flex-wrap justify-center gap-2">
-                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
+                <span className="text-xs uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
                   {purpose === 'business' ? '接待・おもてなし' : purpose === 'party' ? 'ワイワイ盛り上がる' : 'ゆっくり飲みたい'}
                 </span>
-                <span className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
+                <span className="text-xs uppercase tracking-widest px-3 py-1 bg-white border border-gold text-gold">
                   {atmosphere === 'calm' ? '清楚・落ち着き' : atmosphere === 'cheerful' ? '明るい・ノリが良い' : '聞き上手・癒やし'}
                 </span>
               </div>
@@ -98,68 +90,72 @@ export default async function CastPage({
 
         {/* キャストグリッド */}
         <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
-          {sortedCasts.map((cast, index) => (
-            <FadeIn key={cast.id} delay={index * 0.04} className="group relative">
-              <Link href={`/cast/${cast.slug || cast.id}`} className="block h-full">
+          {sortedCasts.map((cast, index) => {
+            const displayName = cast.display_name || cast.stage_name || cast.name || 'CAST';
+            const displayKana = cast.name_kana
+              ? cast.name_kana
+                  .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
+                  .toUpperCase()
+              : displayName.toUpperCase();
 
-                <div className="overflow-hidden bg-white hover:shadow-luxury transition-all duration-700 h-full flex flex-col">
-                  <div className="relative">
-                    <PlaceholderImage 
-                      src={cast.image_url}
-                      alt={cast.stage_name} 
-                      ratio="3:4" 
-                      placeholderText={cast.stage_name}
-                      className="group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                    />
-                    {/* お気に入りボタン */}
-                    <div className="absolute top-1.5 right-1.5 md:top-2 md:right-2 z-20">
-                      <CastFavoriteButton castId={cast.id} />
+            return (
+              <FadeIn key={cast.id} delay={index * 0.04} className="group relative">
+                <Link href={`/cast/${cast.slug || cast.id}`} className="block h-full">
+
+                  <div className="overflow-hidden bg-white hover:shadow-luxury transition-all duration-700 h-full flex flex-col">
+                    <div className="relative">
+                      <PlaceholderImage 
+                        src={cast.image_url}
+                        alt={displayName}
+                        ratio="3:4" 
+                        placeholderText={displayName}
+                        className="group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                      />
+                      {/* お気に入りボタン */}
+                      <div className="absolute top-1.5 right-1.5 md:top-2 md:right-2 z-20">
+                        <CastFavoriteButton castId={cast.id} />
+                      </div>
+                      {/* 本日出勤バッジ */}
+                      {cast.is_today && !isRecommended(cast) && (
+                        <div className="absolute top-0 left-0 right-0 bg-[#171717]/85 text-white text-xs font-sans tracking-widest px-2 py-1 text-center uppercase">
+                          本日出勤
+                        </div>
+                      )}
+                      {isRecommended(cast) && (
+                        <div className="absolute top-0 left-0 right-0 bg-gold/90 text-white text-xs font-sans tracking-widest px-2 py-1 text-center uppercase">
+                          おすすめ
+                        </div>
+                      )}
                     </div>
-                    {/* 本日出勤バッジ */}
-                    {cast.is_today && !isRecommended(cast) && (
-                      <div className="absolute top-0 left-0 right-0 bg-[#171717]/85 text-white text-[8px] font-sans tracking-widest px-2 py-1 text-center uppercase">
-                        本日出勤
+                    {/* テキスト部分 */}
+                    <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
+                      {/* 英語整形名 */}
+                      <p className="text-xs md:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
+                        {displayKana}
+                      </p>
+                      {/* 源氏名 */}
+                      <h3 className="font-serif text-xs md:text-sm lg:text-base text-[#171717] leading-snug">
+                        {displayName}
+                      </h3>
+                      {/* 年齢・身長 */}
+                      <div className="flex justify-center items-center mt-1 gap-1 text-xs md:text-xs text-gray-400">
+                        {cast.age && <span>{cast.age}歳</span>}
+                        {cast.age && cast.height && <span className="text-gray-200">•</span>}
+                        {cast.height && <span>T{cast.height}</span>}
                       </div>
-                    )}
-                    {isRecommended(cast) && (
-                      <div className="absolute top-0 left-0 right-0 bg-gold/90 text-white text-[8px] font-sans tracking-widest px-2 py-1 text-center uppercase">
-                        おすすめ
-                      </div>
-                    )}
-                  </div>
-                  {/* テキスト部分 */}
-                  <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
-                    {/* 英語整形名 */}
-                    <p className="text-[7px] md:text-[9px] font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
-                      {cast.name_kana
-                        ? cast.name_kana
-                            .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
-                            .toUpperCase()
-                        : cast.stage_name.toUpperCase()
-                      }
-                    </p>
-                    {/* 源氏名 */}
-                    <h3 className="font-serif text-[11px] md:text-sm lg:text-base text-[#171717] leading-snug">
-                      {cast.stage_name}
-                    </h3>
-                    {/* 年齢・身長 */}
-                    <div className="flex justify-center items-center mt-1 gap-1 text-[8px] md:text-[9px] text-gray-400">
-                      {cast.age && <span>{cast.age}歳</span>}
-                      {cast.age && cast.height && <span className="text-gray-200">•</span>}
-                      {cast.height && <span>T{cast.height}</span>}
+                      {/* 日記UPバッジ */}
+                      {cast.has_recent_post && (
+                        <div className="mt-1.5 inline-flex items-center gap-1 bg-[#171717] text-white text-xs font-bold tracking-widest px-2 py-0.5">
+                          <span>📓</span>
+                          <span>日記UP</span>
+                        </div>
+                      )}
                     </div>
-                    {/* 日記UPバッジ */}
-                    {hasDiaryUpdate(cast.latest_post_at ?? null) && (
-                      <div className="mt-1.5 inline-flex items-center gap-1 bg-[#171717] text-white text-[8px] font-bold tracking-widest px-2 py-0.5">
-                        <span>📓</span>
-                        <span>日記UP</span>
-                      </div>
-                    )}
                   </div>
-                </div>
-              </Link>
-            </FadeIn>
-          ))}
+                </Link>
+              </FadeIn>
+            );
+          })}
           
           {sortedCasts.length === 0 && (
             <div className="col-span-full py-20 text-center text-gray-400">

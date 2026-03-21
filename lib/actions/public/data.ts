@@ -10,6 +10,36 @@ function jstDateAfterDays(days: number): string {
   return new Date(Date.now() + 9 * 60 * 60 * 1000 + days * 86400000).toISOString().split('T')[0]
 }
 
+type CastImageRecord = {
+  image_url?: string | null
+  is_primary?: boolean | null
+  sort_order?: number | null
+}
+
+function resolveCastImageUrl(
+  imageUrl: string | null | undefined,
+  castImages: CastImageRecord[] | null | undefined
+) {
+  if (typeof imageUrl === 'string' && imageUrl.trim() !== '') {
+    return imageUrl
+  }
+
+  if (!Array.isArray(castImages) || castImages.length === 0) {
+    return null
+  }
+
+  const primaryImage = castImages.find((image) => image.is_primary && image.image_url)
+  if (primaryImage?.image_url) {
+    return primaryImage.image_url
+  }
+
+  const firstImage = [...castImages]
+    .sort((a, b) => (a.sort_order ?? Number.MAX_SAFE_INTEGER) - (b.sort_order ?? Number.MAX_SAFE_INTEGER))
+    .find((image) => image.image_url)
+
+  return firstImage?.image_url ?? null
+}
+
 // ─── 公開キャスト一覧（is_active=true, display_order順）────
 export async function getPublicCasts() {
   const supabase = createServiceClient()
@@ -26,14 +56,24 @@ export async function getPublicCasts() {
 
   if (error) { console.error('getPublicCasts:', error); return [] }
 
-  // 各キャストの最終ブログ投稿日時を計算して付加
+  // 一覧表示に必要な項目を欠損時フォールバック込みで正規化する
+  const diaryThreshold = Date.now() - 72 * 60 * 60 * 1000
+
   return data.map(cast => {
     const posts = (cast.cast_posts ?? []) as { created_at: string }[]
     const latest = posts
       .map(p => new Date(p.created_at).getTime())
+      .filter((timestamp) => !Number.isNaN(timestamp))
       .sort((a, b) => b - a)[0]
+    const displayName = cast.stage_name || cast.name || ''
+    const imageUrl = resolveCastImageUrl(cast.image_url, cast.cast_images as CastImageRecord[] | null | undefined)
+
     return {
       ...cast,
+      display_name: displayName,
+      image_url: imageUrl,
+      quiz_tags: Array.isArray(cast.quiz_tags) ? cast.quiz_tags : [],
+      has_recent_post: typeof latest === 'number' ? latest >= diaryThreshold : false,
       latest_post_at: latest ? new Date(latest).toISOString() : null,
     }
   })
