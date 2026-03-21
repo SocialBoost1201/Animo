@@ -3,6 +3,14 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get('host')
+  if (host === 'www.club-animo.jp') {
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.host = 'club-animo.jp'
+    redirectUrl.protocol = 'https'
+    return NextResponse.redirect(redirectUrl, 308)
+  }
+
   // === Rate Limit (Simple in-memory) ===
   // フォーム送信等、POSTリクエスト（Server Action含む）に対する簡易的制限
   if (request.method === 'POST') {
