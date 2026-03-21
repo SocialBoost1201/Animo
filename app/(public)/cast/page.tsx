@@ -12,6 +12,12 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: '在籍キャスト一覧｜関内キャバクラ CLUB Animo',
   description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」の在籍キャスト一覧。極上の時間をお届けするこだわりのキャストたちをご確認ください。',
+  alternates: {
+    canonical: '/cast',
+  },
+  openGraph: {
+    url: 'https://club-animo.jp/cast',
+  },
 };
 
 // サーバーコンポーネントとしてキャスト一覧を取得
