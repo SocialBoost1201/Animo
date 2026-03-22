@@ -72,7 +72,7 @@ export default async function InternalNoticesPage() {
                   {/* Read Status */}
                   <div className="flex items-center gap-3 text-right">
                     <div>
-                      <p className="text-[10px] text-gray-400 font-bold mb-0.5">既読率</p>
+                      <p className="text-xs text-gray-400 font-bold mb-0.5">既読率</p>
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-serif font-bold text-[#171717]">{notice.reads_count}</span>
                         <span className="text-xs text-gray-500 font-medium">/ {notice.total_casts}</span>

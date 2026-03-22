@@ -121,7 +121,7 @@ export function CastImageManager({ castId, images: initialImages }: { castId: st
 
               {/* Primary Badge */}
               {img.is_primary && (
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-gold text-black text-[9px] font-bold px-2 py-0.5 rounded">
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-gold text-black text-xs font-bold px-2 py-0.5 rounded">
                   <Star size={9} fill="black" />
                   メイン
                 </div>

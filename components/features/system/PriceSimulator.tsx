@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { CalendarHeart, Users } from 'lucide-react';
+import { Phone, Users } from 'lucide-react';
 
 type CustomerType = 'member' | 'visitor';
 type Duration = 60 | 90 | 120 | 150 | 180;
@@ -91,7 +91,7 @@ export const PriceSimulator = () => {
         <div className="space-y-12">
           {/* 来店タイプ */}
           <FadeIn delay={0.2} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Customer Type <span className="text-[10px] text-gray-400 ml-2">来店タイプ</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Customer Type <span className="text-xs text-gray-400 ml-2">来店タイプ</span></span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ToggleButton active={customerType === 'member'} onClick={() => setCustomerType('member')}>Member</ToggleButton>
               <ToggleButton active={customerType === 'visitor'} onClick={() => setCustomerType('visitor')}>Visitor</ToggleButton>
@@ -100,7 +100,7 @@ export const PriceSimulator = () => {
 
           {/* 滞在時間 */}
           <FadeIn delay={0.3} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Expected Duration <span className="text-[10px] text-gray-400 ml-2">滞在時間</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Expected Duration <span className="text-xs text-gray-400 ml-2">滞在時間</span></span>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[60, 90, 120, 150, 180].map((t) => (
                 <ToggleButton key={t} active={duration === t} onClick={() => setDuration(t as Duration)}>
@@ -112,7 +112,7 @@ export const PriceSimulator = () => {
 
           {/* 指名 */}
           <FadeIn delay={0.4} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Nomination <span className="text-[10px] text-gray-400 ml-2">指名</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Nomination <span className="text-xs text-gray-400 ml-2">指名</span></span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <ToggleButton active={nomination === 'none'} onClick={() => setNomination('none')}>なし</ToggleButton>
               <ToggleButton active={nomination === 'inside'} onClick={() => setNomination('inside')}>場内指名</ToggleButton>
@@ -123,7 +123,7 @@ export const PriceSimulator = () => {
 
           {/* 同伴 */}
           <FadeIn delay={0.5} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Accompaniment <span className="text-[10px] text-gray-400 ml-2">同伴</span></span>
+            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Accompaniment <span className="text-xs text-gray-400 ml-2">同伴</span></span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ToggleButton active={!accompaniment} onClick={() => setAccompaniment(false)}>なし</ToggleButton>
               <ToggleButton active={accompaniment} onClick={() => setAccompaniment(true)}>あり</ToggleButton>
@@ -133,7 +133,7 @@ export const PriceSimulator = () => {
 
         {/* Result Area */}
         <FadeIn delay={0.6} className="mt-20 pt-16 border-t border-gold/20 text-center">
-          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total <span className="text-[10px] text-gray-400 ml-2">お見積り目安</span></span>
+          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total <span className="text-xs text-gray-400 ml-2">お見積り目安</span></span>
           <div className="flex items-end justify-center gap-2 mb-4">
             <span className="text-3xl font-sans text-foreground pb-2">¥</span>
             <AnimatePresence mode="popLayout">
@@ -149,7 +149,7 @@ export const PriceSimulator = () => {
               </motion.span>
             </AnimatePresence>
           </div>
-          <p className="text-[10px] md:text-xs text-gray-400 font-serif option-tracking leading-[2] mb-12">
+          <p className="text-xs md:text-xs text-gray-400 font-serif option-tracking leading-[2] mb-12">
             ※ 税・サービス料（30%）込みの金額です。<br />
             ※ キャストドリンク代やボトルの別注文料金は含まれておりません。<br />
             ※ あくまで目安料金となりますので、あらかじめご了承ください。
@@ -157,10 +157,10 @@ export const PriceSimulator = () => {
 
           <div className="flex flex-col md:flex-row justify-center gap-6">
             <Button asChild size="lg" className="btn-sheen px-12 h-14 w-full md:w-auto">
-              <Link href="/reserve">
-                <CalendarHeart className="mr-2 w-5 h-5" />
-                WEB予約はこちら
-              </Link>
+              <a href="tel:045-263-6961">
+                <Phone className="mr-2 w-5 h-5" />
+                お電話はこちら
+              </a>
             </Button>
             <Button asChild variant="outline" size="lg" className="px-12 h-14 w-full md:w-auto bg-transparent border-white/30 hover:bg-white/10 hover:text-gold">
               <Link href="/shift">

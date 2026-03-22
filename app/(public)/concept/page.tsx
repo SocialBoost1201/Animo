@@ -85,7 +85,7 @@ export default function ConceptPage() {
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.15}>
                 <div className="bg-white p-10 border border-gold/10 text-center h-full">
-                  <p className="text-[10px] text-gold font-serif luxury-tracking uppercase tracking-widest mb-3">
+                  <p className="text-xs text-gold font-serif luxury-tracking uppercase tracking-widest mb-3">
                     {String(i + 1).padStart(2, '0')}
                   </p>
                   <h3 className="font-serif luxury-tracking text-xl text-foreground mb-2">{item.en}</h3>

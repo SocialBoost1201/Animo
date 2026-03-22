@@ -83,7 +83,7 @@ export function StaffTable({
                       <div className="font-medium text-[#171717]">
                         {profile.display_name || '名前未設定'}
                         {isSelf && (
-                          <span className="ml-2 text-[10px] text-gray-400 font-normal">（自分）</span>
+                          <span className="ml-2 text-xs text-gray-400 font-normal">（自分）</span>
                         )}
                       </div>
                       <div className="text-xs text-gray-400 font-mono mt-0.5">

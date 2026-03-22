@@ -94,12 +94,12 @@ export default async function HumanResourcesPage({
         <Link href="/admin/human-resources?tab=casts" className={tabClass(tab === 'casts')}>
           <Users size={18} />
           キャスト
-          <span className="ml-1 text-[10px] bg-gray-200 text-gray-600 px-1.5 rounded-full">{mappedCasts.length}</span>
+          <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 rounded-full">{mappedCasts.length}</span>
         </Link>
         <Link href="/admin/human-resources?tab=staffs" className={tabClass(tab === 'staffs')}>
           <UserCheck size={18} />
           スタッフ
-          <span className="ml-1 text-[10px] bg-gray-200 text-gray-600 px-1.5 rounded-full">{staffsData.length}</span>
+          <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 rounded-full">{staffsData.length}</span>
         </Link>
       </div>
 

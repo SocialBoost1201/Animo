@@ -43,7 +43,7 @@ export const SystemPriceGrid = () => {
           <ul className="space-y-8">
             {/* 延長料金 */}
             <li className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100/50 pb-6">
-              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Extension <span className="text-[10px] text-gray-400 ml-2">延長料金</span></span>
+              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Extension <span className="text-xs text-gray-400 ml-2">延長料金</span></span>
               <span className="text-xl md:text-2xl font-normal font-sans tracking-wide text-foreground">
                 ¥3,500 <span className="text-xs font-serif text-gray-400">/ 30min</span>
               </span>
@@ -52,7 +52,7 @@ export const SystemPriceGrid = () => {
             {/* 指名料金 */}
             <li className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100/50 pb-6">
               <div className="flex flex-col mb-2 md:mb-0">
-                <span className="text-foreground font-serif luxury-tracking md:text-lg uppercase">Nomination <span className="text-[10px] text-gray-400 ml-2">指名料金</span></span>
+                <span className="text-foreground font-serif luxury-tracking md:text-lg uppercase">Nomination <span className="text-xs text-gray-400 ml-2">指名料金</span></span>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <span className="text-base md:text-lg font-normal font-sans tracking-wide text-foreground flex items-center justify-between w-full md:w-auto md:gap-8">
@@ -66,7 +66,7 @@ export const SystemPriceGrid = () => {
 
             {/* 同伴料金 */}
             <li className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100/50 pb-6">
-              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Accompaniment <span className="text-[10px] text-gray-400 ml-2">同伴料金</span></span>
+              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Accompaniment <span className="text-xs text-gray-400 ml-2">同伴料金</span></span>
               <span className="text-xl md:text-2xl font-normal font-sans tracking-wide text-foreground">
                 ¥5,000
               </span>
@@ -74,7 +74,7 @@ export const SystemPriceGrid = () => {
 
             {/* TAX / SC */}
             <li className="flex flex-col md:flex-row md:items-center justify-between pt-2">
-              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Tax / Service Charge <span className="text-[10px] text-gray-400 ml-2">税・サービス料</span></span>
+              <span className="text-foreground font-serif luxury-tracking md:text-lg mb-2 md:mb-0 uppercase">Tax / Service Charge <span className="text-xs text-gray-400 ml-2">税・サービス料</span></span>
               <span className="text-xl md:text-2xl font-normal font-sans tracking-wide text-foreground">
                 30%
               </span>

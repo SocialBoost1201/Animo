@@ -79,7 +79,7 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
                     <Link href={`/admin/human-resources`} className="font-serif text-lg font-bold text-[#171717] hover:text-gold transition-colors">
                       {sub.casts?.stage_name}
                     </Link>
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${
                       sub.status === 'approved' ? 'bg-green-100 text-green-700' :
                       sub.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-gray-100 text-gray-500'

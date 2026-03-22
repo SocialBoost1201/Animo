@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Magnetic } from '@/components/motion/Magnetic';
 
 const NAV_ITEMS = [
@@ -127,15 +126,8 @@ export const Header = () => {
                 )} />
               </button>
 
-              <AnimatePresence>
-                {isRecruitOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md border border-gold/20 shadow-lg overflow-hidden"
-                  >
+              {isRecruitOpen && (
+                <div className="absolute top-full right-0 mt-3 w-48 bg-white/95 backdrop-blur-md border border-gold/20 shadow-lg overflow-hidden">
                     {RECRUIT_ITEMS.map((item) => (
                       <Link
                         key={item.href}
@@ -148,9 +140,8 @@ export const Header = () => {
                         {item.label}
                       </Link>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
             </div>
 
             <Magnetic strength={0.2} className="ml-4">
@@ -175,15 +166,8 @@ export const Header = () => {
       </header>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '10%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '10%' }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[60] bg-white flex flex-col"
-          >
+      {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-[60] bg-white flex flex-col">
             <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
               <span className="font-serif luxury-tracking-super text-lg text-[#171717]">
                 CLUB Animo
@@ -220,15 +204,8 @@ export const Header = () => {
                     isMobileRecruitOpen && 'rotate-180'
                   )} />
                 </button>
-                <AnimatePresence>
-                  {isMobileRecruitOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
+                {isMobileRecruitOpen && (
+                    <div className="overflow-hidden">
                       <div className="pt-4 pl-4 space-y-4">
                         {RECRUIT_ITEMS.map((item) => (
                           <Link
@@ -243,9 +220,8 @@ export const Header = () => {
                           </Link>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
               </div>
 
                 <Link
@@ -261,9 +237,8 @@ export const Header = () => {
                   Staff Recruit
                 </Link>
             </nav>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </>
   );
 };

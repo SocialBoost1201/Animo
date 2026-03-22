@@ -26,7 +26,7 @@ export default async function CastPostsPage() {
           </Link>
           <h1 className="font-serif text-xl tracking-widest text-[#171717]">My Posts</h1>
         </div>
-        <Link href="/cast/post" className="flex items-center gap-2 px-4 py-2 bg-[#171717] text-white text-[10px] tracking-widest uppercase rounded-xl hover:bg-gold transition-all">
+        <Link href="/cast/post" className="flex items-center gap-2 px-4 py-2 bg-[#171717] text-white text-xs tracking-widest uppercase rounded-xl hover:bg-gold transition-all">
           <PenLine className="w-3.5 h-3.5" /> 投稿する
         </Link>
       </div>
@@ -43,10 +43,10 @@ export default async function CastPostsPage() {
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
                   <p className="text-xs text-gray-600 line-clamp-2 wrap-break-word">{post.content}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${status.color}`}>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${status.color}`}>
                       {status.label}
                     </span>
-                    <span className="text-[9px] text-gray-300 font-mono">
+                    <span className="text-xs text-gray-300 font-mono">
                       {new Date(post.created_at).toLocaleDateString('ja-JP')}
                     </span>
                   </div>

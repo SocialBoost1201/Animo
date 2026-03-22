@@ -123,7 +123,7 @@ export async function GET(request: Request) {
 
     // ── 5. Resend でメール送信 + ログ記録 ──
     const resend = new Resend(process.env.RESEND_API_KEY!)
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://club-animo.com'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://club-animo.jp'
     const dashboardUrl = `${appUrl}/cast/dashboard`
 
     const results = { sent: 0, failed: 0, skipped: 0 }
@@ -198,7 +198,7 @@ function buildEmailHtml(stageName: string, dashboardUrl: string): string {
           <!-- ヘッダー -->
           <tr>
             <td style="background-color:#171717; padding:28px 32px;">
-              <p style="margin:0; font-size:10px; letter-spacing:0.3em; color:#B39257; text-transform:uppercase;">Club Animo</p>
+              <p style="margin:0; font-size: 12px; letter-spacing:0.3em; color:#B39257; text-transform:uppercase;">Club Animo</p>
               <p style="margin:8px 0 0; font-size:20px; color:#ffffff; font-weight:bold; letter-spacing:0.05em;">本日の確認をお願いします</p>
             </td>
           </tr>
@@ -215,7 +215,7 @@ function buildEmailHtml(stageName: string, dashboardUrl: string): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f9f9; border-radius:6px; margin:20px 0;">
                 <tr>
                   <td style="padding:20px;">
-                    <p style="margin:0 0 12px; font-size:11px; font-weight:bold; letter-spacing:0.2em; color:#999; text-transform:uppercase;">確認内容</p>
+                    <p style="margin:0 0 12px; font-size: 12px; font-weight:bold; letter-spacing:0.2em; color:#999; text-transform:uppercase;">確認内容</p>
                     <ul style="margin:0; padding:0 0 0 18px; font-size:14px; color:#444; line-height:2;">
                       <li>出勤予定に変更はありますか？</li>
                       <li>来店予定（お客様のご来店）はありますか？</li>
@@ -229,7 +229,7 @@ function buildEmailHtml(stageName: string, dashboardUrl: string): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8d5a3; border-radius:6px; margin:20px 0;">
                 <tr>
                   <td style="padding:20px;">
-                    <p style="margin:0 0 12px; font-size:11px; font-weight:bold; letter-spacing:0.2em; color:#B39257; text-transform:uppercase;">来店予定がある場合</p>
+                    <p style="margin:0 0 12px; font-size: 12px; font-weight:bold; letter-spacing:0.2em; color:#B39257; text-transform:uppercase;">来店予定がある場合</p>
                     <ul style="margin:0; padding:0 0 0 18px; font-size:14px; color:#444; line-height:2;">
                       <li>来店時間</li>
                       <li>お客様名</li>
@@ -260,7 +260,7 @@ function buildEmailHtml(stageName: string, dashboardUrl: string): string {
           <!-- フッター -->
           <tr>
             <td style="padding:20px 32px; border-top:1px solid #f0f0f0;">
-              <p style="margin:0; font-size:11px; color:#bbb; line-height:1.8; text-align:center;">
+              <p style="margin:0; font-size: 12px; color:#bbb; line-height:1.8; text-align:center;">
                 このメールは Club Animo のシステムから自動送信されています。<br>
                 ログインがまだの場合は
                 <a href="${dashboardUrl.replace('/cast/dashboard', '/cast/login')}" style="color:#B39257;">こちらからログイン</a>

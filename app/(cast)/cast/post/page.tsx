@@ -19,13 +19,13 @@ export default async function CastNewPostPage() {
 
       <div className="text-center mb-8">
         <h1 className="font-serif text-2xl tracking-widest text-[#171717] mb-2">New Post</h1>
-        <p className="text-[10px] text-gray-400 tracking-wider">キャスト日記を投稿する</p>
+        <p className="text-xs text-gray-400 tracking-wider">キャスト日記を投稿する</p>
       </div>
 
       <CastPostUploadForm castId={cast.id} />
 
       <div className="mt-8 text-center">
-        <p className="text-[10px] text-gray-300 leading-relaxed">
+        <p className="text-xs text-gray-300 leading-relaxed">
           ※ 投稿は管理者の確認後に公開されます。<br />
           ※ 画像の位置情報などは自動的に削除されます。
         </p>

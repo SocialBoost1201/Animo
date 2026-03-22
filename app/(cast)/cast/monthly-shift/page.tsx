@@ -46,7 +46,7 @@ export default async function CastMonthlyShiftPage({
         </div>
         <div>
           <h1 className="font-serif text-xl sm:text-2xl tracking-widest text-[#171717]">Monthly Shift</h1>
-          <p className="text-[10px] sm:text-xs text-gray-500 tracking-wider uppercase font-serif">月間シフト提出</p>
+          <p className="text-xs sm:text-xs text-gray-500 tracking-wider uppercase font-serif">月間シフト提出</p>
         </div>
       </div>
 
@@ -63,7 +63,7 @@ export default async function CastMonthlyShiftPage({
           <span className="text-sm sm:text-base font-serif font-bold text-gold tracking-widest">
             {year} <span className="text-sm font-sans mx-1">年</span> {month} <span className="text-sm font-sans ml-1">月</span>
           </span>
-          <span className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">{new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' })}</span>
+          <span className="text-xs text-gray-400 uppercase tracking-[0.2em]">{new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' })}</span>
         </div>
         <Link 
           href={`/cast/monthly-shift?year=${nextYear}&month=${nextMonth}`}

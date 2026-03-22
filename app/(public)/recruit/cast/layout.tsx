@@ -14,8 +14,8 @@ export default function CastRecruitLayout({
   return (
     <>
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'RECRUIT', item: 'https://club-animo.com/recruit/cast' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'RECRUIT', item: 'https://club-animo.jp/recruit/cast' }
       ]} />
       {children}
     </>

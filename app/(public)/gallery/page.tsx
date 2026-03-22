@@ -17,8 +17,8 @@ export default async function GalleryPage() {
   return (
     <div className="bg-[var(--color-gray-light)] min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'GALLERY', item: 'https://club-animo.com/gallery' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'GALLERY', item: 'https://club-animo.jp/gallery' }
       ]} />
       <div className="container mx-auto">
         <FadeIn className="text-center mb-16 mt-8">

@@ -26,8 +26,8 @@ export default function BashamichiLoungePage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '馬車道ラウンジとは', item: 'https://club-animo.com/about/bashamichi-lounge' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '馬車道ラウンジとは', item: 'https://club-animo.jp/about/bashamichi-lounge' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

@@ -117,7 +117,7 @@ export function RealtimeInbox({ initialContacts }: { initialContacts: Contact[] 
                 <div className="px-5 py-4 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
                     {isUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />}
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                       c.type === 'reserve'
                         ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
                         : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300'

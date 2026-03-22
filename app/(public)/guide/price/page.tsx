@@ -27,9 +27,9 @@ export default function PriceGuidePage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'SYSTEM', item: 'https://club-animo.com/system' },
-        { name: '料金ガイド', item: 'https://club-animo.com/guide/price' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'SYSTEM', item: 'https://club-animo.jp/system' },
+        { name: '料金ガイド', item: 'https://club-animo.jp/guide/price' }
       ]} />
       <FAQSchema faqs={PRICE_FAQS} />
 

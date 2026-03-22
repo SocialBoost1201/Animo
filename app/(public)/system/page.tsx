@@ -3,7 +3,6 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { CalendarHeart } from 'lucide-react';
 
 import { SystemPriceGrid } from '@/components/features/system/SystemPriceGrid';
 import { PriceSimulator } from '@/components/features/system/PriceSimulator';
@@ -20,8 +19,8 @@ export default function SystemPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'SYSTEM', item: 'https://club-animo.com/system' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'SYSTEM', item: 'https://club-animo.jp/system' }
       ]} />
       {/* Header Section */}
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

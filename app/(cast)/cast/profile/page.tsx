@@ -26,7 +26,7 @@ export default async function CastProfilePage() {
 
       <div className="text-center mb-8">
         <h1 className="font-serif text-xl tracking-widest text-[#171717] mb-1">Profile</h1>
-        <p className="text-[10px] text-gray-400 tracking-wider">プロフィール情報</p>
+        <p className="text-xs text-gray-400 tracking-wider">プロフィール情報</p>
       </div>
 
       {/* Profile Image */}
@@ -44,7 +44,7 @@ export default async function CastProfilePage() {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50">
         {profileFields.map((field) => (
           <div key={field.label} className="flex items-center justify-between px-5 py-4">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-serif">{field.label}</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif">{field.label}</span>
             <span className="text-sm text-[#171717] font-bold">{field.value}</span>
           </div>
         ))}
@@ -53,12 +53,12 @@ export default async function CastProfilePage() {
       {/* Comment / Message */}
       {cast.comment && (
         <div className="mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-serif block mb-3">Message</span>
+          <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif block mb-3">Message</span>
           <p className="text-sm text-gray-600 font-serif leading-relaxed whitespace-pre-wrap">{cast.comment}</p>
         </div>
       )}
 
-      <p className="mt-8 text-center text-[9px] text-gray-300 leading-relaxed">
+      <p className="mt-8 text-center text-xs text-gray-300 leading-relaxed">
         ※ プロフィールの変更は管理者までお問い合わせください。
       </p>
     </div>

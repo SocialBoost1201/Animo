@@ -24,7 +24,7 @@ export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses:
             未提出キャスト一覧
           </h2>
           <p className="text-xs text-gray-500 mt-1">対象週: {targetWeekMonday.replace(/-/g, '/')}〜</p>
-          <p className="text-[10px] text-gray-400 mt-0.5">※毎週木・金曜日に自動で督促メールが送信されます</p>
+          <p className="text-xs text-gray-400 mt-0.5">※毎週木・金曜日に自動で督促メールが送信されます</p>
         </div>
         <div className="text-xs font-bold bg-white px-3 py-1 rounded-full border border-gray-200">
           全 {statuses.length} 名中 / 未提出 {unsubmitted.length} 名
@@ -43,7 +43,7 @@ export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses:
               <span className="font-bold text-[#171717]">{s.cast.stage_name}</span>
               
               {!s.hasAuthIndex && (
-                 <span className="text-[10px] text-gray-400 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                 <span className="text-xs text-gray-400 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
                    アカウント未登録
                  </span>
               )}

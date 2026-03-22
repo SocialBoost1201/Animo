@@ -129,14 +129,14 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
           />
           {/* SEO推奨タグサジェスト */}
           <div className="mt-3">
-            <p className="text-[10px] text-gray-400 tracking-widest mb-2 font-bold uppercase">suggested tags / おすすめタグ</p>
+            <p className="text-xs text-gray-400 tracking-widest mb-2 font-bold uppercase">suggested tags / おすすめタグ</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED_TAGS.map(tag => (
                 <button
                   key={tag}
                   type="button"
                   onClick={() => appendTag(tag)}
-                  className={`text-[10px] px-2.5 py-1 rounded-full transition-colors border ${
+                  className={`text-xs px-2.5 py-1 rounded-full transition-colors border ${
                     content.includes(tag) 
                     ? 'bg-gold border-gold text-white font-bold' 
                     : 'bg-white border-gray-200 text-gray-500 hover:border-gold hover:text-gold'

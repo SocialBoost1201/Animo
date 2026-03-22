@@ -29,8 +29,8 @@ export default function HowToChoosePage() {
         updatedAt="2024-03-01T00:00:00+09:00"
       />
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内キャバクラの選び方', item: 'https://club-animo.com/blog/how-to-choose-cabaret' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内キャバクラの選び方', item: 'https://club-animo.jp/blog/how-to-choose-cabaret' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

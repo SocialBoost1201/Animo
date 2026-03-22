@@ -38,15 +38,15 @@ export function CustomerCard({
         </div>
         <div className="flex items-center gap-6 text-sm">
           <div className="text-center">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">予約</p>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">予約</p>
             <p className="font-serif text-[#171717]">{reserveCount} <span className="text-xs text-gray-400 font-sans">回</span></p>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">問合せ</p>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">問合せ</p>
             <p className="font-serif text-[#171717]">{contactCount} <span className="text-xs text-gray-400 font-sans">回</span></p>
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mb-0.5">最終コンタクト</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mb-0.5">最終コンタクト</p>
             <p className="text-gray-600 dark:text-gray-400 text-xs">{lastContact}</p>
           </div>
           <div className="pl-4 border-l border-gray-100 dark:border-white/5 hidden sm:block">
@@ -113,21 +113,21 @@ export function CustomerCard({
                 <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-50 dark:border-white/5">
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {!contact.is_read && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                       contact.type === 'reserve'
                         ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
                         : 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300'
                     }`}>
                       {contact.type === 'reserve' ? '予約' : '問い合わせ'}
                     </span>
-                    <span className="text-[11px] sm:text-xs text-gray-400 font-mono">
+                    <span className="text-xs sm:text-xs text-gray-400 font-mono">
                       {contact.created_at.slice(0, 16).replace('T', ' ')}
                     </span>
                   </div>
                   {!contact.is_read && (
                     <form action={handleMarkAsRead}>
                       <input type="hidden" name="id" value={contact.id} />
-                      <button type="submit" className="flex items-center gap-1 text-[11px] sm:text-xs text-gray-400 hover:text-green-600 transition-colors">
+                      <button type="submit" className="flex items-center gap-1 text-xs sm:text-xs text-gray-400 hover:text-green-600 transition-colors">
                         <CheckCircle size={14} /> 既読
                       </button>
                     </form>

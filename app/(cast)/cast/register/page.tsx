@@ -56,14 +56,14 @@ export default function CastRegisterPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <h1 className="font-serif text-2xl tracking-[0.3em] text-[#171717] font-bold">新規登録</h1>
-          <p className="text-[10px] text-gray-400 tracking-[0.2em] uppercase mt-2 font-serif">Cast Portal Registration</p>
+          <p className="text-xs text-gray-400 tracking-[0.2em] uppercase mt-2 font-serif">Cast Portal Registration</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* 本名（Real Name） */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               本名（Real Name）
             </label>
             <input
@@ -74,12 +74,12 @@ export default function CastRegisterPage() {
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
               placeholder="山田 花子"
             />
-            <p className="text-[9px] text-gray-300 mt-1.5">店舗に届け出た本名を入力してください（外部には一切表示されません）</p>
+            <p className="text-xs text-gray-300 mt-1.5">店舗に届け出た本名を入力してください（外部には一切表示されません）</p>
           </div>
 
           {/* 生年月日（Date of Birth） */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               生年月日（Date of Birth）
             </label>
             <input
@@ -92,7 +92,7 @@ export default function CastRegisterPage() {
 
           {/* メールアドレス */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
             <input
               name="email"
               type="email"
@@ -105,7 +105,7 @@ export default function CastRegisterPage() {
 
           {/* パスワード */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Password</label>
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Password</label>
             <input
               name="password"
               type="password"
@@ -119,7 +119,7 @@ export default function CastRegisterPage() {
 
           {/* パスワード確認 */}
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Confirm Password</label>
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Confirm Password</label>
             <input
               name="confirmPassword"
               type="password"
@@ -141,12 +141,12 @@ export default function CastRegisterPage() {
         </form>
 
         <div className="mt-8 text-center">
-          <Link href="/cast/login" className="text-[11px] text-gray-400 hover:text-gold transition-colors tracking-wider">
+          <Link href="/cast/login" className="text-xs text-gray-400 hover:text-gold transition-colors tracking-wider">
             ← ログインへ戻る
           </Link>
         </div>
 
-        <p className="mt-6 text-center text-[9px] text-gray-300 leading-relaxed">
+        <p className="mt-6 text-center text-xs text-gray-300 leading-relaxed">
           ※ 本名・生年月日は本人確認のみに使用し、外部には一切表示されません。<br />
           ※ 登録後、管理者による確認が完了するまで一部機能が制限されます。
         </p>

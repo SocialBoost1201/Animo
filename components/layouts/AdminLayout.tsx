@@ -119,7 +119,7 @@ export function AdminLayout({
 
           return (
             <div key={section}>
-              <p className="text-[9px] font-bold tracking-[0.2em] text-white/25 uppercase px-3 mb-1.5">
+              <p className="text-xs font-bold tracking-[0.2em] text-white/25 uppercase px-3 mb-1.5">
                 {SECTION_LABELS[section]}
               </p>
               <div className="space-y-0.5">
@@ -144,7 +144,7 @@ export function AdminLayout({
                       <Icon size={16} className={isActive ? 'text-gold' : 'text-white/40 group-hover:text-white/70'} />
                       <span className="flex-1 tracking-wide">{item.label}</span>
                       {badgeCount > 0 && (
-                        <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.2rem] text-center">
+                        <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.2rem] text-center">
                           {badgeCount}
                         </span>
                       )}
@@ -203,7 +203,7 @@ export function AdminLayout({
       </aside>
 
       {/* ─── Main Content ─── */}
-      <main className="flex-1 min-w-0 pb-20 md:pb-0">
+      <main className="flex-1 min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
         {/* Mobile Header */}
         <header className="h-14 bg-white/80 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-b border-gray-100 dark:border-white/5 flex items-center justify-between px-4 md:hidden sticky top-0 z-30 shadow-sm">
           <button
@@ -243,7 +243,7 @@ export function AdminLayout({
       </main>
 
       {/* ─── Mobile Bottom Tab ─── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-t border-gray-100 dark:border-white/5 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur-md border-t border-gray-100 dark:border-white/5 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] dark:shadow-none pb-safe">
         <div className="flex items-center">
           {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -262,7 +262,7 @@ export function AdminLayout({
                   <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gold rounded-b" />
                 )}
                 <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                <span className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : ''}`}>
+                <span className={`text-xs tracking-wide ${isActive ? 'font-bold' : ''}`}>
                   {item.label}
                 </span>
               </Link>

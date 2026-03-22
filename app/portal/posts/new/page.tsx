@@ -44,7 +44,7 @@ export default async function NewPostPage() {
         <CastPostUploadForm castId={castData.id} />
         
         <div className="mt-8 text-center">
-          <p className="text-[10px] text-gray-400 leading-relaxed">
+          <p className="text-xs text-gray-400 leading-relaxed">
             ※ 投稿内容は管理者の確認後にWebサイトへ公開されます。<br />
             ※ 画像は自動的に圧縮され、撮影場所(位置情報)などのデータも削除されます。
           </p>

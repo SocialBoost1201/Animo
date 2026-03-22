@@ -45,12 +45,12 @@ export default function CastForgotPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <h1 className="font-serif text-xl tracking-[0.2em] text-[#171717]">パスワード再設定</h1>
-          <p className="text-[10px] text-gray-400 tracking-wider mt-2">登録したメールアドレスを入力してください</p>
+          <p className="text-xs text-gray-400 tracking-wider mt-2">登録したメールアドレスを入力してください</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">Email</label>
             <input name="email" type="email" required autoComplete="email"
               className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
               placeholder="cast@example.com" />
@@ -63,7 +63,7 @@ export default function CastForgotPasswordPage() {
         </form>
 
         <div className="mt-8 text-center">
-          <Link href="/cast/login" className="text-[11px] text-gray-400 hover:text-gold transition-colors tracking-wider">
+          <Link href="/cast/login" className="text-xs text-gray-400 hover:text-gold transition-colors tracking-wider">
             ← ログインへ戻る
           </Link>
         </div>

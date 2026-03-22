@@ -143,7 +143,7 @@ function SortableCastRow({
             <div className="flex items-center gap-2 mb-0.5">
               <p className="font-bold text-[#171717] text-lg md:text-sm truncate tracking-tight">{cast.stage_name || cast.name}</p>
               {/* Mobile Age Pill */}
-              <span className="md:hidden text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+              <span className="md:hidden text-xs font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                 {cast.age ? `${cast.age}歳` : '年齢非公開'}
               </span>
             </div>
@@ -162,9 +162,9 @@ function SortableCastRow({
           <div className="flex flex-col md:gap-0.5 items-end md:items-start">
             <span className="font-serif font-bold text-lg md:text-sm text-[#171717] flex items-center gap-1.5">
               <Trophy className="w-3.5 h-3.5 text-yellow-500 hidden md:block" />
-              {cast.score.toLocaleString()} <span className="text-[10px] text-gray-400 tracking-wider">pt</span>
+              {cast.score.toLocaleString()} <span className="text-xs text-gray-400 tracking-wider">pt</span>
             </span>
-            <span className="text-[10px] font-bold text-yellow-600 bg-yellow-50/80 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit border border-yellow-100">
+            <span className="text-xs font-bold text-yellow-600 bg-yellow-50/80 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit border border-yellow-100">
               <Star className="w-2.5 h-2.5 fill-current" /> Lv.{cast.level}
             </span>
           </div>
@@ -179,7 +179,7 @@ function SortableCastRow({
               <span className="text-xs font-bold">{cast.quiz_tags.length} <span className="font-normal text-gray-400 hidden lg:inline">設定済み</span></span>
             </div>
           ) : (
-            <span className="text-[11px] font-medium text-gray-400 flex items-center gap-1.5">
+            <span className="text-xs font-medium text-gray-400 flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-gray-200" /> 未設定
             </span>
           )}

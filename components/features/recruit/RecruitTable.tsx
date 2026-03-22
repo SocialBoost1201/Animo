@@ -91,7 +91,7 @@ export function RecruitTable({ title, data, tags }: RecruitTableProps) {
           {tags.map((tag, i) => (
             <span
               key={i}
-              className={`text-[11px] font-serif luxury-tracking px-3 py-2 text-center rounded-sm transition-colors ${
+              className={`text-xs font-serif luxury-tracking px-3 py-2 text-center rounded-sm transition-colors ${
                 tag.active
                   ? 'bg-[#8c7a6b] text-white shadow-sm'
                   : 'bg-gray-100 text-gray-400 border border-gray-200/60'

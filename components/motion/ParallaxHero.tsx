@@ -78,7 +78,7 @@ export const ParallaxHero: React.FC<ParallaxHeroProps> = ({
         transition={{ delay: 2.0, duration: 1 }}
         className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
       >
-        <span className="text-white/70 text-[10px] uppercase luxury-tracking mb-3 font-serif">Scroll</span>
+        <span className="text-white/70 text-xs uppercase luxury-tracking mb-3 font-serif">Scroll</span>
         <motion.div 
           animate={{ height: [0, 48, 0], opacity: [0, 1, 0], y: [0, 24, 48] }}
           transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}

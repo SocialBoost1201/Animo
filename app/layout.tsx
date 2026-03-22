@@ -7,17 +7,11 @@ import "./globals.css";
 import { Analytics } from "@/components/seo/Analytics";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { ReviewSchema } from "@/components/seo/ReviewSchema";
-import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
-import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
 import dynamic from 'next/dynamic';
 import { ToastContainer } from "@/components/ui/Toast";
 
 const LuxuryBackground = dynamic(
   () => import('@/components/ui/LuxuryBackground').then(m => m.LuxuryBackground)
-);
-
-const LoadingScreen = dynamic(
-  () => import('@/components/motion/LoadingScreen').then(m => m.LoadingScreen)
 );
 
 const shippori = Shippori_Mincho({
@@ -94,14 +88,9 @@ export default function RootLayout({
       <body
         className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
-        <ReCaptchaProvider>
-          <SmoothScrollProvider>
-            <LoadingScreen />
-            {children}
-            <LuxuryBackground />
-            <ToastContainer />
-          </SmoothScrollProvider>
-        </ReCaptchaProvider>
+        {children}
+        <LuxuryBackground />
+        <ToastContainer />
         <Analytics 
           gaId={process.env.NEXT_PUBLIC_GA_ID} 
           clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} 

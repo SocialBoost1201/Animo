@@ -21,8 +21,8 @@ export default function YokohamaCabaretGuidePage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '横浜キャバクラガイド', item: 'https://club-animo.com/area/yokohama-cabaret-guide' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '横浜キャバクラガイド', item: 'https://club-animo.jp/area/yokohama-cabaret-guide' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

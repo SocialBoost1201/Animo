@@ -259,7 +259,7 @@ export default function StaffRecruitPage() {
                 >
                   <Icon className="w-4 h-4" />
                   <span>{p.tab}</span>
-                  <span className="hidden sm:inline text-[9px] text-gray-400">／ {p.sub}</span>
+                  <span className="hidden sm:inline text-xs text-gray-400">／ {p.sub}</span>
                 </button>
               );
             })}
@@ -280,7 +280,7 @@ export default function StaffRecruitPage() {
               <FadeIn key={i} delay={i * 0.1}>
                 <div className="bg-white border border-gold/20 shadow-sm">
                   <div className="flex items-start gap-4 p-6 md:p-8 border-b border-gold/10">
-                    <span className="text-[10px] font-serif luxury-tracking text-gold border border-gold/40 px-2 py-1 shrink-0 uppercase">
+                    <span className="text-xs font-serif luxury-tracking text-gold border border-gold/40 px-2 py-1 shrink-0 uppercase">
                       {role.badge}
                     </span>
                     <div className="flex-1">
@@ -293,7 +293,7 @@ export default function StaffRecruitPage() {
                     </div>
                   </div>
                   <div className="p-6 md:p-8">
-                    <p className="text-[10px] text-gray-400 font-serif luxury-tracking uppercase mb-3">勤務条件</p>
+                    <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-3">勤務条件</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {role.conditions.map((c, j) => (
                         <div key={j} className="flex items-center gap-2 text-xs font-serif text-gray-600 luxury-tracking">
@@ -335,7 +335,7 @@ export default function StaffRecruitPage() {
         <div className="container mx-auto max-w-4xl">
           <FadeIn>
             <div className="text-center mb-10">
-              <span className="inline-block text-[10px] font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
+              <span className="inline-block text-xs font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
                 Point
               </span>
               <h2 className="text-xl md:text-2xl font-serif luxury-tracking text-foreground">ここがポイント！</h2>
@@ -503,7 +503,7 @@ export default function StaffRecruitPage() {
                 </div>
                 <div>
                   <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
-                    LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
+                    LINE ID <span className="text-gray-400 text-xs ml-1 normal-case">(任意)</span>
                   </label>
                   <input id="lineId" name="lineId" type="text"
                     className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
@@ -531,7 +531,7 @@ export default function StaffRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
-                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
+                <p className="text-xs text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
                   送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
                 </p>
                 <Button

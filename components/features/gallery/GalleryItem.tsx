@@ -34,7 +34,7 @@ export function GalleryItem({ item, index, onClick, isPriority = false }: Galler
 
       {/* テキスト情報 */}
       <div className="absolute inset-0 p-6 flex flex-col justify-end items-start opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0 ease-out">
-        <span className="text-[10px] text-gold/80 font-serif tracking-[0.3em] uppercase mb-2">
+        <span className="text-xs text-gold/80 font-serif tracking-[0.3em] uppercase mb-2">
           {item.category}
         </span>
         <h3 className="text-white font-serif text-sm md:text-base tracking-widest text-left">

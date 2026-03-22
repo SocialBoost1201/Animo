@@ -33,7 +33,7 @@ export default async function EventsPage() {
                 {/* IDベースの詳細ページを開く */}
                 <Link href={`/events/${item.id}`} className="block">
                   <div className="flex flex-col md:flex-row bg-white hover:bg-gray-50/30 p-8 md:p-12 shadow-luxury transition-all duration-700 border border-gold/20 hover:-translate-y-1">
-                    <div className="shrink-0 mb-6 md:mb-0 md:mr-12 text-[10px] font-serif luxury-tracking text-[#171717] w-48 flex items-center md:pt-1">
+                    <div className="shrink-0 mb-6 md:mb-0 md:mr-12 text-xs font-serif luxury-tracking text-[#171717] w-48 flex items-center md:pt-1">
                       <Calendar size={14} className="mr-3 text-gold opacity-70" />
                       {eventDateStr ? `${eventDateStr} 開催` : '開催日未定'}
                     </div>

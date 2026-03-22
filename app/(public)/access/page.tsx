@@ -15,8 +15,8 @@ export default function AccessPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'ACCESS', item: 'https://club-animo.com/access' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'ACCESS', item: 'https://club-animo.jp/access' }
       ]} />
       {/* Header */}
       <section className="bg-transparent pt-32 pb-16 px-6 relative">
@@ -53,7 +53,7 @@ export default function AccessPage() {
                     <MapPin className="w-5 h-5 opacity-70" />
                   </dt>
                   <dd className="leading-loose">
-                    <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Address</span>
+                    <span className="text-xs text-gold uppercase luxury-tracking block mb-1">Address</span>
                     〒231-0012<br />
                     神奈川県横浜市中区相生町３丁目５３<br />
                     グランドパークビル2F
@@ -66,7 +66,7 @@ export default function AccessPage() {
                     <Building2 className="w-5 h-5 opacity-70" />
                   </dt>
                   <dd className="leading-loose">
-                    <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Building</span>
+                    <span className="text-xs text-gold uppercase luxury-tracking block mb-1">Building</span>
                     グランドパークビル2F
                   </dd>
                 </div>
@@ -77,7 +77,7 @@ export default function AccessPage() {
                     <Phone className="w-5 h-5 opacity-70" />
                   </dt>
                   <dd>
-                    <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Tel</span>
+                    <span className="text-xs text-gold uppercase luxury-tracking block mb-1">Tel</span>
                     <a href="tel:045-263-6961" className="hover:text-gold transition-colors">
                       045-263-6961
                     </a>
@@ -90,7 +90,7 @@ export default function AccessPage() {
                     <Clock className="w-5 h-5 opacity-70" />
                   </dt>
                   <dd className="leading-loose">
-                    <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Open Hours</span>
+                    <span className="text-xs text-gold uppercase luxury-tracking block mb-1">Open Hours</span>
                     21:00 – LAST
                   </dd>
                 </div>
@@ -101,10 +101,10 @@ export default function AccessPage() {
                     <Train className="w-5 h-5 opacity-70" />
                   </dt>
                   <dd className="leading-loose">
-                    <span className="text-[10px] text-gold uppercase luxury-tracking block mb-1">Nearest Station</span>
+                    <span className="text-xs text-gold uppercase luxury-tracking block mb-1">Nearest Station</span>
                     JR根岸線・横浜市営地下鉄<br />
                     <strong className="text-foreground font-serif font-normal">「関内駅」</strong>より徒歩 約5分<br />
-                    <span className="text-[10px] text-gray-400 mt-1 block">Kannai Station — 5 min walk</span>
+                    <span className="text-xs text-gray-400 mt-1 block">Kannai Station — 5 min walk</span>
                   </dd>
                 </div>
 
@@ -129,7 +129,7 @@ export default function AccessPage() {
                 href="https://maps.google.com/maps?q=神奈川県横浜市中区相生町3丁目53+グランドパークビル2F"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[10px] text-center text-gold font-serif luxury-tracking uppercase hover:underline transition-all"
+                className="text-xs text-center text-gold font-serif luxury-tracking uppercase hover:underline transition-all"
               >
                 Google Mapsで開く →
               </a>
@@ -152,7 +152,7 @@ export default function AccessPage() {
                   <p className="text-foreground font-serif mb-1">
                     JR根岸線「関内駅」北口より <strong className="text-gold">徒歩 約5分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Kannai Station (JR Negishi Line) North Exit — 5 min walk</p>
+                  <p className="text-xs text-gray-400">Kannai Station (JR Negishi Line) North Exit — 5 min walk</p>
                 </div>
               </li>
               <li className="flex items-start gap-4 border-b border-gray-100/50 pb-6">
@@ -161,7 +161,7 @@ export default function AccessPage() {
                   <p className="text-foreground font-serif mb-1">
                     横浜市営地下鉄ブルーライン「関内駅」より <strong className="text-gold">徒歩 約5分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Kannai Station (Yokohama Subway Blue Line) — 5 min walk</p>
+                  <p className="text-xs text-gray-400">Kannai Station (Yokohama Subway Blue Line) — 5 min walk</p>
                 </div>
               </li>
               <li className="flex items-start gap-4 border-b border-gray-100/50 pb-6">
@@ -170,7 +170,7 @@ export default function AccessPage() {
                   <p className="text-foreground font-serif mb-1">
                     みなとみらい線「馬車道駅」より <strong className="text-gold">徒歩 約6分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Bashamichi Station (Minatomirai Line) — 6 min walk</p>
+                  <p className="text-xs text-gray-400">Bashamichi Station (Minatomirai Line) — 6 min walk</p>
                 </div>
               </li>
               <li className="flex items-start gap-4">
@@ -179,7 +179,7 @@ export default function AccessPage() {
                   <p className="text-foreground font-serif mb-1">
                     みなとみらい線「日本大通り駅」より <strong className="text-gold">徒歩 約8分</strong>
                   </p>
-                  <p className="text-[11px] text-gray-400">Nihon-odori Station (Minatomirai Line) — 8 min walk</p>
+                  <p className="text-xs text-gray-400">Nihon-odori Station (Minatomirai Line) — 8 min walk</p>
                 </div>
               </li>
             </ul>

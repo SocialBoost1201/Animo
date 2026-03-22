@@ -5,7 +5,7 @@ import { getPublicCasts, getPublicShifts } from '@/lib/actions/public/data';
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: '本日の出勤情報・シフト｜関内キャバクラ CLUB Animo',
@@ -21,8 +21,8 @@ export default async function ShiftPage() {
   return (
     <div className="bg-white min-h-screen pt-24 pb-[var(--spacing-section)] px-6 relative">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'SHIFT', item: 'https://club-animo.com/shift' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'SHIFT', item: 'https://club-animo.jp/shift' }
       ]} />
       <div className="absolute inset-0 bg-linear-to-b from-gold/5 to-transparent pointer-events-none h-[50vh]" />
       <div className="container mx-auto max-w-5xl relative z-10">

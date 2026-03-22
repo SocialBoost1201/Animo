@@ -111,8 +111,8 @@ export default async function AdminMonthlyShiftsPage({
                         if (detail.status === 'unavailable') content = <span className="text-red-500 font-bold">×</span>;
                         else if (detail.status === 'maybe') content = <span className="text-yellow-500 font-bold">△</span>;
                         else if (detail.status === 'available') {
-                          if (detail.isDouhan) content = <span className="text-pink-500 font-bold text-[10px] tracking-tighter">同伴</span>;
-                          else if (detail.startTime) content = <span className="text-blue-600 font-bold text-[10px] tracking-tighter">{detail.startTime}</span>;
+                          if (detail.isDouhan) content = <span className="text-pink-500 font-bold text-xs tracking-tighter">同伴</span>;
+                          else if (detail.startTime) content = <span className="text-blue-600 font-bold text-xs tracking-tighter">{detail.startTime}</span>;
                           else content = <span className="text-blue-500 font-bold">○</span>;
                         }
                       }

@@ -30,8 +30,8 @@ export default function KannaiNightlifePage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内夜遊びガイド', item: 'https://club-animo.com/area/kannai-nightlife' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内夜遊びガイド', item: 'https://club-animo.jp/area/kannai-nightlife' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

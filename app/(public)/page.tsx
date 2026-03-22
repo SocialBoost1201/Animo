@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
-import { CalendarHeart, MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
-import { getPublicHeroMedia, getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
+import { MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
+import { getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
 import { LazyGoogleMap } from '@/components/ui/LazyGoogleMap';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { getSiteSettings } from '@/lib/actions/contents';
@@ -22,7 +22,7 @@ const DynamicGallerySection = nextDynamic(() => import('@/components/features/ga
 const SilverDustBackground = nextDynamic(() => import('@/components/motion/SilverDustBackground').then(m => m.SilverDustBackground));
 const CastFavoriteButton = nextDynamic(() => import('@/components/features/system/CastFavoriteButton').then(m => m.CastFavoriteButton));
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 // HOW TO ENJOY - 静的コンテンツ
 const HOW_TO_EXAMPLES = [
@@ -63,8 +63,7 @@ const HOW_TO_EXAMPLES = [
 ];
 
 export default async function HomePage() {
-  const [dbHeroMedia, dbCasts, dbNews, settings, dbPosts] = await Promise.all([
-    getPublicHeroMedia(),
+  const [dbCasts, dbNews, settings, dbPosts] = await Promise.all([
     getPublicCasts(),
     getPublicContents('news', 3),
     getSiteSettings().catch(() => null),
@@ -73,25 +72,32 @@ export default async function HomePage() {
 
   const recentPosts = dbPosts.data || [];
 
-  const heroMediaData: HeroMedia[] = dbHeroMedia.length > 0
-    ? dbHeroMedia.map((m) => ({
-        id: m.id,
-        type: m.type as 'video' | 'image',
-        url: m.url,
-        posterUrl: m.poster_url || m.url,
-        title: m.title,
-      }))
-    : [
-        { id: 'v0', type: 'video', url: '/videos/animo-hero.mp4', posterUrl: '/images/hero-poster.webp', durationMs: 5000 },
-        { id: 'v1', type: 'video', url: '/videos/movie01_chandelier.mp4', posterUrl: '/images/hero-poster.webp' },
-        { id: 'v0_5', type: 'video', url: '/videos/movie09_soumei.mp4', posterUrl: '/videos/movie09_soumei.mp4' },
-        { id: 'v4', type: 'video', url: '/videos/movie04_shelf.mp4', posterUrl: '/videos/movie04_shelf.mp4' },
-        { id: 'v2', type: 'video', url: '/videos/movie02_shelf.mp4', posterUrl: '/videos/movie02_shelf.mp4' },
-        { id: 'v3', type: 'video', url: '/videos/movie03_bar.mp4', posterUrl: '/videos/movie03_bar.mp4' },
-        { id: 'v5', type: 'video', url: '/videos/movie05_floor.mp4', posterUrl: '/videos/movie05_floor.mp4' },
-        { id: 'v6', type: 'video', url: '/videos/movie06_flower.mp4', posterUrl: '/videos/movie06_flower.mp4' },
-        { id: 'v7', type: 'video', url: '/videos/movie07_flower.mp4', posterUrl: '/videos/movie07_flower.mp4' },
-      ];
+  const heroMediaData: HeroMedia[] = [
+    {
+      id: 'hero-kannai-street',
+      type: 'video',
+      url: '/videos/kannai-street_opt.mp4',
+      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      title: 'Kannai street view',
+      durationMs: 5000,
+    },
+    {
+      id: 'hero-chandelier',
+      type: 'video',
+      url: '/videos/movie01_chandelier.mp4',
+      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      title: 'Main chandelier interior',
+      durationMs: 5000,
+    },
+    {
+      id: 'hero-soumei',
+      type: 'video',
+      url: '/videos/movie09_soumei.mp4',
+      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      title: 'Lighting ambience',
+      durationMs: 5000,
+    },
+  ];
 
   // Today's Cast: is_todayフラグ優先。なければ最大10名表示
   const todayCasts = dbCasts.filter((c) => c.is_today);
@@ -132,6 +138,8 @@ export default async function HomePage() {
         transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
         durationMs={5000}
         transitionMs={800}
+        mobileFallbackSrc="/images/animo-main-chandelier-interior.jpg"
+        mobileFallbackAlt="CLUB Animo main chandelier interior"
         cta={heroCta}
       />
 
@@ -143,7 +151,7 @@ export default async function HomePage() {
             <FadeIn>
               <div className="inline-flex items-center justify-center space-x-3 mb-4">
                 <div className="h-[1px] w-8 bg-gold"></div>
-                <span className="text-[10px] font-serif text-gold luxury-tracking uppercase tracking-widest">Today&apos;s Mood</span>
+                <span className="text-xs font-serif text-gold luxury-tracking uppercase tracking-widest">Today&apos;s Mood</span>
                 <div className="h-[1px] w-8 bg-gold"></div>
               </div>
               <p className="text-sm md:text-base font-serif tracking-widest leading-loose text-white/90 max-w-2xl mx-auto">
@@ -163,7 +171,7 @@ export default async function HomePage() {
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
             <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
-            <Link href="/shift" className="inline-flex items-center text-gold text-[10px] font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
+            <Link href="/shift" className="inline-flex items-center text-gold text-xs font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
               View Schedule →
             </Link>
           </FadeIn>
@@ -184,14 +192,14 @@ export default async function HomePage() {
                       <CastFavoriteButton castId={cast.id} />
                     </div>
                     {cast.is_today && (
-                      <div className="absolute top-0 left-0 right-0 bg-[#171717]/85 text-white text-[8px] font-sans tracking-widest px-2 py-1 text-center uppercase">
+                      <div className="absolute top-0 left-0 right-0 bg-[#171717]/85 text-white text-xs font-sans tracking-widest px-2 py-1 text-center uppercase">
                         本日出勤
                       </div>
                     )}
                   </Link>
                   <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
                     <Link href={`/cast/${cast.slug}`}>
-                      <p className="text-[7px] md:text-[9px] font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
+                      <p className="text-xs md:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
                         {cast.name_kana
                           ? cast.name_kana
                               .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
@@ -199,19 +207,18 @@ export default async function HomePage() {
                           : cast.name.toUpperCase()
                         }
                       </p>
-                      <h3 className="font-serif text-[11px] md:text-sm text-[#171717] hover:text-gold transition-colors leading-snug">
+                      <h3 className="font-serif text-xs md:text-sm text-[#171717] hover:text-gold transition-colors leading-snug">
                         {cast.name}
                       </h3>
                     </Link>
-                    <div className="flex justify-center items-center mt-1 gap-1 text-[8px] md:text-[9px] text-gray-400">
+                    <div className="flex justify-center items-center mt-1 gap-1 text-xs md:text-xs text-gray-400">
                       {cast.age && <span>{cast.age}歳</span>}
                       {cast.age && cast.height && <span className="text-gray-200">•</span>}
                       {cast.height && <span>{cast.height}cm</span>}
                     </div>
                     {/* 日記UPバッジ (72時間以内に投稿があれば表示) */}
-                    {cast.latest_post_at &&
-                      Date.now() - new Date(cast.latest_post_at).getTime() < 72 * 60 * 60 * 1000 && (
-                      <div className="mt-1.5 inline-flex items-center gap-1 bg-[#171717] text-white text-[8px] font-bold tracking-widest px-2 py-0.5">
+                    {cast.has_recent_post && (
+                      <div className="mt-1.5 inline-flex items-center gap-1 bg-[#171717] text-white text-xs font-bold tracking-widest px-2 py-0.5">
                         <span>📓</span>
                         <span>日記UP</span>
                       </div>
@@ -253,7 +260,7 @@ export default async function HomePage() {
                   href={`/news/${news.id}`}
                   className="flex items-baseline gap-6 py-6 border-b border-gold/10 group hover:bg-gold/5 transition-colors px-4 -mx-4"
                 >
-                  <time className="text-[11px] text-gold font-serif luxury-tracking shrink-0 tabular-nums">
+                  <time className="text-xs text-gold font-serif luxury-tracking shrink-0 tabular-nums">
                     {new Date(news.content_date || news.created_at || new Date()).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                   </time>
                   <span className="text-sm font-serif text-foreground group-hover:text-gold transition-colors luxury-tracking line-clamp-1">
@@ -264,7 +271,7 @@ export default async function HomePage() {
             )) : (
               <FadeIn>
                 <div className="py-6 border-b border-gold/10 px-4 flex items-baseline gap-6">
-                  <time className="text-[11px] text-gold font-serif luxury-tracking shrink-0">2026.03.01</time>
+                  <time className="text-xs text-gold font-serif luxury-tracking shrink-0">2026.03.01</time>
                   <span className="text-sm font-serif text-foreground luxury-tracking">春の特別イベント開催予定のお知らせ</span>
                 </div>
               </FadeIn>
@@ -293,11 +300,11 @@ export default async function HomePage() {
             {HOW_TO_EXAMPLES.map((ex, i) => (
               <FadeIn key={i} delay={i * 0.1}>
                 <div className="bg-white p-8 border border-gold/10 h-full flex flex-col">
-                  <p className="text-[10px] text-gold font-serif luxury-tracking uppercase tracking-widest mb-2">
+                  <p className="text-xs text-gold font-serif luxury-tracking uppercase tracking-widest mb-2">
                     Pattern {String(i + 1).padStart(2, '0')}
                   </p>
                   <h3 className="font-serif luxury-tracking text-lg text-foreground mb-1">{ex.label}</h3>
-                  <p className="text-[10px] text-gray-400 font-serif mb-6">{ex.tag}</p>
+                  <p className="text-xs text-gray-400 font-serif mb-6">{ex.tag}</p>
 
                   <div className="space-y-3 flex-1">
                     {ex.items.map((item, j) => (
@@ -309,10 +316,10 @@ export default async function HomePage() {
                   </div>
 
                   <div className="mt-6 pt-4 border-t border-gold/20 flex items-center justify-between">
-                    <span className="text-[10px] text-gray-400 font-serif luxury-tracking uppercase">Total</span>
+                    <span className="text-xs text-gray-400 font-serif luxury-tracking uppercase">Total</span>
                     <span className="text-2xl font-serif text-foreground">{ex.total}</span>
                   </div>
-                  <p className="text-[10px] text-gray-400 font-serif mt-3 leading-relaxed">{ex.note}</p>
+                  <p className="text-xs text-gray-400 font-serif mt-3 leading-relaxed">{ex.note}</p>
                 </div>
               </FadeIn>
             ))}
@@ -409,7 +416,7 @@ export default async function HomePage() {
                         <CastFavoriteButton castId={cast.id} />
                       </div>
                       {cast.is_today && (
-                        <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm text-[8px] md:text-[9px] font-serif luxury-tracking text-gold px-2 py-1 md:px-3 uppercase border border-gold/30">
+                        <div className="absolute top-2 left-2 md:top-3 md:left-3 bg-white/90 backdrop-blur-sm text-xs md:text-xs font-serif luxury-tracking text-gold px-2 py-1 md:px-3 uppercase border border-gold/30">
                           Today
                         </div>
                       )}
@@ -417,13 +424,13 @@ export default async function HomePage() {
                     <div className="p-3 md:p-4 text-center bg-white border-t border-gray-50 flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="font-serif luxury-tracking text-sm md:text-base text-foreground group-hover:text-gold transition-colors">{cast.name}</h3>
-                        <div className="flex justify-center items-center mt-1.5 gap-1 text-[9px] md:text-[10px] text-gray-400 font-serif">
+                        <div className="flex justify-center items-center mt-1.5 gap-1 text-xs md:text-xs text-gray-400 font-serif">
                           {cast.age && <span>{cast.age}歳</span>}
                           {cast.age && cast.height && <span className="text-gray-300">|</span>}
                           {cast.height && <span>{cast.height}cm</span>}
                         </div>
                         {cast.comment && (
-                          <p className="text-[9px] md:text-[10px] text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1 italic">
+                          <p className="text-xs md:text-xs text-gray-400 mt-2 font-serif luxury-tracking line-clamp-1 italic">
                             &ldquo;{cast.comment}&rdquo;
                           </p>
                         )}

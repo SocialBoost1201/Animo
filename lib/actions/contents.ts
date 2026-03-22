@@ -1,20 +1,25 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache } from 'next/cache'
+import { createServiceClient } from '@/lib/supabase/service'
 
 // Site Settings
-export async function getSiteSettings() {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('site_settings')
-    .select('*')
-    .eq('id', 1)
-    .single()
-  
-  if (error) throw new Error(error.message)
-  return data
-}
+export const getSiteSettings = unstable_cache(
+  async () => {
+    const supabase = createServiceClient()
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('*')
+      .eq('id', 1)
+      .single()
+
+    if (error) throw new Error(error.message)
+    return data
+  },
+  ['site-settings'],
+  { revalidate: 300 }
+)
 
 export async function updateSiteSettings(formData: FormData) {
   const supabase = await createClient()

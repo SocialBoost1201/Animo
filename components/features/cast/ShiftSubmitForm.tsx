@@ -125,7 +125,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
         </Link>
         <div>
           <h1 className="font-serif text-xl tracking-widest text-[#171717]">シフト提出</h1>
-          <p className="text-[10px] text-gray-400 tracking-wider mt-1 uppercase font-serif">Shift Schedule</p>
+          <p className="text-xs text-gray-400 tracking-wider mt-1 uppercase font-serif">Shift Schedule</p>
         </div>
       </div>
 
@@ -134,14 +134,14 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
             <button onClick={() => changeWeek('prev')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50">
               <ChevronLeft className="w-4 h-4 text-[#171717]" />
             </button>
-            <p className="text-[11px] text-[#171717] font-bold text-center">
+            <p className="text-xs text-[#171717] font-bold text-center">
                 対象週: {targetMonday.replace(/-/g, '/')} 〜 
             </p>
             <button onClick={() => changeWeek('next')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50">
               <ChevronRight className="w-4 h-4 text-[#171717]" />
             </button>
           </div>
-          <p className="text-[9px] text-gray-500 text-center leading-relaxed mt-2">
+          <p className="text-xs text-gray-500 text-center leading-relaxed mt-2">
               出勤する日の時間を選択してください。<br/>
               ※開始・終了時間は後から変更可能です
           </p>
@@ -164,12 +164,12 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                   }`}>
                       <div className="flex items-center justify-between mb-3">
                           <div className="font-serif font-bold text-sm text-[#171717]">
-                              {d.getMonth() + 1}/{d.getDate()} <span className="text-[10px] text-gray-400 ml-1">({weekDayStrs[i]})</span>
+                              {d.getMonth() + 1}/{d.getDate()} <span className="text-xs text-gray-400 ml-1">({weekDayStrs[i]})</span>
                           </div>
                           <div className="flex bg-gray-100 rounded-lg p-1">
                               <button 
                                 onClick={() => handleTypeChange(dateStr, 'off')}
-                                className={`px-3 py-1.5 text-[10px] rounded-md font-bold transition-all ${
+                                className={`px-3 py-1.5 text-xs rounded-md font-bold transition-all ${
                                     !isWork ? 'bg-white text-gray-500 shadow-xs' : 'text-gray-400 hover:text-gray-600'
                                 }`}
                               >
@@ -177,7 +177,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                               </button>
                               <button 
                                 onClick={() => handleTypeChange(dateStr, 'work')}
-                                className={`px-3 py-1.5 text-[10px] rounded-md font-bold transition-all ${
+                                className={`px-3 py-1.5 text-xs rounded-md font-bold transition-all ${
                                     isWork ? 'bg-[#171717] text-gold shadow-xs' : 'text-gray-400 hover:text-gray-600'
                                 }`}
                               >
@@ -190,7 +190,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                       {isWork && (
                           <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
                               <div className="flex-1">
-                                  <label className="block text-[9px] text-gray-400 uppercase tracking-widest mb-1.5 ml-1">START</label>
+                                  <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 ml-1">START</label>
                                   <select 
                                       value={shift.start}
                                       onChange={(e) => handleTimeChange(dateStr, 'start', e.target.value)}
@@ -203,7 +203,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                               </div>
                               <span className="text-gray-300 font-bold mt-5">〜</span>
                               <div className="flex-1">
-                                  <label className="block text-[9px] text-gray-400 uppercase tracking-widest mb-1.5 ml-1">END</label>
+                                  <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 ml-1">END</label>
                                   <select 
                                       value={shift.end}
                                       onChange={(e) => handleTimeChange(dateStr, 'end', e.target.value)}

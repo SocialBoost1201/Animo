@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { CalendarHeart, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Phone } from 'lucide-react';
 
 // ── 料金計算ロジック（PriceSimulatorと同一） ──────────────────
 const SET_FEE = { member: 6000, visitor: 7000 };
@@ -54,7 +54,7 @@ const ToggleGroup = <T extends string>({
       <button
         key={o.value}
         onClick={() => onChange(o.value)}
-        className={`px-3 py-1.5 text-[10px] font-serif luxury-tracking border transition-all ${
+        className={`px-3 py-1.5 text-xs font-serif luxury-tracking border transition-all ${
           value === o.value
             ? 'bg-[#171717] text-white border-[#171717]'
             : 'bg-white text-gray-500 border-gray-200 hover:border-gold'
@@ -78,13 +78,13 @@ function MiniSimulator({ castName }: { castName: string }) {
 
   return (
     <div className="mt-4 p-4 bg-gold/5 border border-gold/20 space-y-4">
-      <p className="text-[10px] text-gold font-serif luxury-tracking uppercase tracking-widest">
+      <p className="text-xs text-gold font-serif luxury-tracking uppercase tracking-widest">
         {castName} と過ごす場合の料金目安
       </p>
 
       <div className="space-y-3">
         <div>
-          <p className="text-[9px] text-gray-400 uppercase tracking-widest mb-2">来店タイプ</p>
+          <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">来店タイプ</p>
           <ToggleGroup
             options={[
               { label: 'Visitor', value: 'visitor' },
@@ -95,7 +95,7 @@ function MiniSimulator({ castName }: { castName: string }) {
           />
         </div>
         <div>
-          <p className="text-[9px] text-gray-400 uppercase tracking-widest mb-2">滞在時間</p>
+          <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">滞在時間</p>
           <ToggleGroup
             options={[
               { label: '60分', value: '60' },
@@ -108,7 +108,7 @@ function MiniSimulator({ castName }: { castName: string }) {
           />
         </div>
         <div>
-          <p className="text-[9px] text-gray-400 uppercase tracking-widest mb-2">指名</p>
+          <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">指名</p>
           <ToggleGroup
             options={[
               { label: 'なし', value: 'none' },
@@ -124,18 +124,19 @@ function MiniSimulator({ castName }: { castName: string }) {
 
       <div className="flex items-center justify-between pt-3 border-t border-gold/20">
         <div>
-          <p className="text-[9px] text-gray-400 font-serif">料金目安（TAX込）</p>
+          <p className="text-xs text-gray-400 font-serif">料金目安（TAX込）</p>
           <p className="text-2xl font-serif text-[#171717]">
             ¥{price.toLocaleString()}
-            <span className="text-[10px] text-gray-400 ml-1">前後</span>
+            <span className="text-xs text-gray-400 ml-1">前後</span>
           </p>
         </div>
-        <Link
-          href={`/reserve?cast=${encodeURIComponent(castName)}`}
-          className="text-[9px] font-serif luxury-tracking bg-gold text-white px-4 py-2.5 hover:bg-[#171717] transition-colors uppercase"
+        <a
+          href="tel:045-263-6961"
+          className="inline-flex items-center gap-1.5 text-xs font-serif luxury-tracking bg-gold text-white px-4 py-2.5 hover:bg-[#171717] transition-colors uppercase"
         >
-          予約する
-        </Link>
+          <Phone className="w-3 h-3" />
+          電話する
+        </a>
       </div>
     </div>
   );
@@ -185,7 +186,7 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: Cast
             >
               <span className="block">{day.label}</span>
               {count > 0 && (
-                <span className="text-[9px] block mt-0.5 opacity-70">{count}名</span>
+                <span className="text-xs block mt-0.5 opacity-70">{count}名</span>
               )}
               {isActive && (
                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gold" />
@@ -230,20 +231,20 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: Cast
                               {cast.stage_name}
                             </h3>
                           </Link>
-                          <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-400 font-serif luxury-tracking">
+                          <div className="flex items-center gap-2 mt-1 text-xs text-gray-400 font-serif luxury-tracking">
                             {cast.age && <span>{cast.age}歳</span>}
                           </div>
                         </div>
                         {/* 出勤時間バッジ */}
                         <div className="shrink-0 text-right">
-                          <span className="inline-block text-[10px] font-serif luxury-tracking text-gold border border-gold/40 px-3 py-1">
+                          <span className="inline-block text-xs font-serif luxury-tracking text-gold border border-gold/40 px-3 py-1">
                             {startTime} – {endTime}
                           </span>
                         </div>
                       </div>
 
                       {cast.hobby && (
-                        <p className="text-[11px] text-gray-400 font-serif luxury-tracking mt-2 line-clamp-1">
+                        <p className="text-xs text-gray-400 font-serif luxury-tracking mt-2 line-clamp-1">
                           趣味: {cast.hobby}
                         </p>
                       )}
@@ -252,20 +253,20 @@ export function ShiftTable({ initialCasts, initialShifts }: { initialCasts: Cast
                       <div className="flex flex-wrap gap-2 mt-4">
                         <Link
                           href={`/cast/${cast.id}`}
-                          className="text-[9px] font-serif luxury-tracking text-gold border border-gold/60 px-4 py-2 hover:bg-gold/10 transition-colors uppercase"
+                          className="text-xs font-serif luxury-tracking text-gold border border-gold/60 px-4 py-2 hover:bg-gold/10 transition-colors uppercase"
                         >
                           プロフィール
                         </Link>
-                        <Link
-                          href={`/reserve?cast=${encodeURIComponent(cast.stage_name)}`}
-                          className="flex items-center gap-1.5 text-[9px] font-serif luxury-tracking bg-[#171717] text-white px-4 py-2 hover:bg-gold transition-colors uppercase"
+                        <a
+                          href="tel:045-263-6961"
+                          className="flex items-center gap-1.5 text-xs font-serif luxury-tracking bg-[#171717] text-white px-4 py-2 hover:bg-gold transition-colors uppercase"
                         >
-                          <CalendarHeart className="w-3 h-3" />
-                          今すぐ指名予約
-                        </Link>
+                          <Phone className="w-3 h-3" />
+                          電話で確認
+                        </a>
                         <button
                           onClick={() => setOpenSimulator(isSimOpen ? null : cast.id)}
-                          className="flex items-center gap-1 text-[9px] font-serif luxury-tracking text-gray-400 border border-gray-200 px-4 py-2 hover:border-gold hover:text-gold transition-colors uppercase"
+                          className="flex items-center gap-1 text-xs font-serif luxury-tracking text-gray-400 border border-gray-200 px-4 py-2 hover:border-gold hover:text-gold transition-colors uppercase"
                         >
                           料金目安
                           {isSimOpen ? (

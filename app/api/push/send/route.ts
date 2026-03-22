@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const payload = JSON.stringify({
       title,
       body,
-      url: url ?? 'https://club-animo.com',
+      url: url ?? 'https://club-animo.jp',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/badge-72x72.png',
     });

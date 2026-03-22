@@ -35,8 +35,8 @@ export default function BusinessEntertainmentPage() {
         updatedAt="2024-03-01T00:00:00+09:00"
       />
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '接待で使える関内ラウンジ', item: 'https://club-animo.com/blog/business-entertainment' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '接待で使える関内ラウンジ', item: 'https://club-animo.jp/blog/business-entertainment' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

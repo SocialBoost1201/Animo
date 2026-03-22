@@ -104,7 +104,7 @@ export default async function CastDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-2xl tracking-widest text-[#171717]">{cast.stage_name || cast.name}</h1>
-          <p className="text-[10px] text-gray-400 tracking-wider mt-1 uppercase font-serif">Cast Dashboard</p>
+          <p className="text-xs text-gray-400 tracking-wider mt-1 uppercase font-serif">Cast Dashboard</p>
         </div>
         <form action={castLogout}>
           <button type="submit" className="p-2 text-gray-300 hover:text-red-400 transition-colors" title="ログアウト">
@@ -121,7 +121,7 @@ export default async function CastDashboardPage() {
             <div>
               <div className="flex items-center gap-2 text-gold mb-1">
                 <TrendingUp className="w-4 h-4" />
-                <span className="text-[10px] tracking-[0.2em] font-bold">ブログアクセス分析</span>
+                <span className="text-xs tracking-[0.2em] font-bold">ブログアクセス分析</span>
               </div>
               <div className="flex items-baseline gap-2 mt-2">
                 <span className="text-3xl font-serif font-bold tracking-wider">{pvStats.totalPV?.toLocaleString() || 0}</span>
@@ -129,11 +129,11 @@ export default async function CastDashboardPage() {
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-gray-400 block mb-1">店舗内ランキング</span>
+              <span className="text-xs text-gray-400 block mb-1">店舗内ランキング</span>
               <div className="flex items-baseline justify-end gap-1">
                 <span className="text-2xl font-serif font-bold text-gold">{pvStats.rank}</span>
                 <span className="text-xs text-gray-300">位</span>
-                <span className="text-[10px] text-gray-500 ml-1">/ {pvStats.totalCasts}人中</span>
+                <span className="text-xs text-gray-500 ml-1">/ {pvStats.totalCasts}人中</span>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default async function CastDashboardPage() {
 
       {/* === 本日の確認 & 来店予定 === */}
       <div className="space-y-4">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-serif">本日の入力</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif">本日の入力</p>
         <CheckinForm existing={todayCheckin} />
         <ReservationForm reservations={reservationsForForm} />
       </div>
@@ -165,7 +165,7 @@ export default async function CastDashboardPage() {
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <div className="flex items-center gap-3 mb-3">
           <CalendarDays className="w-4 h-4 text-gold" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-serif">Today&apos;s Schedule</span>
+          <span className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif">Today&apos;s Schedule</span>
         </div>
         {todayShift ? (
           <p className="text-sm text-[#171717] font-bold">
@@ -192,7 +192,7 @@ export default async function CastDashboardPage() {
                  <CheckCircle2 className="w-5 h-5 text-green-500" />
                  <div>
                    <p className="text-sm font-bold text-green-800">来週のシフト: 承認済み</p>
-                   <p className="text-[10px] text-green-600 mt-1">公開シフト表に反映されています</p>
+                   <p className="text-xs text-green-600 mt-1">公開シフト表に反映されています</p>
                  </div>
                </div>
              </div>
@@ -202,7 +202,7 @@ export default async function CastDashboardPage() {
                  <div className="w-5 h-5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
                  <div>
                    <p className="text-sm font-bold text-gray-700">来週のシフト: 承認待ち</p>
-                   <p className="text-[10px] text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
+                   <p className="text-xs text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
                  </div>
                </div>
              </div>
@@ -214,7 +214,7 @@ export default async function CastDashboardPage() {
                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                  <div>
                    <p className="text-sm font-bold text-red-700">【重要】シフト未提出（期限超過）</p>
-                   <p className="text-[10px] text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
+                   <p className="text-xs text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
                  </div>
                </div>
              </div>
@@ -224,7 +224,7 @@ export default async function CastDashboardPage() {
                  <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
                  <div>
                    <p className="text-sm font-bold text-yellow-800">シフト提出の期限が近づいています</p>
-                   <p className="text-[10px] text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
+                   <p className="text-xs text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
                  </div>
                </div>
              </div>
@@ -234,7 +234,7 @@ export default async function CastDashboardPage() {
                  <CalendarDays className="w-5 h-5 text-gold" />
                  <div>
                    <p className="text-sm font-bold text-[#171717]">来週のシフトが未提出です</p>
-                   <p className="text-[10px] text-gray-500 mt-1">タップしてシフトを入力してください</p>
+                   <p className="text-xs text-gray-500 mt-1">タップしてシフトを入力してください</p>
                  </div>
                </div>
              </div>
@@ -257,7 +257,7 @@ export default async function CastDashboardPage() {
             <item.icon className={`w-5 h-5 ${item.accent ? 'text-gold' : 'text-gold/60'}`} />
             <div>
               <div className={`text-sm font-bold tracking-widest ${item.accent ? '' : 'text-[#171717]'}`}>{item.label}</div>
-              <div className={`text-[10px] mt-0.5 tracking-wider ${item.accent ? 'text-white/60' : 'text-gray-400'}`}>{item.desc}</div>
+              <div className={`text-xs mt-0.5 tracking-wider ${item.accent ? 'text-white/60' : 'text-gray-400'}`}>{item.desc}</div>
             </div>
           </Link>
         ))}
@@ -265,7 +265,7 @@ export default async function CastDashboardPage() {
 
       {/* Recent Posts */}
       <div>
-        <h2 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-serif mb-4">最近の投稿</h2>
+        <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif mb-4">最近の投稿</h2>
         {recentPosts && recentPosts.length > 0 ? (
           <div className="space-y-3">
             {recentPosts.map((post: any) => (
@@ -276,14 +276,14 @@ export default async function CastDashboardPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-gray-600 line-clamp-2 mb-1">{post.content}</p>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
                       post.status === 'published' ? 'bg-green-50 text-green-600' :
                       post.status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
                       'bg-gray-50 text-gray-400'
                     }`}>
                       {post.status === 'published' ? '公開中' : post.status === 'pending' ? '承認待ち' : '下書き'}
                     </span>
-                    <span className="text-[9px] text-gray-300 font-mono">
+                    <span className="text-xs text-gray-300 font-mono">
                       {new Date(post.created_at).toLocaleDateString('ja-JP')}
                     </span>
                   </div>

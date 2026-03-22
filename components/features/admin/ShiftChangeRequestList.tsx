@@ -66,7 +66,7 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
             }`}>
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-wider ${
+                  <span className={`px-2 py-1 rounded text-xs font-bold tracking-wider ${
                     req.action_type === 'cancel' 
                       ? 'bg-red-100 text-red-700' 
                       : 'bg-blue-100 text-blue-700'
@@ -75,7 +75,7 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
                   </span>
                 </div>
                 <h3 className="font-serif font-bold text-lg text-[#171717]">{req.casts.stage_name}</h3>
-                <p className="text-[10px] text-gray-400 mt-1">申請日時: {submitDate}</p>
+                <p className="text-xs text-gray-400 mt-1">申請日時: {submitDate}</p>
               </div>
             </div>
 

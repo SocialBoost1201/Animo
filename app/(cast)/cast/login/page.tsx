@@ -32,12 +32,12 @@ export default function CastLoginPage() {
         {/* Logo */}
         <div className="text-center mb-12">
           <h1 className="font-serif text-3xl tracking-[0.4em] text-[#171717] font-bold">ANIMO</h1>
-          <p className="text-[10px] text-gold tracking-[0.3em] uppercase mt-2 font-serif">Cast Portal</p>
+          <p className="text-xs text-gold tracking-[0.3em] uppercase mt-2 font-serif">Cast Portal</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               Email
             </label>
             <input
@@ -51,7 +51,7 @@ export default function CastLoginPage() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               Password
             </label>
             <input
@@ -74,10 +74,10 @@ export default function CastLoginPage() {
         </form>
 
         <div className="mt-8 text-center space-y-3">
-          <Link href="/cast/forgot-password" className="block text-[11px] text-gray-400 hover:text-gold transition-colors tracking-wider">
+          <Link href="/cast/forgot-password" className="block text-xs text-gray-400 hover:text-gold transition-colors tracking-wider">
             パスワードを忘れた方はこちら
           </Link>
-          <Link href="/cast/register" className="block text-[11px] text-gold hover:text-[#171717] transition-colors tracking-wider font-bold">
+          <Link href="/cast/register" className="block text-xs text-gold hover:text-[#171717] transition-colors tracking-wider font-bold">
             新規登録はこちら
           </Link>
         </div>

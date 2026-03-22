@@ -30,7 +30,7 @@ export default async function NewsPage() {
                 {/* IDベースの詳細ページを開く */}
                 <Link href={`/news/${item.id}`} className="block">
                   <div className="flex flex-col md:flex-row bg-white hover:bg-gray-50/30 p-8 md:p-12 shadow-luxury transition-all duration-700 border border-gold/20 hover:-translate-y-1">
-                    <div className="shrink-0 mb-6 md:mb-0 md:mr-12 text-[10px] font-serif luxury-tracking text-gray-400 w-32 md:pt-1">
+                    <div className="shrink-0 mb-6 md:mb-0 md:mr-12 text-xs font-serif luxury-tracking text-gray-400 w-32 md:pt-1">
                       {dateStr}
                     </div>
                     <div className="flex-1">

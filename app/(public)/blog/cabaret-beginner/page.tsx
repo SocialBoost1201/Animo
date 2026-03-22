@@ -34,8 +34,8 @@ export default function CabaretBeginnerPage() {
         updatedAt="2024-03-01T00:00:00+09:00"
       />
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'キャバクラ初心者ガイド', item: 'https://club-animo.com/blog/cabaret-beginner' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'キャバクラ初心者ガイド', item: 'https://club-animo.jp/blog/cabaret-beginner' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

@@ -26,8 +26,8 @@ export default function KannaiComparePage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内キャバクラ比較', item: 'https://club-animo.com/area/kannai-compare' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内キャバクラ比較', item: 'https://club-animo.jp/area/kannai-compare' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

@@ -25,6 +25,11 @@
   --shadow-aura: 0 0 50px -10px rgba(179, 146, 87, 0.4); /* シャンパンゴールドのオーラ */
 }
 
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
@@ -88,4 +93,28 @@ body {
   transform: translateX(-100%) skewX(-15deg);
   animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
   pointer-events: none;
+}
+
+.pb-safe {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+/* UIUX-Guard: mobile tiny text normalization */
+@media (max-width: 767px) {
+  .text-\[9px\],
+  .text-\[10px\],
+  .text-\[11px\] {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  [style*="font-size: 12px"],
+  [style*="font-size: 12px"],
+  [style*="font-size: 12px"],
+  [style*="font-size: 12px"],
+  [style*="font-size: 12px"],
+  [style*="font-size: 12px"] {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
 }

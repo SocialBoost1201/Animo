@@ -82,14 +82,14 @@ function ResetPasswordForm() {
           <h1 className="font-serif text-2xl tracking-[0.3em] text-[#171717] font-bold">
             パスワード再設定
           </h1>
-          <p className="text-[10px] text-gray-400 tracking-[0.2em] uppercase mt-2 font-serif">
+          <p className="text-xs text-gray-400 tracking-[0.2em] uppercase mt-2 font-serif">
             Reset Password
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               新しいパスワード
             </label>
             <input
@@ -104,7 +104,7 @@ function ResetPasswordForm() {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
+            <label className="block text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-serif">
               パスワード（確認）
             </label>
             <input
@@ -128,7 +128,7 @@ function ResetPasswordForm() {
         </form>
 
         <div className="mt-8 text-center">
-          <Link href="/cast/login" className="text-[11px] text-gray-400 hover:text-gold transition-colors tracking-wider">
+          <Link href="/cast/login" className="text-xs text-gray-400 hover:text-gold transition-colors tracking-wider">
             ← ログインへ戻る
           </Link>
         </div>

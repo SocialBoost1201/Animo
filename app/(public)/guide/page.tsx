@@ -131,15 +131,15 @@ export default function GuidePage() {
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <div className="bg-white p-6 border border-gold/20 text-center">
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Member</p>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">Member</p>
                 <p className="text-2xl font-serif text-foreground">¥6,000<span className="text-xs text-gray-400 ml-1">/ 60分</span></p>
               </div>
               <div className="bg-white p-6 border border-gold/20 text-center">
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Visitor</p>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">Visitor</p>
                 <p className="text-2xl font-serif text-foreground">¥7,000<span className="text-xs text-gray-400 ml-1">/ 60分</span></p>
               </div>
             </div>
-            <p className="text-[11px] text-gray-400 text-center mt-6 font-serif luxury-tracking">
+            <p className="text-xs text-gray-400 text-center mt-6 font-serif luxury-tracking">
               ※ 上記にTAX/サービス料 30% が加算されます。指名料・延長料は別途。
             </p>
             <div className="text-center mt-8">

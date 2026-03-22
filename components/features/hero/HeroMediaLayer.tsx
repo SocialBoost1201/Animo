@@ -10,6 +10,8 @@ interface HeroMediaLayerProps {
   transitionMode: string;
   transitionMs: number;
   isReducedMotion: boolean;
+  mobileFallbackSrc?: string;
+  mobileFallbackAlt?: string;
 }
 
 export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
@@ -18,17 +20,22 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   transitionMode,
   transitionMs,
   isReducedMotion,
+  mobileFallbackSrc,
+  mobileFallbackAlt,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
-    setIsMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // アクティブな動画の再生制御
   useEffect(() => {
-    if (!isMounted || media.length === 0 || isReducedMotion) return;
+    if (media.length === 0 || isReducedMotion || isMobile) return;
 
     media.forEach((item, i) => {
       const videoEl = videoRefs.current[i];
@@ -61,10 +68,32 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
         }, transitionMs);
       }
     });
-  }, [activeIndex, isMounted, media, isReducedMotion]);
+  }, [activeIndex, isMobile, media, isReducedMotion, transitionMs]);
 
   if (media.length === 0) {
     return <div className="absolute inset-0 bg-[#171717]" />;
+  }
+
+  if (isMobile || isReducedMotion) {
+    const fallbackMedia = media[0];
+    const fallbackSrc =
+      mobileFallbackSrc ||
+      (fallbackMedia.type === 'image'
+        ? fallbackMedia.url
+        : fallbackMedia.posterUrl || '/images/hero-poster.webp');
+
+    return (
+      <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
+        <Image
+          src={fallbackSrc}
+          alt={mobileFallbackAlt || fallbackMedia.title || 'Hero Background'}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+    );
   }
 
   // ハイドレーションエラーを防ぐための初回レンダリング（ポスター画像か空枠のみ）
@@ -86,8 +115,8 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
         />
       )}
 
-      {media.map((item, i) => {
-        const isActive = isMounted && i === activeIndex;
+      {media.slice(0, 3).map((item, i) => {
+        const isActive = i === activeIndex;
 
         // トランジションのスタイリング（基本はFade）
         let enterStyle: React.CSSProperties = { opacity: 1 };

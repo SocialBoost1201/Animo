@@ -20,8 +20,8 @@ export default function KannaiLoungeRecommendPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内ラウンジおすすめ', item: 'https://club-animo.com/area/kannai-lounge-recommend' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内ラウンジおすすめ', item: 'https://club-animo.jp/area/kannai-lounge-recommend' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

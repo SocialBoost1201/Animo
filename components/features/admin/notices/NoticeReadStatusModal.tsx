@@ -144,7 +144,7 @@ export function NoticeReadStatusModal({
                           <span className="font-bold text-gray-700 text-sm">{c.stage_name}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-[10px] text-gray-400 font-medium tracking-wider">READ AT</span>
+                          <span className="text-xs text-gray-400 font-medium tracking-wider">READ AT</span>
                           <p className="text-xs font-bold text-gray-600">
                             {c.read_at ? format(new Date(c.read_at), 'MM/dd HH:mm') : '-'}
                           </p>

@@ -73,7 +73,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
             <option value="zoom">Zoom（ズームアウトして切替）</option>
             <option value="burn">Burn（明転して切替）</option>
           </select>
-          <p className="text-[11px] text-gray-400 mt-2">
+          <p className="text-xs text-gray-400 mt-2">
             ※ ripple は WebGL シェーダーによる高品質エフェクトです。slide / zoom / burn は CSS アニメーションで動作します。
           </p>
         </div>

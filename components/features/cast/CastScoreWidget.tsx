@@ -48,7 +48,7 @@ export function CastScoreWidget({
                   <div className="p-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-500">
                     <Trophy className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-[10px] tracking-[0.25em] font-bold text-yellow-500/90 uppercase">
+                  <span className="text-xs tracking-[0.25em] font-bold text-yellow-500/90 uppercase">
                     Animo Score {displayMonth ? <span className="text-yellow-500/60 ml-1">{displayMonth}</span> : ''}
                   </span>
                 </div>
@@ -62,7 +62,7 @@ export function CastScoreWidget({
               
               {/* Level Badge */}
               <div className="text-right flex flex-col items-end">
-                <span className="text-[10px] text-gray-400 block mb-1.5 font-medium tracking-wider uppercase">Rank</span>
+                <span className="text-xs text-gray-400 block mb-1.5 font-medium tracking-wider uppercase">Rank</span>
                 <div className="flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 px-3 py-1.5 rounded-xl border border-yellow-500/20 backdrop-blur-md shadow-[0_0_15px_rgba(234,179,8,0.1)]">
                   <Star className="w-3.5 h-3.5 fill-current opacity-80" />
                   <span className="text-sm font-bold tracking-widest pl-0.5">Lv.{score.current_level}</span>
@@ -72,7 +72,7 @@ export function CastScoreWidget({
 
             {/* Progress Section */}
             <div className="space-y-2.5">
-              <div className="flex justify-between text-[11px] font-medium text-gray-400 px-1">
+              <div className="flex justify-between text-xs font-medium text-gray-400 px-1">
                 <span>NEXT RANK</span>
                 <span className="text-gray-300">{nextLevelScore - score.total_score} pt to go</span>
               </div>
@@ -115,7 +115,7 @@ export function CastScoreWidget({
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-[#171717] tracking-tight">スコア獲得履歴</h3>
-                  <p className="text-[10px] text-gray-400 font-medium">Recent Activity</p>
+                  <p className="text-xs text-gray-400 font-medium">Recent Activity</p>
                 </div>
               </div>
               <button 
@@ -149,7 +149,7 @@ export function CastScoreWidget({
                             +{log.points_delta}
                           </span>
                         </div>
-                        <p className="text-[11px] text-gray-400 font-medium">
+                        <p className="text-xs text-gray-400 font-medium">
                           {format(new Date(log.created_at), 'yyyy/MM/dd HH:mm', { locale: ja })}
                         </p>
                       </div>

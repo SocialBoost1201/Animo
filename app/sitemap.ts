@@ -43,6 +43,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/blog/yokohama-lounge-ranking', priority: 0.7, changeFrequency: 'monthly' as const },
     { path: '/blog/cabaret-beginner', priority: 0.7, changeFrequency: 'monthly' as const },
     { path: '/blog/business-entertainment', priority: 0.7, changeFrequency: 'monthly' as const },
+
+    // Additional Pages
+    { path: '/events', priority: 0.6, changeFrequency: 'weekly' as const },
+    { path: '/recruit-policy', priority: 0.3, changeFrequency: 'yearly' as const },
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((page) => ({

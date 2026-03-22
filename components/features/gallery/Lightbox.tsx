@@ -88,7 +88,7 @@ export function Lightbox({ items, currentIndex, isOpen, onClose }: LightboxProps
 
         {/* キャプション */}
         <div className="absolute bottom-8 left-0 right-0 text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-          <p className="text-[10px] text-gold/80 font-serif uppercase tracking-[0.3em] mb-2">
+          <p className="text-xs text-gold/80 font-serif uppercase tracking-[0.3em] mb-2">
             {currentItem.category}
           </p>
           <h3 className="text-white font-serif text-lg tracking-widest px-4">

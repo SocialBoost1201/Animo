@@ -34,8 +34,8 @@ export default function KannaiNightspotsPage() {
         updatedAt="2024-03-01T00:00:00+09:00"
       />
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内の夜遊びスポット', item: 'https://club-animo.com/blog/kannai-nightspots' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内の夜遊びスポット', item: 'https://club-animo.jp/blog/kannai-nightspots' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

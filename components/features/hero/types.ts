@@ -15,4 +15,6 @@ export interface HeroVideoRotatorProps {
   durationMs?: number;
   transitionMs?: number;
   overlayOpacity?: number;
+  mobileFallbackSrc?: string;
+  mobileFallbackAlt?: string;
 }

@@ -94,14 +94,14 @@ export default async function AdminCastPostsPage({ searchParams }: { searchParam
                   fill 
                   className="object-cover"
                 />
-                <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-2">
+                <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-400" />
                   {post.casts?.stage_name || post.casts?.name || 'Unknown Cast'}
                 </div>
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-1 wrap-break-word whitespace-pre-wrap">{post.content}</p>
-                <div className="flex justify-between items-center text-[10px] text-gray-400 mb-4 font-mono w-full">
+                <div className="flex justify-between items-center text-xs text-gray-400 mb-4 font-mono w-full">
                   <span>{new Date(post.created_at).toLocaleString('ja-JP')}</span>
                   <span className="flex items-center gap-1 font-bold text-gold" title="この記事の閲覧数（PV）">
                     <Eye className="w-3.5 h-3.5" />

@@ -144,7 +144,7 @@ export const NightStyleQuiz = () => {
             </div>
 
             <div className="text-center">
-              <span className="text-[10px] text-gold font-serif luxury-tracking uppercase mb-2 block">
+              <span className="text-xs text-gold font-serif luxury-tracking uppercase mb-2 block">
                 Question {currentStep + 1} / {QUESTIONS.length}
               </span>
               <h3 className="text-lg md:text-xl font-serif text-[#171717] leading-relaxed">
@@ -208,7 +208,7 @@ export const NightStyleQuiz = () => {
               </div>
             ) : matchedCasts.length > 0 ? (
               <div className="w-full mb-8">
-                <p className="text-[10px] text-gold font-serif luxury-tracking uppercase text-center mb-4">
+                <p className="text-xs text-gold font-serif luxury-tracking uppercase text-center mb-4">
                   Recommended Cast
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -225,11 +225,11 @@ export const NightStyleQuiz = () => {
                             className="group-hover:scale-105 transition-transform duration-700"
                           />
                           <div className="p-2 text-center border-t border-gray-50">
-                            <p className="text-[11px] font-serif luxury-tracking text-[#171717]">
+                            <p className="text-xs font-serif luxury-tracking text-[#171717]">
                               {cast.stage_name}
                             </p>
                             {cast.age && (
-                              <p className="text-[10px] text-gray-400 mt-0.5">{cast.age}歳</p>
+                              <p className="text-xs text-gray-400 mt-0.5">{cast.age}歳</p>
                             )}
                           </div>
                         </div>
@@ -252,7 +252,7 @@ export const NightStyleQuiz = () => {
               </Button>
               <button
                 onClick={resetQuiz}
-                className="flex items-center justify-center gap-2 text-[10px] uppercase font-serif text-gray-400 hover:text-gold transition-colors"
+                className="flex items-center justify-center gap-2 text-xs uppercase font-serif text-gray-400 hover:text-gold transition-colors"
               >
                 <RefreshCcw size={12} />
                 やり直す

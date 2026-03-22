@@ -76,7 +76,7 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
           <div>
             <label className="block text-xs text-gray-500 mb-1">お客様名 *</label>
             <input name="guest_name" type="text" required placeholder="山田" className={inputClass} />
-            <p className="text-[10px] text-gray-300 mt-1">「様」はつけずに入力してください</p>
+            <p className="text-xs text-gray-300 mt-1">「様」はつけずに入力してください</p>
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">種別 *</label>

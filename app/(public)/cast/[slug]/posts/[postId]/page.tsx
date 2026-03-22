@@ -77,12 +77,12 @@ export default async function CastPostDetailPage({ params }: { params: Promise<{
     author: {
       '@type': 'Person',
       name: cast.stage_name || cast.name,
-      url: `https://club-animo.com/cast/${cast.slug}`
+      url: `https://club-animo.jp/cast/${cast.slug}`
     },
     publisher: {
       '@type': 'Organization',
       name: 'CLUB Animo (クラブ アニモ)',
-      url: 'https://club-animo.com'
+      url: 'https://club-animo.jp'
     },
     description: post.content,
   };
@@ -117,7 +117,7 @@ export default async function CastPostDetailPage({ params }: { params: Promise<{
                 <Link href={`/cast/${cast.slug}`} className="font-serif font-bold text-[#171717] hover:underline hover:text-gold transition-colors">
                   {cast.stage_name}
                 </Link>
-                <div className="text-[10px] text-gray-400 font-mono">
+                <div className="text-xs text-gray-400 font-mono">
                   {dateStr}
                 </div>
               </div>
@@ -142,10 +142,10 @@ export default async function CastPostDetailPage({ params }: { params: Promise<{
               
               {/* 自動付与タグ (SEO対策) */}
               <div className="mt-8 pt-4 border-t border-gray-50 flex flex-wrap gap-2">
-                <span className="text-[10px] tracking-widest text-gold bg-gold/5 px-2 py-1">関内キャバクラ</span>
-                <span className="text-[10px] tracking-widest text-gold bg-gold/5 px-2 py-1">横浜キャバクラ</span>
-                <span className="text-[10px] tracking-widest text-gold bg-gold/5 px-2 py-1">Club Animo</span>
-                <span className="text-[10px] tracking-widest text-[#171717] bg-gray-50 px-2 py-1">#{cast.stage_name}</span>
+                <span className="text-xs tracking-widest text-gold bg-gold/5 px-2 py-1">関内キャバクラ</span>
+                <span className="text-xs tracking-widest text-gold bg-gold/5 px-2 py-1">横浜キャバクラ</span>
+                <span className="text-xs tracking-widest text-gold bg-gold/5 px-2 py-1">Club Animo</span>
+                <span className="text-xs tracking-widest text-[#171717] bg-gray-50 px-2 py-1">#{cast.stage_name}</span>
               </div>
             </div>
           </article>

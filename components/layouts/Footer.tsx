@@ -33,7 +33,7 @@ export const Footer = () => {
                 href="https://www.instagram.com/kannai_club_animo/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 text-[10px] font-serif luxury-tracking hover:text-gold transition-colors"
+                className="text-gray-500 text-xs font-serif luxury-tracking hover:text-gold transition-colors"
               >
                 @kannai_club_animo
               </a>
@@ -91,7 +91,7 @@ export const Footer = () => {
               </li>
               <li className="mt-6 pt-6 border-t border-white/10">
                 <p className="font-serif text-white luxury-tracking-super text-sm">OPEN 21:00 - LAST</p>
-                <p className="text-[10px] uppercase mt-2 font-serif luxury-tracking text-gray-500">Closed on Sundays & Holidays</p>
+                <p className="text-xs uppercase mt-2 font-serif luxury-tracking text-gray-500">Closed on Sundays & Holidays</p>
               </li>
             </ul>
           </div>

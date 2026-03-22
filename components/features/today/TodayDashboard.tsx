@@ -86,15 +86,15 @@ export function TodayDashboard({ data, casts }: Props) {
       {/* アクセス解析サマリー */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
-          <span className="text-[10px] text-gray-400 font-bold mb-1">本日のPV</span>
+          <span className="text-xs text-gray-400 font-bold mb-1">本日のPV</span>
           <span className="text-xl font-bold text-gold">{data.analytics.todayPv}</span>
         </div>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
-          <span className="text-[10px] text-gray-400 font-bold mb-1">昨日のPV</span>
+          <span className="text-xs text-gray-400 font-bold mb-1">昨日のPV</span>
           <span className="text-xl font-bold text-gray-600">{data.analytics.yesterdayPv}</span>
         </div>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col items-center justify-center">
-          <span className="text-[10px] text-gray-400 font-bold mb-1">アクティブ</span>
+          <span className="text-xs text-gray-400 font-bold mb-1">アクティブ</span>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-xl font-bold text-[#171717]">{data.analytics.activeUsers}</span>
@@ -244,7 +244,7 @@ export function TodayDashboard({ data, casts }: Props) {
               <button type="button" onClick={() => setShowStaffForm(false)} className="px-4 py-2 text-xs text-gray-500 rounded-lg border">戻る</button>
             </div>
             {data.allStaffs.length === 0 && (
-              <p className="text-[10px] text-red-500 mt-1">
+              <p className="text-xs text-red-500 mt-1">
                 ※人材管理からスタッフを登録してください
               </p>
             )}
@@ -284,11 +284,11 @@ export function TodayDashboard({ data, casts }: Props) {
             </select>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-[10px] text-gray-400 mb-1 block">変更前</label>
+                <label className="text-xs text-gray-400 mb-1 block">変更前</label>
                 <input name="original_time" type="time" className={inputClass} />
               </div>
               <div>
-                <label className="text-[10px] text-gray-400 mb-1 block">変更後</label>
+                <label className="text-xs text-gray-400 mb-1 block">変更後</label>
                 <input name="new_time" type="time" className={inputClass} />
               </div>
             </div>
@@ -343,17 +343,17 @@ export function TodayDashboard({ data, casts }: Props) {
                 <div key={c.cast_id} className="flex items-center justify-between py-1">
                   <span className="text-sm font-bold text-red-600">{c.stage_name}</span>
                   {isMailSent ? (
-                    <span className="text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                    <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                       📧 16:00 メール済み
                     </span>
                   ) : (
-                    <span className="text-[10px] text-gray-400">未連絡</span>
+                    <span className="text-xs text-gray-400">未連絡</span>
                   )}
                 </div>
               )
             })}
           </div>
-          <p className="text-[10px] text-red-400 mt-3">本日の確認フォームを未送信のキャストです</p>
+          <p className="text-xs text-red-400 mt-3">本日の確認フォームを未送信のキャストです</p>
         </div>
       )}
 

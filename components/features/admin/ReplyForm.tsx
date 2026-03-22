@@ -76,7 +76,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
           <input type="hidden" name="customerName" value={customerName} />
 
           <div>
-            <label className="block text-[10px] tracking-widest uppercase text-gray-400 mb-1">
+            <label className="block text-xs tracking-widest uppercase text-gray-400 mb-1">
               返信先 (Email)
             </label>
             <input
@@ -87,14 +87,14 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
               className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm"
             />
             {!hasEmail && (
-              <p className="text-[10px] text-amber-600 mt-1">
+              <p className="text-xs text-amber-600 mt-1">
                 ※ 連絡先がメールアドレス形式ではないため、メール送信はスキップされます（DB保存のみ）。
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-[10px] tracking-widest uppercase text-gray-400 mb-1">
+            <label className="block text-xs tracking-widest uppercase text-gray-400 mb-1">
               返信内容 <span className="text-red-400">*</span>
             </label>
             <textarea

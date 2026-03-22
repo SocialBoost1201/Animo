@@ -8,10 +8,11 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import {
   ArrowRight, CheckCircle2, Phone, Instagram,
-  ChevronRight, CalendarHeart, Star, ChevronUp, ChevronDown
+  CalendarHeart, Star, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
 import { trackRecruitSubmit } from '@/lib/analytics';
 
@@ -121,7 +122,7 @@ const RECRUIT_DETAILS_TAGS: RecruitTag[] = [
 
 // ─── メインコンポーネント ──────────────────────────────────────
 
-export default function CastRecruitPage() {
+function CastRecruitPageContent() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -233,9 +234,9 @@ export default function CastRecruitPage() {
               { label: '送り', value: '毎回完備' },
             ].map((item, i) => (
               <div key={i} className="text-center py-6 px-4">
-                <p className="text-gold font-serif text-[10px] luxury-tracking uppercase mb-2">{item.label}</p>
+                <p className="text-gold font-serif text-xs luxury-tracking uppercase mb-2">{item.label}</p>
                 <p className="text-white font-serif text-xl md:text-2xl luxury-tracking mb-1">{item.value}</p>
-                <p className="text-white/50 font-serif text-[10px] luxury-tracking">{item.unit}</p>
+                <p className="text-white/50 font-serif text-xs luxury-tracking">{item.unit}</p>
               </div>
             ))}
           </div>
@@ -270,7 +271,7 @@ export default function CastRecruitPage() {
                   <div className="w-14 h-14 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="text-gold w-6 h-6" />
                   </div>
-                  <p className="text-[10px] text-gold font-serif luxury-tracking uppercase mb-2">{merit.note}</p>
+                  <p className="text-xs text-gold font-serif luxury-tracking uppercase mb-2">{merit.note}</p>
                   <h3 className="font-serif text-base mb-4 text-foreground luxury-tracking">{merit.title}</h3>
                   <p className="font-serif text-xs text-gray-500 leading-[2.5] luxury-tracking">{merit.desc}</p>
                 </div>
@@ -321,7 +322,7 @@ export default function CastRecruitPage() {
                   </p>
                   <div className="border-t border-gold/20 pt-4">
                     <p className="font-serif text-sm text-foreground luxury-tracking">{voice.name}</p>
-                    <p className="text-[10px] text-gray-400 font-serif luxury-tracking">{voice.age}歳 / {voice.period}</p>
+                    <p className="text-xs text-gray-400 font-serif luxury-tracking">{voice.age}歳 / {voice.period}</p>
                   </div>
                 </div>
               </FadeIn>
@@ -335,7 +336,7 @@ export default function CastRecruitPage() {
         <div className="container mx-auto max-w-4xl">
           <FadeIn>
             <div className="text-center mb-10">
-              <span className="inline-block text-[10px] font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
+              <span className="inline-block text-xs font-serif tracking-widest uppercase text-gold border border-gold/40 px-4 py-1.5 mb-4">
                 Point
               </span>
               <h2 className="text-xl md:text-2xl font-serif luxury-tracking text-foreground">ここがポイント！</h2>
@@ -373,7 +374,7 @@ export default function CastRecruitPage() {
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="flex gap-6 items-start bg-white p-6 border border-gold/10">
                   <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
-                    <span className="text-[10px] font-serif text-gold luxury-tracking">{item.step}</span>
+                    <span className="text-xs font-serif text-gold luxury-tracking">{item.step}</span>
                   </div>
                   <div>
                     <h3 className="font-serif text-sm text-foreground luxury-tracking mb-1">{item.title}</h3>
@@ -514,7 +515,7 @@ export default function CastRecruitPage() {
                 </div>
                 <div>
                   <label htmlFor="lineId" className="block text-xs font-serif luxury-tracking text-foreground mb-3 uppercase">
-                    LINE ID <span className="text-gray-400 text-[10px] ml-1 normal-case">(任意)</span>
+                    LINE ID <span className="text-gray-400 text-xs ml-1 normal-case">(任意)</span>
                   </label>
                   <input id="lineId" name="lineId" type="text"
                     className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
@@ -544,7 +545,7 @@ export default function CastRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
-                <p className="text-[10px] text-gray-500 font-serif luxury-tracking leading-loose mb-6">
+                <p className="text-xs text-gray-500 font-serif luxury-tracking leading-loose mb-6">
                   送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
                 </p>
                 <Button type="submit" disabled={isSubmitting} size="lg"
@@ -559,5 +560,13 @@ export default function CastRecruitPage() {
       </section>
 
     </div>
+  );
+}
+
+export default function CastRecruitPage() {
+  return (
+    <ReCaptchaProvider>
+      <CastRecruitPageContent />
+    </ReCaptchaProvider>
   );
 }

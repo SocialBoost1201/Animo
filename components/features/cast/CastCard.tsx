@@ -38,7 +38,7 @@ export const CastCard: React.FC<CastCardProps> = ({
           />
           {isToday && (
             <div className="absolute top-3 right-3 z-10">
-              <span className="bg-gold text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-sm shadow-sm flex items-center gap-1">
+              <span className="bg-gold text-white text-xs uppercase font-bold tracking-wider px-3 py-1 rounded-sm shadow-sm flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 本日出勤
               </span>
@@ -59,7 +59,7 @@ export const CastCard: React.FC<CastCardProps> = ({
             {tags.slice(0, 3).map((tag, idx) => (
               <span 
                 key={idx} 
-                className="text-[10px] text-gray-500 border border-gray-200 px-2 py-0.5 rounded-sm transition-colors duration-500 group-hover:border-gold/30 group-hover:text-gold/80"
+                className="text-xs text-gray-500 border border-gray-200 px-2 py-0.5 rounded-sm transition-colors duration-500 group-hover:border-gold/30 group-hover:text-gold/80"
               >
                 {tag}
               </span>

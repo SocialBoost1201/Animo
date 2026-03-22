@@ -14,8 +14,8 @@ export default function StaffRecruitLayout({
   return (
     <>
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: 'STAFF RECRUIT', item: 'https://club-animo.com/recruit/staff' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: 'STAFF RECRUIT', item: 'https://club-animo.jp/recruit/staff' }
       ]} />
       {children}
     </>

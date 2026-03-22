@@ -217,7 +217,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 placeholder="アイカ"
                 title="ひらがな・カタカナのみ"
               />
-              <p className="text-[10px] text-gray-400 mt-1">あいうえお順の並び替えに使用します</p>
+              <p className="text-xs text-gray-400 mt-1">あいうえお順の並び替えに使用します</p>
             </div>
           </div>
 
@@ -245,7 +245,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-amber-800 tracking-widest uppercase">🔐 個人情報（管理者専用 / 非公開）</span>
             </div>
-            <p className="text-[10px] text-amber-700 leading-relaxed">
+            <p className="text-xs text-amber-700 leading-relaxed">
               本名・生年月日はサイトおよびキャストダッシュボードには一切表示されません。<br />
               同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、キャストアカウントの発行に使用します。
             </p>
@@ -311,7 +311,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* AI診断タグ */}
           <div>
             <label className={labelClass}>AI診断タグ (Quiz Tags)</label>
-            <p className="text-[10px] text-gray-400 mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
+            <p className="text-xs text-gray-400 mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
             <div className="grid grid-cols-2 gap-2">
               {QUIZ_TAG_OPTIONS.map((tag) => {
                 const isChecked = selectedTags.includes(tag.value)
@@ -369,7 +369,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     unoptimized
                     className="object-cover rounded shadow-sm border border-gray-100" 
                   />
-                  <p className="text-[10px] text-gray-400 mt-28 text-center">プレビュー</p>
+                  <p className="text-xs text-gray-400 mt-28 text-center">プレビュー</p>
                 </div>
               )}
               <div className="flex-1">
@@ -381,7 +381,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   onChange={handleImageChange}
                   className={inputClass} 
                 />
-                <p className="text-[10px] text-gray-400 mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
                   ※ {isEditing ? '新しい画像を選択すると上書きされます。' : '後から追加することもできます。'}
                 </p>

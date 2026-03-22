@@ -131,7 +131,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
           <div className="flex bg-gray-100/80 dark:bg-black/50 p-1 rounded-sm border border-gray-200/50 dark:border-white/10">
             <button
               onClick={() => router.push('?view=week')}
-              className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
+              className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
                 viewType === 'week' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
               }`}
             >
@@ -139,7 +139,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
             </button>
             <button
               onClick={() => router.push('?view=month')}
-              className={`flex items-center gap-1.5 px-4 py-1.5 text-[11px] font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
+              className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
                 viewType === 'month' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
               }`}
             >
@@ -184,7 +184,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                 const isSun = d.getDay() === 0
                 return (
                   <th key={date} className="px-2 py-3 text-center bg-gray-50/70 border-l border-gray-50">
-                    <p className={`text-[10px] font-bold tracking-widest ${isSat ? 'text-blue-500' : isSun ? 'text-red-500' : 'text-gray-500'}`}>
+                    <p className={`text-xs font-bold tracking-widest ${isSat ? 'text-blue-500' : isSun ? 'text-red-500' : 'text-gray-500'}`}>
                       {DAYS_SHORT[i]}
                     </p>
                     <p className="text-sm font-serif text-[#171717] mt-0.5">{d.getDate()}</p>
@@ -201,7 +201,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                   <p className="text-sm font-bold text-[#171717] truncate max-w-[120px]">
                     {cast.stage_name}
                   </p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     {dates.filter(d => shiftMap.has(`${cast.id}_${d}`)).length}日出勤
                   </p>
                 </td>
@@ -220,20 +220,20 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                           <select
                             value={shift?.start_time}
                             onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
-                            className="text-[10px] border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                            className="text-xs border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
                           >
                             {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
                           <select
                             value={shift?.end_time}
                             onChange={e => updateTime(cast.id, date, 'end_time', e.target.value)}
-                            className="text-[10px] border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                            className="text-xs border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
                           >
                             {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
                           <button
                             onClick={() => setEditingCell(null)}
-                            className="text-[10px] text-gold font-bold flex items-center gap-1"
+                            className="text-xs text-gold font-bold flex items-center gap-1"
                           >
                             <Check size={10} /> 完了
                           </button>
@@ -243,7 +243,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                           {/* Toggle button */}
                           <button
                             onClick={() => toggleShift(cast.id, date)}
-                            className={`w-9 h-9 rounded-md transition-all duration-200 flex items-center justify-center text-[10px] font-bold ${
+                            className={`w-9 h-9 rounded-md transition-all duration-200 flex items-center justify-center text-xs font-bold ${
                               hasShift
                                 ? 'bg-gold/15 border border-gold/40 text-gold hover:bg-gold/25'
                                 : 'bg-gray-50 border border-gray-200 text-gray-300 hover:border-gray-300'
@@ -255,7 +255,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                           {hasShift && (
                             <button
                               onClick={() => setEditingCell({ castId: cast.id, date })}
-                              className="flex items-center gap-0.5 text-[9px] text-gray-400 hover:text-gold transition-colors"
+                              className="flex items-center gap-0.5 text-xs text-gray-400 hover:text-gold transition-colors"
                             >
                               <Clock size={9} />
                               {shift?.start_time?.slice(0, 5)}
@@ -290,7 +290,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
             <div key={cast.id} className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm overflow-hidden">
               <div className="bg-gray-50/50 dark:bg-[#0a0a0a] px-4 py-3 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                 <span className="font-bold text-[#171717] dark:text-gray-100 text-sm tracking-widest">{cast.stage_name}</span>
-                <span className="text-[10px] bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400 font-bold">
+                <span className="text-xs bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400 font-bold">
                   {shiftCount}枠 / {dates.length}日
                 </span>
               </div>
@@ -311,7 +311,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                        <div key={date} className="relative flex flex-col items-center">
                          {isEditing && hasShift ? (
                            <div className="absolute top-0 left-0 bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-white/10 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-section-mobile">
-                             <p className="text-[10px] text-gray-500 font-bold border-b pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
+                             <p className="text-xs text-gray-500 font-bold border-b pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
                              <select
                                value={shift?.start_time}
                                onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
@@ -328,7 +328,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                              </select>
                              <button
                                onClick={() => setEditingCell(null)}
-                               className="w-full bg-gold text-black text-[10px] font-bold py-1 rounded-sm mt-1"
+                               className="w-full bg-gold text-black text-xs font-bold py-1 rounded-sm mt-1"
                              >
                                完了
                              </button>
@@ -345,7 +345,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                                   : 'bg-gray-50 border-gray-100 text-gray-400'
                               }`}
                             >
-                              <span className={`text-[9px] font-bold mb-0.5 ${!hasShift && isWeekend ? (dObj.getDay()===0?'text-red-400':'text-blue-400') : ''}`}>
+                              <span className={`text-xs font-bold mb-0.5 ${!hasShift && isWeekend ? (dObj.getDay()===0?'text-red-400':'text-blue-400') : ''}`}>
                                 {dObj.getDate()}{dLabel}
                               </span>
                               {hasShift ? <Check size={12} strokeWidth={3} /> : <span className="text-gray-300 text-xs">+</span>}
@@ -355,7 +355,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                               {hasShift && (
                                 <button
                                   onClick={() => setEditingCell({ castId: cast.id, date })}
-                                  className="flex items-center gap-0.5 text-[9px] text-gray-400 px-1 hover:text-gold"
+                                  className="flex items-center gap-0.5 text-xs text-gray-400 px-1 hover:text-gold"
                                 >
                                   <Clock size={8} />{shift?.start_time?.slice(0, 5)}
                                 </button>

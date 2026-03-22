@@ -87,7 +87,7 @@ export function CastScheduleList({
 
   return (
     <div className="space-y-3 mt-4">
-      <h2 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-serif mb-2 flex items-center gap-2">
+      <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif mb-2 flex items-center gap-2">
         <CalendarDays className="w-3.5 h-3.5" />
         確定済みスケジュール
       </h2>
@@ -104,7 +104,7 @@ export function CastScheduleList({
           <div key={schedule.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:border-gold/30 group">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-gray-50 flex flex-col items-center justify-center shrink-0 border border-gray-100 group-hover:bg-gold/5 group-hover:border-gold/20 transition-colors">
-                <span className="text-[9px] text-gray-400 font-bold leading-none">{dayStr}</span>
+                <span className="text-xs text-gray-400 font-bold leading-none">{dayStr}</span>
                 <span className="text-sm text-[#171717] font-serif font-bold mt-1 leading-none">{dateStr}</span>
               </div>
               <div>
@@ -113,7 +113,7 @@ export function CastScheduleList({
                   {schedule.start_time?.slice(0, 5) || '未定'} 〜 {schedule.end_time?.slice(0, 5) || '未定'}
                 </div>
                 {isPending && (
-                  <p className="text-[10px] text-yellow-600 font-bold mt-1 flex items-center gap-1">
+                  <p className="text-xs text-yellow-600 font-bold mt-1 flex items-center gap-1">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     変更申請中
                   </p>
@@ -149,7 +149,7 @@ export function CastScheduleList({
                 <p className="text-sm font-bold text-[#171717] bg-gray-50 py-2 rounded-lg">
                   対象日: {selectedDate.work_date.replace(/-/g, '/')}
                 </p>
-                <p className="text-[10px] text-gray-400 mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   現在のシフト: {selectedDate.start_time?.slice(0,5)} 〜 {selectedDate.end_time?.slice(0,5)}
                 </p>
               </div>
@@ -176,7 +176,7 @@ export function CastScheduleList({
               {actionType === 'update' && (
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
-                    <label className="block text-[10px] text-gray-400 font-bold mb-1">変更後の開始</label>
+                    <label className="block text-xs text-gray-400 font-bold mb-1">変更後の開始</label>
                     <select
                       value={newStart}
                       onChange={(e) => setNewStart(e.target.value)}
@@ -189,7 +189,7 @@ export function CastScheduleList({
                   </div>
                   <span className="text-gray-300 font-bold mt-5">〜</span>
                   <div className="flex-1">
-                    <label className="block text-[10px] text-gray-400 font-bold mb-1">変更後の終了</label>
+                    <label className="block text-xs text-gray-400 font-bold mb-1">変更後の終了</label>
                     <select
                       value={newEnd}
                       onChange={(e) => setNewEnd(e.target.value)}

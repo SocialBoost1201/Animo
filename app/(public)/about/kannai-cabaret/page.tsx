@@ -31,8 +31,8 @@ export default function KannaiCabaretPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '関内キャバクラとは', item: 'https://club-animo.com/about/kannai-cabaret' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '関内キャバクラとは', item: 'https://club-animo.jp/about/kannai-cabaret' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

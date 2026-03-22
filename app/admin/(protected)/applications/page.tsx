@@ -119,7 +119,7 @@ export default async function ApplicationsPage({
                   <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
                     <div className="flex items-center gap-2 flex-wrap">
                       {isUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />}
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${typeConfig.color}`}>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${typeConfig.color}`}>
                         {typeConfig.label}
                       </span>
                       <h3 className={`text-base ${isUnread ? 'font-bold text-[#171717]' : 'text-gray-500'}`}>
@@ -131,7 +131,7 @@ export default async function ApplicationsPage({
 
                   {/* Row 2: ステータス・既読ボタン */}
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className={`inline-flex items-center text-[10px] font-bold px-2 py-1 rounded ${badge.color}`}>
+                    <span className={`inline-flex items-center text-xs font-bold px-2 py-1 rounded ${badge.color}`}>
                       {badge.label}
                     </span>
                     {/* Client Component でステータス変更 */}

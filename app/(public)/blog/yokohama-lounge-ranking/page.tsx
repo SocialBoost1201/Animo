@@ -34,8 +34,8 @@ export default function YokohamaLoungeRankingPage() {
         updatedAt="2024-03-01T00:00:00+09:00"
       />
       <BreadcrumbSchema breadcrumbs={[
-        { name: 'HOME', item: 'https://club-animo.com/' },
-        { name: '横浜・関内高級ラウンジの選び方', item: 'https://club-animo.com/blog/yokohama-lounge-ranking' }
+        { name: 'HOME', item: 'https://club-animo.jp/' },
+        { name: '横浜・関内高級ラウンジの選び方', item: 'https://club-animo.jp/blog/yokohama-lounge-ranking' }
       ]} />
       
       <section className="bg-transparent pt-32 pb-16 px-6 relative">

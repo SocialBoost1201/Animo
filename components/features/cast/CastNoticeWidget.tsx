@@ -73,7 +73,7 @@ export function CastNoticeWidget({
                   <p className="text-sm font-bold text-[#171717] truncate group-hover:text-orange-600 transition-colors">
                     {notice.title}
                   </p>
-                  <p className="text-[10px] text-gray-400 font-medium">
+                  <p className="text-xs text-gray-400 font-medium">
                     {format(new Date(notice.created_at), 'yyyy/MM/dd', { locale: ja })}
                   </p>
                 </div>
@@ -108,7 +108,7 @@ export function CastNoticeWidget({
 
             <div className="px-6 py-4 border-b border-gray-100 flex items-start justify-between bg-gray-50/50">
               <div className="pr-4">
-                <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold tracking-wider rounded border border-orange-200 mb-2">
+                <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-600 text-xs font-bold tracking-wider rounded border border-orange-200 mb-2">
                   STORE NOTICE
                 </span>
                 <h3 className="text-lg font-bold text-[#171717] leading-tight text-wrap">

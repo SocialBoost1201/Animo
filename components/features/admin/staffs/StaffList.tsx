@@ -139,9 +139,9 @@ export function StaffList({ initialStaffs }: Props) {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">表示名 / 名前</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">役割</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">ステータス</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-400">表示名 / 名前</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-400">役割</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-400">ステータス</th>
                 <th className="px-6 py-4 text-right"></th>
               </tr>
             </thead>
@@ -150,7 +150,7 @@ export function StaffList({ initialStaffs }: Props) {
                 <tr key={staff.id} className={`group hover:bg-gray-50/50 transition-colors ${!staff.is_active ? 'opacity-60 grayscale' : ''}`}>
                   <td className="px-6 py-4">
                     <div className="font-bold text-[#171717]">{staff.display_name}</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">{staff.name}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">{staff.name}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {staff.role || <span className="text-gray-300">-</span>}

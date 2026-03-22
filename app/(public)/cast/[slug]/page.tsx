@@ -1,17 +1,16 @@
 import React from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
-import { Button } from '@/components/ui/Button';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
 import Link from 'next/link';
-import { ArrowLeft, CalendarHeart, Sparkles, Instagram, Twitter, Music } from 'lucide-react';
+import { ArrowLeft, Sparkles, Instagram, Twitter, Music } from 'lucide-react';
 import { getPublicCastBySlug } from '@/lib/actions/public/data';
 import { notFound } from 'next/navigation';
 import { CastViewTracker } from '@/components/features/analytics/CastViewTracker';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { CastPostFeed } from '@/components/features/cast/CastPostFeed';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function CastDetailPage({
   params,
@@ -101,7 +100,7 @@ export default async function CastDetailPage({
                 {isMatched && (
                   <div className="inline-flex items-center gap-2 bg-gold/10 border border-gold/30 px-3 py-1.5 mb-4 rounded-full">
                     <Sparkles className="w-3.5 h-3.5 text-gold" />
-                    <span className="text-[10px] font-bold tracking-widest text-[#171717] font-serif uppercase">
+                    <span className="text-xs font-bold tracking-widest text-[#171717] font-serif uppercase">
                       Diagnosis Match: {matchScore}/4
                     </span>
                   </div>
@@ -111,7 +110,7 @@ export default async function CastDetailPage({
                   <div className="flex flex-wrap gap-2 mt-3">
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {tags.map((tag: any) => (
-                      <span key={tag.id} className="text-[10px] font-serif tracking-widest text-gold border border-gold/40 px-3 py-1">
+                      <span key={tag.id} className="text-xs font-serif tracking-widest text-gold border border-gold/40 px-3 py-1">
                         {tag.name}
                       </span>
                     ))}
@@ -207,7 +206,7 @@ export default async function CastDetailPage({
                         <li key={i} className={`flex items-center text-sm ${isToday ? 'font-bold text-[#171717] bg-gray-50 -mx-3 px-3 py-1 rounded-sm' : 'text-gray-600'}`}>
                           <span className="w-20 tracking-wider">{mmdd} ({dayStr})</span>
                           <span>{startTime} - {endTime}</span>
-                          {isToday && <span className="ml-3 text-[10px] text-gold border border-gold px-2 py-0.5 rounded-sm">本日</span>}
+                          {isToday && <span className="ml-3 text-xs text-gold border border-gold px-2 py-0.5 rounded-sm">本日</span>}
                         </li>
                       );
                     })}

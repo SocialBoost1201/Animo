@@ -1,8 +1,13 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, unstable_cache } from 'next/cache';
+import { createServiceClient } from '@/lib/supabase/service';
 import { addCastScore } from './scores';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Unknown error';
+}
 
 /**
  * キャスト日記を投稿するアクション
@@ -81,7 +86,7 @@ export async function createCastPost(formData: FormData) {
     }
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to create cast post:', err);
     return { success: false, error: 'システムエラーが発生しました。' };
   }
@@ -108,15 +113,15 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
     revalidatePath('/admin/posts');
     revalidatePath('/');
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err: unknown) {
+    return { success: false, error: getErrorMessage(err) };
   }
 }
 
 /**
  * 投稿を削除する
  */
-export async function deleteCastPost(postId: string, imagePath?: string) {
+export async function deleteCastPost(postId: string) {
   try {
     const supabase = await createClient();
     
@@ -135,36 +140,40 @@ export async function deleteCastPost(postId: string, imagePath?: string) {
     revalidatePath('/admin/posts');
     revalidatePath('/');
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err: unknown) {
+    return { success: false, error: getErrorMessage(err) };
   }
 }
 
 /**
  * クライアント（トップページやキャスト詳細）向け：公開済み投稿を取得
  */
-export async function getPublishedPosts(limit: number = 10, castId?: string) {
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('cast_posts')
-      .select('*, casts(name, slug, stage_name, image_url)')
-      .eq('status', 'published')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-      
-    if (castId) {
-      query = query.eq('cast_id', castId);
-    }
+export const getPublishedPosts = unstable_cache(
+  async (limit: number = 10, castId?: string) => {
+    try {
+      const supabase = createServiceClient();
+      let query = supabase
+        .from('cast_posts')
+        .select('*, casts(name, slug, stage_name, image_url)')
+        .eq('status', 'published')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-    const { data, error } = await query;
-    if (error) throw error;
-    
-    return { data, error: null };
-  } catch (err: any) {
-    return { data: null, error: err.message };
-  }
-}
+      if (castId) {
+        query = query.eq('cast_id', castId);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return { data, error: null };
+    } catch (err: unknown) {
+      return { data: null, error: getErrorMessage(err) };
+    }
+  },
+  ['published-posts'],
+  { revalidate: 300 }
+);
 
 /**
  * キャスト投稿時の管理者メール通知（non-critical）

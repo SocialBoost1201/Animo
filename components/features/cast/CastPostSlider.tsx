@@ -27,14 +27,14 @@ export const CastPostSlider = ({ posts }: { posts: any[] }) => {
           
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <div className="flex items-center gap-2 mb-2 w-full">
-              <span className="bg-gold text-white text-[9px] font-bold px-2 py-0.5 rounded-sm shrink-0">
+              <span className="bg-gold text-white text-xs font-bold px-2 py-0.5 rounded-sm shrink-0">
                 {dateStr}
               </span>
               <span className="text-white text-xs font-serif font-bold truncate tracking-widest flex-1">
                 {post.casts?.stage_name || post.casts?.name}
               </span>
             </div>
-            <p className="text-white/80 text-[10px] line-clamp-2 leading-relaxed font-serif wrap-break-word">
+            <p className="text-white/80 text-xs line-clamp-2 leading-relaxed font-serif wrap-break-word">
               {post.content}
             </p>
           </div>

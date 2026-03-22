@@ -88,7 +88,7 @@ export function MonthlyShiftCalendar({
     if (detail.status === 'maybe') return <span className="text-yellow-500 font-bold text-xl">△</span>;
     if (detail.status === 'available') {
       if (detail.isDouhan) return <span className="text-pink-500 font-bold text-xs tracking-widest">同伴</span>;
-      if (detail.startTime) return <span className="text-blue-600 font-bold text-[10px] tracking-tight">{detail.startTime}</span>;
+      if (detail.startTime) return <span className="text-blue-600 font-bold text-xs tracking-tight">{detail.startTime}</span>;
       return <span className="text-blue-500 font-bold text-xl">○</span>;
     }
     return null;
@@ -159,7 +159,7 @@ export function MonthlyShiftCalendar({
           
           <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
             {['日', '月', '火', '水', '木', '金', '土'].map(d => (
-              <div key={d} className={`text-center text-[10px] sm:text-xs font-bold py-2 ${d === '日' ? 'text-red-500' : d === '土' ? 'text-blue-500' : 'text-gray-400'}`}>
+              <div key={d} className={`text-center text-xs sm:text-xs font-bold py-2 ${d === '日' ? 'text-red-500' : d === '土' ? 'text-blue-500' : 'text-gray-400'}`}>
                 {d}
               </div>
             ))}
@@ -182,7 +182,7 @@ export function MonthlyShiftCalendar({
                   className={`relative aspect-4/5 sm:aspect-square sm:h-20 border rounded-xl flex flex-col items-center justify-center p-1 cursor-pointer select-none active:scale-95 transition-all
                   ${getCellBgClass(detail)}`}
                 >
-                  <span className={`absolute top-1 left-2 text-[10px] font-bold ${isWeekend ? 'text-gray-500' : 'text-gray-400'}`}>{day}</span>
+                  <span className={`absolute top-1 left-2 text-xs font-bold ${isWeekend ? 'text-gray-500' : 'text-gray-400'}`}>{day}</span>
                   <div className="mt-2 flex items-center justify-center h-8">
                     {getCellDisplay(detail)}
                   </div>
