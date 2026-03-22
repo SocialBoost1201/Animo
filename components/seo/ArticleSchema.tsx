@@ -18,17 +18,17 @@ export function ArticleSchema({
   publishedAt,
   updatedAt,
   authorName = 'CLUB Animo 編集部',
-  authorUrl = 'https://club-animo.com/system',
+  authorUrl = 'https://club-animo.jp/system',
   authorJobTitle = 'CLUB Animo 店舗責任者',
   publisherName = 'CLUB Animo',
-  publisherLogo = 'https://club-animo.com/images/ogp.webp',
+  publisherLogo = 'https://club-animo.jp/images/ogp.webp',
 }: ArticleSchemaProps) {
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': 'https://club-animo.com/',
+      '@id': 'https://club-animo.jp/',
     },
     headline: title,
     description: description,
