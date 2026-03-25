@@ -1,6 +1,7 @@
 import { getTodayDashboard } from '@/lib/actions/today'
 import { getCasts } from '@/lib/actions/casts'
 import { TodayDashboard } from '@/components/features/today/TodayDashboard'
+import { PageHeader, PageShell } from '@/components/ui/app-shell'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,13 +19,13 @@ export default async function TodayPage() {
   const casts = (castsRaw || []).map(c => ({ id: c.id, stage_name: c.stage_name ?? c.name ?? '' }))
 
   return (
-    <div className="p-4 md:p-8 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-xl font-serif tracking-widest text-[#171717] font-bold">本日の営業状況</h1>
-        <p className="text-sm text-gray-400 mt-1">{dateLabel}</p>
-      </div>
-
+    <PageShell width="narrow" className="space-y-6">
+      <PageHeader
+        eyebrow="Daily Operations"
+        title="本日の営業状況"
+        description={`${dateLabel} の出勤、予約、変更、共有用情報をひとつの画面で確認できます。`}
+      />
       <TodayDashboard data={data} casts={casts} />
-    </div>
+    </PageShell>
   )
 }

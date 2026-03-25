@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 import {
   Shippori_Mincho,
-  Zen_Kaku_Gothic_New,
-} from "next/font/google";
+  Zen_Kaku_Gothic_New, Geist } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@/components/seo/Analytics";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { ReviewSchema } from "@/components/seo/ReviewSchema";
-import dynamic from 'next/dynamic';
 import { ToastContainer } from "@/components/ui/Toast";
+import { DeferredLuxuryBackground } from "@/components/ui/DeferredLuxuryBackground";
+import { cn } from "@/lib/utils";
 
-const LuxuryBackground = dynamic(
-  () => import('@/components/ui/LuxuryBackground').then(m => m.LuxuryBackground)
-);
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const shippori = Shippori_Mincho({
   variable: "--font-shippori",
@@ -80,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" className={cn("font-sans", geist.variable)}>
       <head>
         <LocalBusinessSchema />
         <ReviewSchema ratingValue={4.8} reviewCount={124} />
@@ -89,7 +87,7 @@ export default function RootLayout({
         className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
         {children}
-        <LuxuryBackground />
+        <DeferredLuxuryBackground />
         <ToastContainer />
         <Analytics 
           gaId={process.env.NEXT_PUBLIC_GA_ID} 

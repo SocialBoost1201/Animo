@@ -77,7 +77,7 @@ export default async function HomePage() {
       id: 'hero-kannai-street',
       type: 'video',
       url: '/videos/kannai-street_opt.mp4',
-      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      posterUrl: '/images/animo-main-chandelier-hero-poster.webp',
       title: 'Kannai street view',
       durationMs: 5000,
     },
@@ -85,7 +85,7 @@ export default async function HomePage() {
       id: 'hero-chandelier',
       type: 'video',
       url: '/videos/movie01_chandelier.mp4',
-      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      posterUrl: '/images/animo-main-chandelier-hero-poster.webp',
       title: 'Main chandelier interior',
       durationMs: 5000,
     },
@@ -93,7 +93,7 @@ export default async function HomePage() {
       id: 'hero-soumei',
       type: 'video',
       url: '/videos/movie09_soumei.mp4',
-      posterUrl: '/images/animo-main-chandelier-interior.jpg',
+      posterUrl: '/images/animo-main-chandelier-hero-poster.webp',
       title: 'Lighting ambience',
       durationMs: 5000,
     },
@@ -138,7 +138,7 @@ export default async function HomePage() {
         transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
         durationMs={5000}
         transitionMs={800}
-        mobileFallbackSrc="/images/animo-main-chandelier-interior.jpg"
+        mobileFallbackSrc="/images/animo-main-chandelier-hero-poster.webp"
         mobileFallbackAlt="CLUB Animo main chandelier interior"
         cta={heroCta}
       />

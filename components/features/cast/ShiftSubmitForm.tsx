@@ -7,12 +7,22 @@ import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
+
+function getInitialTargetMonday() {
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const nextMondayDate = getTargetWeekMonday(nextWeek);
+  return new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split('T')[0];
+}
 
 export default function ShiftSubmitPage({ castId }: { castId: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [targetMonday, setTargetMonday] = useState<string>('');
+  const [targetMonday, setTargetMonday] = useState<string>(getInitialTargetMonday);
   const [shifts, setShifts] = useState<WeeklyShiftSubmission>({});
 
   // 1週間分の日付リストを生成
@@ -28,15 +38,6 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
   };
 
   useEffect(() => {
-    if (!targetMonday) {
-      // 初回ロード時: 来週の月曜日をターゲットとする
-      const nextMondayDate = getTargetWeekMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
-      // UTCズレ回避のための文字列化
-      const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      setTargetMonday(nextMondayStr);
-      return;
-    }
-
     const loadShifts = async () => {
       setIsLoading(true);
       const days = generateWeekDays(targetMonday);
@@ -118,18 +119,23 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
   const weekDayStrs = ['月', '火', '水', '木', '金', '土', '日'];
 
   return (
-    <div className="px-5 py-8 max-w-lg mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/cast/dashboard" className="p-2 -ml-2 text-gray-400 hover:text-[#171717] transition-colors rounded-full hover:bg-gray-100">
-            <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="font-serif text-xl tracking-widest text-[#171717]">シフト提出</h1>
-          <p className="text-xs text-gray-400 tracking-wider mt-1 uppercase font-serif">Shift Schedule</p>
-        </div>
-      </div>
+    <PageShell width="narrow" className="space-y-6 px-5 py-8">
+      <PageHeader
+        eyebrow="Shift Schedule"
+        title="来週のシフトを提出"
+        description="出勤日だけを選んで、時間を入力してください。提出後も管理者承認前なら再提出できます。"
+        actions={
+          <Link
+            href="/cast/dashboard"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-4 py-3 text-sm font-medium text-gray-500 transition-colors hover:text-[#171717]"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            ダッシュボードへ戻る
+          </Link>
+        }
+      />
 
-      <div className="bg-gold/5 border border-gold/20 p-4 rounded-xl">
+      <SectionCard tone="subtle" className="p-4">
           <div className="flex items-center justify-between mb-2">
             <button onClick={() => changeWeek('prev')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50">
               <ChevronLeft className="w-4 h-4 text-[#171717]" />
@@ -145,7 +151,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
               出勤する日の時間を選択してください。<br/>
               ※開始・終了時間は後から変更可能です
           </p>
-      </div>
+      </SectionCard>
 
       {isLoading ? (
           <div className="flex justify-center items-center py-20">
@@ -238,6 +244,6 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
               )}
           </button>
       </div>
-    </div>
+    </PageShell>
   );
 }

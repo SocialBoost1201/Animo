@@ -1,5 +1,3 @@
-'use client'
-
 interface GsapRevealTitleProps {
   text: string
   className?: string

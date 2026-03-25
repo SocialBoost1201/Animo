@@ -19,6 +19,7 @@ import { CastNoticeWidget } from '@/components/features/cast/CastNoticeWidget';
 import { getCastNotices } from '@/lib/actions/cast-notices';
 import { CheckinForm } from '@/components/features/today/CheckinForm';
 import { ReservationForm } from '@/components/features/today/ReservationForm';
+import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
 
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
@@ -99,23 +100,28 @@ export default async function CastDashboardPage() {
   ];
 
   return (
-    <div className="px-5 py-8 max-w-lg mx-auto space-y-8">
-      {/* Welcome */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-serif text-2xl tracking-widest text-[#171717]">{cast.stage_name || cast.name}</h1>
-          <p className="text-xs text-gray-400 tracking-wider mt-1 uppercase font-serif">Cast Dashboard</p>
-        </div>
-        <form action={castLogout}>
-          <button type="submit" className="p-2 text-gray-300 hover:text-red-400 transition-colors" title="ログアウト">
-            <LogOut className="w-5 h-5" />
-          </button>
-        </form>
-      </div>
+    <PageShell width="narrow" className="space-y-8 px-5 py-8">
+      <PageHeader
+        eyebrow="Cast Dashboard"
+        title={`${cast.stage_name || cast.name}さんの今日のタスク`}
+        description="提出状況、本日の確認、来店予約、ブログ投稿までを迷わず進められるように整理したホーム画面です。"
+        actions={
+          <form action={castLogout} className="w-full md:w-auto">
+            <button
+              type="submit"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-4 py-3 text-sm font-medium text-gray-500 transition-colors hover:text-red-400 md:w-auto"
+              title="ログアウト"
+            >
+              <LogOut className="h-4 w-4" />
+              ログアウト
+            </button>
+          </form>
+        }
+      />
 
       {/* アクセス分析ランキング */}
       {pvStats.success && (
-        <div className="bg-linear-to-br from-[#171717] to-gray-800 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden transform transition-all hover:scale-[1.01]">
+        <SectionCard tone="accent" className="relative overflow-hidden p-5 transition-all hover:scale-[1.01]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
           <div className="flex items-start justify-between relative z-10">
             <div>
@@ -137,7 +143,7 @@ export default async function CastDashboardPage() {
               </div>
             </div>
           </div>
-        </div>
+        </SectionCard>
       )}
 
       {/* 重要：未読お知らせウィジェット */}
@@ -295,6 +301,6 @@ export default async function CastDashboardPage() {
           <p className="text-sm text-gray-400 text-center py-8">まだ投稿がありません</p>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }
