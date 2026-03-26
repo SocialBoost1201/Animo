@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroVideoRotator } from '@/components/features/hero/HeroVideoRotator';
+import { HeroVideoRotatorV2 } from '@/components/features/hero/HeroVideoRotatorV2';
 import { HeroMedia } from '@/components/features/hero/types';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
@@ -133,7 +133,7 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero */}
-      <HeroVideoRotator
+      <HeroVideoRotatorV2
         media={heroMediaData}
         transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
         durationMs={5000}

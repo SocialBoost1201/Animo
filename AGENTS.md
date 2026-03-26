@@ -739,3 +739,57 @@ api-design-principles,architecture,business-health-diagnostic,composition-patter
 
 Full list: ls .agent/skills/
 
+---
+
+# Data Change Verification Rule（データ変更完全検証ルール）
+
+Why: DBやAPIを更新しても「画面に反映されない」と報告されるケースを防止する。
+APIレスポンスの成功 ≠ 表示結果の正しさ。最終的な出力を実際に取得して確認する必要がある。
+
+## Background（今回の失敗事例）
+
+- `casts.image_url` を null に更新したが、`resolveCastImageUrl()` が `cast_images` テーブルにフォールバックするコードを事前確認しなかった
+- APIの更新レスポンス成功を「完了」と誤判断し、実際の表示データを確認しなかった
+- 結果: 見た目上は変わらず、ユーザーが「反映されない」と報告
+
+## Rule（必須ルール）
+
+### 1. 変更前：データフロー全体を把握する
+
+データ変更タスクに着手する前に、以下を必ず確認すること：
+
+- 変更対象フィールドが最終表示値の **唯一の参照元か** を確認する
+- フロントエンドのデータ取得関数（Server Action / API Route）を読み、**フォールバックロジック・JOIN・複数テーブル参照** がないかチェックする
+- フォールバックが存在する場合は、**すべての参照元を特定してから変更に着手する**
+
+確認対象のパターン例：
+- `image_url` が null のときに `cast_images` テーブルから取得するフォールバック
+- `stage_name || name` のような多段フォールバック
+- 複数テーブルの JOIN で構成される表示値
+
+### 2. 変更後：最終状態を実際にクエリして確認する
+
+変更操作（PATCH / DELETE / UPDATE）の成功レスポンスで完了と判断してはならない。
+変更後に、**実際に表示ロジックが参照するすべてのデータソースを取得し直して確認する**こと。
+
+確認クエリの例：
+```
+# casts + cast_images を JOIN した状態で最終的な image_url を確認
+GET /rest/v1/casts?id=eq.{id}&select=id,name,image_url,cast_images(image_url,is_primary)
+```
+
+最終クエリの結果が期待値と一致した場合のみ「完了」と報告すること。
+
+### 3. 完了報告に最終確認クエリの出力を含める
+
+完了報告には以下を必ず含めること：
+
+1. 変更したテーブル / フィールド一覧（全件）
+2. 変更後の最終状態クエリとその出力
+3. 期待値との一致確認（PASS / FAIL）
+
+Violation:
+- データフロー未確認での変更着手は INVALID
+- 最終状態クエリなしの完了報告は INVALID
+- APIレスポンスの成功のみをもって「完了」とすることは禁止
+
