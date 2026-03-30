@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
 async function getNewsDetail(id: string) {
   const supabase = await createClient()
@@ -18,6 +19,31 @@ async function getNewsDetail(id: string) {
 
   if (error || !data) return null;
   return data;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const news = await getNewsDetail(params.slug);
+
+  if (!news) {
+    return {
+      title: 'お知らせ',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return {
+    title: `${news.title}｜お知らせ`,
+    description: news.description || 'CLUB Animoのお知らせページです。',
+    alternates: {
+      canonical: `/news/${news.id}`,
+    },
+    openGraph: {
+      url: `https://club-animo.jp/news/${news.id}`,
+      title: news.title,
+      description: news.description || 'CLUB Animoのお知らせページです。',
+      type: 'article',
+    },
+  };
 }
 
 export default async function NewsDetailPage({ params }: { params: { slug: string } }) {

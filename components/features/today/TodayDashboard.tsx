@@ -25,6 +25,12 @@ type Props = {
   casts: Cast[]
 }
 
+type SectionHeaderProps = {
+  icon: React.ReactNode
+  label: string
+  count?: number
+}
+
 // 時間グルーピングヘルパー
 function groupByTime(shifts: TodayDashboardData['shifts'], dispatches: TodayDashboardData['dispatches'], absentIds: string[]) {
   const groups: Record<string, { casts: string[]; dispatches: string[] }> = {}
@@ -40,6 +46,18 @@ function groupByTime(shifts: TodayDashboardData['shifts'], dispatches: TodayDash
     groups[t].dispatches.push(d.name)
   }
   return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
+}
+
+function SectionHeader({ icon, label, count }: SectionHeaderProps) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <div className="text-gold">{icon}</div>
+      <span className="text-xs font-bold tracking-widest uppercase text-gray-600">{label}</span>
+      {count !== undefined && (
+        <span className="ml-auto text-xs bg-gold/10 text-gold font-bold px-2 py-0.5 rounded-full">{count}名</span>
+      )}
+    </div>
+  )
 }
 
 export function TodayDashboard({ data, casts }: Props) {
@@ -70,16 +88,6 @@ export function TodayDashboard({ data, casts }: Props) {
       else router.refresh()
     })
   }
-
-  const SectionHeader = ({ icon, label, count }: { icon: React.ReactNode; label: string; count?: number }) => (
-    <div className="flex items-center gap-2 mb-3">
-      <div className="text-gold">{icon}</div>
-      <span className="text-xs font-bold tracking-widest uppercase text-gray-600">{label}</span>
-      {count !== undefined && (
-        <span className="ml-auto text-xs bg-gold/10 text-gold font-bold px-2 py-0.5 rounded-full">{count}名</span>
-      )}
-    </div>
-  )
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pb-20">

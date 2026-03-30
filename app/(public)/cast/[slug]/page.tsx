@@ -9,8 +9,42 @@ import { notFound } from 'next/navigation';
 import { CastViewTracker } from '@/components/features/analytics/CastViewTracker';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
 import { CastPostFeed } from '@/components/features/cast/CastPostFeed';
+import { Metadata } from 'next';
 
 export const revalidate = 300;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const cast = await getPublicCastBySlug(slug);
+
+  if (!cast) {
+    return {
+      title: 'キャスト',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const imageUrl = cast.image_url || cast.cast_images?.[0]?.image_url || '/images/ogp.webp';
+
+  return {
+    title: `${cast.stage_name}｜キャスト`,
+    description: cast.comment || `${cast.stage_name}のプロフィールページです。`,
+    alternates: {
+      canonical: `/cast/${cast.slug}`,
+    },
+    openGraph: {
+      url: `https://club-animo.jp/cast/${cast.slug}`,
+      title: `${cast.stage_name}｜CLUB Animo`,
+      description: cast.comment || `${cast.stage_name}のプロフィールページです。`,
+      images: [imageUrl],
+      type: 'profile',
+    },
+  };
+}
 
 export default async function CastDetailPage({
   params,

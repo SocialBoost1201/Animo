@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: '%s | CLUB Animo 関内キャバクラ',
   },
   alternates: {
-    canonical: '/',
+    canonical: './',
     languages: {
       'ja': '/',
       'en': '/en',
@@ -51,7 +51,6 @@ export const metadata: Metadata = {
     description:
       '関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。',
     images: ['/images/ogp.webp'],
-    url: 'https://club-animo.jp',
     siteName: 'CLUB Animo',
     locale: 'ja_JP',
     type: 'website',

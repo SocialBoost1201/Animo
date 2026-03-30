@@ -21,6 +21,22 @@ import { CheckinForm } from '@/components/features/today/CheckinForm';
 import { ReservationForm } from '@/components/features/today/ReservationForm';
 import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
 
+type TodayReservation = {
+  id: string;
+  visit_time: string;
+  guest_name: string;
+  reservation_type: string;
+  note: string | null;
+};
+
+type RecentPost = {
+  id: string;
+  image_url: string | null;
+  content: string | null;
+  status: 'published' | 'pending' | 'draft' | string;
+  created_at: string;
+};
+
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
   if (!cast) redirect('/cast/login');
@@ -49,7 +65,9 @@ export default async function CastDashboardPage() {
   const { data: pendingRequests } = await getMyPendingChangeRequests(cast.id);
 
   // 次週のシフト提出状況
-  const nextMondayDate = getTargetWeekMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+  const oneWeekLater = new Date();
+  oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+  const nextMondayDate = getTargetWeekMonday(oneWeekLater);
   const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   const { data: shiftSubmission } = await getMyShiftSubmission(nextMondayStr);
 
@@ -84,7 +102,7 @@ export default async function CastDashboardPage() {
   ]);
 
   // reservationsを型に合わせて変換
-  const reservationsForForm = (todayReservations || []).map((r: any) => ({
+  const reservationsForForm = ((todayReservations || []) as TodayReservation[]).map((r) => ({
     id: r.id,
     visit_time: r.visit_time,
     guest_name: r.guest_name,
@@ -274,10 +292,10 @@ export default async function CastDashboardPage() {
         <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif mb-4">最近の投稿</h2>
         {recentPosts && recentPosts.length > 0 ? (
           <div className="space-y-3">
-            {recentPosts.map((post: any) => (
+            {(recentPosts as RecentPost[]).map((post) => (
               <div key={post.id} className="flex items-start gap-4 bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
-                  <Image src={post.image_url} alt="" fill className="object-cover" />
+                  <Image src={post.image_url || '/images/placeholder.webp'} alt="" fill className="object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-gray-600 line-clamp-2 mb-1">{post.content}</p>

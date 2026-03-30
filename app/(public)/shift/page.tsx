@@ -4,6 +4,7 @@ import { ShiftTable } from '@/components/features/shift/ShiftTable';
 import { getPublicCasts, getPublicShifts } from '@/lib/actions/public/data';
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const revalidate = 60;
 
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ShiftPage() {
+  redirect('/#today-cast');
+
   const [casts, shifts] = await Promise.all([
     getPublicCasts(),
     getPublicShifts(),
