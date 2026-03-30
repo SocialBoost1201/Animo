@@ -4,16 +4,40 @@ import { getPublishedPosts } from '@/lib/actions/cast-posts';
 
 const BASE_URL = 'https://club-animo.jp';
 
+type SitemapDateSource = {
+  updated_at?: string | null;
+  created_at?: string | null;
+};
+
+type CastEntry = SitemapDateSource & {
+  slug?: string | null;
+};
+
+type ContentEntry = SitemapDateSource & {
+  id: string;
+};
+
+type CastPostEntry = SitemapDateSource & {
+  id: string;
+  casts?: {
+    slug?: string | null;
+  } | null;
+};
+
+function resolveLastModified(item: SitemapDateSource) {
+  return new Date(item.updated_at || item.created_at || Date.now());
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [casts, news, posts] = await Promise.all([
+  const [casts, news, events, posts] = await Promise.all([
     getPublicCasts().catch(() => []),
     getPublicContents('news').catch(() => []),
+    getPublicContents('event').catch(() => []),
     getPublishedPosts(1000).then(res => res.data || []).catch(() => []),
   ]);
 
   const staticPages = [
     { path: '/', priority: 1.0, changeFrequency: 'daily' as const },
-    { path: '/shift', priority: 0.9, changeFrequency: 'daily' as const },
     { path: '/cast', priority: 0.8, changeFrequency: 'weekly' as const },
     { path: '/system', priority: 0.8, changeFrequency: 'monthly' as const },
     { path: '/guide', priority: 0.7, changeFrequency: 'monthly' as const },
@@ -56,26 +80,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: page.priority,
   }));
 
-  const castEntries: MetadataRoute.Sitemap = (casts || []).map((cast: { slug: string; updated_at?: string; created_at?: string }) => ({
+  const castEntries: MetadataRoute.Sitemap = (casts as CastEntry[])
+    .filter((cast) => Boolean(cast.slug))
+    .map((cast) => ({
     url: `${BASE_URL}/cast/${cast.slug}`,
-    lastModified: new Date(cast.updated_at || cast.created_at || Date.now()),
+    lastModified: resolveLastModified(cast),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
-  const newsEntries: MetadataRoute.Sitemap = (news || []).map((post: { id: string; updated_at?: string; created_at?: string }) => ({
+  const newsEntries: MetadataRoute.Sitemap = (news as ContentEntry[]).map((post) => ({
     url: `${BASE_URL}/news/${post.id}`,
-    lastModified: new Date(post.updated_at || post.created_at || Date.now()),
+    lastModified: resolveLastModified(post),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 
-  const postEntries: MetadataRoute.Sitemap = (posts || []).map((post: any) => ({
-    url: `${BASE_URL}/cast/${post.casts?.slug || 'unknown'}/posts/${post.id}`,
-    lastModified: new Date(post.updated_at || post.created_at || Date.now()),
+  const eventEntries: MetadataRoute.Sitemap = (events as ContentEntry[]).map((event) => ({
+    url: `${BASE_URL}/events/${event.id}`,
+    lastModified: resolveLastModified(event),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  const postEntries: MetadataRoute.Sitemap = (posts as CastPostEntry[])
+    .filter((post) => Boolean(post.casts?.slug))
+    .map((post) => ({
+    url: `${BASE_URL}/cast/${post.casts?.slug}/posts/${post.id}`,
+    lastModified: resolveLastModified(post),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...castEntries, ...newsEntries, ...postEntries];
+  return [...staticEntries, ...castEntries, ...newsEntries, ...eventEntries, ...postEntries];
 }

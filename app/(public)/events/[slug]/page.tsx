@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
 async function getEventDetail(id: string) {
   const supabase = await createClient()
@@ -18,6 +19,31 @@ async function getEventDetail(id: string) {
 
   if (error || !data) return null;
   return data;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const event = await getEventDetail(params.slug);
+
+  if (!event) {
+    return {
+      title: 'イベント',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return {
+    title: `${event.title}｜イベント`,
+    description: event.description || 'CLUB Animoのイベント情報ページです。',
+    alternates: {
+      canonical: `/events/${event.id}`,
+    },
+    openGraph: {
+      url: `https://club-animo.jp/events/${event.id}`,
+      title: event.title,
+      description: event.description || 'CLUB Animoのイベント情報ページです。',
+      type: 'article',
+    },
+  };
 }
 
 export default async function EventDetailPage({ params }: { params: { slug: string } }) {
