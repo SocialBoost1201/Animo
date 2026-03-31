@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getCurrentCast, getMyCastPosts, castLogout } from '@/lib/actions/cast-auth';
+import { getCurrentCast, castLogout } from '@/lib/actions/cast-auth';
 import { getMyShiftSubmission } from '@/lib/actions/cast-shifts';
 import { getTargetWeekMonday } from '@/lib/shift-utils';
 import { getMyConfirmedSchedules, getMyPendingChangeRequests } from '@/lib/actions/cast-change-requests';
@@ -21,20 +21,20 @@ import { CheckinForm } from '@/components/features/today/CheckinForm';
 import { ReservationForm } from '@/components/features/today/ReservationForm';
 import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
 
-type TodayReservation = {
-  id: string;
-  visit_time: string;
-  guest_name: string;
-  reservation_type: string;
-  note: string | null;
-};
-
-type RecentPost = {
+type CastDashboardRecentPost = {
   id: string;
   image_url: string | null;
   content: string | null;
-  status: 'published' | 'pending' | 'draft' | string;
+  status: 'published' | 'pending' | 'draft';
   created_at: string;
+};
+
+type CastDashboardReservationRow = {
+  id: string;
+  visit_time: string;
+  guest_name: string;
+  reservation_type: 'douhan' | 'reservation';
+  note?: string | null;
 };
 
 export default async function CastDashboardPage() {
@@ -65,9 +65,9 @@ export default async function CastDashboardPage() {
   const { data: pendingRequests } = await getMyPendingChangeRequests(cast.id);
 
   // 次週のシフト提出状況
-  const oneWeekLater = new Date();
-  oneWeekLater.setDate(oneWeekLater.getDate() + 7);
-  const nextMondayDate = getTargetWeekMonday(oneWeekLater);
+  const nextWeekBaseDate = new Date();
+  nextWeekBaseDate.setDate(nextWeekBaseDate.getDate() + 7);
+  const nextMondayDate = getTargetWeekMonday(nextWeekBaseDate);
   const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   const { data: shiftSubmission } = await getMyShiftSubmission(nextMondayStr);
 
@@ -78,7 +78,7 @@ export default async function CastDashboardPage() {
   const deadlineDate = new Date(nextMondayDate);
   deadlineDate.setDate(deadlineDate.getDate() - 3); // 前週金曜
   deadlineDate.setHours(23, 55, 0, 0); // 23:55
-  
+
   const now = new Date();
   const isPastDeadline = now > deadlineDate;
   // 木・金は期限間近アラート
@@ -101,13 +101,13 @@ export default async function CastDashboardPage() {
     getCastTodayReservations(),
   ]);
 
-  // reservationsを型に合わせて変換
-  const reservationsForForm = ((todayReservations || []) as TodayReservation[]).map((r) => ({
+  // ReservationForm は optional string を期待するため null は undefined に正規化する
+  const reservationsForForm = (todayReservations || []).map((r: CastDashboardReservationRow) => ({
     id: r.id,
     visit_time: r.visit_time,
     guest_name: r.guest_name,
     reservation_type: r.reservation_type,
-    note: r.note,
+    note: r.note ?? undefined,
   }));
 
   const menuItems = [
@@ -179,9 +179,9 @@ export default async function CastDashboardPage() {
 
       {/* 急募出勤リクエスト */}
       {activeHelpRequests.length > 0 && (
-        <CastHelpRequestList 
-          activeRequests={activeHelpRequests} 
-          myResponses={myHelpResponses} 
+        <CastHelpRequestList
+          activeRequests={activeHelpRequests}
+          myResponses={myHelpResponses}
         />
       )}
 
@@ -201,68 +201,68 @@ export default async function CastDashboardPage() {
       </div>
 
       {/* 確定済みシフト・変更申請 */}
-      <CastScheduleList 
-        castId={cast.id} 
-        schedules={schedules || []} 
-        pendingRequests={pendingRequests || []} 
+      <CastScheduleList
+        castId={cast.id}
+        schedules={schedules || []}
+        pendingRequests={pendingRequests || []}
       />
 
       {/* 来週のシフト提出状況・アラート */}
       <Link href="/cast/shift" className="block relative overflow-hidden rounded-2xl border transition-all hover:scale-[0.98] shadow-sm">
         {shiftSubmission ? (
-           shiftSubmission.status === 'approved' ? (
-             <div className="bg-green-50/50 border-green-200 p-5">
-               <div className="flex items-center gap-3">
-                 <CheckCircle2 className="w-5 h-5 text-green-500" />
-                 <div>
-                   <p className="text-sm font-bold text-green-800">来週のシフト: 承認済み</p>
-                   <p className="text-xs text-green-600 mt-1">公開シフト表に反映されています</p>
-                 </div>
-               </div>
-             </div>
-           ) : (
-             <div className="bg-gray-50 border-gray-200 p-5">
-               <div className="flex items-center gap-3">
-                 <div className="w-5 h-5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
-                 <div>
-                   <p className="text-sm font-bold text-gray-700">来週のシフト: 承認待ち</p>
-                   <p className="text-xs text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
-                 </div>
-               </div>
-             </div>
-           )
+          shiftSubmission.status === 'approved' ? (
+            <div className="bg-green-50/50 border-green-200 p-5">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                <div>
+                  <p className="text-sm font-bold text-green-800">来週のシフト: 承認済み</p>
+                  <p className="text-xs text-green-600 mt-1">公開シフト表に反映されています</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gray-50 border-gray-200 p-5">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
+                <div>
+                  <p className="text-sm font-bold text-gray-700">来週のシフト: 承認待ち</p>
+                  <p className="text-xs text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
+                </div>
+              </div>
+            </div>
+          )
         ) : (
-           isPastDeadline ? (
-             <div className="bg-red-50 border-red-200 p-5 ring-2 ring-red-500/20">
-               <div className="flex items-start gap-3">
-                 <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                 <div>
-                   <p className="text-sm font-bold text-red-700">【重要】シフト未提出（期限超過）</p>
-                   <p className="text-xs text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
-                 </div>
-               </div>
-             </div>
-           ) : isNearDeadline ? (
-             <div className="bg-yellow-50 border-yellow-200 p-5">
-               <div className="flex items-start gap-3">
-                 <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-                 <div>
-                   <p className="text-sm font-bold text-yellow-800">シフト提出の期限が近づいています</p>
-                   <p className="text-xs text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
-                 </div>
-               </div>
-             </div>
-           ) : (
-             <div className="bg-white border-gray-100 p-5">
-               <div className="flex items-center gap-3">
-                 <CalendarDays className="w-5 h-5 text-gold" />
-                 <div>
-                   <p className="text-sm font-bold text-[#171717]">来週のシフトが未提出です</p>
-                   <p className="text-xs text-gray-500 mt-1">タップしてシフトを入力してください</p>
-                 </div>
-               </div>
-             </div>
-           )
+          isPastDeadline ? (
+            <div className="bg-red-50 border-red-200 p-5 ring-2 ring-red-500/20">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-red-700">【重要】シフト未提出（期限超過）</p>
+                  <p className="text-xs text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
+                </div>
+              </div>
+            </div>
+          ) : isNearDeadline ? (
+            <div className="bg-yellow-50 border-yellow-200 p-5">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-yellow-800">シフト提出の期限が近づいています</p>
+                  <p className="text-xs text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white border-gray-100 p-5">
+              <div className="flex items-center gap-3">
+                <CalendarDays className="w-5 h-5 text-gold" />
+                <div>
+                  <p className="text-sm font-bold text-[#171717]">来週のシフトが未提出です</p>
+                  <p className="text-xs text-gray-500 mt-1">タップしてシフトを入力してください</p>
+                </div>
+              </div>
+            </div>
+          )
         )}
       </Link>
 
@@ -292,7 +292,7 @@ export default async function CastDashboardPage() {
         <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif mb-4">最近の投稿</h2>
         {recentPosts && recentPosts.length > 0 ? (
           <div className="space-y-3">
-            {(recentPosts as RecentPost[]).map((post) => (
+            {recentPosts.map((post: CastDashboardRecentPost) => (
               <div key={post.id} className="flex items-start gap-4 bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
                   <Image src={post.image_url || '/images/placeholder.webp'} alt="" fill className="object-cover" />
