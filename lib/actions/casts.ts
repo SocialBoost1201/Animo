@@ -10,6 +10,62 @@ function revalidateAll(slug?: string) {
   if (slug) revalidatePath(`/cast/${slug}`)
 }
 
+const SNS_SCHEMA_ERROR_PATTERNS = [
+  "Could not find the 'sns_",
+  "column casts.sns_",
+  'schema cache',
+]
+
+function hasMissingSnsColumnError(message: string) {
+  return SNS_SCHEMA_ERROR_PATTERNS.some((pattern) => message.includes(pattern))
+}
+
+async function insertCastWithSnsFallback(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  basePayload: Record<string, unknown>,
+  snsPayload: Record<string, unknown>,
+) {
+  const firstAttempt = await supabase
+    .from('casts')
+    .insert({ ...basePayload, ...snsPayload })
+    .select('id, slug')
+    .single()
+
+  if (!firstAttempt.error || !hasMissingSnsColumnError(firstAttempt.error.message)) {
+    return firstAttempt
+  }
+
+  console.warn('casts SNS columns are unavailable; retrying insert without SNS fields.', {
+    message: firstAttempt.error.message,
+  })
+
+  return supabase
+    .from('casts')
+    .insert(basePayload)
+    .select('id, slug')
+    .single()
+}
+
+async function updateCastWithSnsFallback(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  id: string,
+  basePayload: Record<string, unknown>,
+  snsPayload: Record<string, unknown>,
+) {
+  const firstAttempt = await supabase.from('casts').update({ ...basePayload, ...snsPayload }).eq('id', id)
+
+  if (!firstAttempt.error || !hasMissingSnsColumnError(firstAttempt.error.message)) {
+    return firstAttempt
+  }
+
+  console.warn('casts SNS columns are unavailable; retrying update without SNS fields.', {
+    castId: id,
+    message: firstAttempt.error.message,
+  })
+
+  return supabase.from('casts').update(basePayload).eq('id', id)
+}
+
 export async function getCasts(query?: string) {
   const supabase = await createClient()
   let sql = supabase
@@ -62,12 +118,16 @@ export async function createCast(formData: FormData) {
   const sns_instagram = formData.get('sns_instagram') as string || null
   const sns_tiktok = formData.get('sns_tiktok') as string || null
 
-  const { data, error } = await supabase.from('casts').insert({
+  const basePayload = {
     name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
-    sns_x, sns_instagram, sns_tiktok
-  }).select('id, slug').single()
+    status: is_active ? 'public' : 'private',
+  }
+  const snsPayload = { sns_x, sns_instagram, sns_tiktok }
+
+  const { data, error } = await insertCastWithSnsFallback(supabase, basePayload, snsPayload)
 
   if (error) return { error: error.message }
+  if (!data?.id) return { error: 'Cast insert succeeded but no ID was returned.' }
 
   // cast_images へ画像をアップロードして登録
   if (image_file && image_file.size > 0 && data?.id) {
@@ -98,6 +158,7 @@ export async function createCast(formData: FormData) {
   }
 
   revalidatePath('/admin/human-resources')
+  revalidatePath(`/admin/human-resources/${data.id}`)
   revalidateAll(data?.slug)
 
   // cast_private_info に本名・生年月日を保存（別テーブル・RLS: 管理者のみ）
@@ -134,16 +195,19 @@ export async function updateCast(id: string, formData: FormData) {
 
   const updateData: Record<string, unknown> = {
     stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
+    status: is_active ? 'public' : 'private',
+    updated_at: new Date().toISOString()
+  }
+  const snsUpdateData: Record<string, unknown> = {
     sns_x: formData.get('sns_x') as string || null,
     sns_instagram: formData.get('sns_instagram') as string || null,
     sns_tiktok: formData.get('sns_tiktok') as string || null,
-    updated_at: new Date().toISOString()
   }
   if (slug) {
     updateData.slug = slug
   }
 
-  const { error } = await supabase.from('casts').update(updateData).eq('id', id)
+  const { error } = await updateCastWithSnsFallback(supabase, id, updateData, snsUpdateData)
 
   if (error) return { error: error.message }
 
@@ -175,6 +239,7 @@ export async function updateCast(id: string, formData: FormData) {
   }
 
   revalidatePath('/admin/human-resources')
+  revalidatePath(`/admin/human-resources/${id}`)
   revalidateAll(slug)
 
   // cast_private_info を更新（upsertで存在しなければ作成）
