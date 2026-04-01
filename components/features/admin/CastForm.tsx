@@ -94,7 +94,10 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
         ? await updateCast(initialData.id, formData)
         : await createCast(formData)
       if (result.error) showToast(result.error, 'error')
-      else router.push('/admin/human-resources')
+      else {
+        router.push('/admin/human-resources')
+        router.refresh()
+      }
     } catch (err: unknown) {
       const error = err as Error;
       showToast(error.message, 'error')
@@ -120,7 +123,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       const { blob, dataUrl } = await resizeImage(file, 1200, 0.8)
       setImagePreview(dataUrl)
       setCompressedImage(blob)
-    } catch (error) {
+    } catch {
       showToast('画像の処理に失敗しました。別の画像をお試しください。', 'error')
       e.target.value = ''
       setImagePreview(null)
@@ -247,7 +250,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             </div>
             <p className="text-xs text-amber-700 leading-relaxed">
               本名・生年月日はサイトおよびキャストダッシュボードには一切表示されません。<br />
-              同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、キャストアカウントの発行に使用します。
+              同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、本人自己登録時の照合に使用します。<br />
+              管理画面からログインアカウントは発行されません。登録後は本人が <span className="font-bold">/cast/register</span> から自己登録します。
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

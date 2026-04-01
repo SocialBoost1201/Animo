@@ -8,18 +8,62 @@ import { toast } from 'sonner';
 export default function CastRegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [completedMessage, setCompletedMessage] = useState(
+    '本登録メールを送信しました。メール内のリンクから本登録を完了し、再設定したパスワードでログインしてください。'
+  );
+  const [feedback, setFeedback] = useState<{
+    type: 'error' | 'success';
+    title: string;
+    message: string;
+  } | null>(null);
+
+  const errorTitleMap: Record<string, string> = {
+    NO_MATCH: '照合失敗',
+    ALREADY_REGISTERED: '既登録',
+    AUTH_SIGNUP_FAILED: 'Auth作成失敗',
+    AUTH_USER_MISSING: 'Auth作成失敗',
+    ROLE_INSERT_FAILED: '権限付与失敗',
+    CAST_LINK_FAILED: 'キャスト紐付け失敗',
+    MATCH_LOOKUP_FAILED: '照合処理失敗',
+    UNEXPECTED: '想定外エラー',
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setFeedback(null);
     const formData = new FormData(e.currentTarget);
 
-    const result = await castRegister(formData);
-    if (result.success) {
-      toast.success(result.message);
-      setIsCompleted(true);
-    } else {
-      toast.error(result.error);
+    try {
+      const result = await castRegister(formData);
+      if (result.success) {
+        const successMessage = result.message ?? 'アカウントを登録しました。確認メールをご確認ください。';
+        toast.success(successMessage);
+        setFeedback({
+          type: 'success',
+          title: '登録完了',
+          message: successMessage,
+        });
+        setCompletedMessage(successMessage);
+        setIsCompleted(true);
+      } else {
+        const errorMessage = result.error ?? '登録に失敗しました。時間をおいて再度お試しください。';
+        const title = errorTitleMap[result.code ?? 'UNEXPECTED'] ?? '登録失敗';
+        toast.error(errorMessage);
+        setFeedback({
+          type: 'error',
+          title,
+          message: errorMessage,
+        });
+      }
+    } catch {
+      const message = '想定外のエラーが発生しました。時間をおいて再度お試しください。';
+      toast.error(message);
+      setFeedback({
+        type: 'error',
+        title: '想定外エラー',
+        message,
+      });
     }
     setIsLoading(false);
   };
@@ -32,10 +76,7 @@ export default function CastRegisterPage() {
             <span className="text-gold text-2xl">✓</span>
           </div>
           <h2 className="font-serif text-xl tracking-widest text-[#171717] mb-4">登録完了</h2>
-          <p className="text-sm text-gray-500 leading-relaxed mb-8">
-            本登録メールを送信しました。<br />
-            メール内のリンクから本登録を完了し、<br />再設定したパスワードでログインしてください。
-          </p>
+          <p className="text-sm text-gray-500 leading-relaxed mb-8">{completedMessage}</p>
           <Link href="/cast/login" className="inline-block px-8 py-3 bg-[#171717] text-white text-xs tracking-[0.2em] uppercase rounded-xl hover:bg-gold transition-all">
             ログインへ戻る
           </Link>
@@ -60,6 +101,18 @@ export default function CastRegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {feedback && (
+            <div
+              className={`rounded-xl border px-4 py-3 text-sm ${
+                feedback.type === 'error'
+                  ? 'border-red-200 bg-red-50 text-red-700'
+                  : 'border-green-200 bg-green-50 text-green-700'
+              }`}
+            >
+              <p className="font-bold tracking-[0.12em] uppercase text-xs mb-1">{feedback.title}</p>
+              <p>{feedback.message}</p>
+            </div>
+          )}
 
           {/* 本名（Real Name） */}
           <div>

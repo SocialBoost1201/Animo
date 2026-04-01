@@ -5,9 +5,9 @@ import { Resend } from 'resend'
 /**
  * 本日確認 自動メール送信 Cron
  *
- * Vercel Cron: 0 7 * * 1-6  (UTC 07:00 = JST 16:00, 月〜土)
+ * Vercel Cron: 0 8 * * 1-6  (UTC 08:00 = JST 17:00, 月〜土)
  * vercel.json に以下を追記すること
- * { "path": "/api/cron/daily-checkin-reminder", "schedule": "0 7 * * 1-6" }
+ * { "path": "/api/cron/daily-checkin-reminder", "schedule": "0 8 * * 1-6" }
  *
  * 処理フロー:
  * 1. JST 日曜かどうかを確認し、日曜なら早期終了

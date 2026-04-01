@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/daily-checkin-reminder",
-      "schedule": "0 7 * * 1-6"
+      "schedule": "0 8 * * 1-6"
     },
     {
       "path": "/api/automation/birthday",
