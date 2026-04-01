@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { validateCastProfileInput } from '@/lib/validators/cast-profile'
 import { revalidatePath } from 'next/cache'
 
 function revalidateAll(slug?: string) {
@@ -15,9 +16,19 @@ const SNS_SCHEMA_ERROR_PATTERNS = [
   "column casts.sns_",
   'schema cache',
 ]
+const PRIVATE_INFO_SCHEMA_ERROR_PATTERNS = [
+  'column cast_private_info_1.phone does not exist',
+  'column cast_private_info.phone does not exist',
+  "Could not find the 'phone' column",
+  "Could not find the 'email' column",
+]
 
 function hasMissingSnsColumnError(message: string) {
   return SNS_SCHEMA_ERROR_PATTERNS.some((pattern) => message.includes(pattern))
+}
+
+function hasMissingPrivateInfoColumnError(message: string) {
+  return PRIVATE_INFO_SCHEMA_ERROR_PATTERNS.some((pattern) => message.includes(pattern))
 }
 
 async function insertCastWithSnsFallback(
@@ -88,20 +99,58 @@ export async function getCasts(query?: string) {
 
 export async function getCastById(id: string) {
   const supabase = await createClient()
-  const { data, error } = await supabase
+  const firstAttempt = await supabase
     .from('casts')
-    .select('*, cast_images(id, image_url, image_type, is_primary, sort_order)')
+    .select('*, cast_images(id, image_url, image_type, is_primary, sort_order), cast_private_info(real_name, date_of_birth, phone, email)')
     .eq('id', id)
     .single()
-  if (error) throw new Error(error.message)
-  return data
+
+  if (!firstAttempt.error || !hasMissingPrivateInfoColumnError(firstAttempt.error.message)) {
+    if (firstAttempt.error) throw new Error(firstAttempt.error.message)
+    return firstAttempt.data
+  }
+
+  console.warn('cast_private_info optional columns are unavailable; retrying cast detail fetch without phone/email.', {
+    castId: id,
+    message: firstAttempt.error.message,
+  })
+
+  const fallbackAttempt = await supabase
+    .from('casts')
+    .select('*, cast_images(id, image_url, image_type, is_primary, sort_order), cast_private_info(real_name, date_of_birth)')
+    .eq('id', id)
+    .single()
+
+  if (fallbackAttempt.error) throw new Error(fallbackAttempt.error.message)
+  return fallbackAttempt.data
 }
 
 export async function createCast(formData: FormData) {
   const supabase = await createClient()
 
-  const stage_name = formData.get('stage_name') as string
-  const name_kana = formData.get('name_kana') as string
+  const profileValidation = validateCastProfileInput({
+    real_name: String(formData.get('real_name') ?? ''),
+    name_kana: String(formData.get('name_kana') ?? ''),
+    stage_name: String(formData.get('stage_name') ?? ''),
+    date_of_birth: String(formData.get('date_of_birth') ?? ''),
+    phone: String(formData.get('phone') ?? ''),
+    email: String(formData.get('email') ?? ''),
+  })
+
+  if (Object.keys(profileValidation.fieldErrors).length > 0) {
+    return {
+      error: '入力内容を確認してください。',
+      fieldErrors: profileValidation.fieldErrors,
+    }
+  }
+
+  const stage_name = profileValidation.values.stageName
+  const name_kana = profileValidation.values.nameKana
+  const real_name = profileValidation.values.realName
+  const date_of_birth = profileValidation.values.dateOfBirth
+  const phone = profileValidation.values.phone
+  const email = profileValidation.values.email
+
   let slug = formData.get('slug') as string
   if (!slug) {
     slug = crypto.randomUUID().split('-')[0]
@@ -161,17 +210,15 @@ export async function createCast(formData: FormData) {
   revalidatePath(`/admin/human-resources/${data.id}`)
   revalidateAll(data?.slug)
 
-  // cast_private_info に本名・生年月日を保存（別テーブル・RLS: 管理者のみ）
+  // cast_private_info に必須個人情報を保存（別テーブル・RLS: 管理者のみ）
   if (data?.id) {
-    const real_name = formData.get('real_name') as string
-    const date_of_birth = formData.get('date_of_birth') as string
-    if (real_name && date_of_birth) {
-      await supabase.from('cast_private_info').upsert({
-        cast_id: data.id,
-        real_name,
-        date_of_birth,
-      }, { onConflict: 'cast_id' })
-    }
+    await supabase.from('cast_private_info').upsert({
+      cast_id: data.id,
+      real_name,
+      date_of_birth,
+      phone,
+      email,
+    }, { onConflict: 'cast_id' })
   }
 
   return { success: true, id: data?.id }
@@ -180,8 +227,29 @@ export async function createCast(formData: FormData) {
 export async function updateCast(id: string, formData: FormData) {
   const supabase = await createClient()
 
-  const stage_name = formData.get('stage_name') as string
-  const name_kana = formData.get('name_kana') as string
+  const profileValidation = validateCastProfileInput({
+    real_name: String(formData.get('real_name') ?? ''),
+    name_kana: String(formData.get('name_kana') ?? ''),
+    stage_name: String(formData.get('stage_name') ?? ''),
+    date_of_birth: String(formData.get('date_of_birth') ?? ''),
+    phone: String(formData.get('phone') ?? ''),
+    email: String(formData.get('email') ?? ''),
+  })
+
+  if (Object.keys(profileValidation.fieldErrors).length > 0) {
+    return {
+      error: '入力内容を確認してください。',
+      fieldErrors: profileValidation.fieldErrors,
+    }
+  }
+
+  const stage_name = profileValidation.values.stageName
+  const name_kana = profileValidation.values.nameKana
+  const real_name = profileValidation.values.realName
+  const date_of_birth = profileValidation.values.dateOfBirth
+  const phone = profileValidation.values.phone
+  const email = profileValidation.values.email
+
   const slug = formData.get('slug') as string
   
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null
@@ -194,7 +262,7 @@ export async function updateCast(id: string, formData: FormData) {
   const image_file = formData.get('image_file') as File | null
 
   const updateData: Record<string, unknown> = {
-    stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
+    name: stage_name, stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
     status: is_active ? 'public' : 'private',
     updated_at: new Date().toISOString()
   }
@@ -243,15 +311,13 @@ export async function updateCast(id: string, formData: FormData) {
   revalidateAll(slug)
 
   // cast_private_info を更新（upsertで存在しなければ作成）
-  const real_name = formData.get('real_name') as string
-  const date_of_birth = formData.get('date_of_birth') as string
-  if (real_name && date_of_birth) {
-    await supabase.from('cast_private_info').upsert({
-      cast_id: id,
-      real_name,
-      date_of_birth,
-    }, { onConflict: 'cast_id' })
-  }
+  await supabase.from('cast_private_info').upsert({
+    cast_id: id,
+    real_name,
+    date_of_birth,
+    phone,
+    email,
+  }, { onConflict: 'cast_id' })
 
   return { success: true }
 }
