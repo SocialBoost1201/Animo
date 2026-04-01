@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
@@ -46,68 +47,138 @@ export async function castRegister(formData: FormData) {
   }
 
   const supabase = await createClient();
+  const serviceRoleClient = createServiceClient();
 
-  // 本名 + 生年月日の完全一致でキャストを特定
-  const { data: privateInfo } = await supabase
-    .from('cast_private_info')
-    .select('cast_id, casts!inner(id, stage_name, auth_user_id)')
-    .eq('real_name', realName)
-    .eq('date_of_birth', dateOfBirth)
-    .maybeSingle();
+  try {
+    // 個人情報テーブルは匿名ユーザーに公開せず、サーバー側のみで照合する。
+    const { data: privateInfo, error: privateInfoError } = await serviceRoleClient
+      .from('cast_private_info')
+      .select('cast_id, casts!inner(id, stage_name, auth_user_id)')
+      .eq('real_name', realName)
+      .eq('date_of_birth', dateOfBirth)
+      .maybeSingle();
 
-  if (!privateInfo) {
-    return {
-      success: false,
-      error: '入力された本名・生年月日に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
+    if (privateInfoError) {
+      return {
+        success: false,
+        error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。',
+        code: 'MATCH_LOOKUP_FAILED',
+      };
+    }
+
+    if (!privateInfo) {
+      return {
+        success: false,
+        error: '入力された本名・生年月日に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
+        code: 'NO_MATCH',
+      };
+    }
+
+    const castRecord = privateInfo.casts as unknown as {
+      id: string;
+      stage_name: string;
+      auth_user_id: string | null;
     };
-  }
 
-  // TypeScriptの型安全のためにキャスト
-  const castRecord = privateInfo.casts as unknown as { id: string; stage_name: string; auth_user_id: string | null };
+    if (castRecord.auth_user_id) {
+      return {
+        success: false,
+        error: 'このキャストのアカウントはすでに登録済みです。担当者にお問い合わせください。',
+        code: 'ALREADY_REGISTERED',
+      };
+    }
 
-  if (castRecord.auth_user_id) {
-    return {
-      success: false,
-      error: 'このキャストのアカウントはすでに登録済みです。担当者にお問い合わせください。',
-    };
-  }
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app';
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${siteUrl}/cast/reset-password`,
+      },
+    });
 
-  // Supabase Auth にアカウント登録
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app';
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${siteUrl}/cast/reset-password`,
-    },
-  });
+    let authUser = data.user;
+    let usedRateLimitFallback = false;
 
-  if (error) {
-    return { success: false, error: error.message };
-  }
+    if (error) {
+      if (error.message.toLowerCase().includes('email rate limit exceeded')) {
+        const { data: fallbackData, error: fallbackError } =
+          await serviceRoleClient.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true,
+          });
 
-  if (data.user) {
-    // RLSをバイパスするため、ここからサービスロールを使用（サインアップ直後はまだログイン状態ではないため）
-    const { createServiceClient } = await import('@/lib/supabase/service');
-    const serviceRoleClient = createServiceClient();
+        if (fallbackError) {
+          return {
+            success: false,
+            error: `アカウント作成に失敗しました: ${fallbackError.message}`,
+            code: 'AUTH_SIGNUP_FAILED',
+          };
+        }
 
-    // user_roles に cast ロールを追加
-    await serviceRoleClient.from('user_roles').insert({
-      user_id: data.user.id,
+        authUser = fallbackData.user;
+        usedRateLimitFallback = true;
+      } else {
+        return {
+          success: false,
+          error: `アカウント作成に失敗しました: ${error.message}`,
+          code: 'AUTH_SIGNUP_FAILED',
+        };
+      }
+    }
+
+    if (!authUser) {
+      return {
+        success: false,
+        error: 'アカウント作成の応答が不正でした。時間をおいて再度お試しください。',
+        code: 'AUTH_USER_MISSING',
+      };
+    }
+
+    const { error: roleError } = await serviceRoleClient.from('user_roles').insert({
+      user_id: authUser.id,
       role: 'cast',
     });
 
-    // casts テーブルの auth_user_id を自動紐付け
-    await serviceRoleClient
-      .from('casts')
-      .update({ auth_user_id: data.user.id })
-      .eq('id', castRecord.id);
-  }
+    if (roleError && roleError.code !== '23505') {
+      return {
+        success: false,
+        error: 'アカウント作成後の権限付与に失敗しました。担当者にお問い合わせください。',
+        code: 'ROLE_INSERT_FAILED',
+      };
+    }
 
-  return {
-    success: true,
-    message: `アカウントを登録しました。確認メールをご確認の上、ログインしてください。`,
-  };
+    const { error: castUpdateError } = await serviceRoleClient
+      .from('casts')
+      .update({ auth_user_id: authUser.id })
+      .eq('id', castRecord.id)
+      .is('auth_user_id', null);
+
+    if (castUpdateError) {
+      return {
+        success: false,
+        error: 'アカウント作成後のキャスト紐付けに失敗しました。担当者にお問い合わせください。',
+        code: 'CAST_LINK_FAILED',
+      };
+    }
+
+    revalidatePath('/cast/register');
+
+    return {
+      success: true,
+      message: usedRateLimitFallback
+        ? 'アカウントを登録しました。メール送信上限のため確認メールは送信できませんでしたが、このままログインできます。'
+        : 'アカウントを登録しました。確認メールをご確認の上、ログインしてください。',
+      code: 'SUCCESS',
+    };
+  } catch {
+    return {
+      success: false,
+      error: '想定外のエラーが発生しました。時間をおいて再度お試しください。',
+      code: 'UNEXPECTED',
+    };
+  }
 }
 
 

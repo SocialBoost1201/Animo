@@ -1,6 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
+import { getJstDateString } from '@/lib/date-utils'
 import { revalidatePath } from 'next/cache'
 import { StaffSlave } from './staffs'
 import { getAnalyticsSummary } from './analytics'
@@ -32,6 +34,7 @@ export type TodayReservation = {
   stage_name: string
   visit_time: string
   guest_name: string
+  guest_count?: number | null
   reservation_type: 'douhan' | 'reservation'
   note?: string
 }
@@ -87,8 +90,8 @@ export type TodayDashboardData = {
 // 本日の全データ取得
 // ==========================================
 export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboardData> {
-  const supabase = await createClient()
-  const today = dateStr || new Date().toISOString().split('T')[0]
+  const supabase = createServiceClient()
+  const today = dateStr || getJstDateString()
 
   // 本日の承認済みシフトを取得
   const { data: shiftsRaw } = await supabase
@@ -130,7 +133,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // 来店予定
   const { data: reservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, reservation_type, note, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, casts(stage_name)')
     .eq('reservation_date', today)
     .order('visit_time')
 
@@ -142,6 +145,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       stage_name: cast?.stage_name || '不明',
       visit_time: r.visit_time,
       guest_name: r.guest_name,
+      guest_count: r.guest_count,
       reservation_type: r.reservation_type,
       note: r.note,
     }
@@ -324,7 +328,8 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('来店予定')
     for (const r of data.reservations) {
       const typeLabel = r.reservation_type === 'douhan' ? '同伴' : '来店予定'
-      lines.push(`${r.visit_time.substring(0, 5)}　${r.stage_name}　${r.guest_name}様　${typeLabel}`)
+      const guestCountLabel = r.guest_count ? `　${r.guest_count}名` : ''
+      lines.push(`${r.visit_time.substring(0, 5)}　${r.stage_name}　${r.guest_name}様${guestCountLabel}　${typeLabel}`)
     }
   }
 
@@ -440,7 +445,7 @@ export async function submitCheckin(formData: FormData) {
     .single()
   if (!cast) return { error: 'キャスト情報が見つかりません' }
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = getJstDateString()
   const { error } = await supabase.from('daily_checkins').upsert({
     cast_id: cast.id,
     checkin_date: today,
@@ -471,12 +476,22 @@ export async function addReservation(formData: FormData) {
     .single()
   if (!cast) return { error: 'キャスト情報が見つかりません' }
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = getJstDateString()
+  const guestCountValue = formData.get('guest_count')
+  const guestCount = typeof guestCountValue === 'string' && guestCountValue.trim() !== ''
+    ? Number.parseInt(guestCountValue, 10)
+    : null
+
+  if (guestCount !== null && (!Number.isInteger(guestCount) || guestCount <= 0)) {
+    return { error: '人数は1以上の整数で入力してください' }
+  }
+
   const { error } = await supabase.from('daily_reservations').insert({
     cast_id: cast.id,
     reservation_date: today,
     visit_time: formData.get('visit_time') as string,
     guest_name: formData.get('guest_name') as string,
+    guest_count: guestCount,
     reservation_type: formData.get('reservation_type') as string,
     note: (formData.get('note') as string) || null,
   })
@@ -505,7 +520,7 @@ export async function getCastTodayReservations() {
     .single()
   if (!cast) return []
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = getJstDateString()
   const { data } = await supabase
     .from('daily_reservations')
     .select('*')
@@ -528,7 +543,7 @@ export async function getCastTodayCheckin() {
     .single()
   if (!cast) return null
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = getJstDateString()
   const { data } = await supabase
     .from('daily_checkins')
     .select('*')

@@ -14,8 +14,7 @@ import {
   deleteStaffAttendance,
   generateLineText,
 } from '@/lib/actions/today'
-import { getCasts } from '@/lib/actions/casts'
-import { Copy, Plus, Trash2, Users, Truck, Star, ChevronRight, AlertTriangle, Calendar, Clock } from 'lucide-react'
+import { Copy, Plus, Trash2, Users, Star, ChevronRight, AlertTriangle, Calendar, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 type Cast = { id: string; stage_name?: string }
@@ -331,6 +330,9 @@ export function TodayDashboard({ data, casts }: Props) {
                 <span className="text-sm font-bold text-gold w-12 shrink-0">{r.visit_time.substring(0, 5)}</span>
                 <span className="text-sm font-bold">{r.stage_name}</span>
                 <span className="text-sm text-gray-600">{r.guest_name}様</span>
+                {r.guest_count ? (
+                  <span className="text-xs text-gray-500 shrink-0">{r.guest_count}名</span>
+                ) : null}
                 <span className={`text-xs px-2 py-0.5 rounded-full font-bold ml-auto shrink-0 ${r.reservation_type === 'douhan' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>
                   {r.reservation_type === 'douhan' ? '同伴' : '来店予定'}
                 </span>
@@ -352,7 +354,7 @@ export function TodayDashboard({ data, casts }: Props) {
                   <span className="text-sm font-bold text-red-600">{c.stage_name}</span>
                   {isMailSent ? (
                     <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
-                      📧 16:00 メール済み
+                      📧 17:00 メール済み
                     </span>
                   ) : (
                     <span className="text-xs text-gray-400">未連絡</span>

@@ -20,6 +20,7 @@ import { getCastNotices } from '@/lib/actions/cast-notices';
 import { CheckinForm } from '@/components/features/today/CheckinForm';
 import { ReservationForm } from '@/components/features/today/ReservationForm';
 import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
+import { getJstDateString } from '@/lib/date-utils';
 
 type CastDashboardRecentPost = {
   id: string;
@@ -33,6 +34,7 @@ type CastDashboardReservationRow = {
   id: string;
   visit_time: string;
   guest_name: string;
+  guest_count?: number | null;
   reservation_type: 'douhan' | 'reservation';
   note?: string | null;
 };
@@ -52,7 +54,7 @@ export default async function CastDashboardPage() {
     .limit(3);
 
   // 本日の出勤
-  const today = new Date().toISOString().split('T')[0];
+  const today = getJstDateString();
   const { data: todayShift } = await supabase
     .from('cast_schedules')
     .select('*')
@@ -106,6 +108,7 @@ export default async function CastDashboardPage() {
     id: r.id,
     visit_time: r.visit_time,
     guest_name: r.guest_name,
+    guest_count: r.guest_count ?? null,
     reservation_type: r.reservation_type,
     note: r.note ?? undefined,
   }));

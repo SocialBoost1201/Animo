@@ -2,14 +2,13 @@ import { getTodayDashboard } from '@/lib/actions/today'
 import { getCasts } from '@/lib/actions/casts'
 import { TodayDashboard } from '@/components/features/today/TodayDashboard'
 import { PageHeader, PageShell } from '@/components/ui/app-shell'
+import { getJstDateLabel, getJstDateString } from '@/lib/date-utils'
 
 export const dynamic = 'force-dynamic'
 
 export default async function TodayPage() {
-  const today = new Date().toISOString().split('T')[0]
-  const d = new Date()
-  const weekdays = ['日', '月', '火', '水', '木', '金', '土']
-  const dateLabel = `${d.getMonth() + 1}月${d.getDate()}日（${weekdays[d.getDay()]}）`
+  const today = getJstDateString()
+  const dateLabel = getJstDateLabel()
 
   const [data, castsRaw] = await Promise.all([
     getTodayDashboard(today),
