@@ -1,6 +1,37 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin'])
+
+async function getAppRole(
+  supabase: ReturnType<typeof createServerClient>,
+  userId: string
+) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .maybeSingle()
+
+  if (profile?.role) {
+    return profile.role
+  }
+
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  return userRole?.role ?? null
+}
+
+function redirectToSafeDestination(request: NextRequest, role: string | null) {
+  const url = request.nextUrl.clone()
+  url.pathname = role === 'cast' ? '/cast/dashboard' : '/'
+  return NextResponse.redirect(url)
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -39,9 +70,10 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
 
   // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin/login')) {
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
@@ -49,33 +81,27 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Redirect /admin directly to /admin/dashboard
-    if (request.nextUrl.pathname === '/admin') {
+    if (pathname === '/admin') {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/dashboard'
       return NextResponse.redirect(url)
     }
 
-    // Role-based Access Control for restricted routes
-    if (
-      request.nextUrl.pathname.startsWith('/admin/settings') ||
-      request.nextUrl.pathname.startsWith('/admin/staffs')
-    ) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-      
-      if (!profile || (profile.role !== 'owner' && profile.role !== 'manager')) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/admin/dashboard'
-        return NextResponse.redirect(url)
-      }
+    const role = await getAppRole(supabase, user.id)
+
+    if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
+      return redirectToSafeDestination(request, role)
     }
   }
 
   // Redirect logged in users away from login page
-  if (request.nextUrl.pathname.startsWith('/admin/login') && user) {
+  if (pathname.startsWith('/admin/login') && user) {
+    const role = await getAppRole(supabase, user.id)
+
+    if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
+      return supabaseResponse
+    }
+
     const url = request.nextUrl.clone()
     url.pathname = '/admin/dashboard'
     return NextResponse.redirect(url)

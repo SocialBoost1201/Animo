@@ -13,8 +13,21 @@ export default async function Layout({ children }: { children: React.ReactNode }
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
-    if (profile) role = profile.role;
+      .maybeSingle();
+
+    if (profile?.role) {
+      role = profile.role;
+    } else {
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (userRole?.role) {
+        role = userRole.role;
+      }
+    }
   }
 
 

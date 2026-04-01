@@ -12,7 +12,6 @@ import {
   MessageSquare,
   FileText,
   LogOut,
-  UserCheck,
   Briefcase,
   Menu,
   ChevronRight,
@@ -248,7 +247,6 @@ export function AdminLayout({
           {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
-            const isInbox = item.href === '/admin/applications';
             return (
               <Link
                 key={item.href}

@@ -10,6 +10,7 @@ type Reservation = {
   id: string
   visit_time: string
   guest_name: string
+  guest_count?: number | null
   reservation_type: string
   note?: string
 }
@@ -54,6 +55,9 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
               <Clock size={14} className="text-gold shrink-0" />
               <span className="text-sm font-bold text-gold w-12 shrink-0">{r.visit_time.substring(0, 5)}</span>
               <span className="text-sm text-gray-700">{r.guest_name}様</span>
+              {r.guest_count ? (
+                <span className="text-xs text-gray-500 shrink-0">{r.guest_count}名</span>
+              ) : null}
               <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${r.reservation_type === 'douhan' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>
                 {r.reservation_type === 'douhan' ? '同伴' : '来店予定'}
               </span>
@@ -79,6 +83,17 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
             <p className="text-xs text-gray-300 mt-1">「様」はつけずに入力してください</p>
           </div>
           <div>
+            <label className="block text-xs text-gray-500 mb-1">人数</label>
+            <input
+              name="guest_count"
+              type="number"
+              min="1"
+              inputMode="numeric"
+              placeholder="2"
+              className={inputClass}
+            />
+          </div>
+          <div>
             <label className="block text-xs text-gray-500 mb-1">種別 *</label>
             <select name="reservation_type" required className={inputClass}>
               <option value="">選択してください</option>
@@ -88,7 +103,7 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">メモ（任意）</label>
-            <input name="note" type="text" placeholder="人数、テーブルなど" className={inputClass} />
+            <input name="note" type="text" placeholder="テーブル、備考など" className={inputClass} />
           </div>
           <div className="flex gap-2 pt-1">
             <button

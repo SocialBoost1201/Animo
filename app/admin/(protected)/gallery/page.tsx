@@ -1,32 +1,28 @@
-import { getContents, deleteContent } from '@/lib/actions/contents'
-import Link from 'next/link'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
-import { revalidatePath } from 'next/cache'
+import { getContents } from '@/lib/actions/contents'
+import { PauseCircle } from 'lucide-react'
 
 export default async function GalleryPage() {
   const contents = await getContents('gallery')
-
-  async function handleDelete(data: FormData) {
-    'use server'
-    const id = data.get('id') as string
-    await deleteContent(id)
-    revalidatePath('/admin/gallery')
-  }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Gallery</h1>
-          <p className="text-sm text-gray-500 mt-2">店舗内装等のギャラリー画像の管理</p>
+          <p className="text-sm text-gray-500 mt-2">公開ギャラリー確認用の一覧です</p>
         </div>
-        <Link 
-          href="/admin/gallery/new" 
-          className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors"
-        >
-          <Plus size={16} />
-          新規追加
-        </Link>
+        <div className="inline-flex items-center gap-2 rounded-sm border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-bold tracking-widest text-amber-800">
+          <PauseCircle size={16} />
+          静的運用中
+        </div>
+      </div>
+
+      <div className="rounded-sm border border-amber-200 bg-amber-50 p-4">
+        <p className="text-xs font-bold tracking-widest text-amber-800 uppercase">公開反映は停止中です</p>
+        <p className="mt-2 text-sm leading-6 text-amber-900">
+          現在の公開 <span className="font-bold">/gallery</span> は静的データで固定運用しています。
+          この管理画面の登録内容は公開サイトへ反映されないため、追加・編集・削除は一時停止しています。
+        </p>
       </div>
 
       <div className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-x-auto">
@@ -37,7 +33,7 @@ export default async function GalleryPage() {
               <th className="px-6 py-4 font-bold">Caption</th>
               <th className="px-6 py-4 font-bold">Category</th>
               <th className="px-6 py-4 font-bold">Status</th>
-              <th className="px-6 py-4 font-bold text-right">Actions</th>
+              <th className="px-6 py-4 font-bold text-right">Operation</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -66,20 +62,9 @@ export default async function GalleryPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end items-center gap-2">
-                    <button className="p-2 text-gray-400 hover:text-[#171717] transition-colors rounded hover:bg-gray-100">
-                      <Edit2 size={16} />
-                    </button>
-                    <form action={handleDelete}>
-                      <input type="hidden" name="id" value={content.id} />
-                      <button 
-                        type="submit"
-                        className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded hover:bg-red-50"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </form>
-                  </div>
+                  <span className="inline-flex items-center rounded bg-gray-100 px-2 py-1 text-xs font-bold tracking-wider text-gray-500">
+                    停止中
+                  </span>
                 </td>
               </tr>
             ))}
