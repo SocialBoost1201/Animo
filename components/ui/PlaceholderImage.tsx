@@ -54,7 +54,7 @@ export function PlaceholderImage({
   return (
     <div
       className={cn(
-        'relative w-full overflow-hidden bg-[var(--color-gray-light)] flex flex-col items-center justify-center text-center',
+        'relative w-full overflow-hidden bg-gray-light flex flex-col items-center justify-center text-center',
         ratioClasses[ratio],
         className
       )}

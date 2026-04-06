@@ -1,23 +1,20 @@
 import type { Metadata } from "next";
-import {
-  Shippori_Mincho,
-  Zen_Kaku_Gothic_New, Geist, Inter } from "next/font/google";
+import { Shippori_Mincho, Zen_Kaku_Gothic_New, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 const inter = Inter({subsets:['latin'],variable:'--font-inter'});
 
 const shippori = Shippori_Mincho({
   variable: "--font-shippori",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
   subsets: ["latin"],
   display: 'swap',
 });
 
 const zenKaku = Zen_Kaku_Gothic_New({
   variable: "--font-zen-kaku",
-  weight: ["300", "400", "500"],
+  weight: ["400", "500"],
   subsets: ["latin"],
   display: 'swap',
 });
@@ -73,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cn("font-sans", geist.variable, inter.variable)}>
+    <html lang="ja" className={cn("font-sans", inter.variable)}>
       <head />
       <body
         className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}

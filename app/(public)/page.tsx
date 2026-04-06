@@ -544,7 +544,7 @@ export default async function HomePage() {
       {/* 9. RECRUIT */}
       <section className="py-24 bg-[#111] px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <PlaceholderImage src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1920&auto=format&fit=crop" ratio="16:9" alt="Recruit Background" className="w-full h-full object-cover" />
+          <PlaceholderImage src="/images/cast-recruit-hero.webp" ratio="16:9" alt="Recruit Background" className="w-full h-full object-cover" />
         </div>
         <div className="container mx-auto relative z-10">
           <FadeIn>
