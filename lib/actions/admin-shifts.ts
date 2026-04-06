@@ -139,8 +139,6 @@ export async function getAllCastShiftStatuses(targetWeekMonday: string) {
   if (castsError || !casts) return { data: [], error: castsError?.message || 'Failed to fetch casts' };
 
   // auth_user_id のリスト
-  const authUserIds = casts.map(c => c.auth_user_id).filter(Boolean);
-  
   // Auth ユーザー情報を取得 (メールアドレスなど) -> サーバー側でのみ可能
   // (admin auth apiが必要だが、ここでは簡略化のため profiles や直接 email の取得を試みる)
   // Auth API は service_role_key 等が必要になるため、ここではメール送信はAPIエンドポイントまたは別の手段を取る前提とする。

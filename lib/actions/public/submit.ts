@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { sendAdminNotification, sendGuestConfirmation } from '@/lib/mail'
-import { sendLineNotification } from '@/app/api/line/route'
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 

@@ -78,41 +78,72 @@ export async function saveSchedules(formData: FormData) {
   if (!updatesData) return { success: true }
 
   try {
-    const updates = JSON.parse(updatesData)
+    const updates = JSON.parse(updatesData) as {
+      action: 'insert' | 'delete';
+      cast_id: string;
+      date: string;
+      start_time?: string;
+      end_time?: string;
+    }[]
 
-    for (const update of updates) {
-      if (update.action === 'insert') {
-        await supabase.from('cast_schedules').insert({
-          cast_id: update.cast_id,
-          work_date: update.date,
-          start_time: update.start_time === 'LAST' ? null : (update.start_time || null),
-          end_time: update.end_time === 'LAST' ? null : (update.end_time || null),
-        })
-      } else if (update.action === 'delete') {
-        await supabase
+    const toInsert = updates
+      .filter(u => u.action === 'insert')
+      .map(u => ({
+        cast_id: u.cast_id,
+        work_date: u.date,
+        start_time: u.start_time === 'LAST' ? null : (u.start_time || null),
+        end_time: u.end_time === 'LAST' ? null : (u.end_time || null),
+      }))
+
+    const toDelete = updates.filter(u => u.action === 'delete')
+
+    // 一括削除実行 (各ペアに対して)
+    if (toDelete.length > 0) {
+      // Supabase supports .or() for complex filters. 
+      // For many deletes, looping is actually safer unless we use a temporary table or RPC,
+      // but let's at least group them better if possible.
+      // Small scale (tens) is fine with Promise.all
+      await Promise.all(toDelete.map(u => 
+        supabase
           .from('cast_schedules')
           .delete()
-          .eq('cast_id', update.cast_id)
-          .eq('work_date', update.date)
-      }
+          .eq('cast_id', u.cast_id)
+          .eq('work_date', u.date)
+      ))
     }
 
-    revalidatePath('/')
-    revalidatePath('/admin/shifts')
-    revalidatePath('/shift')
-    revalidatePath('/cast')
+    // 一括挿入実行
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('cast_schedules')
+        .insert(toInsert)
+      if (error) throw error
+    }
 
-    const castIds = [...new Set(updates.map((u: { cast_id: string }) => u.cast_id).filter(Boolean))]
+    // Revalidation (minimizing calls)
+    const pathsToRevalidate = [
+      '/',
+      '/admin/shifts',
+      '/shift',
+      '/cast'
+    ]
+
+    pathsToRevalidate.forEach(p => revalidatePath(p))
+
+    // Unique cast slugs revalidation
+    const castIds = [...new Set(updates.map(u => u.cast_id).filter(Boolean))]
     if (castIds.length > 0) {
       const { data: castsData } = await supabase
         .from('casts').select('slug').in('id', castIds)
       if (castsData) {
-        castsData.forEach((c: { slug?: string }) => { if (c.slug) revalidatePath(`/cast/${c.slug}`) })
+        const uniqueSlugs = [...new Set(castsData.map(c => c.slug).filter(Boolean))]
+        uniqueSlugs.forEach(slug => revalidatePath(`/cast/${slug}`))
       }
     }
 
     return { success: true }
   } catch (error: unknown) {
+    console.error('Save error:', error)
     const err = error as Error;
     return { error: err.message || 'スケジュール更新に失敗しました' }
   }

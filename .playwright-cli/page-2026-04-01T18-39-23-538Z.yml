@@ -1,0 +1,133 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "CLUB Animo" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: CLUB Animo
+        - navigation [ref=e8]:
+          - link "System" [ref=e9] [cursor=pointer]:
+            - /url: /system
+          - link "Cast" [ref=e10] [cursor=pointer]:
+            - /url: /cast
+          - link "Shift" [ref=e11] [cursor=pointer]:
+            - /url: /shift
+          - link "Gallery" [ref=e12] [cursor=pointer]:
+            - /url: /gallery
+          - link "Access" [ref=e13] [cursor=pointer]:
+            - /url: /access
+          - button "Recruit" [ref=e15]:
+            - text: Recruit
+            - img [ref=e16]
+          - link "Cast Recruit" [ref=e19] [cursor=pointer]:
+            - /url: /recruit/cast
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - link "CAST LIST" [ref=e24] [cursor=pointer]:
+          - /url: /cast
+          - img [ref=e25]
+          - text: CAST LIST
+        - generic [ref=e27]:
+          - generic [ref=e30]:
+            - img "まりあ" [ref=e32]
+            - button "お気に入りに追加する" [ref=e34]:
+              - img [ref=e35]
+          - generic [ref=e38]:
+            - heading "まりあ" [level=1] [ref=e40]
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]: Age
+                - generic [ref=e44]: 25歳
+              - generic [ref=e45]:
+                - generic [ref=e46]: Height
+                - generic [ref=e47]: "-"
+              - generic [ref=e48]:
+                - generic [ref=e49]: Real Name
+                - generic [ref=e50]: 田中 真理亜
+              - generic [ref=e51]:
+                - generic [ref=e52]: Birth Date
+                - generic [ref=e53]: 1990/12/01
+            - generic [ref=e54]:
+              - heading "Cast Journal" [level=3] [ref=e55]: Cast Journal
+              - paragraph [ref=e58]: 最新の投稿は順次公開いたします。
+            - generic [ref=e59]:
+              - heading "Schedule" [level=3] [ref=e60]: Schedule
+              - paragraph [ref=e62]: 現在公開されている出勤予定はありません。
+    - contentinfo [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - link "CLUB Animo" [ref=e67] [cursor=pointer]:
+              - /url: /
+            - paragraph [ref=e68]: 関内の大人の社交場。煌びやかなシャンデリアの下で、特別な時間をお過ごしください。極上のキャストが最高の夜を演出いたします。
+            - generic [ref=e69]:
+              - link "Instagram" [ref=e70] [cursor=pointer]:
+                - /url: https://www.instagram.com/kannai_club_animo/
+                - img [ref=e71]
+              - link "@kannai_club_animo" [ref=e74] [cursor=pointer]:
+                - /url: https://www.instagram.com/kannai_club_animo/
+          - generic [ref=e75]:
+            - heading "Discover" [level=3] [ref=e76]
+            - list [ref=e77]:
+              - listitem [ref=e78]:
+                - link "Concept" [ref=e79] [cursor=pointer]:
+                  - /url: /concept
+              - listitem [ref=e80]:
+                - link "First Visit Guide" [ref=e81] [cursor=pointer]:
+                  - /url: /guide
+              - listitem [ref=e82]:
+                - link "System" [ref=e83] [cursor=pointer]:
+                  - /url: /system
+              - listitem [ref=e84]:
+                - link "Cast" [ref=e85] [cursor=pointer]:
+                  - /url: /cast
+              - listitem [ref=e86]:
+                - link "News" [ref=e87] [cursor=pointer]:
+                  - /url: /news
+              - listitem [ref=e88]:
+                - link "Today's Shift" [ref=e89] [cursor=pointer]:
+                  - /url: /shift
+              - listitem [ref=e90]:
+                - link "Gallery" [ref=e91] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=e92]:
+                - link "FAQ" [ref=e93] [cursor=pointer]:
+                  - /url: /faq
+          - generic [ref=e94]:
+            - heading "Recruit" [level=3] [ref=e95]
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - link "Cast Recruit" [ref=e98] [cursor=pointer]:
+                  - /url: /recruit/cast
+              - listitem [ref=e99]:
+                - link "Staff Recruit" [ref=e100] [cursor=pointer]:
+                  - /url: /recruit/staff
+              - listitem [ref=e101]:
+                - link "採用プライバシー" [ref=e102] [cursor=pointer]:
+                  - /url: /privacy
+          - generic [ref=e103]:
+            - heading "Access" [level=3] [ref=e104]
+            - list [ref=e105]:
+              - listitem [ref=e106]:
+                - img [ref=e107]
+                - generic [ref=e110]:
+                  - text: 〒231-0012
+                  - text: 神奈川県横浜市中区相生町３丁目５３
+                  - text: グランドパークビル2F
+              - listitem [ref=e111]:
+                - img [ref=e112]
+                - link "045-263-6961" [ref=e114] [cursor=pointer]:
+                  - /url: tel:045-263-6961
+              - listitem [ref=e115]:
+                - paragraph [ref=e116]: OPEN 21:00 - LAST
+                - paragraph [ref=e117]: Closed on Sundays & Holidays
+        - generic [ref=e118]:
+          - paragraph [ref=e119]: © 2026 Club Animo. All rights reserved. 20歳未満の方のご入店はお断りしております。
+          - generic [ref=e120]:
+            - link "Privacy Policy" [ref=e121] [cursor=pointer]:
+              - /url: /privacy
+            - link "Terms of Service" [ref=e122] [cursor=pointer]:
+              - /url: /terms
+  - button "Open Next.js Dev Tools" [ref=e128] [cursor=pointer]:
+    - img [ref=e129]
+  - alert [ref=e132]

@@ -72,12 +72,38 @@ export async function submitShiftChangeRequest(
   newEndTime: string | null
 ) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  if (typeof castId !== 'string' || !castId.trim()) {
+    return { success: false, error: 'Invalid cast' };
+  }
+
+  const normalizedCastId = castId.trim();
+
+  const { data: ownedCast, error: castError } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('id', normalizedCastId)
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+
+  if (castError) {
+    return { success: false, error: 'Failed to save request' };
+  }
+
+  if (!ownedCast) {
+    return { success: false, error: 'Invalid cast' };
+  }
 
   // すでに pending の申請がないかチェック（1日1アクティブ申請）
   const { data: existing } = await supabase
     .from('shift_change_requests')
     .select('id')
-    .eq('cast_id', castId)
+    .eq('cast_id', normalizedCastId)
     .eq('target_date', targetDate)
     .eq('status', 'pending')
     .single();
@@ -89,7 +115,7 @@ export async function submitShiftChangeRequest(
   const { error } = await supabase
     .from('shift_change_requests')
     .insert({
-      cast_id: castId,
+      cast_id: normalizedCastId,
       target_date: targetDate,
       action_type: actionType,
       new_start_time: actionType === 'cancel' ? null : newStartTime,

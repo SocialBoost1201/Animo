@@ -1,8 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { render } from '@react-email/components';
-import { BirthdayEmail } from '@/emails/BirthdayEmail';
 import { ThankYouEmail } from '@/emails/ThankYouEmail';
 
 const resend = new Resend(process.env.RESEND_API_KEY);

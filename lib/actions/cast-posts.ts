@@ -25,10 +25,31 @@ export async function createCastPost(formData: FormData) {
 
     const file = formData.get('image') as File | null;
     const content = formData.get('content') as string;
-    const castId = formData.get('castId') as string;
+    const rawCastId = formData.get('castId');
 
-    if (!file || !content || !castId) {
+    if (!file || !content || typeof rawCastId !== 'string') {
       return { success: false, error: '必要なデータが不足しています。' };
+    }
+
+    const castId = rawCastId.trim();
+    if (!castId) {
+      return { success: false, error: '必要なデータが不足しています。' };
+    }
+
+    const { data: ownedCast, error: castError } = await supabase
+      .from('casts')
+      .select('id')
+      .eq('id', castId)
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+
+    if (castError) {
+      console.error('Cast Ownership Check Error:', castError);
+      return { success: false, error: '投稿データの保存に失敗しました。' };
+    }
+
+    if (!ownedCast) {
+      return { success: false, error: '不正なキャスト情報です。' };
     }
 
     // Storageへのアップロード

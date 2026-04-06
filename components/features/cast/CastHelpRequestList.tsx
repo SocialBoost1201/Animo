@@ -5,15 +5,14 @@ import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { AlertCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { ShiftRequest, ShiftRequestResponse } from '@/lib/actions/admin-shift-requests';
-import { submitShiftRequestResponse } from '@/lib/actions/cast-shift-requests';
+import { MyShiftRequestResponse, submitShiftRequestResponse } from '@/lib/actions/cast-shift-requests';
 
-// @ts-ignore
 export function CastHelpRequestList({
   activeRequests,
   myResponses
 }: {
   activeRequests: ShiftRequest[];
-  myResponses: ShiftRequestResponse[];
+  myResponses: Array<Pick<ShiftRequestResponse, 'request_id'> & MyShiftRequestResponse>;
 }) {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [startTime, setStartTime] = useState('21:00');

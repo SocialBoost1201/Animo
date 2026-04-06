@@ -1,9 +1,39 @@
 'use server';
 
+import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+
+const PRODUCTION_AUTH_BASE_URL = 'https://club-animo.jp';
+
+function resolveAuthBaseUrl() {
+  const candidates = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.APP_URL,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+
+    try {
+      const url = new URL(candidate);
+      const isLocal =
+        url.hostname === 'localhost' ||
+        url.hostname === '127.0.0.1' ||
+        url.hostname.endsWith('.local');
+
+      if (isLocal) continue;
+      return url.origin;
+    } catch {
+      // ignore invalid env value and continue to next candidate
+    }
+  }
+
+  return PRODUCTION_AUTH_BASE_URL;
+}
 
 /**
  * キャストログイン
@@ -48,12 +78,14 @@ export async function castRegister(formData: FormData) {
 
   const supabase = await createClient();
   const serviceRoleClient = createServiceClient();
+  const authBaseUrl = resolveAuthBaseUrl();
+  const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
 
   try {
     // 個人情報テーブルは匿名ユーザーに公開せず、サーバー側のみで照合する。
-    const { data: privateInfo, error: privateInfoError } = await serviceRoleClient
+    const { data: exactPrivateInfo, error: privateInfoError } = await serviceRoleClient
       .from('cast_private_info')
-      .select('cast_id, casts!inner(id, stage_name, auth_user_id)')
+      .select('cast_id, real_name, casts!inner(id, stage_name, auth_user_id)')
       .eq('real_name', realName)
       .eq('date_of_birth', dateOfBirth)
       .maybeSingle();
@@ -64,6 +96,37 @@ export async function castRegister(formData: FormData) {
         error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。',
         code: 'MATCH_LOOKUP_FAILED',
       };
+    }
+
+    let privateInfo = exactPrivateInfo;
+
+    if (!privateInfo) {
+      const { data: sameBirthDateCandidates, error: sameBirthDateError } = await serviceRoleClient
+        .from('cast_private_info')
+        .select('cast_id, real_name, casts!inner(id, stage_name, auth_user_id)')
+        .eq('date_of_birth', dateOfBirth);
+
+      if (sameBirthDateError) {
+        return {
+          success: false,
+          error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。',
+          code: 'MATCH_LOOKUP_FAILED',
+        };
+      }
+
+      const matchedCandidates = (sameBirthDateCandidates ?? []).filter((candidate) => {
+        return normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
+      });
+
+      if (matchedCandidates.length === 1) {
+        privateInfo = matchedCandidates[0];
+      } else if (matchedCandidates.length > 1) {
+        return {
+          success: false,
+          error: '同一の本人確認情報に一致するキャストが複数見つかりました。担当者にお問い合わせください。',
+          code: 'MULTIPLE_MATCHES',
+        };
+      }
     }
 
     if (!privateInfo) {
@@ -88,20 +151,26 @@ export async function castRegister(formData: FormData) {
       };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app';
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${siteUrl}/cast/reset-password`,
+        emailRedirectTo: `${authBaseUrl}/cast/verify-email`,
       },
     });
 
     let authUser = data.user;
-    let usedRateLimitFallback = false;
+    let usedAuthFallback = false;
 
     if (error) {
-      if (error.message.toLowerCase().includes('email rate limit exceeded')) {
+      const normalizedErrorMessage = error.message.toLowerCase();
+      const shouldBypassEmailDelivery =
+        normalizedErrorMessage.includes('email rate limit exceeded') ||
+        normalizedErrorMessage.includes('error sending confirmation email');
+
+      if (shouldBypassEmailDelivery) {
+        usedAuthFallback = true;
+
         const { data: fallbackData, error: fallbackError } =
           await serviceRoleClient.auth.admin.createUser({
             email,
@@ -110,15 +179,61 @@ export async function castRegister(formData: FormData) {
           });
 
         if (fallbackError) {
-          return {
-            success: false,
-            error: `アカウント作成に失敗しました: ${fallbackError.message}`,
-            code: 'AUTH_SIGNUP_FAILED',
-          };
-        }
+          const fallbackMessage = fallbackError.message.toLowerCase();
+          const duplicateUserError =
+            fallbackMessage.includes('already been registered') ||
+            fallbackMessage.includes('already registered') ||
+            fallbackMessage.includes('already exists');
 
-        authUser = fallbackData.user;
-        usedRateLimitFallback = true;
+          if (!duplicateUserError) {
+            return {
+              success: false,
+              error: `アカウント作成に失敗しました: ${fallbackError.message}`,
+              code: 'AUTH_SIGNUP_FAILED',
+            };
+          }
+
+          const { data: usersData, error: usersError } = await serviceRoleClient.auth.admin.listUsers({
+            page: 1,
+            perPage: 1000,
+          });
+
+          if (usersError) {
+            return {
+              success: false,
+              error: `アカウント作成に失敗しました: ${usersError.message}`,
+              code: 'AUTH_SIGNUP_FAILED',
+            };
+          }
+
+          const existingUser = usersData.users.find((user) => user.email?.toLowerCase() === email.toLowerCase());
+
+          if (!existingUser) {
+            return {
+              success: false,
+              error: `アカウント作成に失敗しました: ${fallbackError.message}`,
+              code: 'AUTH_SIGNUP_FAILED',
+            };
+          }
+
+          const { data: updatedUserData, error: updateUserError } =
+            await serviceRoleClient.auth.admin.updateUserById(existingUser.id, {
+              password,
+              email_confirm: true,
+            });
+
+          if (updateUserError) {
+            return {
+              success: false,
+              error: `アカウント作成に失敗しました: ${updateUserError.message}`,
+              code: 'AUTH_SIGNUP_FAILED',
+            };
+          }
+
+          authUser = updatedUserData.user;
+        } else {
+          authUser = fallbackData.user;
+        }
       } else {
         return {
           success: false,
@@ -167,9 +282,9 @@ export async function castRegister(formData: FormData) {
 
     return {
       success: true,
-      message: usedRateLimitFallback
-        ? 'アカウントを登録しました。メール送信上限のため確認メールは送信できませんでしたが、このままログインできます。'
-        : 'アカウントを登録しました。確認メールをご確認の上、ログインしてください。',
+      message: usedAuthFallback
+        ? 'アカウントを登録しました。確認メール送信に失敗したため、このままログインできます。'
+        : 'アカウントを登録しました。確認メールをご確認の上、認証後にログインしてください。',
       code: 'SUCCESS',
     };
   } catch {
@@ -186,7 +301,8 @@ export async function castRegister(formData: FormData) {
  * パスワード再設定メール送信
  */
 export async function castForgotPassword(formData: FormData) {
-  const email = formData.get('email') as string;
+  const email = (formData.get('email') as string)?.trim().toLowerCase();
+  const resetRedirectUrl = `${PRODUCTION_AUTH_BASE_URL}/cast/reset-password`;
 
   if (!email) {
     return { success: false, error: 'メールアドレスを入力してください。' };
@@ -194,10 +310,38 @@ export async function castForgotPassword(formData: FormData) {
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://animo-lake.vercel.app'}/cast/reset-password`,
+    redirectTo: resetRedirectUrl,
   });
 
   if (error) {
+    const normalizedErrorMessage = error.message.toLowerCase();
+
+    if (normalizedErrorMessage.includes('redirect url') && normalizedErrorMessage.includes('not allowed')) {
+      return {
+        success: false,
+        error: '再設定リンクURLが許可されていません。認証設定（URL Configuration）をご確認ください。',
+      };
+    }
+
+    if (
+      normalizedErrorMessage.includes('error sending recovery email') ||
+      normalizedErrorMessage.includes('failed to send message') ||
+      normalizedErrorMessage.includes('smtp')
+    ) {
+      return {
+        success: false,
+        error:
+          '再設定メールの送信に失敗しました。SMTP設定（Sender / Host / Port / Username / Password）をご確認ください。',
+      };
+    }
+
+    if (normalizedErrorMessage.includes('rate limit')) {
+      return {
+        success: false,
+        error: '短時間での送信回数が上限に達しました。しばらく待ってから再度お試しください。',
+      };
+    }
+
     return { success: false, error: error.message };
   }
 

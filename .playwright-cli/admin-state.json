@@ -1,0 +1,135 @@
+{
+  "cookies": [
+    {
+      "name": "_ga",
+      "value": "GA1.1.2055829359.1774981800",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1809541846.542476,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "CLID",
+      "value": "cef4f9dec76a4a709e2a1a8024c49bea.20260331.20270331",
+      "domain": "www.clarity.ms",
+      "path": "/",
+      "expires": 1806517799.783716,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_clck",
+      "value": "1mhjhkq%5E2%5Eg4t%5E0%5E2281",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1806517799,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "MUID",
+      "value": "395D0D00E256621532541A2DE30E6311",
+      "domain": ".bing.com",
+      "path": "/",
+      "expires": 1808677799.968004,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MR",
+      "value": "0",
+      "domain": ".c.bing.com",
+      "path": "/",
+      "expires": 1775586599.96804,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SRM_B",
+      "value": "395D0D00E256621532541A2DE30E6311",
+      "domain": ".c.bing.com",
+      "path": "/",
+      "expires": 1808677799.968051,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SM",
+      "value": "C",
+      "domain": ".c.clarity.ms",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MUID",
+      "value": "395D0D00E256621532541A2DE30E6311",
+      "domain": ".clarity.ms",
+      "path": "/",
+      "expires": 1808677799.996472,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "MR",
+      "value": "0",
+      "domain": ".c.clarity.ms",
+      "path": "/",
+      "expires": 1775586599.996486,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "ANONCHK",
+      "value": "0",
+      "domain": ".c.clarity.ms",
+      "path": "/",
+      "expires": 1774982399.996494,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "sb-nygsfetbfxngwfzbmryq-auth-token",
+      "value": "base64-eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSkZVekkxTmlJc0ltdHBaQ0k2SW1ReE9XUXdZbU16TFdWbE56QXROR000T0MwNFlUZGlMVGxqTkRBM1pUTXhOREEwTUNJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcGMzTWlPaUpvZEhSd2N6b3ZMMjU1WjNObVpYUmlabmh1WjNkbWVtSnRjbmx4TG5OMWNHRmlZWE5sTG1OdkwyRjFkR2d2ZGpFaUxDSnpkV0lpT2lJek0yRXlZamhtWVMwNU5XUmtMVFE0TmpFdE9HSTBZeTFqWlRNMk1qTmxabU0yWWpNaUxDSmhkV1FpT2lKaGRYUm9aVzUwYVdOaGRHVmtJaXdpWlhod0lqb3hOemMwT1RnMU5ERTJMQ0pwWVhRaU9qRTNOelE1T0RFNE1UWXNJbVZ0WVdsc0lqb2ljMjF2YTJVdFlXUnRhVzR0TWpBeU5qQTBNREZBWVc1cGJXOHViRzlqWVd3aUxDSndhRzl1WlNJNklpSXNJbUZ3Y0Y5dFpYUmhaR0YwWVNJNmV5SndjbTkyYVdSbGNpSTZJbVZ0WVdsc0lpd2ljSEp2ZG1sa1pYSnpJanBiSW1WdFlXbHNJbDE5TENKMWMyVnlYMjFsZEdGa1lYUmhJanA3SW1WdFlXbHNYM1psY21sbWFXVmtJanAwY25WbExDSnpiM1Z5WTJVaU9pSmpiMlJsZUMxemJXOXJaU0o5TENKeWIyeGxJam9pWVhWMGFHVnVkR2xqWVhSbFpDSXNJbUZoYkNJNkltRmhiREVpTENKaGJYSWlPbHQ3SW0xbGRHaHZaQ0k2SW5CaGMzTjNiM0prSWl3aWRHbHRaWE4wWVcxd0lqb3hOemMwT1RneE9ERTJmVjBzSW5ObGMzTnBiMjVmYVdRaU9pSmpaRFF4T0ROallpMWxORFE1TFRSaE16SXRZalExTlMxa1lqaGhOVFV3TVRSa1pHSWlMQ0pwYzE5aGJtOXVlVzF2ZFhNaU9tWmhiSE5sZlEuYkJJd20wN29GUFdYbkZlOUt1QmNRN0h2OEgwdzVSdFRNS1RIYWdzaDl2R0dNSkY2TlpfUjZTRTZoUk9oVnU4YVp5OS02eVkwSWItT090X2hQRGxtNGciLCJ0b2tlbl90eXBlIjoiYmVhcmVyIiwiZXhwaXJlc19pbiI6MzYwMCwiZXhwaXJlc19hdCI6MTc3NDk4NTQxNiwicmVmcmVzaF90b2tlbiI6InRjNnc3Nmh6M3U0dSIsInVzZXIiOnsiaWQiOiIzM2EyYjhmYS05NWRkLTQ4NjEtOGI0Yy1jZTM2MjNlZmM2YjMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJlbWFpbCI6InNtb2tlLWFkbWluLTIwMjYwNDAxQGFuaW1vLmxvY2FsIiwiZW1haWxfY29uZmlybWVkX2F0IjoiMjAyNi0wMy0zMVQxNzo1NzozOC41MjkzMTdaIiwicGhvbmUiOiIiLCJjb25maXJtZWRfYXQiOiIyMDI2LTAzLTMxVDE3OjU3OjM4LjUyOTMxN1oiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI2LTAzLTMxVDE4OjMwOjE2Ljc5NzMwNDYxMloiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwic291cmNlIjoiY29kZXgtc21va2UifSwiaWRlbnRpdGllcyI6W3siaWRlbnRpdHlfaWQiOiIyNDUxN2YwYy1lYzk5LTQ3MTEtYTg2Yy04N2NhOTEzZjNiMGMiLCJpZCI6IjMzYTJiOGZhLTk1ZGQtNDg2MS04YjRjLWNlMzYyM2VmYzZiMyIsInVzZXJfaWQiOiIzM2EyYjhmYS05NWRkLTQ4NjEtOGI0Yy1jZTM2MjNlZmM2YjMiLCJpZGVudGl0eV9kYXRhIjp7ImVtYWlsIjoic21va2UtYWRtaW4tMjAyNjA0MDFAYW5pbW8ubG9jYWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiMzNhMmI4ZmEtOTVkZC00ODYxLThiNGMtY2UzNjIzZWZjNmIzIn0sInByb3ZpZGVyIjoiZW1haWwiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI2LTAzLTMxVDE3OjU3OjM4LjUxMjg0NVoiLCJjcmVhdGVkX2F0IjoiMjAyNi0wMy0zMVQxNzo1NzozOC41MTI5MDNaIiwidXBkYXRlZF9hdCI6IjIwMjYtMDMtMzFUMTc6NTc6MzguNTEyOTAzWiIsImVtYWlsIjoic21va2UtYWRtaW4tMjAyNjA0MDFAYW5pbW8ubG9jYWwifV0sImNyZWF0ZWRfYXQiOiIyMDI2LTAzLTMxVDE3OjU3OjM4LjQ3NDg4OVoiLCJ1cGRhdGVkX2F0IjoiMjAyNi0wMy0zMVQxODozMDoxNi44MzI3NjJaIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0sIndlYWtfcGFzc3dvcmQiOm51bGx9",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1809541817.477166,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_V6M44M1H1C",
+      "value": "GS2.1.s1774981799$o1$g1$t1774981846$j13$l0$h0",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1809541846.542264,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_clsk",
+      "value": "12nppfs%5E1774981847193%5E4%5E1%5Eo.clarity.ms%2Fcollect",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1775068247,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

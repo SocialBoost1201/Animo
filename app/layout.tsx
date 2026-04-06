@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import {
   Shippori_Mincho,
-  Zen_Kaku_Gothic_New, Geist } from "next/font/google";
+  Zen_Kaku_Gothic_New, Geist, Inter } from "next/font/google";
 import "./globals.css";
-import { Analytics } from "@/components/seo/Analytics";
-import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
-import { ReviewSchema } from "@/components/seo/ReviewSchema";
-import { ToastContainer } from "@/components/ui/Toast";
-import { DeferredLuxuryBackground } from "@/components/ui/DeferredLuxuryBackground";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({subsets:['latin'],variable:'--font-inter'});
 
 const shippori = Shippori_Mincho({
   variable: "--font-shippori",
@@ -77,21 +73,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cn("font-sans", geist.variable)}>
-      <head>
-        <LocalBusinessSchema />
-        <ReviewSchema ratingValue={4.8} reviewCount={124} />
-      </head>
+    <html lang="ja" className={cn("font-sans", geist.variable, inter.variable)}>
+      <head />
       <body
         className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
         {children}
-        <DeferredLuxuryBackground />
-        <ToastContainer />
-        <Analytics 
-          gaId={process.env.NEXT_PUBLIC_GA_ID} 
-          clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} 
-        />
       </body>
     </html>
   );

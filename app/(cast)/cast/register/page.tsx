@@ -9,7 +9,7 @@ export default function CastRegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [completedMessage, setCompletedMessage] = useState(
-    '本登録メールを送信しました。メール内のリンクから本登録を完了し、再設定したパスワードでログインしてください。'
+    '確認メールを送信しました。メール内のリンクで認証を完了してからログインしてください。'
   );
   const [feedback, setFeedback] = useState<{
     type: 'error' | 'success';
@@ -21,6 +21,7 @@ export default function CastRegisterPage() {
     NO_MATCH: '照合失敗',
     ALREADY_REGISTERED: '既登録',
     AUTH_SIGNUP_FAILED: 'Auth作成失敗',
+    AUTH_RATE_LIMIT: '送信上限',
     AUTH_USER_MISSING: 'Auth作成失敗',
     ROLE_INSERT_FAILED: '権限付与失敗',
     CAST_LINK_FAILED: 'キャスト紐付け失敗',
@@ -201,7 +202,7 @@ export default function CastRegisterPage() {
 
         <p className="mt-6 text-center text-xs text-gray-300 leading-relaxed">
           ※ 本名・生年月日は本人確認のみに使用し、外部には一切表示されません。<br />
-          ※ 登録後、管理者による確認が完了するまで一部機能が制限されます。
+          ※ 登録後、確認メールで認証が完了するまでログインできません。
         </p>
       </div>
     </div>

@@ -2,9 +2,53 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import XlsxPopulate from 'xlsx-populate';
 import { TemplateShiftData } from '@/lib/actions/template-shifts';
+import { createClient } from '@/lib/supabase/server';
+
+const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin']);
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
+async function getAppRole(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string
+) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (profile?.role) {
+    return profile.role;
+  }
+
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  return userRole?.role ?? null;
+}
 
 export async function POST(req: Request) {
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const role = await getAppRole(supabase, user.id);
+    if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const data: TemplateShiftData = await req.json();
 
     const templatePath = path.join(process.cwd(), 'data', 'templates', 'animo_shift_template.xlsx');
@@ -65,8 +109,11 @@ export async function POST(req: Request) {
     headers.set('Content-Disposition', `attachment; filename="shift_${data.year}_${data.month}.xlsx"`);
 
     return new NextResponse(buffer, { status: 200, headers });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Export Error:', error);
-    return NextResponse.json({ error: 'Failed to export excel', details: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to export excel', details: getErrorMessage(error, 'Unknown error') },
+      { status: 500 }
+    );
   }
 }

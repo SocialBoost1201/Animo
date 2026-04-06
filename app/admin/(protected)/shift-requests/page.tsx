@@ -6,7 +6,7 @@ import { ShiftRequestList } from '@/components/features/admin/ShiftRequestList';
 import { UnsubmittedCastsList } from '@/components/features/admin/UnsubmittedCastsList';
 import { ShiftChangeRequestList } from '@/components/features/admin/ShiftChangeRequestList';
 import { HelpRequestList } from '@/components/features/admin/HelpRequestList';
-import { getShiftRequests, getShiftRequestResponses } from '@/lib/actions/admin-shift-requests';
+import { getShiftRequests, getShiftRequestResponses, ShiftRequest, ShiftRequestResponse } from '@/lib/actions/admin-shift-requests';
 import Link from 'next/link';
 
 export default async function ShiftRequestsPage({
@@ -26,8 +26,8 @@ export default async function ShiftRequestsPage({
   const { data: castStatuses } = await getAllCastShiftStatuses(nextMondayStr);
 
   // ヘルプ募集関連のデータ取得
-  let helpRequests: any[] = [];
-  let helpResponses: any[] = [];
+  let helpRequests: ShiftRequest[] = [];
+  let helpResponses: ShiftRequestResponse[] = [];
   if (tab === 'help') {
     helpRequests = await getShiftRequests();
     helpResponses = await getShiftRequestResponses(status === 'all' ? undefined : status);

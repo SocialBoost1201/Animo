@@ -1,0 +1,608 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+          - navigation [ref=e8]:
+            - generic [ref=e9]:
+              - paragraph [ref=e10]: 管理
+              - generic [ref=e11]:
+                - link "🗓 本日の営業状況" [ref=e12] [cursor=pointer]:
+                  - /url: /admin/today
+                  - img [ref=e13]
+                  - generic [ref=e16]: 🗓 本日の営業状況
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /admin/dashboard
+                  - img [ref=e18]
+                  - generic [ref=e23]: Dashboard
+                - link "人材管理" [ref=e24] [cursor=pointer]:
+                  - /url: /admin/human-resources
+                  - img [ref=e25]
+                  - generic [ref=e30]: 人材管理
+                  - img [ref=e31]
+                - link "月間シフト(β)" [ref=e33] [cursor=pointer]:
+                  - /url: /admin/monthly-shifts
+                  - img [ref=e34]
+                  - generic [ref=e36]: 月間シフト(β)
+                - link "Excelシフト" [ref=e37] [cursor=pointer]:
+                  - /url: /admin/template-shifts
+                  - img [ref=e38]
+                  - generic [ref=e40]: Excelシフト
+            - generic [ref=e41]:
+              - paragraph [ref=e42]: 顧客・応募
+              - generic [ref=e43]:
+                - link "求人応募" [ref=e44] [cursor=pointer]:
+                  - /url: /admin/applications
+                  - img [ref=e45]
+                  - generic [ref=e48]: 求人応募
+                - link "出勤申請" [ref=e49] [cursor=pointer]:
+                  - /url: /admin/shift-requests
+                  - img [ref=e50]
+                  - generic [ref=e52]: 出勤申請
+                - link "お知らせ" [ref=e53] [cursor=pointer]:
+                  - /url: /admin/internal-notices
+                  - img [ref=e54]
+                  - generic [ref=e57]: お知らせ
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: コンテンツ
+              - generic [ref=e60]:
+                - link "キャスト投稿" [ref=e61] [cursor=pointer]:
+                  - /url: /admin/posts
+                  - img [ref=e62]
+                  - generic [ref=e64]: キャスト投稿
+                - link "ニュース" [ref=e65] [cursor=pointer]:
+                  - /url: /admin/contents
+                  - img [ref=e66]
+                  - generic [ref=e69]: ニュース
+                - link "ギャラリー" [ref=e70] [cursor=pointer]:
+                  - /url: /admin/gallery
+                  - img [ref=e71]
+                  - generic [ref=e75]: ギャラリー
+                - link "ヒーロー" [ref=e76] [cursor=pointer]:
+                  - /url: /admin/hero
+                  - img [ref=e77]
+                  - generic [ref=e81]: ヒーロー
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: システム
+              - link "設定" [ref=e85] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e86]
+                - generic [ref=e89]: 設定
+          - generic [ref=e90]:
+            - link "← サイトを表示" [ref=e91] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e92]: ← サイトを表示
+            - button "ログアウト" [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e98]: ログアウト
+      - main [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Club ANIMO
+          - generic [ref=e103]: /
+          - generic [ref=e104]: 人材管理
+        - generic [ref=e1127]:
+          - generic [ref=e1128]:
+            - generic [ref=e1129]:
+              - heading "人材管理" [level=1] [ref=e1130]
+              - paragraph [ref=e1131]: キャストとスタッフの登録・編集・管理
+            - generic [ref=e1132]:
+              - generic [ref=e1133]:
+                - link [ref=e1134] [cursor=pointer]:
+                  - /url: /admin/human-resources?tab=casts&month=2026-02
+                  - img [ref=e1135]
+                - generic [ref=e1137]: 2026年4月
+                - link [ref=e1138] [cursor=pointer]:
+                  - /url: /admin/human-resources?tab=casts&month=2026-04
+                  - img [ref=e1139]
+              - generic [ref=e1142]:
+                - img [ref=e1143]
+                - textbox "源氏名・名前で検索..." [ref=e1146]
+              - link "キャスト登録" [ref=e1147] [cursor=pointer]:
+                - /url: /admin/human-resources/new
+                - img [ref=e1148]
+                - text: キャスト登録
+          - generic [ref=e1149]:
+            - link "キャスト 16" [ref=e1150] [cursor=pointer]:
+              - /url: /admin/human-resources?tab=casts
+              - img [ref=e1151]
+              - text: キャスト
+              - generic [ref=e1156]: "16"
+            - link "スタッフ 0" [ref=e1157] [cursor=pointer]:
+              - /url: /admin/human-resources?tab=staffs
+              - img [ref=e1158]
+              - text: スタッフ
+              - generic [ref=e1162]: "0"
+          - generic [ref=e1163]:
+            - generic [ref=e1164]:
+              - generic:
+                - generic: 0件選択中
+                - button "一括公開":
+                  - img
+                  - text: 一括公開
+                - button "一括非公開":
+                  - img
+                  - text: 一括非公開
+                - button "一括削除":
+                  - img
+                  - text: 一括削除
+              - button "順番を保存する" [ref=e1165]:
+                - img [ref=e1166]
+                - text: 順番を保存する
+            - generic [ref=e1170]:
+              - generic [ref=e1171]:
+                - checkbox [ref=e1173] [cursor=pointer]
+                - generic [ref=e1174]: IMG
+                - generic [ref=e1175]: CAST NAME
+                - generic [ref=e1176]: AGE
+                - generic [ref=e1177]: SCORE / RANK
+                - generic [ref=e1178]: TAGS
+                - generic [ref=e1179]: STATUS
+                - generic [ref=e1180]: ACTIONS
+              - generic [ref=e1181]:
+                - generic [ref=e1183]:
+                  - generic [ref=e1184]:
+                    - checkbox [ref=e1186] [cursor=pointer]
+                    - button [ref=e1187]:
+                      - img [ref=e1188]
+                  - generic [ref=e1195]:
+                    - generic [ref=e1197]: あ
+                    - generic [ref=e1198]:
+                      - paragraph [ref=e1200]: あいか
+                      - paragraph [ref=e1201]: お酒♡
+                  - generic [ref=e1202]: 20歳
+                  - generic [ref=e1204]:
+                    - generic [ref=e1205]:
+                      - img [ref=e1206]
+                      - text: "0"
+                      - generic [ref=e1212]: pt
+                    - generic [ref=e1213]:
+                      - img [ref=e1214]
+                      - text: Lv.1
+                  - generic [ref=e1217]: 未設定
+                  - generic [ref=e1220]:
+                    - img [ref=e1221]
+                    - generic [ref=e1224]: 公開
+                  - generic [ref=e1225]:
+                    - link "編集" [ref=e1226] [cursor=pointer]:
+                      - /url: /admin/human-resources/6d66dfc4-b38c-4e10-8522-2156da403229
+                      - img [ref=e1227]
+                    - generic [ref=e1229]: "|"
+                    - button [ref=e1230]:
+                      - img [ref=e1231]
+                - generic [ref=e1235]:
+                  - generic [ref=e1236]:
+                    - checkbox [ref=e1238] [cursor=pointer]
+                    - button [ref=e1239]:
+                      - img [ref=e1240]
+                  - generic [ref=e1247]:
+                    - generic [ref=e1249]: じ
+                    - generic [ref=e1250]:
+                      - paragraph [ref=e1252]: じゅり
+                      - paragraph [ref=e1253]: 野球観戦
+                  - generic [ref=e1254]: 24歳
+                  - generic [ref=e1256]:
+                    - generic [ref=e1257]:
+                      - img [ref=e1258]
+                      - text: "0"
+                      - generic [ref=e1264]: pt
+                    - generic [ref=e1265]:
+                      - img [ref=e1266]
+                      - text: Lv.1
+                  - generic [ref=e1269]: 未設定
+                  - generic [ref=e1272]:
+                    - img [ref=e1273]
+                    - generic [ref=e1276]: 公開
+                  - generic [ref=e1277]:
+                    - link "編集" [ref=e1278] [cursor=pointer]:
+                      - /url: /admin/human-resources/631940ff-6967-4991-a96f-9d985848ec78
+                      - img [ref=e1279]
+                    - generic [ref=e1281]: "|"
+                    - button [ref=e1282]:
+                      - img [ref=e1283]
+                - generic [ref=e1287]:
+                  - generic [ref=e1288]:
+                    - checkbox [ref=e1290] [cursor=pointer]
+                    - button [ref=e1291]:
+                      - img [ref=e1292]
+                  - generic [ref=e1299]:
+                    - generic [ref=e1301]: か
+                    - generic [ref=e1302]:
+                      - paragraph [ref=e1304]: かな
+                      - paragraph [ref=e1305]: 漫画、美容
+                  - generic [ref=e1306]: 27歳
+                  - generic [ref=e1308]:
+                    - generic [ref=e1309]:
+                      - img [ref=e1310]
+                      - text: "0"
+                      - generic [ref=e1316]: pt
+                    - generic [ref=e1317]:
+                      - img [ref=e1318]
+                      - text: Lv.1
+                  - generic [ref=e1321]: 未設定
+                  - generic [ref=e1324]:
+                    - img [ref=e1325]
+                    - generic [ref=e1328]: 公開
+                  - generic [ref=e1329]:
+                    - link "編集" [ref=e1330] [cursor=pointer]:
+                      - /url: /admin/human-resources/83ad6c14-a8d2-4728-bb35-5acbcb070eae
+                      - img [ref=e1331]
+                    - generic [ref=e1333]: "|"
+                    - button [ref=e1334]:
+                      - img [ref=e1335]
+                - generic [ref=e1339]:
+                  - generic [ref=e1340]:
+                    - checkbox [ref=e1342] [cursor=pointer]
+                    - button [ref=e1343]:
+                      - img [ref=e1344]
+                  - generic [ref=e1351]:
+                    - generic [ref=e1353]: り
+                    - generic [ref=e1354]:
+                      - paragraph [ref=e1356]: りいな
+                      - paragraph [ref=e1357]: 食べること、飲むこと
+                  - generic [ref=e1358]: 34歳
+                  - generic [ref=e1360]:
+                    - generic [ref=e1361]:
+                      - img [ref=e1362]
+                      - text: "0"
+                      - generic [ref=e1368]: pt
+                    - generic [ref=e1369]:
+                      - img [ref=e1370]
+                      - text: Lv.1
+                  - generic [ref=e1373]: 未設定
+                  - generic [ref=e1376]:
+                    - img [ref=e1377]
+                    - generic [ref=e1380]: 公開
+                  - generic [ref=e1381]:
+                    - link "編集" [ref=e1382] [cursor=pointer]:
+                      - /url: /admin/human-resources/961b3760-bcc6-4073-9927-3d78456e4090
+                      - img [ref=e1383]
+                    - generic [ref=e1385]: "|"
+                    - button [ref=e1386]:
+                      - img [ref=e1387]
+                - generic [ref=e1391]:
+                  - generic [ref=e1392]:
+                    - checkbox [ref=e1394] [cursor=pointer]
+                    - button [ref=e1395]:
+                      - img [ref=e1396]
+                  - generic [ref=e1403]:
+                    - generic [ref=e1405]: い
+                    - generic [ref=e1406]:
+                      - paragraph [ref=e1408]: いぶき
+                      - paragraph [ref=e1409]: 寝ること！！
+                  - generic [ref=e1410]: 31歳
+                  - generic [ref=e1412]:
+                    - generic [ref=e1413]:
+                      - img [ref=e1414]
+                      - text: "0"
+                      - generic [ref=e1420]: pt
+                    - generic [ref=e1421]:
+                      - img [ref=e1422]
+                      - text: Lv.1
+                  - generic [ref=e1425]: 未設定
+                  - generic [ref=e1428]:
+                    - img [ref=e1429]
+                    - generic [ref=e1432]: 公開
+                  - generic [ref=e1433]:
+                    - link "編集" [ref=e1434] [cursor=pointer]:
+                      - /url: /admin/human-resources/8e1ccc67-bc4d-4ef7-8594-b6d0a2326a1e
+                      - img [ref=e1435]
+                    - generic [ref=e1437]: "|"
+                    - button [ref=e1438]:
+                      - img [ref=e1439]
+                - generic [ref=e1443]:
+                  - generic [ref=e1444]:
+                    - checkbox [ref=e1446] [cursor=pointer]
+                    - button [ref=e1447]:
+                      - img [ref=e1448]
+                  - generic [ref=e1455]:
+                    - generic [ref=e1457]: み
+                    - paragraph [ref=e1460]: みらん
+                  - generic [ref=e1461]: "-"
+                  - generic [ref=e1463]:
+                    - generic [ref=e1464]:
+                      - img [ref=e1465]
+                      - text: "0"
+                      - generic [ref=e1471]: pt
+                    - generic [ref=e1472]:
+                      - img [ref=e1473]
+                      - text: Lv.1
+                  - generic [ref=e1476]: 未設定
+                  - generic [ref=e1479]:
+                    - img [ref=e1480]
+                    - generic [ref=e1483]: 公開
+                  - generic [ref=e1484]:
+                    - link "編集" [ref=e1485] [cursor=pointer]:
+                      - /url: /admin/human-resources/7a8f430b-4b42-47fa-947b-296063b757f2
+                      - img [ref=e1486]
+                    - generic [ref=e1488]: "|"
+                    - button [ref=e1489]:
+                      - img [ref=e1490]
+                - generic [ref=e1494]:
+                  - generic [ref=e1495]:
+                    - checkbox [ref=e1497] [cursor=pointer]
+                    - button [ref=e1498]:
+                      - img [ref=e1499]
+                  - generic [ref=e1506]:
+                    - generic [ref=e1508]: な
+                    - generic [ref=e1509]:
+                      - paragraph [ref=e1511]: ななせ
+                      - paragraph [ref=e1512]: 推し活、アニメ
+                  - generic [ref=e1513]: 23歳
+                  - generic [ref=e1515]:
+                    - generic [ref=e1516]:
+                      - img [ref=e1517]
+                      - text: "0"
+                      - generic [ref=e1523]: pt
+                    - generic [ref=e1524]:
+                      - img [ref=e1525]
+                      - text: Lv.1
+                  - generic [ref=e1528]: 未設定
+                  - generic [ref=e1531]:
+                    - img [ref=e1532]
+                    - generic [ref=e1535]: 公開
+                  - generic [ref=e1536]:
+                    - link "編集" [ref=e1537] [cursor=pointer]:
+                      - /url: /admin/human-resources/14065914-9eb3-4421-ae9b-46ff2f9ae011
+                      - img [ref=e1538]
+                    - generic [ref=e1540]: "|"
+                    - button [ref=e1541]:
+                      - img [ref=e1542]
+                - generic [ref=e1546]:
+                  - generic [ref=e1547]:
+                    - checkbox [ref=e1549] [cursor=pointer]
+                    - button [ref=e1550]:
+                      - img [ref=e1551]
+                  - generic [ref=e1558]:
+                    - generic [ref=e1560]: あ
+                    - paragraph [ref=e1563]: あすみ
+                  - generic [ref=e1564]: "-"
+                  - generic [ref=e1566]:
+                    - generic [ref=e1567]:
+                      - img [ref=e1568]
+                      - text: "0"
+                      - generic [ref=e1574]: pt
+                    - generic [ref=e1575]:
+                      - img [ref=e1576]
+                      - text: Lv.1
+                  - generic [ref=e1579]: 未設定
+                  - generic [ref=e1582]:
+                    - img [ref=e1583]
+                    - generic [ref=e1586]: 公開
+                  - generic [ref=e1587]:
+                    - link "編集" [ref=e1588] [cursor=pointer]:
+                      - /url: /admin/human-resources/c5c36ee4-6837-4e53-b32f-803699094164
+                      - img [ref=e1589]
+                    - generic [ref=e1591]: "|"
+                    - button [ref=e1592]:
+                      - img [ref=e1593]
+                - generic [ref=e1597]:
+                  - generic [ref=e1598]:
+                    - checkbox [ref=e1600] [cursor=pointer]
+                    - button [ref=e1601]:
+                      - img [ref=e1602]
+                  - generic [ref=e1609]:
+                    - generic [ref=e1611]: あ
+                    - paragraph [ref=e1614]: あんな
+                  - generic [ref=e1615]: "-"
+                  - generic [ref=e1617]:
+                    - generic [ref=e1618]:
+                      - img [ref=e1619]
+                      - text: "0"
+                      - generic [ref=e1625]: pt
+                    - generic [ref=e1626]:
+                      - img [ref=e1627]
+                      - text: Lv.1
+                  - generic [ref=e1630]: 未設定
+                  - generic [ref=e1633]:
+                    - img [ref=e1634]
+                    - generic [ref=e1637]: 公開
+                  - generic [ref=e1638]:
+                    - link "編集" [ref=e1639] [cursor=pointer]:
+                      - /url: /admin/human-resources/be4714ef-94c3-4627-9adc-9e2a68ca121a
+                      - img [ref=e1640]
+                    - generic [ref=e1642]: "|"
+                    - button [ref=e1643]:
+                      - img [ref=e1644]
+                - generic [ref=e1648]:
+                  - generic [ref=e1649]:
+                    - checkbox [ref=e1651] [cursor=pointer]
+                    - button [ref=e1652]:
+                      - img [ref=e1653]
+                  - generic [ref=e1660]:
+                    - generic [ref=e1662]: さ
+                    - paragraph [ref=e1665]: さやか
+                  - generic [ref=e1666]: "-"
+                  - generic [ref=e1668]:
+                    - generic [ref=e1669]:
+                      - img [ref=e1670]
+                      - text: "0"
+                      - generic [ref=e1676]: pt
+                    - generic [ref=e1677]:
+                      - img [ref=e1678]
+                      - text: Lv.1
+                  - generic [ref=e1681]: 未設定
+                  - generic [ref=e1684]:
+                    - img [ref=e1685]
+                    - generic [ref=e1688]: 公開
+                  - generic [ref=e1689]:
+                    - link "編集" [ref=e1690] [cursor=pointer]:
+                      - /url: /admin/human-resources/7e0add74-be6d-4bca-989e-5611f18aeca3
+                      - img [ref=e1691]
+                    - generic [ref=e1693]: "|"
+                    - button [ref=e1694]:
+                      - img [ref=e1695]
+                - generic [ref=e1699]:
+                  - generic [ref=e1700]:
+                    - checkbox [ref=e1702] [cursor=pointer]
+                    - button [ref=e1703]:
+                      - img [ref=e1704]
+                  - generic [ref=e1711]:
+                    - generic [ref=e1713]: す
+                    - paragraph [ref=e1716]: すい
+                  - generic [ref=e1717]: "-"
+                  - generic [ref=e1719]:
+                    - generic [ref=e1720]:
+                      - img [ref=e1721]
+                      - text: "0"
+                      - generic [ref=e1727]: pt
+                    - generic [ref=e1728]:
+                      - img [ref=e1729]
+                      - text: Lv.1
+                  - generic [ref=e1732]: 未設定
+                  - generic [ref=e1735]:
+                    - img [ref=e1736]
+                    - generic [ref=e1739]: 公開
+                  - generic [ref=e1740]:
+                    - link "編集" [ref=e1741] [cursor=pointer]:
+                      - /url: /admin/human-resources/be41e820-4cfd-4fd4-9dae-e44a670ba9c8
+                      - img [ref=e1742]
+                    - generic [ref=e1744]: "|"
+                    - button [ref=e1745]:
+                      - img [ref=e1746]
+                - generic [ref=e1750]:
+                  - generic [ref=e1751]:
+                    - checkbox [ref=e1753] [cursor=pointer]
+                    - button [ref=e1754]:
+                      - img [ref=e1755]
+                  - generic [ref=e1762]:
+                    - generic [ref=e1764]: あ
+                    - paragraph [ref=e1767]: あみ
+                  - generic [ref=e1768]: "-"
+                  - generic [ref=e1770]:
+                    - generic [ref=e1771]:
+                      - img [ref=e1772]
+                      - text: "0"
+                      - generic [ref=e1778]: pt
+                    - generic [ref=e1779]:
+                      - img [ref=e1780]
+                      - text: Lv.1
+                  - generic [ref=e1783]: 未設定
+                  - generic [ref=e1786]:
+                    - img [ref=e1787]
+                    - generic [ref=e1790]: 公開
+                  - generic [ref=e1791]:
+                    - link "編集" [ref=e1792] [cursor=pointer]:
+                      - /url: /admin/human-resources/672b4857-5cc9-4dca-9981-f34d9c75a2c4
+                      - img [ref=e1793]
+                    - generic [ref=e1795]: "|"
+                    - button [ref=e1796]:
+                      - img [ref=e1797]
+                - generic [ref=e1801]:
+                  - generic [ref=e1802]:
+                    - checkbox [ref=e1804] [cursor=pointer]
+                    - button [ref=e1805]:
+                      - img [ref=e1806]
+                  - generic [ref=e1813]:
+                    - generic [ref=e1815]: ゆ
+                    - paragraph [ref=e1818]: ゆうか
+                  - generic [ref=e1819]: "-"
+                  - generic [ref=e1821]:
+                    - generic [ref=e1822]:
+                      - img [ref=e1823]
+                      - text: "0"
+                      - generic [ref=e1829]: pt
+                    - generic [ref=e1830]:
+                      - img [ref=e1831]
+                      - text: Lv.1
+                  - generic [ref=e1834]: 未設定
+                  - generic [ref=e1837]:
+                    - img [ref=e1838]
+                    - generic [ref=e1841]: 公開
+                  - generic [ref=e1842]:
+                    - link "編集" [ref=e1843] [cursor=pointer]:
+                      - /url: /admin/human-resources/7250ad55-2d2b-4b2c-9513-994e53c8cddb
+                      - img [ref=e1844]
+                    - generic [ref=e1846]: "|"
+                    - button [ref=e1847]:
+                      - img [ref=e1848]
+                - generic [ref=e1852]:
+                  - generic [ref=e1853]:
+                    - checkbox [ref=e1855] [cursor=pointer]
+                    - button [ref=e1856]:
+                      - img [ref=e1857]
+                  - generic [ref=e1864]:
+                    - generic [ref=e1866]: れ
+                    - paragraph [ref=e1869]: れい
+                  - generic [ref=e1870]: "-"
+                  - generic [ref=e1872]:
+                    - generic [ref=e1873]:
+                      - img [ref=e1874]
+                      - text: "0"
+                      - generic [ref=e1880]: pt
+                    - generic [ref=e1881]:
+                      - img [ref=e1882]
+                      - text: Lv.1
+                  - generic [ref=e1885]: 未設定
+                  - generic [ref=e1888]:
+                    - img [ref=e1889]
+                    - generic [ref=e1892]: 公開
+                  - generic [ref=e1893]:
+                    - link "編集" [ref=e1894] [cursor=pointer]:
+                      - /url: /admin/human-resources/e387b8da-e460-41c9-a47f-fca7ddb9d53a
+                      - img [ref=e1895]
+                    - generic [ref=e1897]: "|"
+                    - button [ref=e1898]:
+                      - img [ref=e1899]
+                - generic [ref=e1903]:
+                  - generic [ref=e1904]:
+                    - checkbox [ref=e1906] [cursor=pointer]
+                    - button [ref=e1907]:
+                      - img [ref=e1908]
+                  - generic [ref=e1915]:
+                    - generic [ref=e1917]: れ
+                    - paragraph [ref=e1920]: れな
+                  - generic [ref=e1921]: "-"
+                  - generic [ref=e1923]:
+                    - generic [ref=e1924]:
+                      - img [ref=e1925]
+                      - text: "0"
+                      - generic [ref=e1931]: pt
+                    - generic [ref=e1932]:
+                      - img [ref=e1933]
+                      - text: Lv.1
+                  - generic [ref=e1936]: 未設定
+                  - generic [ref=e1939]:
+                    - img [ref=e1940]
+                    - generic [ref=e1943]: 公開
+                  - generic [ref=e1944]:
+                    - link "編集" [ref=e1945] [cursor=pointer]:
+                      - /url: /admin/human-resources/07ef6330-7274-4180-bea0-af7776739c40
+                      - img [ref=e1946]
+                    - generic [ref=e1948]: "|"
+                    - button [ref=e1949]:
+                      - img [ref=e1950]
+                - generic [ref=e1954]:
+                  - generic [ref=e1955]:
+                    - checkbox [ref=e1957] [cursor=pointer]
+                    - button [ref=e1958]:
+                      - img [ref=e1959]
+                  - generic [ref=e1966]:
+                    - generic [ref=e1968]: る
+                    - paragraph [ref=e1971]: るり
+                  - generic [ref=e1972]: "-"
+                  - generic [ref=e1974]:
+                    - generic [ref=e1975]:
+                      - img [ref=e1976]
+                      - text: "0"
+                      - generic [ref=e1982]: pt
+                    - generic [ref=e1983]:
+                      - img [ref=e1984]
+                      - text: Lv.1
+                  - generic [ref=e1987]: 未設定
+                  - generic [ref=e1990]:
+                    - img [ref=e1991]
+                    - generic [ref=e1994]: 公開
+                  - generic [ref=e1995]:
+                    - link "編集" [ref=e1996] [cursor=pointer]:
+                      - /url: /admin/human-resources/9c85bc48-8527-4920-85d8-0960217bc1be
+                      - img [ref=e1997]
+                    - generic [ref=e1999]: "|"
+                    - button [ref=e2000]:
+                      - img [ref=e2001]
+              - status [ref=e2004]
+  - button "Open Next.js Dev Tools" [ref=e988] [cursor=pointer]:
+    - img [ref=e989]
+  - alert [ref=e993]

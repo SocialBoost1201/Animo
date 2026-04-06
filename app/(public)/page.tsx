@@ -146,7 +146,7 @@ export default async function HomePage() {
       {/* 1.5 TODAY'S MOOD */}
       {settings?.today_mood && (
         <section className="bg-[#171717] text-white py-12 px-6 border-y border-gold/20 shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
+          <div className="absolute inset-0 bg-[url('/images/stardust.png')] opacity-10"></div>
           <div className="container mx-auto text-center relative z-10">
             <FadeIn>
               <div className="inline-flex items-center justify-center space-x-3 mb-4">
@@ -176,7 +176,13 @@ export default async function HomePage() {
             </Link>
           </FadeIn>
 
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4">
+          <div
+            className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mx-auto"
+            style={displayTodayCasts.length < 5 ? {
+              gridTemplateColumns: `repeat(${Math.min(displayTodayCasts.length, 3)}, minmax(0, 1fr))`,
+              maxWidth: `${Math.min(displayTodayCasts.length, 3) * 220}px`,
+            } : undefined}
+          >
             {displayTodayCasts.map((cast, index) => (
               <FadeIn key={cast.id} delay={index * 0.04} className={`group ${index === 9 ? 'hidden md:block' : ''}`}>
                 <div className="overflow-hidden bg-white hover:shadow-luxury transition-all duration-700 h-full flex flex-col">

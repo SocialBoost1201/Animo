@@ -13,6 +13,31 @@ import { Metadata } from 'next';
 
 export const revalidate = 300;
 
+type CastPrivateInfo = {
+  real_name?: string | null;
+  date_of_birth?: string | null;
+};
+
+function normalizePrivateInfo(raw: CastPrivateInfo | CastPrivateInfo[] | null | undefined) {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return raw;
+}
+
+function formatBirthDate(value: string | null | undefined) {
+  if (!value) return '-';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const [year, month, day] = value.split('-');
+  const parsed = new Date(`${value}T00:00:00+09:00`);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return `${year}/${month}/${day}`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -86,6 +111,7 @@ export default async function CastDetailPage({
   const subImages = cast.cast_images?.filter((img: any) => !img.is_primary) || [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tags = cast.cast_tag_relations?.map((r: any) => r.cast_tags).filter(Boolean) || [];
+  const privateInfo = normalizePrivateInfo(cast.cast_private_info as CastPrivateInfo | CastPrivateInfo[] | null | undefined);
 
   return (
     <div className="bg-background min-h-screen pt-24 pb-[var(--spacing-section)] px-6">
@@ -180,6 +206,18 @@ export default async function CastDetailPage({
                   <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Height</span>
                   <span className="text-[#171717] font-bold">{cast.height ? `T ${cast.height} cm` : '-'}</span>
                 </div>
+                {privateInfo?.real_name && (
+                  <div className="flex items-center">
+                    <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Real Name</span>
+                    <span className="text-[#171717] font-bold">{privateInfo.real_name}</span>
+                  </div>
+                )}
+                {privateInfo?.date_of_birth && (
+                  <div className="flex items-center">
+                    <span className="w-20 text-gray-400 tracking-widest uppercase text-xs">Birth Date</span>
+                    <span className="text-[#171717] font-bold">{formatBirthDate(privateInfo.date_of_birth)}</span>
+                  </div>
+                )}
                 {cast.hobby && (
                   <div className="flex items-start col-span-2">
                     <span className="w-20 text-gray-400 tracking-widest uppercase text-xs pt-0.5">Hobby</span>

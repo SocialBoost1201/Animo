@@ -4,6 +4,20 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { ShiftRequest } from './admin-shift-requests';
 
+export type MyShiftRequestResponse = {
+  id: string;
+  request_id: string;
+  cast_id: string;
+  proposed_start_time: string;
+  proposed_end_time: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  shift_request: Array<{
+    target_date: string;
+    message: string;
+  }> | null;
+};
+
 /**
  * キャスト: 現在アクティブな出勤リクエスト（募集）一覧を取得する
  */
@@ -81,7 +95,7 @@ export async function submitShiftRequestResponse(
 /**
  * キャスト: 過去の自身の応募ステータスを取得する
  */
-export async function getMyShiftRequestResponses() {
+export async function getMyShiftRequestResponses(): Promise<MyShiftRequestResponse[]> {
     const supabase = await createClient();
 
     const { data: { session } } = await supabase.auth.getSession();
@@ -117,5 +131,5 @@ export async function getMyShiftRequestResponses() {
         return [];
     }
 
-    return (data || []) as any;
+    return (data ?? []) as MyShiftRequestResponse[];
 }

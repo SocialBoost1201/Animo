@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useTransition, useState, useEffect } from 'react';
+import { useTransition, useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
@@ -15,24 +15,28 @@ export function SearchBar({ placeholder = '検索...' }: { placeholder?: string 
   const [text, setText] = useState(currentQuery);
   const [debouncedText] = useDebounce(text, 400);
 
+  // ref で searchParams の最新値を保持する。
+  // effect の dep に searchParams を追加すると router.push → URL 変化 →
+  // searchParams 変化 → effect 再実行の無限ループが発生するため、
+  // レンダー本体で ref を同期することで stale closure を回避する。
+  const searchParamsRef = useRef(searchParams);
+  searchParamsRef.current = searchParams;
+
   useEffect(() => {
-    // 検索パラメーターが変更されたときの処理（URL直書き時など）
-    if (searchParams.get('q') !== debouncedText) {
-       // Only execute if they are functionally different to avoid loop
-       if (searchParams.get('q') === null && debouncedText === '') return;
-    }
+    const params = searchParamsRef.current;
+    // URL に q がなく入力も空の場合は push しない（初期レンダーでの空 push を防ぐ）
+    if (params.get('q') === null && debouncedText === '') return;
 
     startTransition(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      const newParams = new URLSearchParams(params.toString());
       if (debouncedText) {
-        params.set('q', debouncedText);
+        newParams.set('q', debouncedText);
       } else {
-        params.delete('q');
+        newParams.delete('q');
       }
-      router.push(`${pathname}?${params.toString()}`);
+      router.push(`${pathname}?${newParams.toString()}`);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedText, pathname, router]); // We explicitly don't put searchParams here to avoid infinite loops
+  }, [debouncedText, pathname, router]);
 
   return (
     <div className="relative flex items-center w-full max-w-sm">

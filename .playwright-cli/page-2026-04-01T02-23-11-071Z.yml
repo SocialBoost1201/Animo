@@ -1,0 +1,122 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "ANIMO PORTAL" [ref=e6] [cursor=pointer]:
+        - /url: /cast/dashboard
+    - main [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e10]:
+            - paragraph [ref=e11]: Cast Dashboard
+            - generic [ref=e12]:
+              - heading "あいかさんの今日のタスク" [level=1] [ref=e13]
+              - paragraph [ref=e14]: 提出状況、本日の確認、来店予約、ブログ投稿までを迷わず進められるように整理したホーム画面です。
+          - button "ログアウト" [ref=e17]:
+            - img [ref=e18]
+            - text: ログアウト
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]:
+              - img [ref=e25]
+              - generic [ref=e28]: ブログアクセス分析
+            - generic [ref=e29]:
+              - generic [ref=e30]: "0"
+              - generic [ref=e31]: PV
+          - generic [ref=e32]:
+            - generic [ref=e33]: 店舗内ランキング
+            - generic [ref=e34]:
+              - generic [ref=e35]: "1"
+              - generic [ref=e36]: 位
+              - generic [ref=e37]: / 0人中
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: 本日の入力
+          - generic [ref=e40]:
+            - paragraph [ref=e41]: 本日の確認
+            - generic [ref=e42]:
+              - generic [ref=e43] [cursor=pointer]:
+                - checkbox "本日は欠勤 出勤できない場合にチェック" [ref=e44]
+                - generic [ref=e45]:
+                  - text: 本日は欠勤
+                  - paragraph [ref=e46]: 出勤できない場合にチェック
+              - generic [ref=e47] [cursor=pointer]:
+                - checkbox "出勤変更あり 時間変更・遅刻・早退など" [ref=e48]
+                - generic [ref=e49]:
+                  - text: 出勤変更あり
+                  - paragraph [ref=e50]: 時間変更・遅刻・早退など
+              - generic [ref=e51]:
+                - generic [ref=e52]: メモ（任意）
+                - textbox "同伴あり、など" [ref=e53]
+              - button "確認を送信する" [ref=e54]
+          - generic [ref=e55]:
+            - paragraph [ref=e56]: 来店予定
+            - generic [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e62]: 20:30
+              - generic [ref=e63]: 田中様
+              - generic [ref=e64]: 3名
+              - generic [ref=e65]: 来店予定
+              - button [ref=e66]:
+                - img [ref=e67]
+            - button "来店予定を追加" [ref=e70]:
+              - img [ref=e71]
+              - text: 来店予定を追加
+        - generic [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - img [ref=e80]
+                - generic [ref=e86]: Animo Score 2026年4月
+              - generic [ref=e87]:
+                - generic [ref=e88]: "0"
+                - generic [ref=e89]: pt
+            - generic [ref=e90]:
+              - generic [ref=e91]: Rank
+              - generic [ref=e92]:
+                - img [ref=e93]
+                - generic [ref=e95]: Lv.1
+          - generic [ref=e97]:
+            - generic [ref=e98]: NEXT RANK
+            - generic [ref=e99]: 50 pt to go
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - img [ref=e103]
+            - generic [ref=e105]: Today's Schedule
+          - paragraph [ref=e106]: 本日の出勤予定はありません
+        - paragraph [ref=e108]: 確定済みのスケジュールはありません
+        - link "来週のシフトが未提出です タップしてシフトを入力してください" [ref=e109] [cursor=pointer]:
+          - /url: /cast/shift
+          - generic [ref=e111]:
+            - img [ref=e112]
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: 来週のシフトが未提出です
+              - paragraph [ref=e116]: タップしてシフトを入力してください
+        - generic [ref=e117]:
+          - link "シフト提出 来週のシフトを提出" [ref=e118] [cursor=pointer]:
+            - /url: /cast/shift
+            - img [ref=e119]
+            - generic [ref=e121]:
+              - generic [ref=e122]: シフト提出
+              - generic [ref=e123]: 来週のシフトを提出
+          - link "新規投稿 日記を投稿する" [ref=e124] [cursor=pointer]:
+            - /url: /cast/post
+            - img [ref=e125]
+            - generic [ref=e127]:
+              - generic [ref=e128]: 新規投稿
+              - generic [ref=e129]: 日記を投稿する
+          - link "投稿一覧 過去の投稿を見る" [ref=e130] [cursor=pointer]:
+            - /url: /cast/posts
+            - img [ref=e131]
+            - generic [ref=e134]:
+              - generic [ref=e135]: 投稿一覧
+              - generic [ref=e136]: 過去の投稿を見る
+          - link "プロフィール 自分の情報を確認" [ref=e137] [cursor=pointer]:
+            - /url: /cast/profile
+            - img [ref=e138]
+            - generic [ref=e141]:
+              - generic [ref=e142]: プロフィール
+              - generic [ref=e143]: 自分の情報を確認
+        - generic [ref=e144]:
+          - heading "最近の投稿" [level=2] [ref=e145]
+          - paragraph [ref=e146]: まだ投稿がありません
+    - region "Notifications alt+T"
+  - alert [ref=e147]

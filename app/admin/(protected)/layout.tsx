@@ -7,41 +7,18 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let role = 'staff';
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle();
+  // 並列実行でフェッチ時間を短縮
+  const [userProfile, userRole, pendingPosts, pendingShifts] = await Promise.all([
+    user ? supabase.from('profiles').select('role').eq('id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+    user ? supabase.from('user_roles').select('role').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+    supabase.from('cast_posts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+  ]);
 
-    if (profile?.role) {
-      role = profile.role;
-    } else {
-      const { data: userRole } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .maybeSingle();
+  const role = userProfile.data?.role || userRole.data?.role || 'staff';
 
-      if (userRole?.role) {
-        role = userRole.role;
-      }
-    }
-  }
-
-
-  // 承認待ちのキャスト投稿件数を取得
-  const { count: pendingPostsCount } = await supabase
-    .from('cast_posts')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'pending');
-
-  // 承認待ちのキャストシフト提出件数を取得
-  const { count: pendingShiftsCount } = await supabase
-    .from('shift_submissions')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'pending');
+  const pendingPostsCount = pendingPosts.count || 0;
+  const pendingShiftsCount = pendingShifts.count || 0;
 
   return (
     <>

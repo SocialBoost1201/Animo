@@ -66,12 +66,33 @@ export async function submitMyShift(
     return { success: false, error: 'Unauthorized' };
   }
 
+  if (typeof castId !== 'string' || !castId.trim()) {
+    return { success: false, error: 'Invalid cast' };
+  }
+
+  const normalizedCastId = castId.trim();
+
+  const { data: ownedCast, error: castError } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('id', normalizedCastId)
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+
+  if (castError) {
+    return { success: false, error: 'Failed to save shifts' };
+  }
+
+  if (!ownedCast) {
+    return { success: false, error: 'Invalid cast' };
+  }
+
   // 提出データのUpsert（ON CONFLICT を利用するか、既存チェック後にUPDATE/INSERT）
   // 既存レコードがあるか確認
   const { data: existing } = await supabase
     .from('shift_submissions')
     .select('id')
-    .eq('cast_id', castId)
+    .eq('cast_id', normalizedCastId)
     .eq('target_week_monday', targetWeekMonday)
     .maybeSingle();
 
@@ -80,7 +101,7 @@ export async function submitMyShift(
     const { error } = await supabase
       .from('shift_submissions')
       .update({
-        shifts_data: shiftsData as any,
+        shifts_data: shiftsData,
         status: 'pending', // 再提出時は再度pendingにする
         submitted_at: new Date().toISOString(),
       })
@@ -92,9 +113,9 @@ export async function submitMyShift(
     const { error } = await supabase
       .from('shift_submissions')
       .insert({
-        cast_id: castId,
+        cast_id: normalizedCastId,
         target_week_monday: targetWeekMonday,
-        shifts_data: shiftsData as any,
+        shifts_data: shiftsData,
         status: 'pending',
       });
 
@@ -102,7 +123,7 @@ export async function submitMyShift(
     
     // 新規提出の場合、期限チェックなどを行ってポイント付与（簡易的に初回提出で+10ptとする）
     try {
-      await addCastScore(castId, 10, 'shift_submitted_on_time', 'シフトを提出しました');
+      await addCastScore(normalizedCastId, 10, 'shift_submitted_on_time', 'シフトを提出しました');
     } catch (e) {
       console.warn('Failed to add score for shift submission:', e);
     }

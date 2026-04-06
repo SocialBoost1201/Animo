@@ -1,0 +1,236 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+          - navigation [ref=e8]:
+            - generic [ref=e9]:
+              - paragraph [ref=e10]: 管理
+              - generic [ref=e11]:
+                - link "🗓 本日の営業状況" [ref=e12] [cursor=pointer]:
+                  - /url: /admin/today
+                  - img [ref=e13]
+                  - generic [ref=e16]: 🗓 本日の営業状況
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /admin/dashboard
+                  - img [ref=e18]
+                  - generic [ref=e23]: Dashboard
+                - link "人材管理" [ref=e24] [cursor=pointer]:
+                  - /url: /admin/human-resources
+                  - img [ref=e25]
+                  - generic [ref=e30]: 人材管理
+                  - img [ref=e31]
+                - link "月間シフト(β)" [ref=e33] [cursor=pointer]:
+                  - /url: /admin/monthly-shifts
+                  - img [ref=e34]
+                  - generic [ref=e36]: 月間シフト(β)
+                - link "Excelシフト" [ref=e37] [cursor=pointer]:
+                  - /url: /admin/template-shifts
+                  - img [ref=e38]
+                  - generic [ref=e40]: Excelシフト
+            - generic [ref=e41]:
+              - paragraph [ref=e42]: 顧客・応募
+              - generic [ref=e43]:
+                - link "求人応募" [ref=e44] [cursor=pointer]:
+                  - /url: /admin/applications
+                  - img [ref=e45]
+                  - generic [ref=e48]: 求人応募
+                - link "出勤申請" [ref=e49] [cursor=pointer]:
+                  - /url: /admin/shift-requests
+                  - img [ref=e50]
+                  - generic [ref=e52]: 出勤申請
+                - link "お知らせ" [ref=e53] [cursor=pointer]:
+                  - /url: /admin/internal-notices
+                  - img [ref=e54]
+                  - generic [ref=e57]: お知らせ
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: コンテンツ
+              - generic [ref=e60]:
+                - link "キャスト投稿" [ref=e61] [cursor=pointer]:
+                  - /url: /admin/posts
+                  - img [ref=e62]
+                  - generic [ref=e64]: キャスト投稿
+                - link "ニュース" [ref=e65] [cursor=pointer]:
+                  - /url: /admin/contents
+                  - img [ref=e66]
+                  - generic [ref=e69]: ニュース
+                - link "ギャラリー" [ref=e70] [cursor=pointer]:
+                  - /url: /admin/gallery
+                  - img [ref=e71]
+                  - generic [ref=e75]: ギャラリー
+                - link "ヒーロー" [ref=e76] [cursor=pointer]:
+                  - /url: /admin/hero
+                  - img [ref=e77]
+                  - generic [ref=e81]: ヒーロー
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: システム
+              - link "設定" [ref=e85] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e86]
+                - generic [ref=e89]: 設定
+          - generic [ref=e90]:
+            - link "← サイトを表示" [ref=e91] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e92]: ← サイトを表示
+            - button "ログアウト" [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e98]: ログアウト
+      - main [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Club ANIMO
+          - generic [ref=e103]: /
+          - generic [ref=e104]: 人材管理
+        - generic [ref=e994]:
+          - generic [ref=e995]:
+            - heading "キャスト編集" [level=1] [ref=e996]
+            - paragraph [ref=e997]: あいか さんの情報を編集します
+          - generic [ref=e998]:
+            - heading "プロフィール画像" [level=2] [ref=e999]: プロフィール画像
+            - generic [ref=e1001]:
+              - generic [ref=e1003] [cursor=pointer]:
+                - img [ref=e1005]
+                - paragraph [ref=e1009]: ドラッグ＆ドロップ または クリックして選択
+                - paragraph [ref=e1010]: JPG, PNG, WebP ・ 複数ファイル可
+              - generic [ref=e1011]: まだ画像がありません。上のエリアに画像をドラッグ＆ドロップしてください。
+              - paragraph [ref=e1012]: ⭐ メイン画像がサイトのキャスト一覧・シフトページに表示されます
+          - generic [ref=e1013]:
+            - heading "アカウント情報" [level=2] [ref=e1014]: アカウント情報
+            - generic [ref=e1016]:
+              - generic [ref=e1017]: 状態
+              - generic [ref=e1018]: 未登録
+            - paragraph [ref=e1019]: このキャストはまだアカウント登録されていません
+            - generic [ref=e1020]:
+              - generic [ref=e1021]:
+                - term [ref=e1022]: 登録メールアドレス
+                - definition [ref=e1023]: "-"
+              - generic [ref=e1024]:
+                - term [ref=e1025]: 登録日時
+                - definition [ref=e1026]: "-"
+              - generic [ref=e1027]:
+                - term [ref=e1028]: 最終ログイン日時
+                - definition [ref=e1029]: "-"
+              - generic [ref=e1030]:
+                - term [ref=e1031]: Auth User ID
+                - definition [ref=e1032]: "-"
+          - generic [ref=e1033]:
+            - heading "プロフィール情報" [level=2] [ref=e1034]: プロフィール情報
+            - generic [ref=e1036]:
+              - link "一覧へ戻る" [ref=e1038] [cursor=pointer]:
+                - /url: /admin/human-resources
+                - img [ref=e1039]
+                - text: 一覧へ戻る
+              - generic [ref=e1041]:
+                - heading "Edit Cast" [level=2] [ref=e1042]
+                - generic [ref=e1043]:
+                  - generic [ref=e1044]:
+                    - generic [ref=e1045]:
+                      - generic [ref=e1046]: 源氏名 (Stage Name) *
+                      - textbox "源氏名 (Stage Name) *" [ref=e1047]:
+                        - /placeholder: あいか
+                        - text: あいか
+                    - generic [ref=e1048]:
+                      - generic [ref=e1049]: フリガナ (Name Kana) *
+                      - textbox "フリガナ (Name Kana) *" [ref=e1050]:
+                        - /placeholder: アイカ
+                        - text: あいか
+                      - paragraph [ref=e1051]: あいうえお順の並び替えに使用します
+                  - generic [ref=e1052]:
+                    - generic [ref=e1053]:
+                      - generic [ref=e1054]: 年齢 (Age)
+                      - spinbutton "年齢 (Age)" [ref=e1055]: "20"
+                    - generic [ref=e1056]:
+                      - generic [ref=e1057]: 身長 (Height) / cm
+                      - spinbutton "身長 (Height) / cm" [ref=e1058]: "160"
+                  - generic [ref=e1059]:
+                    - generic [ref=e1061]: 🔐 個人情報（管理者専用 / 非公開）
+                    - paragraph [ref=e1062]:
+                      - text: 本名・生年月日はサイトおよびキャストダッシュボードには一切表示されません。
+                      - text: 同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、本人自己登録時の照合に使用します。
+                      - text: 管理画面からログインアカウントは発行されません。登録後は本人が /cast/register から自己登録します。
+                    - generic [ref=e1063]:
+                      - generic [ref=e1064]:
+                        - generic [ref=e1065]: 本名 (Real Name) *
+                        - textbox "本名 (Real Name) *" [ref=e1066]:
+                          - /placeholder: 山田 花子
+                          - text: 山田 花子
+                      - generic [ref=e1067]:
+                        - generic [ref=e1068]: 生年月日 (Date of Birth) *
+                        - textbox "生年月日 (Date of Birth) *" [ref=e1069]: 2000-01-01
+                  - generic [ref=e1070]:
+                    - generic [ref=e1072]: SNS連携 (Optional)
+                    - generic [ref=e1073]:
+                      - generic [ref=e1074]:
+                        - generic [ref=e1075]: X (Twitter) ID
+                        - textbox "X (Twitter) ID" [ref=e1076]:
+                          - /placeholder: "@username"
+                      - generic [ref=e1077]:
+                        - generic [ref=e1078]: Instagram ID
+                        - textbox "Instagram ID" [ref=e1079]:
+                          - /placeholder: username
+                      - generic [ref=e1080]:
+                        - generic [ref=e1081]: TikTok ID
+                        - textbox "TikTok ID" [ref=e1082]:
+                          - /placeholder: username
+                  - generic [ref=e1083]:
+                    - generic [ref=e1084]: 趣味 (Hobby)
+                    - textbox "趣味 (Hobby)" [ref=e1085]:
+                      - /placeholder: 旅行、カフェ巡り
+                      - text: お酒♡
+                  - generic [ref=e1086]:
+                    - generic [ref=e1087]: AI診断タグ (Quiz Tags)
+                    - paragraph [ref=e1088]: お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。
+                    - generic [ref=e1089]:
+                      - generic [ref=e1090] [cursor=pointer]:
+                        - checkbox "癒し系・優しい" [ref=e1091]
+                        - text: 癒し系・優しい
+                      - generic [ref=e1092] [cursor=pointer]:
+                        - checkbox "クール・大人っぽい" [ref=e1093]
+                        - text: クール・大人っぽい
+                      - generic [ref=e1094] [cursor=pointer]:
+                        - checkbox "元気・明るい" [ref=e1095]
+                        - text: 元気・明るい
+                      - generic [ref=e1096] [cursor=pointer]:
+                        - checkbox "インテリ・話が弾む" [ref=e1097]
+                        - text: インテリ・話が弾む
+                      - generic [ref=e1098] [cursor=pointer]:
+                        - checkbox "キュート・ガーリー" [ref=e1099]
+                        - text: キュート・ガーリー
+                      - generic [ref=e1100] [cursor=pointer]:
+                        - checkbox "セクシー・魅力的" [ref=e1101]
+                        - text: セクシー・魅力的
+                      - generic [ref=e1102] [cursor=pointer]:
+                        - checkbox "笑いが絶えない" [ref=e1103]
+                        - text: 笑いが絶えない
+                      - generic [ref=e1104] [cursor=pointer]:
+                        - checkbox "アウトドア・スポーティ" [ref=e1105]
+                        - text: アウトドア・スポーティ
+                      - generic [ref=e1106] [cursor=pointer]:
+                        - checkbox "音楽好き" [ref=e1107]
+                        - text: 音楽好き
+                      - generic [ref=e1108] [cursor=pointer]:
+                        - checkbox "ファッション・おしゃれ" [ref=e1109]
+                        - text: ファッション・おしゃれ
+                  - generic [ref=e1110]:
+                    - generic [ref=e1112]: 一言コメント (Comment)
+                    - textbox "一言コメント (Comment)" [ref=e1113]:
+                      - /placeholder: お客様へのメッセージやプロフィール文
+                      - text: お酒を楽しく飲むの大好きなんで、一緒に飲みましょう！
+                  - generic [ref=e1114]:
+                    - generic [ref=e1115]: プロフィール画像 (Profile Image)
+                    - generic [ref=e1117]:
+                      - button "プロフィール画像 (Profile Image)" [ref=e1118]
+                      - paragraph [ref=e1119]:
+                        - text: ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）
+                        - text: ※ 新しい画像を選択すると上書きされます。
+                  - generic [ref=e1120]:
+                    - generic [ref=e1121] [cursor=pointer]:
+                      - checkbox "在籍中（公開する）" [checked] [ref=e1122]
+                      - generic [ref=e1123]: 在籍中（公開する）
+                    - paragraph [ref=e1124]: オフにすると公開ページに表示されません
+                  - button "更新する" [ref=e1126]
+  - button "Open Next.js Dev Tools" [ref=e988] [cursor=pointer]:
+    - img [ref=e989]
+  - alert [ref=e993]

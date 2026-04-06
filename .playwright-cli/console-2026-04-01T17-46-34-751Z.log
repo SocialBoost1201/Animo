@@ -1,0 +1,162 @@
+[    1577ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[    1603ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  106579ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  106716ms] [LOG] [Fast Refresh] done in 237ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  206394ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  206421ms] [LOG] [Fast Refresh] done in 58ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  225798ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  225825ms] [LOG] [Fast Refresh] done in 62ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  877086ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  877111ms] [LOG] [Fast Refresh] done in 68ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  908105ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  908140ms] [LOG] [Fast Refresh] done in 65ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  908415ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  908435ms] [LOG] [Fast Refresh] done in 122ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[  932325ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  933327ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  934329ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  935332ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  936339ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  941345ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  946358ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  951384ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  956407ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  961440ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  966553ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[  971636ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NMJnGM0lFCDQVMxVmbEkf' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[ 1370445ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1370503ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1378343ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1378346ms] [LOG] [Fast Refresh] done in 103ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1591683ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1591696ms] [LOG] [Fast Refresh] done in 114ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1612696ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1612807ms] [LOG] [Fast Refresh] done in 69ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1763127ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1763160ms] [LOG] [Fast Refresh] done in 135ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1971005ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1971035ms] [LOG] [Fast Refresh] done in 81ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1976136ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 1976166ms] [LOG] [Fast Refresh] done in 51ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2055652ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2055687ms] [LOG] [Fast Refresh] done in 88ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2174772ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2174813ms] [LOG] [Fast Refresh] done in 142ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2974185ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 2974194ms] [LOG] [Fast Refresh] done in 110ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3071763ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3071764ms] [LOG] [Fast Refresh] done in 101ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3118511ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3118562ms] [LOG] [Fast Refresh] done in 100ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3187997ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3187998ms] [LOG] [Fast Refresh] done in 102ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3246867ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 3246874ms] [LOG] [Fast Refresh] done in 108ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4453508ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4453546ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4453664ms] [LOG] [Fast Refresh] done in 257ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4453691ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4453698ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4458164ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4458203ms] [LOG] [Fast Refresh] done in 141ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4458747ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4458858ms] [LOG] [Fast Refresh] done in 212ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_86575c0d._.js:1206
+[ 4459006ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://127.0.0.1:4100/admin/human-resources/new:0
+[ 4459123ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4459214ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4459542ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4459866ms] [LOG] [Fast Refresh] done in 424ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4527047ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4528344ms] [LOG] [Fast Refresh] done in 1369ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4530252ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4530280ms] [LOG] [Fast Refresh] done in 128ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4531593ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4531655ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4535911ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4535968ms] [LOG] [Fast Refresh] done in 159ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4548616ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4548643ms] [LOG] [Fast Refresh] done in 65ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4574961ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4575046ms] [LOG] [Fast Refresh] done in 71ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4575205ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4575214ms] [LOG] [Fast Refresh] done in 110ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4575683ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4575700ms] [LOG] [Fast Refresh] done in 119ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4614449ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4614577ms] [LOG] [Fast Refresh] done in 137ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4615151ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4615193ms] [LOG] [Fast Refresh] done in 143ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4617018ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4617055ms] [LOG] [Fast Refresh] done in 138ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4618926ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4618942ms] [LOG] [Fast Refresh] done in 117ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4619384ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4619429ms] [LOG] [Fast Refresh] done in 145ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4644338ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4644340ms] [LOG] [Fast Refresh] done in 103ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4647467ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4647508ms] [LOG] [Fast Refresh] done in 141ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4648093ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4648098ms] [LOG] [Fast Refresh] done in 107ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4756740ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4756802ms] [LOG] [Fast Refresh] done in 94ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4756903ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4756948ms] [LOG] [Fast Refresh] done in 147ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4757050ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4757059ms] [LOG] [Fast Refresh] done in 111ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4928427ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4928483ms] [LOG] [Fast Refresh] done in 156ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4930264ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4930265ms] [LOG] [Fast Refresh] done in 103ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4979758ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4979948ms] [LOG] [Fast Refresh] done in 281ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4980341ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4980412ms] [LOG] [Fast Refresh] done in 172ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4980613ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 4980692ms] [LOG] [Fast Refresh] done in 181ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 6622999ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 6623081ms] [LOG] [Fast Refresh] done in 185ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7209624ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7209875ms] [LOG] [Fast Refresh] done in 353ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7210530ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7210543ms] [LOG] [Fast Refresh] done in 115ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7719836ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7719883ms] [LOG] [Fast Refresh] done in 148ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7813755ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 7813769ms] [LOG] [Fast Refresh] done in 116ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8472199ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8472220ms] [LOG] [Fast Refresh] done in 121ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8579507ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8579540ms] [LOG] [Fast Refresh] done in 134ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8611351ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8611394ms] [LOG] [Fast Refresh] done in 144ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8612247ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[ 8612253ms] [LOG] [Fast Refresh] done in 107ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[10641318ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=ToRDc3bm8nm2Z2uxja5cs' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10642321ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=ToRDc3bm8nm2Z2uxja5cs' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10643324ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=ToRDc3bm8nm2Z2uxja5cs' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10644325ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=ToRDc3bm8nm2Z2uxja5cs' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10645327ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=ToRDc3bm8nm2Z2uxja5cs' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10650342ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[10651725ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[10651757ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[10651776ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:4100/admin/login:0
+[10937573ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10938575ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10939577ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10940579ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10941587ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10946591ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10951600ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10956621ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10961646ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10966704ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10971806ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878
+[10977117ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=NqST9tUK1am0Mospv16IX' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_client_7a2e2762._.js:10878

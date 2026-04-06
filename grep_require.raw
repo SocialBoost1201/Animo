@@ -1,0 +1,19 @@
+./pnpm-lock.yaml:    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+./lint_output.txt:  7:12  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+./lint_output.txt:  8:14  error    A `require()` style import is forbidden    @typescript-eslint/no-require-imports
+./package-lock.json:      "deprecated": "This package is deprecated. Use require('node:util').isDeepStrictEqual instead.",
+./.agent/skills/github-workflow-automation/SKILL.md:            const { Anthropic } = require('@anthropic-ai/sdk');
+./.agent/skills/typescript-expert/SKILL.md:   node -e "const p=require('./package.json');console.log(Object.keys({...p.devDependencies,...p.dependencies}||{}).join('\n'))" 2>/dev/null | grep -E 'biome|eslint|prettier|vitest|jest|turborepo|nx' || echo "No tooling detected"
+./.agent/skills/security-best-practices/references/javascript-typescript-nextjs-web-server-security.md:* Search for `eval(`, `new Function`, `vm.`, `require(` with non-literals.
+./.agent/skills/debugging-strategies/resources/implementation-playbook.md:    require('v8').writeHeapSnapshot();
+./.agent/skills/next-best-practices/self-hosting.md:const Redis = require('ioredis');
+./.agent/skills/next-best-practices/self-hosting.md:const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+./.agent/skills/next-best-practices/bundling.md:Error: require() of ES Module
+./.agent/skills/pptx/pptxgenjs.md:const pptxgen = require("pptxgenjs");
+./.agent/skills/pptx/pptxgenjs.md:const React = require("react");
+./.agent/skills/pptx/pptxgenjs.md:const ReactDOMServer = require("react-dom/server");
+./.agent/skills/pptx/pptxgenjs.md:const sharp = require("sharp");
+./.agent/skills/pptx/pptxgenjs.md:const { FaCheckCircle, FaChartLine } = require("react-icons/fa");
+./.agent/skills/mobile-first-design-rules/scripts/main.cjs:const fs = require('fs');
+./.agent/skills/mobile-first-design-rules/scripts/main.cjs:const path = require('path');
+./.agent/skills/docx/SKILL.md:        VerticalAlign, PageNumber, PageBreak } = require('docx');

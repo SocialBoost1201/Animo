@@ -1,0 +1,13 @@
+[     159ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:4100/admin/login:0
+[     407ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[     458ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[   29461ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[   29512ms] [LOG] [Fast Refresh] done in 100ms @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[   31230ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[   31230ms] [WARNING] The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width. @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297

@@ -15,8 +15,8 @@
   --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
   /* Brand Typography */
-  --font-serif: "Times New Roman", Times, var(--font-shippori), serif;
-  --font-sans: "Times New Roman", Times, var(--font-zen-kaku), sans-serif;
+  --font-serif: var(--font-shippori), "Times New Roman", Times, serif;
+  --font-sans: var(--font-zen-kaku), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Brand Spacing & Border Radius */
   --spacing-section: 160px;
@@ -158,11 +158,6 @@ body {
     line-height: 1.45 !important;
   }
 
-  [style*="font-size: 12px"],
-  [style*="font-size: 12px"],
-  [style*="font-size: 12px"],
-  [style*="font-size: 12px"],
-  [style*="font-size: 12px"],
   [style*="font-size: 12px"] {
     font-size: 12px !important;
     line-height: 1.45 !important;

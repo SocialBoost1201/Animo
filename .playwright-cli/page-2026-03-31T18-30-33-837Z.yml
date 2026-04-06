@@ -1,0 +1,162 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+          - navigation [ref=e8]:
+            - generic [ref=e9]:
+              - paragraph [ref=e10]: 管理
+              - generic [ref=e11]:
+                - link "🗓 本日の営業状況" [ref=e12] [cursor=pointer]:
+                  - /url: /admin/today
+                  - img [ref=e13]
+                  - generic [ref=e16]: 🗓 本日の営業状況
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /admin/dashboard
+                  - img [ref=e18]
+                  - generic [ref=e23]: Dashboard
+                  - img [ref=e24]
+                - link "人材管理" [ref=e26] [cursor=pointer]:
+                  - /url: /admin/human-resources
+                  - img [ref=e27]
+                  - generic [ref=e32]: 人材管理
+                - link "月間シフト(β)" [ref=e33] [cursor=pointer]:
+                  - /url: /admin/monthly-shifts
+                  - img [ref=e34]
+                  - generic [ref=e36]: 月間シフト(β)
+                - link "Excelシフト" [ref=e37] [cursor=pointer]:
+                  - /url: /admin/template-shifts
+                  - img [ref=e38]
+                  - generic [ref=e40]: Excelシフト
+            - generic [ref=e41]:
+              - paragraph [ref=e42]: 顧客・応募
+              - generic [ref=e43]:
+                - link "求人応募" [ref=e44] [cursor=pointer]:
+                  - /url: /admin/applications
+                  - img [ref=e45]
+                  - generic [ref=e48]: 求人応募
+                - link "出勤申請" [ref=e49] [cursor=pointer]:
+                  - /url: /admin/shift-requests
+                  - img [ref=e50]
+                  - generic [ref=e52]: 出勤申請
+                - link "お知らせ" [ref=e53] [cursor=pointer]:
+                  - /url: /admin/internal-notices
+                  - img [ref=e54]
+                  - generic [ref=e57]: お知らせ
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: コンテンツ
+              - generic [ref=e60]:
+                - link "キャスト投稿" [ref=e61] [cursor=pointer]:
+                  - /url: /admin/posts
+                  - img [ref=e62]
+                  - generic [ref=e64]: キャスト投稿
+                - link "ニュース" [ref=e65] [cursor=pointer]:
+                  - /url: /admin/contents
+                  - img [ref=e66]
+                  - generic [ref=e69]: ニュース
+                - link "ギャラリー" [ref=e70] [cursor=pointer]:
+                  - /url: /admin/gallery
+                  - img [ref=e71]
+                  - generic [ref=e75]: ギャラリー
+                - link "ヒーロー" [ref=e76] [cursor=pointer]:
+                  - /url: /admin/hero
+                  - img [ref=e77]
+                  - generic [ref=e81]: ヒーロー
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: システム
+              - link "設定" [ref=e85] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e86]
+                - generic [ref=e89]: 設定
+          - generic [ref=e90]:
+            - link "← サイトを表示" [ref=e91] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e92]: ← サイトを表示
+            - button "ログアウト" [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e98]: ログアウト
+      - main [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Club ANIMO
+          - generic [ref=e103]: /
+          - generic [ref=e104]: Dashboard
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: Admin Dashboard
+              - generic [ref=e110]:
+                - heading "営業全体をひと目で把握できる管理ダッシュボード" [level=1] [ref=e111]
+                - paragraph [ref=e112]: 2026-04-01 のサマリーです。数値確認、出勤状況、承認や登録への導線をここから迷わず進められる構成に整えます。
+            - generic [ref=e113]:
+              - link "キャスト追加" [ref=e114] [cursor=pointer]:
+                - /url: /admin/human-resources/new
+                - img
+                - text: キャスト追加
+              - link "シフト登録" [ref=e115] [cursor=pointer]:
+                - /url: /admin/shifts
+                - img
+                - text: シフト登録
+          - generic [ref=e116]:
+            - link "17名 在籍キャスト" [ref=e117] [cursor=pointer]:
+              - /url: /admin/human-resources
+              - img [ref=e118]
+              - paragraph [ref=e123]: 17名
+              - paragraph [ref=e124]: 在籍キャスト
+              - img [ref=e125]
+            - link "0件 未読の求人応募" [ref=e127] [cursor=pointer]:
+              - /url: /admin/applications
+              - img [ref=e128]
+              - paragraph [ref=e131]: 0件
+              - paragraph [ref=e132]: 未読の求人応募
+              - img [ref=e133]
+            - link "0名 今日の出勤予定" [ref=e135] [cursor=pointer]:
+              - /url: /admin/shifts
+              - img [ref=e136]
+              - paragraph [ref=e138]: 0名
+              - paragraph [ref=e139]: 今日の出勤予定
+              - img [ref=e140]
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - img [ref=e145]
+              - paragraph [ref=e148]: 累計求人応募
+            - paragraph [ref=e149]: 0件
+          - generic [ref=e151]:
+            - heading "求人応募 推移（直近6ヶ月）" [level=2] [ref=e152]: 求人応募 推移（直近6ヶ月）
+            - generic [ref=e156]:
+              - list [ref=e158]:
+                - listitem [ref=e159]:
+                  - img "応募者数 legend icon" [ref=e160]
+                  - text: 応募者数
+              - application [ref=e162]:
+                - generic [ref=e174]:
+                  - generic [ref=e175]:
+                    - generic [ref=e177]: 11月
+                    - generic [ref=e179]: 12月
+                    - generic [ref=e181]: 1月
+                    - generic [ref=e183]: 2月
+                    - generic [ref=e185]: 3月
+                    - generic [ref=e187]: 4月
+                  - generic [ref=e188]:
+                    - generic [ref=e190]: "0"
+                    - generic [ref=e192]: "1"
+                    - generic [ref=e194]: "2"
+                    - generic [ref=e196]: "3"
+                    - generic [ref=e198]: "4"
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: Today
+                - heading "本日の出勤予定 (2026-04-01)" [level=2] [ref=e204]
+                - paragraph [ref=e205]: 営業開始前に、誰が何時から出勤するかを一覧で確認できます。
+              - link "シフト管理" [ref=e207] [cursor=pointer]:
+                - /url: /admin/shifts
+            - generic [ref=e210]:
+              - paragraph [ref=e211]: 本日の出勤登録はありません
+              - paragraph [ref=e212]: まだスケジュールが承認・登録されていません。シフト管理から登録を進めてください。
+              - link "登録する" [ref=e214] [cursor=pointer]:
+                - /url: /admin/shifts
+  - alert [ref=e215]
+  - generic [ref=e216]: "0"

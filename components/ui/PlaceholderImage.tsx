@@ -40,6 +40,17 @@ export function PlaceholderImage({
 
   const finalSrc = src && src.trim() !== '' ? src : fallbackImages[ratio];
 
+  // ratio に応じた適切な sizes を設定（一律固定からコンテキスト別に最適化）
+  const sizesMap: Record<string, string> = {
+    '4:5': '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw',
+    '3:4': '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw',
+    '3:2': '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
+    '4:3': '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
+    '16:9': '(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 50vw',
+    'square': '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw',
+  };
+  const resolvedSizes = sizesMap[ratio] ?? '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+
   return (
     <div
       className={cn(
@@ -55,7 +66,7 @@ export function PlaceholderImage({
           fill
           priority={priority}
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes={resolvedSizes}
         />
       ) : (
         <div className="flex flex-col items-center justify-center opacity-50">

@@ -1,0 +1,29 @@
+{
+  "stageName": "こでっくす445680",
+  "nameKana": "コデックス445680",
+  "realName": "検証太郎445680",
+  "dob": "1999-04-01",
+  "steps": {
+    "beforeQuery": {
+      "error": null,
+      "rows": []
+    },
+    "login": {
+      "url": "http://127.0.0.1:3003/admin/dashboard",
+      "ok": true
+    },
+    "newPage": {
+      "url": "http://127.0.0.1:3003/admin/human-resources/new",
+      "ok": true
+    },
+    "afterSubmit": {
+      "url": "http://127.0.0.1:3003/admin/login",
+      "text": "CLUB ANIMO\n\nADMIN SYSTEM\n\nEMAIL\nPASSWORD\nLOGIN"
+    },
+    "afterQuery": {
+      "error": null,
+      "rows": []
+    }
+  },
+  "record": null
+}

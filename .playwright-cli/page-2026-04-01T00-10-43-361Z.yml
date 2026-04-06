@@ -1,0 +1,130 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+          - navigation [ref=e8]:
+            - generic [ref=e9]:
+              - paragraph [ref=e10]: 管理
+              - generic [ref=e11]:
+                - link "🗓 本日の営業状況" [ref=e12] [cursor=pointer]:
+                  - /url: /admin/today
+                  - img [ref=e13]
+                  - generic [ref=e16]: 🗓 本日の営業状況
+                  - img [ref=e17]
+                - link "Dashboard" [ref=e19] [cursor=pointer]:
+                  - /url: /admin/dashboard
+                  - img [ref=e20]
+                  - generic [ref=e25]: Dashboard
+                - link "人材管理" [ref=e26] [cursor=pointer]:
+                  - /url: /admin/human-resources
+                  - img [ref=e27]
+                  - generic [ref=e32]: 人材管理
+                - link "月間シフト(β)" [ref=e33] [cursor=pointer]:
+                  - /url: /admin/monthly-shifts
+                  - img [ref=e34]
+                  - generic [ref=e36]: 月間シフト(β)
+                - link "Excelシフト" [ref=e37] [cursor=pointer]:
+                  - /url: /admin/template-shifts
+                  - img [ref=e38]
+                  - generic [ref=e40]: Excelシフト
+            - generic [ref=e41]:
+              - paragraph [ref=e42]: 顧客・応募
+              - generic [ref=e43]:
+                - link "求人応募" [ref=e44] [cursor=pointer]:
+                  - /url: /admin/applications
+                  - img [ref=e45]
+                  - generic [ref=e48]: 求人応募
+                - link "出勤申請" [ref=e49] [cursor=pointer]:
+                  - /url: /admin/shift-requests
+                  - img [ref=e50]
+                  - generic [ref=e52]: 出勤申請
+                - link "お知らせ" [ref=e53] [cursor=pointer]:
+                  - /url: /admin/internal-notices
+                  - img [ref=e54]
+                  - generic [ref=e57]: お知らせ
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: コンテンツ
+              - generic [ref=e60]:
+                - link "キャスト投稿" [ref=e61] [cursor=pointer]:
+                  - /url: /admin/posts
+                  - img [ref=e62]
+                  - generic [ref=e64]: キャスト投稿
+                - link "ニュース" [ref=e65] [cursor=pointer]:
+                  - /url: /admin/contents
+                  - img [ref=e66]
+                  - generic [ref=e69]: ニュース
+                - link "ギャラリー" [ref=e70] [cursor=pointer]:
+                  - /url: /admin/gallery
+                  - img [ref=e71]
+                  - generic [ref=e75]: ギャラリー
+                - link "ヒーロー" [ref=e76] [cursor=pointer]:
+                  - /url: /admin/hero
+                  - img [ref=e77]
+                  - generic [ref=e81]: ヒーロー
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: システム
+              - link "設定" [ref=e85] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e86]
+                - generic [ref=e89]: 設定
+          - generic [ref=e90]:
+            - link "← サイトを表示" [ref=e91] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e92]: ← サイトを表示
+            - button "ログアウト" [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e98]: ログアウト
+      - main [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Club ANIMO
+          - generic [ref=e103]: /
+          - generic [ref=e104]: 🗓 本日の営業状況
+        - generic [ref=e106]:
+          - generic [ref=e108]:
+            - paragraph [ref=e109]: Daily Operations
+            - generic [ref=e110]:
+              - heading "本日の営業状況" [level=1] [ref=e111]
+              - paragraph [ref=e112]: 4月1日（水） の出勤、予約、変更、共有用情報をひとつの画面で確認できます。
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: 本日のPV
+                - generic [ref=e117]: "0"
+              - generic [ref=e118]:
+                - generic [ref=e119]: 昨日のPV
+                - generic [ref=e120]: "0"
+              - generic [ref=e121]:
+                - generic [ref=e122]: アクティブ
+                - generic [ref=e125]: "0"
+            - button "本日の営業状況をコピー" [ref=e126]:
+              - img [ref=e127]
+              - text: 本日の営業状況をコピー
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - img [ref=e133]
+                - generic [ref=e135]: 体入
+              - paragraph [ref=e136]: 本日の体入はありません
+              - button "体入を追加" [ref=e137]:
+                - img [ref=e138]
+                - text: 体入を追加
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - img [ref=e142]
+                - generic [ref=e144]: スタッフ出勤
+              - paragraph [ref=e145]: スタッフ未登録
+              - button "スタッフを追加" [ref=e146]:
+                - img [ref=e147]
+                - text: スタッフを追加
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - img [ref=e151]
+                - generic [ref=e154]: 当日変更
+              - paragraph [ref=e155]: 当日変更なし
+              - button "変更を追加" [ref=e156]:
+                - img [ref=e157]
+                - text: 変更を追加
+  - alert [ref=e158]

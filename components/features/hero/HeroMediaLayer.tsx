@@ -96,22 +96,27 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
     );
   }
 
-  // ハイドレーションエラーを防ぐための初回レンダリング（ポスター画像か空枠のみ）
-  // mounted後もDOM構造は同じに保つ
+  // ハイドレーション後もDOM構造は同じに保つ
   const durationSec = `${transitionMs / 1000}s`;
+
+  // デスクトップ: 最初に表示されるポスター画像をpriority=trueで先行描画（LCP対象）
+  const firstPosterSrc = media.length > 0
+    ? (media[0].type === 'image' ? media[0].url : (media[0].posterUrl ?? null))
+    : null;
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
-      {/* 最初の画像の先読み用 (LCP最適化) */}
-      {media.length > 0 && (media[0].type === 'image' || media[0].posterUrl) && (
+      {/* LCP最適化: 最初に実際に見えるポスター画像をpriority描画（opacity:0では効果なし → 実表示） */}
+      {firstPosterSrc && (
         <Image
-          src={media[0].type === 'image' ? media[0].url : (media[0].posterUrl as string)}
-          alt="Hero Background LCP"
+          src={firstPosterSrc}
+          alt={media[0].title ?? 'Hero Background'}
           fill
           priority
           fetchPriority="high"
           sizes="100vw"
-          className="opacity-0 pointer-events-none"
+          className="object-cover object-center"
+          style={{ zIndex: 5 }}
         />
       )}
 
@@ -162,7 +167,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
                 }}
                 poster={item.posterUrl}
                 autoPlay={false} // useEffect側で明示的にコントロールするため初期はfalse
-                preload={i === 0 ? "metadata" : "none"}
+                preload={i === 0 ? "auto" : "none"} // 最初の動画はバッファリング開始を早める
                 loop
                 muted
                 playsInline

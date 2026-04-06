@@ -1,0 +1,288 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "CLUB Animo" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: CLUB Animo
+        - navigation [ref=e8]:
+          - link "System" [ref=e9] [cursor=pointer]:
+            - /url: /system
+          - link "Cast" [ref=e10] [cursor=pointer]:
+            - /url: /cast
+          - link "Shift" [ref=e11] [cursor=pointer]:
+            - /url: /shift
+          - link "Gallery" [ref=e12] [cursor=pointer]:
+            - /url: /gallery
+          - link "Access" [ref=e13] [cursor=pointer]:
+            - /url: /access
+          - button "Recruit" [ref=e15]:
+            - text: Recruit
+            - img [ref=e16]
+          - link "Cast Recruit" [ref=e19] [cursor=pointer]:
+            - /url: /recruit/cast
+    - main [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Cast" [level=1] [ref=e24]
+          - paragraph [ref=e26]:
+            - text: 個性豊かな上質空間を彩るキャストたち。
+            - text: （本日の出勤キャストを優先して表示しています）
+        - generic [ref=e27]:
+          - link "あいか お気に入りに追加する 本日出勤 あいか 20歳 • T160" [ref=e29] [cursor=pointer]:
+            - /url: /cast/aika
+            - generic [ref=e30]:
+              - generic [ref=e31]:
+                - img "あいか" [ref=e33]
+                - button "お気に入りに追加する" [ref=e35]:
+                  - img [ref=e36]
+                - generic [ref=e38]: 本日出勤
+              - generic [ref=e39]:
+                - heading "あいか" [level=3] [ref=e40]
+                - generic [ref=e41]:
+                  - generic [ref=e42]: 20歳
+                  - generic [ref=e43]: •
+                  - generic [ref=e44]: T160
+          - link "まりあ お気に入りに追加する まりあ 35歳" [ref=e46] [cursor=pointer]:
+            - /url: /cast/1826b2b7
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - img "まりあ" [ref=e50]
+                - button "お気に入りに追加する" [ref=e52]:
+                  - img [ref=e53]
+              - generic [ref=e55]:
+                - heading "まりあ" [level=3] [ref=e56]
+                - generic [ref=e58]: 35歳
+          - link "まりあ お気に入りに追加する まりあ 25歳" [ref=e60] [cursor=pointer]:
+            - /url: /cast/5aa228ef
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - img "まりあ" [ref=e64]
+                - button "お気に入りに追加する" [ref=e66]:
+                  - img [ref=e67]
+              - generic [ref=e69]:
+                - heading "まりあ" [level=3] [ref=e70]
+                - generic [ref=e72]: 25歳
+          - link "じゅり お気に入りに追加する じゅり 24歳 • T163" [ref=e74] [cursor=pointer]:
+            - /url: /cast/juri
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - img "じゅり" [ref=e78]
+                - button "お気に入りに追加する" [ref=e80]:
+                  - img [ref=e81]
+              - generic [ref=e83]:
+                - heading "じゅり" [level=3] [ref=e84]
+                - generic [ref=e85]:
+                  - generic [ref=e86]: 24歳
+                  - generic [ref=e87]: •
+                  - generic [ref=e88]: T163
+          - link "かな お気に入りに追加する かな 27歳 • T158" [ref=e90] [cursor=pointer]:
+            - /url: /cast/kana
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - img "かな" [ref=e94]
+                - button "お気に入りに追加する" [ref=e96]:
+                  - img [ref=e97]
+              - generic [ref=e99]:
+                - heading "かな" [level=3] [ref=e100]
+                - generic [ref=e101]:
+                  - generic [ref=e102]: 27歳
+                  - generic [ref=e103]: •
+                  - generic [ref=e104]: T158
+          - link "りいな お気に入りに追加する りいな 34歳 • T164" [ref=e106] [cursor=pointer]:
+            - /url: /cast/riina
+            - generic [ref=e107]:
+              - generic [ref=e108]:
+                - img "りいな" [ref=e110]
+                - button "お気に入りに追加する" [ref=e112]:
+                  - img [ref=e113]
+              - generic [ref=e115]:
+                - heading "りいな" [level=3] [ref=e116]
+                - generic [ref=e117]:
+                  - generic [ref=e118]: 34歳
+                  - generic [ref=e119]: •
+                  - generic [ref=e120]: T164
+          - link "いぶき お気に入りに追加する いぶき 31歳 • T163" [ref=e122] [cursor=pointer]:
+            - /url: /cast/ibuki
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - img "いぶき" [ref=e126]
+                - button "お気に入りに追加する" [ref=e128]:
+                  - img [ref=e129]
+              - generic [ref=e131]:
+                - heading "いぶき" [level=3] [ref=e132]
+                - generic [ref=e133]:
+                  - generic [ref=e134]: 31歳
+                  - generic [ref=e135]: •
+                  - generic [ref=e136]: T163
+          - link "みらん お気に入りに追加する みらん" [ref=e138] [cursor=pointer]:
+            - /url: /cast/miran
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - img "みらん" [ref=e142]
+                - button "お気に入りに追加する" [ref=e144]:
+                  - img [ref=e145]
+              - heading "みらん" [level=3] [ref=e148]
+          - link "ななせ お気に入りに追加する ななせ 23歳 • T159" [ref=e150] [cursor=pointer]:
+            - /url: /cast/nanase
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - img "ななせ" [ref=e154]
+                - button "お気に入りに追加する" [ref=e156]:
+                  - img [ref=e157]
+              - generic [ref=e159]:
+                - heading "ななせ" [level=3] [ref=e160]
+                - generic [ref=e161]:
+                  - generic [ref=e162]: 23歳
+                  - generic [ref=e163]: •
+                  - generic [ref=e164]: T159
+          - link "あすみ お気に入りに追加する あすみ" [ref=e166] [cursor=pointer]:
+            - /url: /cast/asumi
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - img "あすみ" [ref=e170]
+                - button "お気に入りに追加する" [ref=e172]:
+                  - img [ref=e173]
+              - heading "あすみ" [level=3] [ref=e176]
+          - link "あんな お気に入りに追加する あんな" [ref=e178] [cursor=pointer]:
+            - /url: /cast/anna
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - img "あんな" [ref=e182]
+                - button "お気に入りに追加する" [ref=e184]:
+                  - img [ref=e185]
+              - heading "あんな" [level=3] [ref=e188]
+          - link "さやか お気に入りに追加する さやか" [ref=e190] [cursor=pointer]:
+            - /url: /cast/sayaka
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - img "さやか" [ref=e194]
+                - button "お気に入りに追加する" [ref=e196]:
+                  - img [ref=e197]
+              - heading "さやか" [level=3] [ref=e200]
+          - link "すい お気に入りに追加する すい" [ref=e202] [cursor=pointer]:
+            - /url: /cast/sui
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - img "すい" [ref=e206]
+                - button "お気に入りに追加する" [ref=e208]:
+                  - img [ref=e209]
+              - heading "すい" [level=3] [ref=e212]
+          - link "あみ お気に入りに追加する あみ" [ref=e214] [cursor=pointer]:
+            - /url: /cast/ami
+            - generic [ref=e215]:
+              - generic [ref=e216]:
+                - img "あみ" [ref=e218]
+                - button "お気に入りに追加する" [ref=e220]:
+                  - img [ref=e221]
+              - heading "あみ" [level=3] [ref=e224]
+          - link "ゆうか お気に入りに追加する ゆうか" [ref=e226] [cursor=pointer]:
+            - /url: /cast/yuuka
+            - generic [ref=e227]:
+              - generic [ref=e228]:
+                - img "ゆうか" [ref=e230]
+                - button "お気に入りに追加する" [ref=e232]:
+                  - img [ref=e233]
+              - heading "ゆうか" [level=3] [ref=e236]
+          - link "れい お気に入りに追加する れい" [ref=e238] [cursor=pointer]:
+            - /url: /cast/rei
+            - generic [ref=e239]:
+              - generic [ref=e240]:
+                - img "れい" [ref=e242]
+                - button "お気に入りに追加する" [ref=e244]:
+                  - img [ref=e245]
+              - heading "れい" [level=3] [ref=e248]
+          - link "れな お気に入りに追加する れな" [ref=e250] [cursor=pointer]:
+            - /url: /cast/rena
+            - generic [ref=e251]:
+              - generic [ref=e252]:
+                - img "れな" [ref=e254]
+                - button "お気に入りに追加する" [ref=e256]:
+                  - img [ref=e257]
+              - heading "れな" [level=3] [ref=e260]
+          - link "るり お気に入りに追加する るり" [ref=e262] [cursor=pointer]:
+            - /url: /cast/ruri
+            - generic [ref=e263]:
+              - generic [ref=e264]:
+                - img "るり" [ref=e266]
+                - button "お気に入りに追加する" [ref=e268]:
+                  - img [ref=e269]
+              - heading "るり" [level=3] [ref=e272]
+    - contentinfo [ref=e273]:
+      - generic [ref=e274]:
+        - generic [ref=e275]:
+          - generic [ref=e276]:
+            - link "CLUB Animo" [ref=e277] [cursor=pointer]:
+              - /url: /
+            - paragraph [ref=e278]: 関内の大人の社交場。煌びやかなシャンデリアの下で、特別な時間をお過ごしください。極上のキャストが最高の夜を演出いたします。
+            - generic [ref=e279]:
+              - link "Instagram" [ref=e280] [cursor=pointer]:
+                - /url: https://www.instagram.com/kannai_club_animo/
+                - img [ref=e281]
+              - link "@kannai_club_animo" [ref=e284] [cursor=pointer]:
+                - /url: https://www.instagram.com/kannai_club_animo/
+          - generic [ref=e285]:
+            - heading "Discover" [level=3] [ref=e286]
+            - list [ref=e287]:
+              - listitem [ref=e288]:
+                - link "Concept" [ref=e289] [cursor=pointer]:
+                  - /url: /concept
+              - listitem [ref=e290]:
+                - link "First Visit Guide" [ref=e291] [cursor=pointer]:
+                  - /url: /guide
+              - listitem [ref=e292]:
+                - link "System" [ref=e293] [cursor=pointer]:
+                  - /url: /system
+              - listitem [ref=e294]:
+                - link "Cast" [ref=e295] [cursor=pointer]:
+                  - /url: /cast
+              - listitem [ref=e296]:
+                - link "News" [ref=e297] [cursor=pointer]:
+                  - /url: /news
+              - listitem [ref=e298]:
+                - link "Today's Shift" [ref=e299] [cursor=pointer]:
+                  - /url: /shift
+              - listitem [ref=e300]:
+                - link "Gallery" [ref=e301] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=e302]:
+                - link "FAQ" [ref=e303] [cursor=pointer]:
+                  - /url: /faq
+          - generic [ref=e304]:
+            - heading "Recruit" [level=3] [ref=e305]
+            - list [ref=e306]:
+              - listitem [ref=e307]:
+                - link "Cast Recruit" [ref=e308] [cursor=pointer]:
+                  - /url: /recruit/cast
+              - listitem [ref=e309]:
+                - link "Staff Recruit" [ref=e310] [cursor=pointer]:
+                  - /url: /recruit/staff
+              - listitem [ref=e311]:
+                - link "採用プライバシー" [ref=e312] [cursor=pointer]:
+                  - /url: /privacy
+          - generic [ref=e313]:
+            - heading "Access" [level=3] [ref=e314]
+            - list [ref=e315]:
+              - listitem [ref=e316]:
+                - img [ref=e317]
+                - generic [ref=e320]:
+                  - text: 〒231-0012
+                  - text: 神奈川県横浜市中区相生町３丁目５３
+                  - text: グランドパークビル2F
+              - listitem [ref=e321]:
+                - img [ref=e322]
+                - link "045-263-6961" [ref=e324] [cursor=pointer]:
+                  - /url: tel:045-263-6961
+              - listitem [ref=e325]:
+                - paragraph [ref=e326]: OPEN 21:00 - LAST
+                - paragraph [ref=e327]: Closed on Sundays & Holidays
+        - generic [ref=e328]:
+          - paragraph [ref=e329]: © 2026 Club Animo. All rights reserved. 20歳未満の方のご入店はお断りしております。
+          - generic [ref=e330]:
+            - link "Privacy Policy" [ref=e331] [cursor=pointer]:
+              - /url: /privacy
+            - link "Terms of Service" [ref=e332] [cursor=pointer]:
+              - /url: /terms
+  - button "Open Next.js Dev Tools" [ref=e338] [cursor=pointer]:
+    - img [ref=e339]
+  - alert [ref=e342]

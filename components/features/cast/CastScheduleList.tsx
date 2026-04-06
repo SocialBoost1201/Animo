@@ -96,7 +96,7 @@ export function CastScheduleList({
         // 現在申請中かどうかを判定
         const isPending = pendingRequests.some(r => r.target_date === schedule.work_date);
         
-        const dateObj = new Date(schedule.work_date);
+        const dateObj = new Date(schedule.work_date.replace(/-/g, '/'));
         const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
         const dayStr = ['日', '月', '火', '水', '木', '金', '土'][dateObj.getDay()];
 
@@ -110,7 +110,7 @@ export function CastScheduleList({
               <div>
                 <div className="flex items-center gap-1.5 font-bold text-[#171717] text-sm">
                   <Clock className="w-3.5 h-3.5 text-gold" />
-                  {schedule.start_time?.slice(0, 5) || '未定'} 〜 {schedule.end_time?.slice(0, 5) || '未定'}
+                  {schedule.start_time ? schedule.start_time.slice(0, 5) : '未定'} 〜 {schedule.end_time ? schedule.end_time.slice(0, 5) : 'LAST'}
                 </div>
                 {isPending && (
                   <p className="text-xs text-yellow-600 font-bold mt-1 flex items-center gap-1">
@@ -144,7 +144,7 @@ export function CastScheduleList({
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-6 pb-safe space-y-6">
               <div className="text-center">
                 <p className="text-sm font-bold text-[#171717] bg-gray-50 py-2 rounded-lg">
                   対象日: {selectedDate.work_date.replace(/-/g, '/')}

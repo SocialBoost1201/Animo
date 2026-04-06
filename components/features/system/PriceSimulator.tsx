@@ -10,7 +10,6 @@ import { Phone, Users } from 'lucide-react';
 type CustomerType = 'member' | 'visitor';
 type Duration = 60 | 90 | 120 | 150 | 180;
 type Nomination = 'none' | 'inside' | 'main' | 'escort';
-type Accompaniment = boolean;
 
 // Luxury Toggle Button Component
 const ToggleButton = ({ 
@@ -47,7 +46,6 @@ export const PriceSimulator = () => {
   const [customerType, setCustomerType] = useState<CustomerType>('visitor');
   const [duration, setDuration] = useState<Duration>(60);
   const [nomination, setNomination] = useState<Nomination>('none');
-  const [accompaniment, setAccompaniment] = useState<Accompaniment>(false);
 
   // Calculation Logic
   const calculateTotal = useMemo(() => {
@@ -65,13 +63,10 @@ export const PriceSimulator = () => {
     let nominationFee = 0;
     if (nomination === 'inside') nominationFee = 2500;
     if (nomination === 'main') nominationFee = 3000;
-    if (nomination === 'escort') nominationFee = 5000;
-
-    // 4. Accompaniment Charge
-    const accompanimentFee = accompaniment ? 5000 : 0;
+    if (nomination === 'escort') nominationFee = 5000; // 同伴料込
 
     // Subtotal
-    const subTotal = baseFee + extensionFee + nominationFee + accompanimentFee;
+    const subTotal = baseFee + extensionFee + nominationFee;
 
     // 5. TAX & Service Charge (display: 30%, calculation: ×1.32)
     const totalWithTax = Math.round(subTotal * 1.32);
@@ -80,7 +75,7 @@ export const PriceSimulator = () => {
     const roundedTotal = Math.round(totalWithTax / 1000) * 1000;
 
     return roundedTotal;
-  }, [customerType, duration, nomination, accompaniment]);
+  }, [customerType, duration, nomination]);
 
 
 
@@ -120,20 +115,11 @@ export const PriceSimulator = () => {
               <ToggleButton active={nomination === 'escort'} onClick={() => setNomination('escort')}>同伴</ToggleButton>
             </div>
           </FadeIn>
-
-          {/* 同伴 */}
-          <FadeIn delay={0.5} className="flex flex-col space-y-4">
-            <span className="text-sm font-serif text-gold uppercase luxury-tracking">Accompaniment <span className="text-xs text-gray-400 ml-2">同伴</span></span>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ToggleButton active={!accompaniment} onClick={() => setAccompaniment(false)}>なし</ToggleButton>
-              <ToggleButton active={accompaniment} onClick={() => setAccompaniment(true)}>あり</ToggleButton>
-            </div>
-          </FadeIn>
         </div>
 
         {/* Result Area */}
         <FadeIn delay={0.6} className="mt-20 pt-16 border-t border-gold/20 text-center">
-          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimate Total <span className="text-xs text-gray-400 ml-2">お見積り目安</span></span>
+          <span className="text-sm md:text-base font-serif text-gray-500 luxury-tracking uppercase mb-4 block">Estimated Total <span className="text-xs text-gray-400 ml-2">お見積り目安</span></span>
           <div className="flex items-end justify-center gap-2 mb-4">
             <span className="text-3xl font-sans text-foreground pb-2">¥</span>
             <AnimatePresence mode="popLayout">
@@ -143,14 +129,14 @@ export const PriceSimulator = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="text-6xl md:text-7xl font-sans font-light tracking-tight text-foreground bg-clip-text text-transparent bg-linear-to-b from-foreground to-gray-500"
+                className="text-6xl md:text-7xl font-sans font-light tracking-tight bg-clip-text text-transparent bg-linear-to-b from-foreground to-gray-500"
               >
                 {calculateTotal.toLocaleString()}
               </motion.span>
             </AnimatePresence>
           </div>
-          <p className="text-xs md:text-xs text-gray-400 font-serif option-tracking leading-[2] mb-12">
-            ※ 税・サービス料（30%）込みの金額です。<br />
+          <p className="text-xs md:text-xs text-gray-400 font-serif option-tracking leading-loose mb-12">
+            ※ 税・サービス料（32%）込みの金額です。<br />
             ※ キャストドリンク代やボトルの別注文料金は含まれておりません。<br />
             ※ あくまで目安料金となりますので、あらかじめご了承ください。
           </p>

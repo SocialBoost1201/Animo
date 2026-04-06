@@ -1,0 +1,435 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "CLUB Animo" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: CLUB Animo
+      - navigation [ref=e8]:
+        - link "System" [ref=e9] [cursor=pointer]:
+          - /url: /system
+        - link "Cast" [ref=e10] [cursor=pointer]:
+          - /url: /cast
+        - link "Shift" [ref=e11] [cursor=pointer]:
+          - /url: /shift
+        - link "Gallery" [ref=e12] [cursor=pointer]:
+          - /url: /gallery
+        - link "Access" [ref=e13] [cursor=pointer]:
+          - /url: /access
+        - button "Recruit" [ref=e15]:
+          - text: Recruit
+          - img [ref=e16]
+        - link "Cast Recruit" [ref=e19] [cursor=pointer]:
+          - /url: /recruit/cast
+  - main [ref=e20]:
+    - generic [ref=e21]:
+      - generic:
+        - img "CLUB Animo main chandelier interior"
+      - generic [ref=e22]:
+        - heading "CLUB Animo" [level=1] [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: 煌びやかなシャンデリアの下で
+          - paragraph [ref=e26]: 特別な時間を
+        - generic [ref=e28]:
+          - link "本日の出勤を見る" [ref=e30] [cursor=pointer]:
+            - /url: /shift
+            - img [ref=e31]
+            - text: 本日の出勤を見る
+          - link "料金を確認する" [ref=e34] [cursor=pointer]:
+            - /url: /system
+            - img [ref=e35]
+            - text: 料金を確認する
+    - generic [ref=e41]:
+      - generic [ref=e44]: Today's Mood
+      - paragraph [ref=e46]: 本日も皆様のご来店をお待ちしております
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - heading "Today's Cast" [level=2] [ref=e50]:
+          - generic [ref=e51]: Today's Cast
+        - paragraph [ref=e53]: 本日の出勤
+        - link "View Schedule →" [ref=e54] [cursor=pointer]:
+          - /url: /shift
+      - generic [ref=e57]:
+        - link "あいか 本日出勤" [ref=e58] [cursor=pointer]:
+          - /url: /cast/aika
+          - img "あいか" [ref=e60]
+          - generic [ref=e63]: 本日出勤
+        - generic [ref=e64]:
+          - link "アイカ あいか" [ref=e65] [cursor=pointer]:
+            - /url: /cast/aika
+            - paragraph [ref=e66]: アイカ
+            - heading "あいか" [level=3] [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]: 20歳
+            - generic [ref=e70]: •
+            - generic [ref=e71]: 160cm
+    - generic [ref=e73]:
+      - heading "News" [level=2] [ref=e75]:
+        - generic [ref=e76]: News
+      - generic [ref=e80]:
+        - time [ref=e81]: 2026.03.01
+        - generic [ref=e82]: 春の特別イベント開催予定のお知らせ
+      - link "View All News →" [ref=e84] [cursor=pointer]:
+        - /url: /news
+    - generic [ref=e86]:
+      - generic [ref=e87]:
+        - heading "How to Enjoy" [level=2] [ref=e88]:
+          - generic [ref=e89]: How to Enjoy
+        - paragraph [ref=e90]: Animo の楽しみ方
+      - generic [ref=e91]:
+        - generic [ref=e93]:
+          - paragraph [ref=e94]: Pattern 01
+          - heading "はじめての方" [level=3] [ref=e95]
+          - paragraph [ref=e96]: Visitor · 60分 · 指名なし
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e99]: セット料金
+              - generic [ref=e100]: ¥7,000
+            - generic [ref=e101]:
+              - generic [ref=e102]: TAX / Service (30%)
+              - generic [ref=e103]: ¥2,100
+          - generic [ref=e104]:
+            - generic [ref=e105]: Total
+            - generic [ref=e106]: ¥9,000
+          - paragraph [ref=e107]: ※ 最もシンプルなご利用例。まず雰囲気を楽しみたい方に。
+        - generic [ref=e109]:
+          - paragraph [ref=e110]: Pattern 02
+          - heading "場内指名で楽しむ" [level=3] [ref=e111]
+          - paragraph [ref=e112]: Visitor · 90分 · 場内指名
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: セット料金
+              - generic [ref=e116]: ¥7,000
+            - generic [ref=e117]:
+              - generic [ref=e118]: 延長 30分
+              - generic [ref=e119]: ¥3,500
+            - generic [ref=e120]:
+              - generic [ref=e121]: 場内指名
+              - generic [ref=e122]: ¥2,500
+            - generic [ref=e123]:
+              - generic [ref=e124]: TAX / Service (30%)
+              - generic [ref=e125]: ¥3,900
+          - generic [ref=e126]:
+            - generic [ref=e127]: Total
+            - generic [ref=e128]: ¥17,000
+          - paragraph [ref=e129]: ※ 気になるキャストをその場で指名して過ごす標準パターン。
+        - generic [ref=e131]:
+          - paragraph [ref=e132]: Pattern 03
+          - heading "じっくり楽しむ" [level=3] [ref=e133]
+          - paragraph [ref=e134]: Visitor · 120分 · 本指名
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - generic [ref=e137]: セット料金
+              - generic [ref=e138]: ¥7,000
+            - generic [ref=e139]:
+              - generic [ref=e140]: 延長 60分
+              - generic [ref=e141]: ¥7,000
+            - generic [ref=e142]:
+              - generic [ref=e143]: 本指名
+              - generic [ref=e144]: ¥3,000
+            - generic [ref=e145]:
+              - generic [ref=e146]: TAX / Service (30%)
+              - generic [ref=e147]: ¥5,100
+          - generic [ref=e148]:
+            - generic [ref=e149]: Total
+            - generic [ref=e150]: ¥22,000
+          - paragraph [ref=e151]: ※ お気に入りのキャストとたっぷり過ごしたい方のスタンダード。
+      - link "初めての方へ →" [ref=e153] [cursor=pointer]:
+        - /url: /guide
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - heading "Price Simulator" [level=2] [ref=e157]:
+          - generic [ref=e158]: Price Simulator
+        - paragraph [ref=e160]: ご利用内容に合わせた料金目安をシミュレーションできます
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - generic [ref=e166]: Customer Type 来店タイプ
+            - generic [ref=e167]:
+              - button "Member" [ref=e168]
+              - button "Visitor" [ref=e169]: Visitor
+          - generic [ref=e171]:
+            - generic [ref=e172]: Expected Duration 滞在時間
+            - generic [ref=e173]:
+              - button "60 MIN" [ref=e174]:
+                - generic [ref=e175]: 60 MIN
+              - button "90 MIN" [ref=e177]:
+                - generic [ref=e178]: 90 MIN
+              - button "120 MIN" [ref=e179]:
+                - generic [ref=e180]: 120 MIN
+              - button "150 MIN" [ref=e181]:
+                - generic [ref=e182]: 150 MIN
+              - button "180 MIN" [ref=e183]:
+                - generic [ref=e184]: 180 MIN
+          - generic [ref=e185]:
+            - generic [ref=e186]: Nomination 指名
+            - generic [ref=e187]:
+              - button "なし" [ref=e188]: なし
+              - button "場内指名" [ref=e190]
+              - button "本指名" [ref=e191]
+              - button "同伴" [ref=e192]
+          - generic [ref=e193]:
+            - generic [ref=e194]: Accompaniment 同伴
+            - generic [ref=e195]:
+              - button "なし" [ref=e196]: なし
+              - button "あり" [ref=e198]
+        - generic [ref=e199]:
+          - generic [ref=e200]: Estimate Total お見積り目安
+          - generic [ref=e201]:
+            - generic [ref=e202]: ¥
+            - generic [ref=e203]: 9,000
+          - paragraph [ref=e204]:
+            - text: ※ 税・サービス料（30%）込みの金額です。
+            - text: ※ キャストドリンク代やボトルの別注文料金は含まれておりません。
+            - text: ※ あくまで目安料金となりますので、あらかじめご了承ください。
+          - generic [ref=e205]:
+            - link "お電話はこちら" [ref=e206] [cursor=pointer]:
+              - /url: tel:045-263-6961
+              - img
+              - text: お電話はこちら
+            - link "本日の出勤を見る" [ref=e207] [cursor=pointer]:
+              - /url: /shift
+              - img
+              - text: 本日の出勤を見る
+    - generic [ref=e209]:
+      - generic [ref=e210]:
+        - heading "Night Style" [level=2] [ref=e211]:
+          - generic [ref=e212]: Night Style
+        - paragraph [ref=e214]: 今日の気分に合わせた過ごし方をご提案します
+      - generic [ref=e216]:
+        - generic [ref=e222]:
+          - generic [ref=e223]: Question 1 / 4
+          - heading "Q1. 今日のご来店目的は？" [level=3] [ref=e224]
+        - generic [ref=e225]:
+          - button "接待や大切な方のおもてなし" [ref=e226]:
+            - img [ref=e228]
+            - generic [ref=e230]: 接待や大切な方のおもてなし
+          - button "友人とワイワイ盛り上がりたい" [ref=e231]:
+            - img [ref=e233]
+            - generic [ref=e238]: 友人とワイワイ盛り上がりたい
+          - button "一人でゆっくり飲みたい" [ref=e239]:
+            - img [ref=e241]
+            - generic [ref=e243]: 一人でゆっくり飲みたい
+    - generic [ref=e245]:
+      - generic [ref=e246]:
+        - heading "Cast" [level=2] [ref=e247]:
+          - generic [ref=e248]: Cast
+        - paragraph [ref=e250]: 在籍キャスト
+      - generic [ref=e251]:
+        - link "えりか えりか" [ref=e253] [cursor=pointer]:
+          - /url: /cast/f1f93b3b
+          - generic [ref=e254]:
+            - img "えりか" [ref=e257]
+            - heading "えりか" [level=3] [ref=e262]
+        - link "まりあ まりあ 35歳" [ref=e264] [cursor=pointer]:
+          - /url: /cast/1826b2b7
+          - generic [ref=e265]:
+            - img "まりあ" [ref=e268]
+            - generic [ref=e272]:
+              - heading "まりあ" [level=3] [ref=e273]
+              - generic [ref=e275]: 35歳
+        - link "更新確認ステージ名 更新確認ステージ名 25歳" [ref=e277] [cursor=pointer]:
+          - /url: /cast/5aa228ef
+          - generic [ref=e278]:
+            - img "更新確認ステージ名" [ref=e281]
+            - generic [ref=e285]:
+              - heading "更新確認ステージ名" [level=3] [ref=e286]
+              - generic [ref=e288]: 25歳
+        - link "あいか Today あいか 20歳 | 160cm “お酒を楽しく飲むの大好きなんで、一緒に飲みましょう！”" [ref=e290] [cursor=pointer]:
+          - /url: /cast/aika
+          - generic [ref=e291]:
+            - generic [ref=e292]:
+              - img "あいか" [ref=e294]
+              - generic [ref=e297]: Today
+            - generic [ref=e299]:
+              - heading "あいか" [level=3] [ref=e300]
+              - generic [ref=e301]:
+                - generic [ref=e302]: 20歳
+                - generic [ref=e303]: "|"
+                - generic [ref=e304]: 160cm
+              - paragraph [ref=e305]: “お酒を楽しく飲むの大好きなんで、一緒に飲みましょう！”
+        - link "じゅり じゅり 24歳 | 163cm “たくさん飲みましょう❤️”" [ref=e307] [cursor=pointer]:
+          - /url: /cast/juri
+          - generic [ref=e308]:
+            - img "じゅり" [ref=e311]
+            - generic [ref=e315]:
+              - heading "じゅり" [level=3] [ref=e316]
+              - generic [ref=e317]:
+                - generic [ref=e318]: 24歳
+                - generic [ref=e319]: "|"
+                - generic [ref=e320]: 163cm
+              - paragraph [ref=e321]: “たくさん飲みましょう❤️”
+        - link "かな かな 27歳 | 158cm" [ref=e323] [cursor=pointer]:
+          - /url: /cast/kana
+          - generic [ref=e324]:
+            - img "かな" [ref=e327]
+            - generic [ref=e331]:
+              - heading "かな" [level=3] [ref=e332]
+              - generic [ref=e333]:
+                - generic [ref=e334]: 27歳
+                - generic [ref=e335]: "|"
+                - generic [ref=e336]: 158cm
+        - link "りいな りいな 34歳 | 164cm “ビールはスタバ🍺♡”" [ref=e338] [cursor=pointer]:
+          - /url: /cast/riina
+          - generic [ref=e339]:
+            - img "りいな" [ref=e342]
+            - generic [ref=e346]:
+              - heading "りいな" [level=3] [ref=e347]
+              - generic [ref=e348]:
+                - generic [ref=e349]: 34歳
+                - generic [ref=e350]: "|"
+                - generic [ref=e351]: 164cm
+              - paragraph [ref=e352]: “ビールはスタバ🍺♡”
+        - link "いぶき いぶき 31歳 | 163cm “お話聞くのが好きなのであなたの人生聞かせてくださーい♡笑”" [ref=e354] [cursor=pointer]:
+          - /url: /cast/ibuki
+          - generic [ref=e355]:
+            - img "いぶき" [ref=e358]
+            - generic [ref=e362]:
+              - heading "いぶき" [level=3] [ref=e363]
+              - generic [ref=e364]:
+                - generic [ref=e365]: 31歳
+                - generic [ref=e366]: "|"
+                - generic [ref=e367]: 163cm
+              - paragraph [ref=e368]: “お話聞くのが好きなのであなたの人生聞かせてくださーい♡笑”
+        - link "みらん みらん" [ref=e370] [cursor=pointer]:
+          - /url: /cast/miran
+          - generic [ref=e371]:
+            - img "みらん" [ref=e374]
+            - heading "みらん" [level=3] [ref=e379]
+        - link "ななせ ななせ 23歳 | 159cm “つまりらぶしっく”" [ref=e381] [cursor=pointer]:
+          - /url: /cast/nanase
+          - generic [ref=e382]:
+            - img "ななせ" [ref=e385]
+            - generic [ref=e389]:
+              - heading "ななせ" [level=3] [ref=e390]
+              - generic [ref=e391]:
+                - generic [ref=e392]: 23歳
+                - generic [ref=e393]: "|"
+                - generic [ref=e394]: 159cm
+              - paragraph [ref=e395]: “つまりらぶしっく”
+      - link "キャスト一覧を見る →" [ref=e397] [cursor=pointer]:
+        - /url: /cast
+    - generic [ref=e399]:
+      - generic [ref=e400]:
+        - heading "Gallery" [level=2] [ref=e401]:
+          - generic [ref=e402]: Gallery
+        - paragraph [ref=e404]: The Atmosphere of Club Animo
+      - paragraph [ref=e406]: Loading Gallery...
+      - link "すべての写真を見る" [ref=e408] [cursor=pointer]:
+        - /url: /gallery
+    - generic [ref=e410]:
+      - heading "Access" [level=2] [ref=e412]:
+        - generic [ref=e413]: Access
+      - generic [ref=e416]:
+        - generic [ref=e417]:
+          - generic [ref=e418]:
+            - term [ref=e419]:
+              - img [ref=e420]
+            - definition [ref=e423]:
+              - text: 〒231-0012
+              - text: 神奈川県横浜市中区相生町３丁目５３
+              - text: グランドパークビル2F
+          - generic [ref=e424]:
+            - term [ref=e425]:
+              - img [ref=e426]
+            - definition [ref=e430]:
+              - paragraph [ref=e431]:
+                - text: JR根岸線「関内駅」
+                - strong [ref=e432]: 徒歩 約5分
+              - paragraph [ref=e433]:
+                - text: 横浜市営地下鉄「関内駅」
+                - strong [ref=e434]: 徒歩 約5分
+              - paragraph [ref=e435]:
+                - text: みなとみらい線「馬車道駅」
+                - strong [ref=e436]: 徒歩 約6分
+              - paragraph [ref=e437]:
+                - text: みなとみらい線「日本大通り駅」
+                - strong [ref=e438]: 徒歩 約8分
+        - link "詳しく見る" [ref=e440] [cursor=pointer]:
+          - /url: /access
+    - generic [ref=e444]:
+      - img "Recruit Background" [ref=e447]
+      - generic [ref=e449]:
+        - heading "Recruit" [level=2] [ref=e450]
+        - paragraph [ref=e451]:
+          - text: 当店では、一緒に最高の空間を創り上げるキャスト・スタッフを募集しています。
+          - text: 未経験からでも安心して働ける環境を整えています。
+        - generic [ref=e452]:
+          - link "キャスト求人を見る" [ref=e453] [cursor=pointer]:
+            - /url: /recruit/cast
+          - link "店舗スタッフ求人を見る" [ref=e454] [cursor=pointer]:
+            - /url: /recruit/staff
+  - contentinfo [ref=e455]:
+    - generic [ref=e456]:
+      - generic [ref=e457]:
+        - generic [ref=e458]:
+          - link "CLUB Animo" [ref=e459] [cursor=pointer]:
+            - /url: /
+          - paragraph [ref=e460]: 関内の大人の社交場。煌びやかなシャンデリアの下で、特別な時間をお過ごしください。極上のキャストが最高の夜を演出いたします。
+          - generic [ref=e461]:
+            - link "Instagram" [ref=e462] [cursor=pointer]:
+              - /url: https://www.instagram.com/kannai_club_animo/
+              - img [ref=e463]
+            - link "@kannai_club_animo" [ref=e466] [cursor=pointer]:
+              - /url: https://www.instagram.com/kannai_club_animo/
+        - generic [ref=e467]:
+          - heading "Discover" [level=3] [ref=e468]
+          - list [ref=e469]:
+            - listitem [ref=e470]:
+              - link "Concept" [ref=e471] [cursor=pointer]:
+                - /url: /concept
+            - listitem [ref=e472]:
+              - link "First Visit Guide" [ref=e473] [cursor=pointer]:
+                - /url: /guide
+            - listitem [ref=e474]:
+              - link "System" [ref=e475] [cursor=pointer]:
+                - /url: /system
+            - listitem [ref=e476]:
+              - link "Cast" [ref=e477] [cursor=pointer]:
+                - /url: /cast
+            - listitem [ref=e478]:
+              - link "News" [ref=e479] [cursor=pointer]:
+                - /url: /news
+            - listitem [ref=e480]:
+              - link "Today's Shift" [ref=e481] [cursor=pointer]:
+                - /url: /shift
+            - listitem [ref=e482]:
+              - link "Gallery" [ref=e483] [cursor=pointer]:
+                - /url: /gallery
+            - listitem [ref=e484]:
+              - link "FAQ" [ref=e485] [cursor=pointer]:
+                - /url: /faq
+        - generic [ref=e486]:
+          - heading "Recruit" [level=3] [ref=e487]
+          - list [ref=e488]:
+            - listitem [ref=e489]:
+              - link "Cast Recruit" [ref=e490] [cursor=pointer]:
+                - /url: /recruit/cast
+            - listitem [ref=e491]:
+              - link "Staff Recruit" [ref=e492] [cursor=pointer]:
+                - /url: /recruit/staff
+            - listitem [ref=e493]:
+              - link "採用プライバシー" [ref=e494] [cursor=pointer]:
+                - /url: /privacy
+        - generic [ref=e495]:
+          - heading "Access" [level=3] [ref=e496]
+          - list [ref=e497]:
+            - listitem [ref=e498]:
+              - img [ref=e499]
+              - generic [ref=e502]:
+                - text: 〒231-0012
+                - text: 神奈川県横浜市中区相生町３丁目５３
+                - text: グランドパークビル2F
+            - listitem [ref=e503]:
+              - img [ref=e504]
+              - link "045-263-6961" [ref=e506] [cursor=pointer]:
+                - /url: tel:045-263-6961
+            - listitem [ref=e507]:
+              - paragraph [ref=e508]: OPEN 21:00 - LAST
+              - paragraph [ref=e509]: Closed on Sundays & Holidays
+      - generic [ref=e510]:
+        - paragraph [ref=e511]: © 2026 Club Animo. All rights reserved. 20歳未満の方のご入店はお断りしております。
+        - generic [ref=e512]:
+          - link "Privacy Policy" [ref=e513] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms of Service" [ref=e514] [cursor=pointer]:
+            - /url: /terms

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getTargetWeekMonday } from '@/lib/shift-utils';
+import { getTargetWeekMonday, formatDate, getWeekDates } from '@/lib/shift-utils';
 import { getMyShiftSubmission, submitMyShift, WeeklyShiftSubmission, ShiftType } from '@/lib/actions/cast-shifts';
 import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Send, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -13,9 +13,7 @@ function getInitialTargetMonday() {
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
   const nextMondayDate = getTargetWeekMonday(nextWeek);
-  return new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000)
-    .toISOString()
-    .split('T')[0];
+  return formatDate(nextMondayDate);
 }
 
 export default function ShiftSubmitPage({ castId }: { castId: string }) {
@@ -25,27 +23,15 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
   const [targetMonday, setTargetMonday] = useState<string>(getInitialTargetMonday);
   const [shifts, setShifts] = useState<WeeklyShiftSubmission>({});
 
-  // 1週間分の日付リストを生成
-  const generateWeekDays = (mondayStr: string) => {
-    const monday = new Date(mondayStr);
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-        const d = new Date(monday);
-        d.setDate(monday.getDate() + i);
-        days.push(d);
-    }
-    return days;
-  };
-
   useEffect(() => {
     const loadShifts = async () => {
       setIsLoading(true);
-      const days = generateWeekDays(targetMonday);
+      const days = getWeekDates(targetMonday);
       const initialShifts: WeeklyShiftSubmission = {};
       
       // デフォルト値のセット（休み）
       days.forEach(d => {
-        const dateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        const dateStr = formatDate(d);
         initialShifts[dateStr] = { type: 'off', start: '21:00', end: 'LAST' };
       });
 
@@ -115,8 +101,8 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
       );
   }
 
-  const days = targetMonday ? generateWeekDays(targetMonday) : [];
-  const weekDayStrs = ['月', '火', '水', '木', '金', '土', '日'];
+  const days = targetMonday ? getWeekDates(targetMonday) : [];
+  const weekDayStrs = ['月', '火', '水', '木', '金', '土', '日']; // 月曜始まり
 
   return (
     <PageShell width="narrow" className="space-y-6 px-5 py-8">
@@ -137,19 +123,22 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
 
       <SectionCard tone="subtle" className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <button onClick={() => changeWeek('prev')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50">
-              <ChevronLeft className="w-4 h-4 text-[#171717]" />
+            <button onClick={() => changeWeek('prev')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50 transition-colors">
+              <ChevronLeft className="w-5 h-5 text-[#171717]" />
             </button>
-            <p className="text-xs text-[#171717] font-bold text-center">
-                対象週: {targetMonday.replace(/-/g, '/')} 〜 
-            </p>
-            <button onClick={() => changeWeek('next')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50">
-              <ChevronRight className="w-4 h-4 text-[#171717]" />
+            <div className="flex flex-col items-center">
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Target Period</span>
+                <p className="text-sm text-[#171717] font-bold tracking-tight">
+                    {targetMonday.replace(/-/g, '/')} 〜 {days.length > 0 ? formatDate(days[6]).replace(/-/g, '/') : ''}
+                </p>
+            </div>
+            <button onClick={() => changeWeek('next')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50 transition-colors">
+              <ChevronRight className="w-5 h-5 text-[#171717]" />
             </button>
           </div>
-          <p className="text-xs text-gray-500 text-center leading-relaxed mt-2">
-              出勤する日の時間を選択してください。<br/>
-              ※開始・終了時間は後から変更可能です
+          <p className="text-[11px] text-gray-500 text-center leading-relaxed mt-3 px-4">
+              出勤する日を選択し、希望する時間を選んでください。<br/>
+              ※開始・終了時間は後から変更可能です。
           </p>
       </SectionCard>
 
@@ -160,7 +149,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
       ) : (
       <div className="space-y-3">
           {days.map((d, i) => {
-              const dateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+              const dateStr = formatDate(d);
               const shift = shifts[dateStr] || { type: 'off', start: '21:00', end: 'LAST' };
               const isWork = shift.type === 'work';
 
@@ -228,7 +217,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
       </div>
       )}
 
-      <div className="pt-4 sticky bottom-6 z-10">
+      <div className="pt-4 sticky z-10" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
           <button 
               onClick={handleSubmit}
               disabled={isSubmitting}

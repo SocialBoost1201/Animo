@@ -3,6 +3,10 @@
 import { createCast, updateCast } from '@/lib/actions/casts'
 import { Button } from '@/components/ui/Button'
 import { showToast } from '@/components/ui/Toast'
+import {
+  validateCastProfileInput,
+  type CastProfileFieldErrors,
+} from '@/lib/validators/cast-profile'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -22,6 +26,12 @@ const QUIZ_TAG_OPTIONS = [
   { value: 'fashion', label: 'ファッション・おしゃれ' },
 ]
 
+type CastPrivateInfo = {
+  real_name: string
+  date_of_birth: string
+  phone?: string | null
+  email?: string | null
+}
 
 type Cast = {
   id: string;
@@ -39,8 +49,13 @@ type Cast = {
   sns_x?: string;
   sns_instagram?: string;
   sns_tiktok?: string;
-  // 非公開個人情報（管理者のみ参照可能）
-  cast_private_info?: { real_name: string; date_of_birth: string } | null;
+  cast_private_info?: CastPrivateInfo | CastPrivateInfo[] | null;
+}
+
+function normalizePrivateInfo(raw: Cast['cast_private_info']): CastPrivateInfo | null {
+  if (!raw) return null
+  if (Array.isArray(raw)) return raw[0] ?? null
+  return raw
 }
 
 export function CastForm({ initialData }: { initialData?: Cast }) {
@@ -49,23 +64,75 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [compressedImage, setCompressedImage] = useState<Blob | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.quiz_tags || [])
+  const [formError, setFormError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<CastProfileFieldErrors>({})
   const formRef = useRef<HTMLFormElement>(null)
   const isEditing = !!initialData
+
+  const privateInfo = normalizePrivateInfo(initialData?.cast_private_info)
 
   // --- フリガナ自動生成用ステート ---
   const [stageName, setStageName] = useState(initialData?.stage_name || initialData?.name || '')
   const [nameKana, setNameKana] = useState(initialData?.name_kana || '')
+  const [realName, setRealName] = useState(privateInfo?.real_name || '')
+  const [dateOfBirth, setDateOfBirth] = useState(privateInfo?.date_of_birth || '')
+  const [phone, setPhone] = useState(privateInfo?.phone || '')
+  const [email, setEmail] = useState(privateInfo?.email || '')
   // もともとデータがない新規登録時のみ、自動入力をONにする
   const [isAutoKana, setIsAutoKana] = useState(!initialData?.name_kana)
+
+  const clearFieldError = (field: keyof CastProfileFieldErrors) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const validateAllFields = () => {
+    const result = validateCastProfileInput({
+      real_name: realName,
+      name_kana: nameKana,
+      stage_name: stageName,
+      date_of_birth: dateOfBirth,
+      phone,
+      email,
+    })
+    setFieldErrors(result.fieldErrors)
+    return {
+      isValid: Object.keys(result.fieldErrors).length === 0,
+      values: result.values,
+    }
+  }
+
+  const validateSingleField = (field: keyof CastProfileFieldErrors) => {
+    const result = validateCastProfileInput({
+      real_name: realName,
+      name_kana: nameKana,
+      stage_name: stageName,
+      date_of_birth: dateOfBirth,
+      phone,
+      email,
+    })
+    const message = result.fieldErrors[field]
+    setFieldErrors((prev) => {
+      const next = { ...prev }
+      if (message) next[field] = message
+      else delete next[field]
+      return next
+    })
+  }
 
   const handleStageNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setStageName(val)
+    clearFieldError('stage_name')
     
     // 手動で編集されていなければ、ひらがな/カタカナ入力時に自動カタカナ変換する
     if (isAutoKana) {
       // 全て平仮名・カタカナ・長音記号だけで構成されているかチェック
-      const isKanaOnly = /^[ぁ-んァ-ンー]*$/.test(val)
+      const isKanaOnly = /^[ぁ-んァ-ンー\s　]*$/.test(val)
       if (isKanaOnly) {
         // ひらがなをカタカナに変換してセット
         const katakana = val.replace(/[\u3041-\u3096]/g, match => 
@@ -80,9 +147,23 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setFormError(null)
+
+    const validation = validateAllFields()
+    if (!validation.isValid) {
+      setFormError('入力内容を確認してください。')
+      return
+    }
+
     setIsPending(true)
     const formData = new FormData(e.currentTarget)
     if (!formData.get('is_active')) formData.set('is_active', 'false')
+    formData.set('real_name', validation.values.realName)
+    formData.set('name_kana', validation.values.nameKana)
+    formData.set('stage_name', validation.values.stageName)
+    formData.set('date_of_birth', validation.values.dateOfBirth)
+    formData.set('phone', validation.values.phone)
+    formData.set('email', validation.values.email)
 
     // 圧縮済みの画像をFormDataに上書き
     if (compressedImage) {
@@ -93,20 +174,26 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
       const result = isEditing && initialData?.id
         ? await updateCast(initialData.id, formData)
         : await createCast(formData)
-      if (result.error) showToast(result.error, 'error')
-      else {
+      if (result.error) {
+        if (result.fieldErrors) {
+          setFieldErrors(result.fieldErrors)
+          setFormError(result.error)
+        } else {
+          showToast(result.error, 'error')
+          setFormError(result.error)
+        }
+      } else {
         router.push('/admin/human-resources')
         router.refresh()
       }
     } catch (err: unknown) {
       const error = err as Error;
       showToast(error.message, 'error')
+      setFormError(error.message)
     } finally {
       setIsPending(false)
     }
   }
-
-
 
   const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors'
   const labelClass = 'block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2'
@@ -171,12 +258,10 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     })
   }
 
-
-
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link href="/admin/human-resources" className="inline-flex items-center text-sm text-gray-500 hover:text-[#171717] transition-colors">
+        <Link prefetch={false} href="/admin/human-resources" className="inline-flex items-center text-sm text-gray-500 hover:text-[#171717] transition-colors">
           <ArrowLeft size={16} className="mr-1" /> 一覧へ戻る
         </Link>
       </div>
@@ -187,24 +272,37 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
         </h2>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+          {formError && (
+            <div className="rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {formError}
+            </div>
+          )}
 
-          {/* 源氏名 + フリガナ */}
+          {/* 必須項目 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="stage_name" className={labelClass}>源氏名 (Stage Name) *</label>
+              <label htmlFor="real_name" className={labelClass}>名前 *</label>
               <input
-                id="stage_name"
-                name="stage_name"
+                id="real_name"
+                name="real_name"
                 type="text"
-                value={stageName}
-                onChange={handleStageNameChange}
+                value={realName}
+                onChange={(e) => {
+                  setRealName(e.target.value)
+                  clearFieldError('real_name')
+                }}
+                onBlur={() => validateSingleField('real_name')}
                 required
                 className={inputClass}
-                placeholder="あいか"
+                placeholder="山田 花子"
+                autoComplete="off"
               />
+              {fieldErrors.real_name && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.real_name}</p>
+              )}
             </div>
             <div>
-              <label htmlFor="name_kana" className={labelClass}>フリガナ (Name Kana) *</label>
+              <label htmlFor="name_kana" className={labelClass}>フリガナ *</label>
               <input
                 id="name_kana"
                 name="name_kana"
@@ -212,15 +310,96 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 value={nameKana}
                 onChange={(e) => {
                   setNameKana(e.target.value)
-                  setIsAutoKana(false) // 手動編集されたら自動追従を解除
+                  setIsAutoKana(false)
+                  clearFieldError('name_kana')
                 }}
+                onBlur={() => validateSingleField('name_kana')}
                 required
-                pattern="^[ぁ-んァ-ンー]+$"
                 className={inputClass}
-                placeholder="アイカ"
-                title="ひらがな・カタカナのみ"
+                placeholder="ヤマダ ハナコ"
+                title="全角カタカナで入力してください"
               />
-              <p className="text-xs text-gray-400 mt-1">あいうえお順の並び替えに使用します</p>
+              {fieldErrors.name_kana && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.name_kana}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="stage_name" className={labelClass}>源氏名 *</label>
+              <input
+                id="stage_name"
+                name="stage_name"
+                type="text"
+                value={stageName}
+                onChange={handleStageNameChange}
+                onBlur={() => validateSingleField('stage_name')}
+                required
+                className={inputClass}
+                placeholder="あいか"
+              />
+              {fieldErrors.stage_name && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.stage_name}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="date_of_birth" className={labelClass}>生年月日 *</label>
+              <input
+                id="date_of_birth"
+                name="date_of_birth"
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => {
+                  setDateOfBirth(e.target.value)
+                  clearFieldError('date_of_birth')
+                }}
+                onBlur={() => validateSingleField('date_of_birth')}
+                required
+                className={inputClass}
+              />
+              {fieldErrors.date_of_birth && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.date_of_birth}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="phone" className={labelClass}>電話番号 *</label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value)
+                  clearFieldError('phone')
+                }}
+                onBlur={() => validateSingleField('phone')}
+                required
+                className={inputClass}
+                placeholder="090-1234-5678"
+                autoComplete="tel"
+              />
+              {fieldErrors.phone && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.phone}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="email" className={labelClass}>メールアドレス *</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  clearFieldError('email')
+                }}
+                onBlur={() => validateSingleField('email')}
+                required
+                className={inputClass}
+                placeholder="cast@example.com"
+                autoComplete="email"
+              />
+              {fieldErrors.email && (
+                <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
+              )}
             </div>
           </div>
 
@@ -229,7 +408,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <input type="hidden" name="slug" value={initialData.slug} />
           )}
 
-          {/* 年齢 + 身長 */}
+          <p className="text-xs text-gray-500">
+            名前・生年月日・電話番号・メールアドレスは管理者専用情報です。公開ページには表示されません。
+          </p>
+
+          {/* 任意項目 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="cast_age" className={labelClass}>年齢 (Age)</label>
@@ -240,44 +423,6 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               <label htmlFor="cast_height" className={labelClass}>身長 (Height) / cm</label>
               <input id="cast_height" name="height" type="number" min="130" max="220"
                 defaultValue={initialData?.height} className={inputClass} placeholder="160" />
-            </div>
-          </div>
-
-          {/* === 個人情報エリア（管理者専用・外部非公開） === */}
-          <div className="border border-amber-200 bg-amber-50 rounded-sm p-4 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-amber-800 tracking-widest uppercase">🔐 個人情報（管理者専用 / 非公開）</span>
-            </div>
-            <p className="text-xs text-amber-700 leading-relaxed">
-              本名・生年月日はサイトおよびキャストダッシュボードには一切表示されません。<br />
-              同じ源氏名のキャストが過去・将来に存在する場合の本人特定と、本人自己登録時の照合に使用します。<br />
-              管理画面からログインアカウントは発行されません。登録後は本人が <span className="font-bold">/cast/register</span> から自己登録します。
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="real_name" className={labelClass}>本名 (Real Name) *</label>
-                <input
-                  id="real_name"
-                  name="real_name"
-                  type="text"
-                  defaultValue={initialData?.cast_private_info?.real_name || ''}
-                  required
-                  className={inputClass}
-                  placeholder="山田 花子"
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <label htmlFor="date_of_birth" className={labelClass}>生年月日 (Date of Birth) *</label>
-                <input
-                  id="date_of_birth"
-                  name="date_of_birth"
-                  type="date"
-                  defaultValue={initialData?.cast_private_info?.date_of_birth || ''}
-                  required
-                  className={inputClass}
-                />
-              </div>
             </div>
           </div>
 
@@ -349,8 +494,6 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             </div>
           </div>
 
-
-
           {/* コメント */}
           <div>
             <div className="flex items-end justify-between mb-2">
@@ -360,38 +503,39 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               className={inputClass} placeholder="お客様へのメッセージやプロフィール文" />
           </div>
 
-          {/* 画像 アップロード */}
-          <div>
-            <label htmlFor="image_file" className={labelClass}>プロフィール画像 (Profile Image)</label>
-            <div className="flex items-start gap-4">
-              {(imagePreview || primaryImage?.image_url) && (
-                <div className="shrink-0 mb-4 md:mb-0 relative w-24 h-24">
-                  <Image 
-                    src={imagePreview || primaryImage?.image_url || ''} 
-                    alt="プレビュー" 
-                    fill
-                    unoptimized
-                    className="object-cover rounded shadow-sm border border-gray-100" 
+          {!isEditing && (
+            <div>
+              <label htmlFor="image_file" className={labelClass}>プロフィール画像 (Profile Image)</label>
+              <div className="flex items-start gap-4">
+                {(imagePreview || primaryImage?.image_url) && (
+                  <div className="shrink-0 mb-4 md:mb-0 relative w-24 h-24">
+                    <Image
+                      src={imagePreview || primaryImage?.image_url || ''}
+                      alt="プレビュー"
+                      fill
+                      unoptimized
+                      className="object-cover rounded shadow-sm border border-gray-100"
+                    />
+                    <p className="text-xs text-gray-400 mt-28 text-center">プレビュー</p>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input
+                    id="image_file"
+                    name="image_file"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                    onChange={handleImageChange}
+                    className={inputClass}
                   />
-                  <p className="text-xs text-gray-400 mt-28 text-center">プレビュー</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
+                    ※ 後から追加することもできます。
+                  </p>
                 </div>
-              )}
-              <div className="flex-1">
-                <input 
-                  id="image_file"
-                  name="image_file" 
-                  type="file" 
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                  onChange={handleImageChange}
-                  className={inputClass} 
-                />
-                <p className="text-xs text-gray-400 mt-2">
-                  ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
-                  ※ {isEditing ? '新しい画像を選択すると上書きされます。' : '後から追加することもできます。'}
-                </p>
               </div>
             </div>
-          </div>
+          )}
 
           {/* 在籍フラグ */}
           <div className="border-t border-gray-100 pt-6">

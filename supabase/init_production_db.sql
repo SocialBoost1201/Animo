@@ -8,6 +8,9 @@
 -- ─────────────────────────────────────────────────────────────
 ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS slug text;
 ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS profile_image_id uuid;
+ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS sns_x text;
+ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS sns_instagram text;
+ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS sns_tiktok text;
 ALTER TABLE public.casts ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
 
 -- 既存データに slug を自動生成（重複しない形式）

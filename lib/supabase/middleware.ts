@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin'])
+const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin', 'staff'])
 
 async function getAppRole(
   supabase: ReturnType<typeof createServerClient>,

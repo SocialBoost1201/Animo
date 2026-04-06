@@ -1,0 +1,4 @@
+[    2397ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[    2427ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297
+[    2593ms] [WARNING] Image with src "/images/placeholders/cast.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://127.0.0.1:4100/_next/static/chunks/eee8a_next_dist_3ea5c34e._.js:2297

@@ -1,0 +1,21 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "ANIMO PORTAL" [ref=e6] [cursor=pointer]:
+        - /url: /cast/dashboard
+    - main [ref=e7]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - heading "パスワード再設定" [level=1] [ref=e11]
+          - paragraph [ref=e12]: 登録したメールアドレスを入力してください
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - generic [ref=e15]: Email
+            - textbox "cast@example.com" [ref=e16]
+          - button "再設定メールを送信" [ref=e17]
+        - link "← ログインへ戻る" [ref=e19] [cursor=pointer]:
+          - /url: /cast/login
+    - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e25] [cursor=pointer]:
+    - img [ref=e26]
+  - alert [ref=e29]

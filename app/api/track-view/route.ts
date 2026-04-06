@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     // クライアントのIPアドレス（プロキシ等のヘッダーを順番に確認）
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
-    let viewerIp = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || 'unknown-ip');
+    const viewerIp = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || 'unknown-ip');
     
     // User Agent
     const userAgent = request.headers.get('user-agent') || 'unknown-ua';

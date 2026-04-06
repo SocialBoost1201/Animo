@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Save, Eraser, CalendarDays, Loader2, Check } from 'lucide-react';
+import { Save, Eraser, Loader2, Check } from 'lucide-react';
 import { ShiftStatus, MonthlyShiftDetail, saveMonthlyShifts } from '@/lib/actions/monthly-shifts';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -43,8 +43,9 @@ export function MonthlyShiftCalendar({
       const next = { ...prev };
       
       if (activeTool.type === 'erase') {
-        const { [dateStr]: _, ...rest } = next;
-        return rest; // 未選択状態（キーごと削除してnull扱いにする設計に合わせる）
+        const nextWithoutDate = { ...next };
+        delete nextWithoutDate[dateStr];
+        return nextWithoutDate; // 未選択状態（キーごと削除してnull扱いにする設計に合わせる）
       }
       
       next[dateStr] = {
@@ -109,10 +110,10 @@ export function MonthlyShiftCalendar({
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         
         {/* ペイントツール選択（スマホでは画面下部に固定、PCでは上部） */}
-        <div className="p-4 bg-gray-50 border-b border-gray-200 sticky top-0 sm:static z-20">
+        <div className="p-4 bg-gray-50 border-b border-gray-200 sticky top-14 sm:static z-20">
           <h3 className="text-xs font-bold text-gray-500 mb-3 flex items-center gap-1.5 uppercase tracking-widest">
             <span className="w-1.5 h-1.5 bg-gold rounded-full inline-block"></span>
-            1. 予定を選んでカレンダーをタップ
+            1. 予定の種類を選んでください
           </h3>
           
           <div className="flex flex-wrap gap-2">
@@ -154,7 +155,7 @@ export function MonthlyShiftCalendar({
         <div className="p-4 sm:p-6">
           <h3 className="text-xs font-bold text-gray-500 mb-4 flex items-center gap-1.5 uppercase tracking-widest pb-2 border-b border-gray-100">
             <span className="w-1.5 h-1.5 bg-gold rounded-full inline-block"></span>
-            2. カレンダーを塗りつぶす
+            2. カレンダーをタップして入力
           </h3>
           
           <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
@@ -201,7 +202,7 @@ export function MonthlyShiftCalendar({
           className="w-full sm:w-auto bg-[#171717] hover:bg-gold text-white px-8 py-3.5 rounded-xl font-bold tracking-widest flex items-center justify-center gap-2 shadow-[0_8px_16px_rgba(0,0,0,0.15)] active:scale-95 transition-all disabled:opacity-50"
         >
           {isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-          {isPending ? '保存しています...' : 'シフトを提出する'}
+          {isPending ? '保存しています…' : 'シフトを提出する'}
         </button>
       </div>
 

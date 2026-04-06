@@ -9,11 +9,13 @@ import { Button } from '@/components/ui/Button';
 import {
   ArrowRight, CheckCircle2, Phone, Instagram,
   ChevronDown, ChevronUp, CalendarHeart, Briefcase,
-  Users, User, MapPin
+  User
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
 import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
 import { trackRecruitSubmit } from '@/lib/analytics';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 
 // ─── データ定義 ────────────────────────────────────────────────
 
@@ -79,7 +81,7 @@ const POSITIONS = {
       '学歴・職歴・業界経験一切不問（異業種転職大歓迎）',
       'アルバイトは週１日・3時間〜自由なシフトに調整可能',
       'マネージャー・店長候補への昇格実績多数・独立支援あり',
-      '安心の文化：素行の悪いお客様はお断り',
+      '安心の環境：マナーの悪いお客様の入店はお断りしております',
       'スマホ応募OK',
     ],
     tableData: [
@@ -159,28 +161,51 @@ const POSITIONS = {
 
 // ─── メインコンポーネント ──────────────────────────────────────
 
-export default function StaffRecruitPage() {
+function StaffRecruitPageContent() {
   const [activeTab, setActiveTab] = useState<'staff' | 'escort'>('staff');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const data = POSITIONS[activeTab];
+  const heroCtaBase =
+    'group relative isolate inline-flex w-full min-h-16 sm:min-h-[72px] items-center justify-center gap-3 overflow-hidden rounded-[24px] border px-7 py-4 font-serif text-[11px] md:text-xs uppercase luxury-tracking transition-all duration-500 ease-out backdrop-blur-xl shadow-[0_24px_60px_-28px_rgba(0,0,0,0.75)]';
+
+  const heroCtaPrimary = `${heroCtaBase} border-[#f1ddb1]/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.98)_0%,rgba(245,234,209,0.97)_38%,rgba(191,154,89,0.96)_100%)] text-[#18130d] hover:-translate-y-0.5 hover:shadow-[0_30px_75px_-28px_rgba(179,146,87,0.72)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.06)_38%,rgba(255,255,255,0.02)_100%)] before:content-['']`;
+
+  const heroCtaSecondary = `${heroCtaBase} border-white/20 bg-[linear-gradient(135deg,rgba(14,12,10,0.78)_0%,rgba(30,25,19,0.62)_52%,rgba(73,58,37,0.5)_100%)] text-white hover:-translate-y-0.5 hover:border-[#d7ba84]/55 hover:shadow-[0_30px_72px_-30px_rgba(222,187,124,0.36)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.03)_32%,rgba(255,255,255,0)_100%)] before:content-['']`;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!executeRecaptcha) {
+      setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage('');
-    const formData = new FormData(e.currentTarget);
-    formData.append('type', data.formRole);
-    const result = await submitRecruitApplication(formData);
-    setIsSubmitting(false);
-    if (result.error) {
-      setErrorMessage(result.error);
-    } else {
-      setIsSuccess(true);
-      trackRecruitSubmit('staff');
+
+    try {
+      const token = await executeRecaptcha('staff_recruit_submit');
+      const formData = new FormData(e.currentTarget);
+      formData.append('type', data.formRole);
+      formData.append('recaptchaToken', token);
+      
+      const result = await submitRecruitApplication(formData);
+      setIsSubmitting(false);
+      
+      if (result.error) {
+        setErrorMessage(result.error);
+      } else {
+        setIsSuccess(true);
+        trackRecruitSubmit('staff');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('予期せぬエラーが発生しました。');
+      setIsSubmitting(false);
     }
   };
 
@@ -226,15 +251,19 @@ export default function StaffRecruitPage() {
             <p className="text-white font-serif luxury-tracking text-sm md:text-base leading-loose max-w-xl mx-auto mb-10">
               {data.hero}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-              <a href="#form" className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-foreground transition-all duration-300">
-                <CalendarHeart className="w-4 h-4" />
-                今すぐWEB応募
-              </a>
-              <a href="tel:045-263-6961" className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/10 transition-colors">
-                <Phone className="w-4 h-4" />
-                電話で相談
-              </a>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl mx-auto rounded-[28px] border border-white/15 bg-[linear-gradient(135deg,rgba(12,10,9,0.4)_0%,rgba(12,10,9,0.18)_100%)] p-3 shadow-[0_30px_80px_-36px_rgba(0,0,0,0.9)] backdrop-blur-md">
+              <Button asChild size="lg" className={heroCtaPrimary}>
+                <a href="#form">
+                  <CalendarHeart className="relative z-10 w-4 h-4 shrink-0" />
+                  <span className="relative z-10">今すぐWEB応募</span>
+                </a>
+              </Button>
+              <Button asChild size="lg" className={heroCtaSecondary}>
+                <a href="tel:045-263-6961">
+                  <Phone className="relative z-10 w-4 h-4 shrink-0" />
+                  <span className="relative z-10">電話で相談</span>
+                </a>
+              </Button>
             </div>
           </FadeIn>
         </div>
@@ -285,7 +314,7 @@ export default function StaffRecruitPage() {
                     </span>
                     <div className="flex-1">
                       <h3 className="font-serif text-base md:text-lg text-foreground luxury-tracking mb-2">{role.title}</h3>
-                      <p className="text-xs text-gray-500 font-serif luxury-tracking leading-[2]">{role.duties}</p>
+                      <p className="text-xs text-gray-500 font-serif luxury-tracking leading-loose">{role.duties}</p>
                     </div>
                     <div className="hidden md:block shrink-0 text-right">
                       <p className="text-xs text-gray-400 font-serif luxury-tracking mb-1">給与目安</p>
@@ -531,7 +560,7 @@ export default function StaffRecruitPage() {
               </div>
 
               <div className="pt-6 text-center">
-                <p className="text-xs text-gray-500 font-serif luxury-tracking leading-[2] mb-6">
+                <p className="text-xs text-gray-500 font-serif luxury-tracking leading-loose mb-6">
                   送信することにより、<Link href="/recruit-policy" target="_blank" className="text-gold underline hover:no-underline transition-all">求人応募ポリシー</Link>に同意したものとみなされます。<br />※当店では20歳未満の方からのご応募はお断りしております。
                 </p>
                 <Button
@@ -550,5 +579,13 @@ export default function StaffRecruitPage() {
       </section>
 
     </div>
+  );
+}
+
+export default function StaffRecruitPage() {
+  return (
+    <ReCaptchaProvider>
+      <StaffRecruitPageContent />
+    </ReCaptchaProvider>
   );
 }

@@ -1,67 +1,151 @@
-import { createClient } from '@/lib/supabase/server';
+import { getDashboardCastShifts } from '@/lib/actions/dashboard';
 import Link from 'next/link';
-import { EmptyState, SectionCard, SectionHeader, StatusBadge } from '@/components/ui/app-shell';
-import { Button } from '@/components/ui/Button';
+import { ChevronRight, Users } from 'lucide-react';
 
-type ShiftWithCast = {
-  id: string;
-  start_time: string | null;
-  end_time: string | null;
-  casts: {
-    stage_name: string;
-    slug: string | null;
-  } | null;
-};
+const STATUS_CONFIG = {
+  confirmed: {
+    label: '確定',
+    bg: 'bg-[#50a06414]',
+    border: 'border-[#50a0642e]',
+    textColor: 'text-[#72b894]',
+    dot: 'bg-[#72b894]',
+  },
+  late: {
+    label: '予定遅刻',
+    bg: 'bg-[#c8823214]',
+    border: 'border-[#c882322e]',
+    textColor: 'text-[#c8884d]',
+    dot: 'bg-[#c8884d]',
+  },
+  trial: {
+    label: '体験入店',
+    bg: 'bg-[#dfbd6914]',
+    border: 'border-[#dfbd692e]',
+    textColor: 'text-[#dfbd69]',
+    dot: 'bg-[#dfbd69]',
+  },
+  pending: {
+    label: '確認待ち',
+    bg: 'bg-[#8a847814]',
+    border: 'border-[#8a84782e]',
+    textColor: 'text-[#8a8478]',
+    dot: 'bg-[#8a8478]',
+  },
+} as const;
 
-export async function DashboardTodayShifts({ date }: { date: string }) {
-  const supabase = await createClient();
+export async function DashboardTodayShifts() {
+  const casts = await getDashboardCastShifts();
 
-  const { data: todayShifts } = await supabase
-    .from('cast_schedules')
-    .select('*, casts(stage_name, slug)')
-    .eq('work_date', date);
+  const confirmedCount = casts.filter((c) => c.status === 'confirmed').length;
+  const lateCount = casts.filter((c) => c.status === 'late').length;
+  const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <SectionCard className="space-y-5">
-      <SectionHeader
-        eyebrow="Today"
-        title={`本日の出勤予定 (${date})`}
-        description="営業開始前に、誰が何時から出勤するかを一覧で確認できます。"
-        actions={
-          <Button asChild variant="outline" size="sm">
-            <Link href="/admin/shifts">シフト管理</Link>
-          </Button>
-        }
-      />
-      <div className="divide-y divide-gray-100 overflow-hidden rounded-[20px] border border-black/5 bg-[#fcfcfb]">
-        {todayShifts && todayShifts.length > 0 ? (
-          todayShifts.map((shift: ShiftWithCast) => (
-            <div key={shift.id} className="flex items-center justify-between gap-4 px-5 py-4">
-              <div className="space-y-1">
-                <p className="font-semibold tracking-[-0.02em] text-[#171717]">
-                  {shift.casts?.stage_name ?? '—'}
-                </p>
-                <StatusBadge tone="accent">出勤予定</StatusBadge>
-              </div>
-              <span className="text-sm font-medium text-gray-500 font-mono">
-                {shift.start_time?.slice(0, 5)} — {shift.end_time?.slice(0, 5) ?? 'LAST'}
-              </span>
-            </div>
-          ))
-        ) : (
-          <div className="p-4">
-            <EmptyState
-              title="本日の出勤登録はありません"
-              description="まだスケジュールが承認・登録されていません。シフト管理から登録を進めてください。"
-              action={
-                <Button asChild variant="outline" size="sm">
-                  <Link href="/admin/shifts">登録する</Link>
-                </Button>
-              }
-            />
+    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+            <Users size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
-        )}
+          <div className="flex flex-col">
+            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤キャスト</p>
+            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">
+              確定 {confirmedCount}名
+              {lateCount > 0 && ` / 遅刻 ${lateCount}名`}
+              {trialCount > 0 && ` / 体験 ${trialCount}名`}
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/admin/today"
+          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[0.56px] border-[#ffffff0f] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
+        >
+          <span>詳細</span>
+          <ChevronRight size={12} className="-mt-px" />
+        </Link>
       </div>
-    </SectionCard>
+
+      {/* Table */}
+      <div className="flex-1 overflow-x-auto custom-scrollbar">
+        <div className="min-w-[700px]">
+          {/* Table Header Row */}
+          <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6">
+            <div className="w-[200px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">キャスト名</div>
+            <div className="w-[120px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">出勤時間</div>
+            <div className="w-[110px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">ステータス</div>
+            <div className="flex-1 text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">タグ / 備考</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-[#ffffff0a]">
+            {casts.length === 0 ? (
+              <div className="h-40 flex items-center justify-center italic">
+                <p className="text-[12px] text-[#5a5650]">出勤登録がありません</p>
+              </div>
+            ) : (
+              casts.map((cast) => {
+                const cfg = STATUS_CONFIG[cast.status] || STATUS_CONFIG.pending;
+                return (
+                  <div
+                    key={cast.castId}
+                    className="flex items-center min-h-[52px] hover:bg-[#ffffff05] transition-colors px-6"
+                  >
+                    <div className="w-[200px] flex items-center gap-3 shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#1c1d22] border-[0.56px] border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative">
+                        {cast.avatarUrl ? (
+                           <img 
+                             src={cast.avatarUrl} 
+                             alt={cast.castName} 
+                             className="w-full h-full object-cover" 
+                             referrerPolicy="no-referrer"
+                           />
+                        ) : (
+                          <span className="text-[10px] font-bold text-[#5a5650]">{cast.initial}</span>
+                        )}
+                      </div>
+                      <span className="text-[12px] font-semibold text-[#f4f1ea] truncate">{cast.castName}</span>
+                    </div>
+                    
+                    {/* Time */}
+                    <div className="w-[120px] px-4">
+                      <div className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#dfbd69] font-inter">
+                        <span>{cast.startTime}</span>
+                        <span className="text-[#5a5650] font-normal">—</span>
+                        <span className="text-[#8a8478] font-normal">{cast.endTime || 'Last'}</span>
+                      </div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className="w-[110px] flex justify-center">
+                      <div className={`flex items-center gap-1.5 px-2.5 py-1 ${cfg.bg} rounded-[20px] border-[0.56px] ${cfg.border} min-w-[76px] justify-center`}>
+                        <div className={`w-[5px] h-[5px] rounded-full ${cfg.dot}`} />
+                        <span className={`text-[10px] font-semibold tracking-[0.12px] ${cfg.textColor}`}>{cfg.label}</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex-1 px-4 flex flex-wrap gap-1.5">
+                      {cast.tags.length > 0 ? (
+                        cast.tags.map((tag, i) => (
+                          <span
+                             key={i}
+                             className="px-1.5 py-px bg-[#ffffff05] border border-[#ffffff0a] rounded-[4px] text-[9px] font-medium text-[#8a8478] tracking-[0.06px]"
+                          >
+                            {tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[10px] text-[#5a5650]">—</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

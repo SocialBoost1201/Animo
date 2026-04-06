@@ -14,6 +14,11 @@ export type Notice = {
   created_by: string;
 };
 
+type CastImage = {
+  image_url: string | null;
+  is_primary: boolean;
+};
+
 // ----------------------------------------------------------------------
 // 管理者向けアクション
 // ----------------------------------------------------------------------
@@ -97,7 +102,7 @@ export async function getNoticeReadStatus(noticeId: string) {
   const readMap = new Map(reads?.map(r => [r.cast_id, r.read_at]));
 
   return casts.map(cast => {
-    const imageUrl = cast.cast_images?.find((img: any) => img.is_primary)?.image_url;
+    const imageUrl = cast.cast_images?.find((img: CastImage) => img.is_primary)?.image_url;
     return {
       cast_id: cast.id,
       stage_name: cast.stage_name,

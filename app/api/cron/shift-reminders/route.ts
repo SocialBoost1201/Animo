@@ -2,14 +2,19 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { Resend } from 'resend';
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
 // Vercel Cronから呼び出されるAPI（毎週木曜・金曜の指定時刻に実行）
 export async function GET(request: Request) {
   // クロンの認証ハッシュ（セキュリティ）を確認
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    // ローカルテスト等での実行も考慮し、401を返すが、適宜スキップ処理を入れても良い
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    console.warn('Unauthorized cron invocation attempt');
+  if (
+    process.env.CRON_SECRET &&
+    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -70,8 +75,7 @@ export async function GET(request: Request) {
     if (usersError) throw new Error('Failed to list auth users');
 
     const resend = new Resend(process.env.RESEND_API_KEY!);
-    const sentCount = 0;
-    const errors = [];
+    const errors: Array<{ castId: string; error: unknown }> = [];
 
     // メール送信ループ
     for (const cast of unsubmittedCasts) {
@@ -106,8 +110,8 @@ export async function GET(request: Request) {
       errors 
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Cron Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error, 'Internal Server Error') }, { status: 500 });
   }
 }

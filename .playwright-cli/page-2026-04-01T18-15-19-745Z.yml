@@ -1,0 +1,20 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "ANIMO PORTAL" [ref=e6] [cursor=pointer]:
+        - /url: /cast/dashboard
+    - main [ref=e7]:
+      - generic [ref=e44]:
+        - generic [ref=e46]: ✓
+        - heading "登録完了" [level=2] [ref=e47]
+        - paragraph [ref=e48]: アカウントを登録しました。確認メール送信に失敗したため、このままログインできます。
+        - link "ログインへ戻る" [ref=e49] [cursor=pointer]:
+          - /url: /cast/login
+    - region "Notifications alt+T":
+      - list:
+        - listitem [ref=e50]:
+          - img [ref=e52]
+          - generic [ref=e55]: アカウントを登録しました。確認メール送信に失敗したため、このままログインできます。
+  - button "Open Next.js Dev Tools" [ref=e39] [cursor=pointer]:
+    - img [ref=e40]
+  - alert [ref=e43]

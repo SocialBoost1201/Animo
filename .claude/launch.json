@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Animo",
+      "runtimeExecutable": "/Users/takumashinnyo/Workspace/projects/Animo/.claude/pnpm-wrapper.sh",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    }
+  ]
+}

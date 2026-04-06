@@ -1,0 +1,19 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "ANIMO PORTAL" [ref=e6] [cursor=pointer]:
+        - /url: /cast/dashboard
+    - main [ref=e7]:
+      - generic [ref=e9]:
+        - heading "メール送信完了" [level=2] [ref=e21]
+        - paragraph [ref=e22]:
+          - text: パスワード再設定用のリンクを送信しました。
+          - text: メールをご確認ください。
+        - link "ログインへ戻る" [ref=e23] [cursor=pointer]:
+          - /url: /cast/login
+    - region "Notifications alt+T":
+      - list:
+        - listitem [ref=e24]:
+          - img [ref=e26]
+          - generic [ref=e29]: パスワード再設定のメールを送信しました。
+  - alert [ref=e20]

@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+          - navigation [ref=e8]:
+            - generic [ref=e9]:
+              - paragraph [ref=e10]: 管理
+              - generic [ref=e11]:
+                - link "🗓 本日の営業状況" [ref=e12] [cursor=pointer]:
+                  - /url: /admin/today
+                  - img [ref=e13]
+                  - generic [ref=e16]: 🗓 本日の営業状況
+                - link "Dashboard" [ref=e17] [cursor=pointer]:
+                  - /url: /admin/dashboard
+                  - img [ref=e18]
+                  - generic [ref=e23]: Dashboard
+                - link "人材管理" [ref=e24] [cursor=pointer]:
+                  - /url: /admin/human-resources
+                  - img [ref=e25]
+                  - generic [ref=e30]: 人材管理
+                - link "月間シフト(β)" [ref=e31] [cursor=pointer]:
+                  - /url: /admin/monthly-shifts
+                  - img [ref=e32]
+                  - generic [ref=e34]: 月間シフト(β)
+                - link "Excelシフト" [ref=e35] [cursor=pointer]:
+                  - /url: /admin/template-shifts
+                  - img [ref=e36]
+                  - generic [ref=e38]: Excelシフト
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: 顧客・応募
+              - generic [ref=e41]:
+                - link "求人応募" [ref=e42] [cursor=pointer]:
+                  - /url: /admin/applications
+                  - img [ref=e43]
+                  - generic [ref=e46]: 求人応募
+                - link "出勤申請" [ref=e47] [cursor=pointer]:
+                  - /url: /admin/shift-requests
+                  - img [ref=e48]
+                  - generic [ref=e50]: 出勤申請
+                - link "お知らせ" [ref=e51] [cursor=pointer]:
+                  - /url: /admin/internal-notices
+                  - img [ref=e52]
+                  - generic [ref=e55]: お知らせ
+            - generic [ref=e56]:
+              - paragraph [ref=e57]: コンテンツ
+              - generic [ref=e58]:
+                - link "キャスト投稿" [ref=e59] [cursor=pointer]:
+                  - /url: /admin/posts
+                  - img [ref=e60]
+                  - generic [ref=e62]: キャスト投稿
+                - link "ニュース" [ref=e63] [cursor=pointer]:
+                  - /url: /admin/contents
+                  - img [ref=e64]
+                  - generic [ref=e67]: ニュース
+                - link "ギャラリー" [ref=e68] [cursor=pointer]:
+                  - /url: /admin/gallery
+                  - img [ref=e69]
+                  - generic [ref=e73]: ギャラリー
+                  - img [ref=e74]
+                - link "ヒーロー" [ref=e76] [cursor=pointer]:
+                  - /url: /admin/hero
+                  - img [ref=e77]
+                  - generic [ref=e81]: ヒーロー
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: システム
+              - link "設定" [ref=e85] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e86]
+                - generic [ref=e89]: 設定
+          - generic [ref=e90]:
+            - link "← サイトを表示" [ref=e91] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e92]: ← サイトを表示
+            - button "ログアウト" [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e98]: ログアウト
+      - main [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Club ANIMO
+          - generic [ref=e103]: /
+          - generic [ref=e104]: ギャラリー
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - heading "Gallery" [level=1] [ref=e109]
+              - paragraph [ref=e110]: 公開ギャラリー確認用の一覧です
+            - generic [ref=e111]:
+              - img [ref=e112]
+              - text: 静的運用中
+          - generic [ref=e114]:
+            - paragraph [ref=e115]: 公開反映は停止中です
+            - paragraph [ref=e116]: 現在の公開 /gallery は静的データで固定運用しています。 この管理画面の登録内容は公開サイトへ反映されないため、追加・編集・削除は一時停止しています。
+          - table [ref=e118]:
+            - rowgroup [ref=e119]:
+              - row "Image Caption Category Status Operation" [ref=e120]:
+                - columnheader "Image" [ref=e121]
+                - columnheader "Caption" [ref=e122]
+                - columnheader "Category" [ref=e123]
+                - columnheader "Status" [ref=e124]
+                - columnheader "Operation" [ref=e125]
+            - rowgroup [ref=e126]:
+              - row "ギャラリー画像が登録されていません。" [ref=e127]:
+                - cell "ギャラリー画像が登録されていません。" [ref=e128]
+  - alert [ref=e129]

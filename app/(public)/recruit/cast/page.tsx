@@ -162,6 +162,13 @@ function CastRecruitPageContent() {
     }
   };
 
+  const heroCtaBase =
+    'group relative isolate inline-flex w-full min-h-16 sm:min-h-[72px] items-center justify-center gap-3 overflow-hidden rounded-[24px] border px-7 py-4 font-serif text-[11px] md:text-xs uppercase luxury-tracking transition-all duration-500 ease-out backdrop-blur-xl shadow-[0_24px_60px_-28px_rgba(0,0,0,0.75)]';
+
+  const heroCtaPrimary = `${heroCtaBase} border-[#f1ddb1]/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.98)_0%,rgba(245,234,209,0.97)_38%,rgba(191,154,89,0.96)_100%)] text-[#18130d] hover:-translate-y-0.5 hover:shadow-[0_30px_75px_-28px_rgba(179,146,87,0.72)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.06)_38%,rgba(255,255,255,0.02)_100%)] before:content-['']`;
+
+  const heroCtaSecondary = `${heroCtaBase} border-white/20 bg-[linear-gradient(135deg,rgba(14,12,10,0.78)_0%,rgba(30,25,19,0.62)_52%,rgba(73,58,37,0.5)_100%)] text-white hover:-translate-y-0.5 hover:border-[#d7ba84]/55 hover:shadow-[0_30px_72px_-30px_rgba(222,187,124,0.36)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.03)_32%,rgba(255,255,255,0)_100%)] before:content-['']`;
+
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-white pb-32 flex items-center justify-center pt-32">
@@ -204,20 +211,19 @@ function CastRecruitPageContent() {
             <p className="text-white font-serif luxury-tracking text-xs md:text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mb-10">
               もっと輝く、新しい私へ。
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-lg mx-auto">
-              <Button asChild size="lg" className="flex-1 w-full px-6 py-6 text-xs font-serif luxury-tracking uppercase bg-white text-foreground hover:bg-white/90 drop-shadow-md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl mx-auto rounded-[28px] border border-white/15 bg-[linear-gradient(135deg,rgba(12,10,9,0.4)_0%,rgba(12,10,9,0.18)_100%)] p-3 shadow-[0_30px_80px_-36px_rgba(0,0,0,0.9)] backdrop-blur-md">
+              <Button asChild size="lg" className={heroCtaPrimary}>
                 <a href="#form">
-                  <CalendarHeart className="w-4 h-4 mr-2" />
-                  今すぐWEB応募
+                  <CalendarHeart className="relative z-10 w-4 h-4 shrink-0" />
+                  <span className="relative z-10">今すぐWEB応募</span>
                 </a>
               </Button>
-              <a
-                href="tel:045-263-6961"
-                className="flex-1 w-full inline-flex items-center justify-center gap-2 px-6 py-6 border border-white bg-white/10 backdrop-blur-sm text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/30 transition-all drop-shadow-md"
-              >
-                <Phone className="w-4 h-4" />
-                電話で相談
-              </a>
+              <Button asChild size="lg" className={heroCtaSecondary}>
+                <a href="tel:045-263-6961">
+                  <Phone className="relative z-10 w-4 h-4 shrink-0" />
+                  <span className="relative z-10">電話で相談</span>
+                </a>
+              </Button>
             </div>
           </FadeIn>
         </div>
