@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { validateCastProfileInput } from '@/lib/validators/cast-profile'
 import { revalidatePath } from 'next/cache'
 
@@ -322,11 +323,69 @@ export async function updateCast(id: string, formData: FormData) {
   return { success: true }
 }
 
+/**
+ * キャスト1件を削除する。
+ * 削除前に以下を連動処理する:
+ *   A. cast に紐づく auth.users アカウントを ban（ログイン不可）にする
+ *   B. cast_images の画像ファイルを Supabase Storage から物理削除する
+ */
 export async function deleteCast(id: string) {
   const supabase = await createClient()
-  const { data: cast } = await supabase.from('casts').select('slug').eq('id', id).single()
+  const serviceClient = createServiceClient()
+
+  // slug と画像一覧を事前取得
+  const { data: cast } = await supabase
+    .from('casts')
+    .select('slug, cast_images(image_url)')
+    .eq('id', id)
+    .single()
+
+  // ── B. Storage の画像ファイルを削除 ──────────────────────────
+  const images: { image_url: string }[] = (cast?.cast_images as { image_url: string }[] | null) ?? []
+  if (images.length > 0) {
+    const storagePaths = images
+      .map((img: { image_url: string }) => {
+        // URL例: https://xxx.supabase.co/storage/v1/object/public/images/casts/xxx.jpg
+        // バケット名「images」以降のパスを抽出する
+        const match = img.image_url.match(/\/storage\/v1\/object\/public\/images\/(.+)$/)
+        return match ? match[1] : null
+      })
+      .filter((p): p is string => p !== null)
+
+    if (storagePaths.length > 0) {
+      const { error: storageError } = await serviceClient.storage
+        .from('images')
+        .remove(storagePaths)
+      if (storageError) {
+        console.error('[deleteCast] Storage削除エラー:', storageError.message)
+        // ストレージ削除失敗は致命的ではないため処理を続行
+      }
+    }
+  }
+
+  // ── A. auth.users を ban（ログイン不可）にする ────────────────
+  // profiles テーブルから cast_id に紐づく auth UID を取得
+  const { data: profile } = await serviceClient
+    .from('profiles')
+    .select('id')
+    .eq('cast_id', id)
+    .maybeSingle()
+
+  if (profile?.id) {
+    const { error: banError } = await serviceClient.auth.admin.updateUserById(
+      profile.id,
+      { ban_duration: '876000h' } // 約100年 = 実質永久 ban
+    )
+    if (banError) {
+      console.error('[deleteCast] auth.users ban エラー:', banError.message)
+      // ban 失敗は致命的ではないため処理を続行
+    }
+  }
+
+  // ── casts レコードを削除（CASCADE で関連テーブルも自動削除）──
   const { error } = await supabase.from('casts').delete().eq('id', id)
   if (error) return { error: error.message }
+
   revalidatePath('/admin/human-resources')
   revalidateAll(cast?.slug)
   return { success: true }
