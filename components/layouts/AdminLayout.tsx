@@ -55,6 +55,53 @@ const BOTTOM_TAB_ITEMS = [
   { href: '/admin/applications',    icon: Briefcase,       label: '応募' },
 ];
 
+// ── Theme token maps ────────────────────────────────────────────────────────
+const DARK = {
+  pageBg:          'bg-[#121316]',
+  sidebarBg:       'bg-[#0e0e10]',
+  sidebarBorder:   'border-[#ffffff0f]',
+  divider:         'bg-[#ffffff08]',
+  sectionLabel:    'text-[#5a5650]',
+  navInactive:     'text-[#8a8478] hover:bg-[#ffffff06] hover:text-[#cbc3b3]',
+  navIconInactive: 'text-[#8a8478] group-hover:text-[#cbc3b3]',
+  footerBorder:    'border-[#ffffff08]',
+  toggleWrap:      'bg-[#ffffff07] border-[#ffffff08]',
+  toggleInactive:  'text-[#5a5650] hover:text-[#8a8478]',
+  toggleLightActive: 'bg-[#ffffff15] text-[#f4f1ea]',
+  userCard:        'bg-[#ffffff07] border-[#ffffff08]',
+  userName:        'text-[#c7c0b2]',
+  userSub:         'text-[#5a5650]',
+  primaryText:     'text-[#f4f1ea]',
+  mobileHeader:    'bg-[#0e0e10] border-[#ffffff0f]',
+  mobileTab:       'bg-[#0e0e10] border-[#ffffff0f]',
+  mobileMenuBtn:   'text-[#5a5650] hover:text-[#8a8478]',
+  mobileTabActive: 'text-[#dfbd69]',
+  mobileTabInactive:'text-[#8a8478]',
+};
+
+const LIGHT = {
+  pageBg:          'bg-[#f0ece5]',
+  sidebarBg:       'bg-[#faf8f4]',
+  sidebarBorder:   'border-[#00000012]',
+  divider:         'bg-[#0000000a]',
+  sectionLabel:    'text-[#b0a898]',
+  navInactive:     'text-[#7a7268] hover:bg-[#0000000a] hover:text-[#2e2b26]',
+  navIconInactive: 'text-[#7a7268] group-hover:text-[#2e2b26]',
+  footerBorder:    'border-[#00000010]',
+  toggleWrap:      'bg-[#0000000a] border-[#00000010]',
+  toggleInactive:  'text-[#b0a898] hover:text-[#7a7268]',
+  toggleLightActive: 'bg-[#0000001a] text-[#2e2b26]',
+  userCard:        'bg-[#0000000a] border-[#00000010]',
+  userName:        'text-[#2e2b26]',
+  userSub:         'text-[#b0a898]',
+  primaryText:     'text-[#1a1710]',
+  mobileHeader:    'bg-[#faf8f4] border-[#00000012]',
+  mobileTab:       'bg-[#faf8f4] border-[#00000012]',
+  mobileMenuBtn:   'text-[#b0a898] hover:text-[#7a7268]',
+  mobileTabActive: 'text-[#926f34]',
+  mobileTabInactive:'text-[#b0a898]',
+};
+
 export function AdminLayout({
   children,
   pendingPostsCount    = 0,
@@ -72,6 +119,9 @@ export function AdminLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
+  const T = theme === 'dark' ? DARK : LIGHT;
+  const isDark = theme === 'dark';
+
   const getBadgeCount = (badge?: string) => {
     if (badge === 'posts')        return pendingPostsCount;
     if (badge === 'shifts')       return pendingShiftsCount;
@@ -80,7 +130,7 @@ export function AdminLayout({
   };
 
   const renderSidebarContent = () => (
-    <div className="flex flex-col h-full bg-[#0e0e10] font-inter border-r border-[#ffffff0f]">
+    <div className={`flex flex-col h-full font-inter border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
       {/* Branding */}
       <div className="h-[72px] px-5 flex items-center gap-3 shrink-0">
         <Link prefetch={false} href="/admin/dashboard" className="flex items-center gap-3">
@@ -88,19 +138,19 @@ export function AdminLayout({
             <LayoutDashboard size={17} className="text-[#0b0b0d]" />
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-[9px] font-bold text-[#5a5650] tracking-[2.2px] leading-none uppercase">CLUB ANIMO</span>
+            <span className={`text-[9px] font-bold tracking-[2.2px] leading-none uppercase ${T.sectionLabel}`}>CLUB ANIMO</span>
             <span className="text-[13px] font-bold bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent tracking-[1.3px] leading-none">ANIMO CMS</span>
           </div>
         </Link>
         <button
           onClick={() => setMobileOpen(false)}
-          className="md:hidden ml-auto p-1 text-[#5a5650] hover:text-[#8a8478] transition-colors"
+          className={`md:hidden ml-auto p-1 transition-colors ${T.mobileMenuBtn}`}
         >
           <X size={17} />
         </button>
       </div>
 
-      <div className="mx-4 h-px bg-[#ffffff08]" />
+      <div className={`mx-4 h-px ${T.divider}`} />
 
       {/* Navigation */}
       <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
@@ -116,13 +166,12 @@ export function AdminLayout({
           return (
             <div key={section} className="space-y-0.5">
               <div className="px-3 mb-2">
-                <p className="text-[9px] font-bold tracking-[1.6px] text-[#5a5650] uppercase leading-none">
+                <p className={`text-[9px] font-bold tracking-[1.6px] uppercase leading-none ${T.sectionLabel}`}>
                   {SECTIONS[section]}
                 </p>
               </div>
 
               {items.map((item) => {
-                // treat /admin/shift-requests as active for that href
                 const isActive = pathname === item.href ||
                   (item.href !== '/admin/dashboard' && item.href !== '/admin/today' && pathname.startsWith(item.href + '/'));
                 const Icon = item.icon;
@@ -136,13 +185,13 @@ export function AdminLayout({
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
                       isActive
                         ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
-                        : 'text-[#8a8478] hover:bg-[#ffffff06] hover:text-[#cbc3b3]'
+                        : T.navInactive
                     }`}
                   >
                     <Icon
                       size={13}
                       strokeWidth={isActive ? 2.5 : 2}
-                      className={`shrink-0 ${isActive ? 'text-[#0b0b0d]' : 'text-[#8a8478] group-hover:text-[#cbc3b3]'}`}
+                      className={`shrink-0 ${isActive ? 'text-[#0b0b0d]' : T.navIconInactive}`}
                     />
                     <span className="flex-1 tracking-tight truncate">{item.label}</span>
 
@@ -164,20 +213,20 @@ export function AdminLayout({
       </nav>
 
       {/* Footer */}
-      <div className="p-3.5 border-t border-[#ffffff08] space-y-3">
+      <div className={`p-3.5 border-t space-y-3 ${T.footerBorder}`}>
         {/* Mode Switch */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 px-1">
-            <List size={10} className="text-[#5a5650]" />
-            <span className="text-[9px] font-bold tracking-[1.4px] text-[#5a5650] uppercase leading-none">モード選択</span>
+            <List size={10} className={T.sectionLabel} />
+            <span className={`text-[9px] font-bold tracking-[1.4px] uppercase leading-none ${T.sectionLabel}`}>モード選択</span>
           </div>
-          <div className="flex items-center bg-[#ffffff07] rounded-[10px] border border-[#ffffff08] p-1 gap-1">
+          <div className={`flex items-center rounded-[10px] border p-1 gap-1 ${T.toggleWrap}`}>
             <button
               onClick={() => setTheme('dark')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
-                theme === 'dark'
+                isDark
                   ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-sm'
-                  : 'text-[#5a5650] hover:text-[#8a8478]'
+                  : T.toggleInactive
               }`}
             >
               <Moon size={11} />
@@ -186,9 +235,9 @@ export function AdminLayout({
             <button
               onClick={() => setTheme('light')}
               className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
-                theme === 'light'
-                  ? 'bg-[#ffffff15] text-[#f4f1ea] shadow-sm'
-                  : 'text-[#5a5650] hover:text-[#8a8478]'
+                !isDark
+                  ? T.toggleLightActive
+                  : T.toggleInactive
               }`}
             >
               <Sun size={11} />
@@ -198,16 +247,16 @@ export function AdminLayout({
         </div>
 
         {/* User Profile */}
-        <div className="flex items-center gap-2.5 px-2.5 py-2 bg-[#ffffff07] rounded-[11px] border border-[#ffffff08]">
+        <div className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[11px] border ${T.userCard}`}>
           <div className="w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0">
             <span className="text-[10px] font-bold text-[#0b0b0d]">店</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold text-[#c7c0b2] truncate leading-none mb-0.5">田中 マネージャー</p>
-            <p className="text-[9px] text-[#5a5650] truncate leading-none">Club Animo · 管理者</p>
+            <p className={`text-[11px] font-semibold truncate leading-none mb-0.5 ${T.userName}`}>田中 マネージャー</p>
+            <p className={`text-[9px] truncate leading-none ${T.userSub}`}>Club Animo · 管理者</p>
           </div>
           <form action={logout}>
-            <button type="submit" className="p-1.5 text-[#5a5650] hover:text-[#d4785a] transition-colors rounded-lg hover:bg-[#d4785a10]" title="ログアウト">
+            <button type="submit" className={`p-1.5 transition-colors rounded-lg hover:bg-[#d4785a10] hover:text-[#d4785a] ${T.userSub}`} title="ログアウト">
               <LogOut size={12} />
             </button>
           </form>
@@ -217,7 +266,7 @@ export function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen flex bg-[#121316] text-[#f4f1ea]">
+    <div className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
       {/* Desktop Sidebar */}
       <aside className="w-[220px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
         {renderSidebarContent()}
@@ -239,12 +288,12 @@ export function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 bg-[#121316]">
+      <main className={`flex-1 min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 transition-colors duration-200 ${T.pageBg}`}>
         {/* Mobile Header */}
-        <header className="h-14 bg-[#0e0e10] border-b border-[#ffffff0f] flex items-center justify-between px-4 md:hidden sticky top-0 z-30">
+        <header className={`h-14 border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-30 ${T.mobileHeader}`}>
           <button
             onClick={() => setMobileOpen(true)}
-            className="p-2 rounded-md text-[#5a5650] hover:text-[#8a8478] transition-colors"
+            className={`p-2 rounded-md transition-colors ${T.mobileMenuBtn}`}
             aria-label="メニューを開く"
           >
             <Menu size={20} />
@@ -260,7 +309,7 @@ export function AdminLayout({
       </main>
 
       {/* Mobile Bottom Tab */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#0e0e10] border-t border-[#ffffff0f] pb-safe font-inter">
+      <nav className={`fixed bottom-0 left-0 right-0 z-30 md:hidden border-t pb-safe font-inter ${T.mobileTab}`}>
         <div className="flex items-center">
           {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname === item.href;
@@ -272,7 +321,7 @@ export function AdminLayout({
                 prefetch={false}
                 onClick={() => setMobileOpen(false)}
                 className={`flex-1 flex flex-col items-center justify-center py-3 min-h-[60px] gap-1 transition-all relative ${
-                  isActive ? 'text-[#dfbd69]' : 'text-[#8a8478]'
+                  isActive ? T.mobileTabActive : T.mobileTabInactive
                 }`}
               >
                 {isActive && (
