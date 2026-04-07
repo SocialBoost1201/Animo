@@ -70,10 +70,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cn("font-sans", inter.variable)}>
+    <html lang="ja" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <head />
       <body
         className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        suppressHydrationWarning
       >
         {children}
       </body>

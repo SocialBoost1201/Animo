@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { BookOpen, User, Phone, Mail, Star, TrendingUp } from 'lucide-react'
+import { DeleteCustomerButton } from '@/components/features/admin/customers/DeleteCustomerButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,8 +71,8 @@ export default async function CustomersPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-[#1c1d22] border-b border-[#ffffff08]">
-                  {['顧客名', '連絡先', 'ランク', '来店回数', '備考'].map((h) => (
-                    <th key={h} className="px-5 py-3">
+                  {['顧客名', '連絡先', 'ランク', '来店回数', '備考', ''].map((h, i) => (
+                    <th key={i} className="px-5 py-3">
                       <span className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase">{h}</span>
                     </th>
                   ))}
@@ -94,7 +95,7 @@ export default async function CustomersPage() {
                           )}
                           {c.email && (
                             <a href={`mailto:${c.email}`} className="flex items-center gap-1.5 text-[11px] text-[#8a8478] hover:text-[#c7c0b2]">
-                              <Mail size={10} className="shrink-0" /><span className="truncate max-w-[160px]">{c.email}</span>
+                              <Mail size={10} className="shrink-0" /><span className="truncate max-w-section">{c.email}</span>
                             </a>
                           )}
                         </div>
@@ -110,6 +111,9 @@ export default async function CustomersPage() {
                       </td>
                       <td className="px-5 py-3.5">
                         <span className="text-[11px] text-[#5a5650] line-clamp-1">{c.note || '–'}</span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right w-12">
+                        <DeleteCustomerButton customerId={c.id} customerName={c.name} />
                       </td>
                     </tr>
                   )

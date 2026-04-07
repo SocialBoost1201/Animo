@@ -73,3 +73,16 @@ export async function updateCustomer(id: string, updates: Record<string, unknown
   revalidatePath('/admin/customers');
   revalidatePath(`/admin/customers/${id}`);
 }
+
+export async function deleteCustomer(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('customers').delete().eq('id', id);
+
+  if (error) {
+    console.error('Error deleting customer:', error);
+    throw new Error('顧客データの削除に失敗しました');
+  }
+
+  revalidatePath('/admin/customers');
+  return { success: true };
+}
