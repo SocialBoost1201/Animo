@@ -6,95 +6,89 @@ import { ShiftRequestList } from '@/components/features/admin/ShiftRequestList';
 import { UnsubmittedCastsList } from '@/components/features/admin/UnsubmittedCastsList';
 import { ShiftChangeRequestList } from '@/components/features/admin/ShiftChangeRequestList';
 import { HelpRequestList } from '@/components/features/admin/HelpRequestList';
-import { getShiftRequests, getShiftRequestResponses, ShiftRequest, ShiftRequestResponse } from '@/lib/actions/admin-shift-requests';
+import { getShiftRequests, getShiftRequestResponses, type ShiftRequest, type ShiftRequestResponse } from '@/lib/actions/admin-shift-requests';
 import Link from 'next/link';
 
 export default async function ShiftRequestsPage({
   searchParams,
 }: {
-  searchParams: { status?: string, tab?: string };
+  searchParams: { status?: string; tab?: string };
 }) {
   const status = searchParams.status || 'pending';
-  const tab = searchParams.tab || 'new';
+  const tab    = searchParams.tab    || 'new';
 
-  const { data: submissions } = await getShiftSubmissions(status);
+  const { data: submissions }    = await getShiftSubmissions(status);
   const { data: changeRequests } = await getAdminShiftChangeRequests(status);
 
-  // 来週の月曜日を設定し、全キャストの提出状況を取得
-  const nextMondayDate = getTargetWeekMonday(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
-  const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  const now = new Date();
+  const nextMondayDate = getTargetWeekMonday(new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000));
+  const nextMondayStr  = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   const { data: castStatuses } = await getAllCastShiftStatuses(nextMondayStr);
 
-  // ヘルプ募集関連のデータ取得
-  let helpRequests: ShiftRequest[] = [];
-  let helpResponses: ShiftRequestResponse[] = [];
+  let helpRequests: ShiftRequest[]           = [];
+  let helpResponses: ShiftRequestResponse[]  = [];
   if (tab === 'help') {
-    helpRequests = await getShiftRequests();
+    helpRequests  = await getShiftRequests();
     helpResponses = await getShiftRequestResponses(status === 'all' ? undefined : status);
   }
 
+  const mainTabs = [
+    { id: 'new',    label: '新規提出' },
+    { id: 'change', label: '変更申請', hasBadge: changeRequests?.some((r) => r.status === 'pending') },
+    { id: 'help',   label: '店舗からの募集' },
+  ];
+
+  const subStatuses = [
+    { label: '未承認', value: 'pending' },
+    { label: '承認済', value: 'approved' },
+    { label: 'すべて', value: 'all' },
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">シフト承認</h1>
-          <p className="text-sm text-gray-500 mt-2">
-            キャストから提出されたシフトの確認と承認を行います。
-          </p>
-        </div>
+    <div className="space-y-6 font-inter">
+      {/* ── Page Header ── */}
+      <div className="py-2">
+        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">出勤調整</h1>
+        <p className="text-[11px] text-[#8a8478] mt-0.5">シフト提出・変更申請・当日調整の管理</p>
       </div>
 
-      <div className="flex bg-white/50 border border-gray-100 p-1.5 rounded-xl w-fit">
-        <Link 
-          href={`/admin/shift-requests?tab=new&status=${status}`}
-          className={`px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${
-            tab === 'new' ? 'bg-[#171717] text-white shadow-md' : 'text-gray-500 hover:text-[#171717] hover:bg-white'
-          }`}
-        >
-          新規提出 (1週間分)
-        </Link>
-        <Link 
-          href={`/admin/shift-requests?tab=change&status=${status}`}
-          className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${
-            tab === 'change' ? 'bg-[#171717] text-white shadow-md' : 'text-gray-500 hover:text-[#171717] hover:bg-white'
-          }`}
-        >
-          変更申請 (日次)
-          {/* 未処理の変更申請がある場合にバッジを表示 */}
-          {changeRequests && changeRequests.some(r => r.status === 'pending') && (
-            <span className="w-2 h-2 rounded-full bg-red-500"></span>
-          )}
-        </Link>
-        <Link 
-          href={`/admin/shift-requests?tab=help&status=${status}`}
-          className={`flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all ${
-            tab === 'help' ? 'bg-[#171717] text-white shadow-md' : 'text-gray-500 hover:text-[#171717] hover:bg-white'
-          }`}
-        >
-          店舗からの募集
-        </Link>
+      {/* ── Main Tabs ── */}
+      <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[12px]">
+        {mainTabs.map((t) => (
+          <Link
+            key={t.id}
+            href={`/admin/shift-requests?tab=${t.id}&status=${status}`}
+            className={`flex items-center gap-2 px-5 py-2 text-[12px] font-semibold rounded-[9px] transition-all whitespace-nowrap ${
+              tab === t.id
+                ? 'text-[#0b0b0d] shadow-md'
+                : 'text-[#8a8478] hover:text-[#c7c0b2]'
+            }`}
+            style={tab === t.id ? { background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' } : {}}
+          >
+            {t.label}
+            {t.hasBadge && (
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4785a]" />
+            )}
+          </Link>
+        ))}
       </div>
 
       <div className="flex flex-col xl:flex-row gap-6 items-start">
-        {/* 左側: リスト */}
+        {/* Left: List */}
         <div className="flex-1 w-full min-w-0">
           {tab === 'new' ? (
             <ShiftRequestList initialSubmissions={submissions || []} currentStatus={status} />
           ) : tab === 'change' ? (
-            <div className="space-y-6">
-              <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-                {[
-                  { label: '未承認 (Pending)', value: 'pending' },
-                  { label: '承認済 (Approved)', value: 'approved' },
-                  { label: 'すべて (All)', value: 'all' },
-                ].map((opt) => (
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[10px]">
+                {subStatuses.map((opt) => (
                   <Link
                     key={opt.value}
                     href={`/admin/shift-requests?tab=change&status=${opt.value}`}
-                    className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${
+                    className={`px-4 py-1.5 text-[11px] font-semibold rounded-[8px] transition-all ${
                       status === opt.value
-                        ? 'bg-white text-[#171717] shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                        ? 'bg-[#ffffff12] text-[#f4f1ea]'
+                        : 'text-[#5a5650] hover:text-[#8a8478]'
                     }`}
                   >
                     {opt.label}
@@ -104,20 +98,16 @@ export default async function ShiftRequestsPage({
               <ShiftChangeRequestList requests={changeRequests || []} />
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-                {[
-                  { label: '未承認 (Pending)', value: 'pending' },
-                  { label: '承認済 (Approved)', value: 'approved' },
-                  { label: 'すべて (All)', value: 'all' },
-                ].map((opt) => (
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[10px]">
+                {subStatuses.map((opt) => (
                   <Link
                     key={opt.value}
                     href={`/admin/shift-requests?tab=help&status=${opt.value}`}
-                    className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${
+                    className={`px-4 py-1.5 text-[11px] font-semibold rounded-[8px] transition-all ${
                       status === opt.value
-                        ? 'bg-white text-[#171717] shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                        ? 'bg-[#ffffff12] text-[#f4f1ea]'
+                        : 'text-[#5a5650] hover:text-[#8a8478]'
                     }`}
                   >
                     {opt.label}
@@ -129,8 +119,8 @@ export default async function ShiftRequestsPage({
           )}
         </div>
 
-        {/* 右側: 未提出キャスト一覧・リマインド */}
-        <div className="w-full xl:w-[320px] shrink-0">
+        {/* Right: Unsubmitted */}
+        <div className="w-full xl:w-[300px] shrink-0">
           <div className="sticky top-[80px]">
             <UnsubmittedCastsList statuses={castStatuses || []} targetWeekMonday={nextMondayStr} />
           </div>

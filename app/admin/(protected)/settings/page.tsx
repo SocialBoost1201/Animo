@@ -1,16 +1,15 @@
-import { getSiteSettings, updateSiteSettings } from '@/lib/actions/contents'
+import { getSiteSettings } from '@/lib/actions/contents'
 import { SettingsForm } from '@/components/features/admin/SettingsForm'
 
 export default async function SettingsPage() {
   const settings = await getSiteSettings()
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Site Settings</h1>
-          <p className="text-sm text-gray-500 mt-2">サイト全体に関する基本情報と振る舞いの設定</p>
-        </div>
+    <div className="space-y-6 font-inter">
+      {/* ── Page Header ── */}
+      <div className="flex flex-col gap-0.5 py-2">
+        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">設定</h1>
+        <p className="text-[11px] text-[#8a8478]">サイト全体に関する基本情報と動作の設定</p>
       </div>
 
       <SettingsForm initialData={settings} />

@@ -10,89 +10,82 @@ export default async function InternalNoticesPage() {
   const notices = await getAdminNotices();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-5">
-        <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Notices</h1>
-          <p className="text-sm text-gray-500 mt-2">キャスト向けお知らせ・既読状況の管理</p>
+    <div className="space-y-6 font-inter">
+      {/* ── Page Header ── */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-2">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">通知</h1>
+          <p className="text-[11px] text-[#8a8478]">キャスト向けお知らせ・既読状況の管理</p>
         </div>
         <Link
           href="/admin/internal-notices/new"
-          className="bg-[#171717] hover:bg-gold text-white px-5 py-2.5 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors whitespace-nowrap"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] whitespace-nowrap"
+          style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
         >
-          <Plus size={16} />
+          <Plus size={13} strokeWidth={3} />
           新規作成
         </Link>
       </div>
 
-      <div className="bg-white border border-gray-100 shadow-sm rounded-sm overflow-hidden">
+      {/* ── Notice List ── */}
+      <div className="bg-[#17181c] rounded-[18px] border border-[#ffffff0f] overflow-hidden">
         {notices.length === 0 ? (
-          <div className="p-12 text-center flex flex-col items-center">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-300">
-              <Bell className="w-8 h-8" />
+          <div className="py-16 flex flex-col items-center gap-3">
+            <div className="w-12 h-12 bg-[#1c1d22] rounded-full flex items-center justify-center">
+              <Bell size={20} className="text-[#5a5650]" />
             </div>
-            <p className="text-[#171717] font-bold">お知らせがありません</p>
-            <p className="text-sm text-gray-500 mt-1">キャストへの連絡事項を作成して配信しましょう。</p>
+            <p className="text-[13px] font-medium text-[#8a8478]">お知らせがありません</p>
+            <p className="text-[11px] text-[#5a5650]">キャストへの連絡事項を作成して配信しましょう。</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#ffffff08]">
             {notices.map((notice) => (
-              <div key={notice.id} className="p-5 flex flex-col md:flex-row gap-6 hover:bg-gray-50 transition-colors">
-                
-                {/* Header Section */}
+              <div
+                key={notice.id}
+                className="p-5 flex flex-col md:flex-row gap-5 hover:bg-[#ffffff03] transition-colors"
+              >
+                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-2.5 mb-2">
                     {notice.importance === 'high' ? (
-                      <span className="inline-flex items-center gap-1 bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded text-xs font-bold tracking-wider">
-                        <AlertCircle size={12} /> 重要
+                      <span className="inline-flex items-center gap-1 bg-[#d4785a14] text-[#d4785a] border border-[#d4785a20] px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider">
+                        <AlertCircle size={10} /> 重要
                       </span>
                     ) : (
-                      <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-bold tracking-wider">
+                      <span className="bg-[#ffffff08] text-[#5a5650] px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider">
                         通常
                       </span>
                     )}
-                    <span className="text-xs text-gray-400 flex items-center gap-1 font-medium tracking-wider">
-                      <Clock size={12} />
+                    <span className="text-[10px] text-[#5a5650] flex items-center gap-1">
+                      <Clock size={10} />
                       {format(new Date(notice.created_at), 'yyyy/MM/dd HH:mm', { locale: ja })}
                     </span>
                   </div>
-                  
-                  <h3 className="text-lg font-bold text-[#171717] mb-2 truncate">
-                    {notice.title}
-                  </h3>
-                  
-                  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed whitespace-pre-wrap">
-                    {notice.content}
-                  </p>
+
+                  <h3 className="text-[14px] font-semibold text-[#f4f1ea] mb-1.5 truncate">{notice.title}</h3>
+                  <p className="text-[12px] text-[#8a8478] line-clamp-2 leading-relaxed whitespace-pre-wrap">{notice.content}</p>
                 </div>
 
-                {/* Stats & Actions Section */}
-                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 w-full md:w-auto shrink-0 md:pl-6 md:border-l border-gray-100">
-                  
-                  {/* Read Status */}
-                  <div className="flex items-center gap-3 text-right">
-                    <div>
-                      <p className="text-xs text-gray-400 font-bold mb-0.5">既読率</p>
+                {/* Stats & Actions */}
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 shrink-0 md:pl-5 md:border-l md:border-[#ffffff08]">
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="text-[9px] text-[#5a5650] font-bold mb-0.5 uppercase tracking-wider">既読率</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-serif font-bold text-[#171717]">{notice.reads_count}</span>
-                        <span className="text-xs text-gray-500 font-medium">/ {notice.total_casts}</span>
+                        <span className="text-[20px] font-bold text-[#f4f1ea] leading-none">{notice.reads_count}</span>
+                        <span className="text-[10px] text-[#5a5650]">/ {notice.total_casts}</span>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-                      <Users size={18} />
+                    <div className="w-9 h-9 rounded-full bg-[#dfbd6914] flex items-center justify-center">
+                      <Users size={15} className="text-[#dfbd69]" />
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2 mt-auto">
-                    {/* Read Status Check Modal Button */}
+                  <div className="flex items-center gap-2">
                     <NoticeReadStatusModal notice={notice} />
-
-                    {/* Default Actions */}
                     <NoticeDeleteButton noticeId={notice.id} />
                   </div>
                 </div>
-
               </div>
             ))}
           </div>

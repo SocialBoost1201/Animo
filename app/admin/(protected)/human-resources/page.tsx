@@ -14,18 +14,16 @@ export default async function HumanResourcesPage({
   searchParams: Promise<{ q?: string; month?: string; tab?: string }>;
 }) {
   const { q, month, tab = 'casts' } = await searchParams;
-  
-  // 共通データ並列取得
+
   const [castsData, staffsData] = await Promise.all([
     getCasts(q),
-    getStaffs(true) // 全スタッフ（非在籍含む）取得
+    getStaffs(true),
   ]);
 
-  // キャスト表示用の処理
   const targetMonth = month || new Date().toISOString().substring(0, 7);
   const dateObj = new Date(targetMonth + '-01T00:00:00');
   const dFormat = `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月`;
-  
+
   const prevMonthDate = new Date(dateObj);
   prevMonthDate.setMonth(prevMonthDate.getMonth() - 1);
   const nextMonthDate = new Date(dateObj);
@@ -33,13 +31,13 @@ export default async function HumanResourcesPage({
   const prevMonthStr = prevMonthDate.toISOString().substring(0, 7);
   const nextMonthStr = nextMonthDate.toISOString().substring(0, 7);
 
-  const mappedCasts = (castsData || []).map(cast => {
-    const mScore = cast.cast_scores?.find((s: any) => s.target_month === targetMonth);
+  const mappedCasts = (castsData || []).map((cast) => {
+    const mScore = cast.cast_scores?.find((s: { target_month: string }) => s.target_month === targetMonth) as { total_score?: number; current_level?: number } | undefined;
     return {
       id: cast.id,
       stage_name: cast.stage_name,
       name: cast.name,
-      image_url: cast.cast_images?.find((img: { is_primary: boolean, image_url: string }) => img.is_primary)?.image_url || null,
+      image_url: cast.cast_images?.find((img: { is_primary: boolean; image_url: string }) => img.is_primary)?.image_url || null,
       age: cast.age,
       hobby: cast.hobby,
       quiz_tags: cast.quiz_tags || [],
@@ -51,61 +49,88 @@ export default async function HumanResourcesPage({
     };
   });
 
-  const tabClass = (active: boolean) => 
-    `flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all ${
-      active 
-        ? 'border-[#171717] text-[#171717] bg-gray-50' 
-        : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-    }`;
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">人材管理</h1>
-          <p className="text-sm text-gray-500 mt-2">キャストとスタッフの登録・編集・管理</p>
+    <div className="space-y-6 font-inter">
+      {/* ── Page Header ── */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">キャスト管理</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">キャストとスタッフの登録・編集・管理</p>
         </div>
-        
-        {tab === 'casts' && (
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
-              <Link href={`/admin/human-resources?tab=casts&month=${prevMonthStr}${q ? `&q=${q}` : ''}`} className="p-1 hover:bg-gray-100 rounded text-gray-500">
-                <ChevronLeft size={16} />
+
+        <div className="flex flex-wrap items-center gap-3">
+          {tab === 'casts' && (
+            <>
+              <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[10px] border border-[#ffffff0f] px-1 py-1">
+                <Link
+                  href={`/admin/human-resources?tab=casts&month=${prevMonthStr}${q ? `&q=${q}` : ''}`}
+                  className="p-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08]"
+                >
+                  <ChevronLeft size={14} />
+                </Link>
+                <span className="text-[12px] font-semibold text-[#c7c0b2] min-w-[72px] text-center">{dFormat}</span>
+                <Link
+                  href={`/admin/human-resources?tab=casts&month=${nextMonthStr}${q ? `&q=${q}` : ''}`}
+                  className="p-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08]"
+                >
+                  <ChevronRight size={14} />
+                </Link>
+              </div>
+              <div className="w-56">
+                <SearchBar placeholder="源氏名・名前で検索..." />
+              </div>
+              <Link
+                href="/admin/human-resources/new"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
+              >
+                <Plus size={13} strokeWidth={3} />
+                キャスト登録
               </Link>
-              <span className="text-sm font-bold min-w-[80px] text-center text-[#171717]">{dFormat}</span>
-              <Link href={`/admin/human-resources?tab=casts&month=${nextMonthStr}${q ? `&q=${q}` : ''}`} className="p-1 hover:bg-gray-100 rounded text-gray-500">
-                <ChevronRight size={16} />
-              </Link>
-            </div>
-            <div className="flex-1 md:w-64 min-w-[200px]">
-              <SearchBar placeholder="源氏名・名前で検索..." />
-            </div>
-            <Link
-              href="/admin/human-resources/new"
-              className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors whitespace-nowrap"
-            >
-              <Plus size={16} />
-              キャスト登録
-            </Link>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
 
-      {/* タブメニュー */}
-      <div className="flex border-b border-gray-200">
-        <Link href="/admin/human-resources?tab=casts" className={tabClass(tab === 'casts')}>
-          <Users size={18} />
+      {/* ── Tabs ── */}
+      <div className="flex items-center gap-1 border-b border-[#ffffff08]">
+        <Link
+          href="/admin/human-resources?tab=casts"
+          className={`flex items-center gap-2 px-4 py-2.5 text-[12px] font-medium transition-colors relative ${
+            tab === 'casts'
+              ? 'text-[#f4f1ea]'
+              : 'text-[#5a5650] hover:text-[#8a8478]'
+          }`}
+        >
+          <Users size={13} />
           キャスト
-          <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 rounded-full">{mappedCasts.length}</span>
+          <span className="ml-0.5 text-[9px] font-bold bg-[#ffffff08] text-[#8a8478] px-1.5 py-0.5 rounded-full">
+            {mappedCasts.length}
+          </span>
+          {tab === 'casts' && (
+            <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+          )}
         </Link>
-        <Link href="/admin/human-resources?tab=staffs" className={tabClass(tab === 'staffs')}>
-          <UserCheck size={18} />
+        <Link
+          href="/admin/human-resources?tab=staffs"
+          className={`flex items-center gap-2 px-4 py-2.5 text-[12px] font-medium transition-colors relative ${
+            tab === 'staffs'
+              ? 'text-[#f4f1ea]'
+              : 'text-[#5a5650] hover:text-[#8a8478]'
+          }`}
+        >
+          <UserCheck size={13} />
           スタッフ
-          <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 rounded-full">{staffsData.length}</span>
+          <span className="ml-0.5 text-[9px] font-bold bg-[#ffffff08] text-[#8a8478] px-1.5 py-0.5 rounded-full">
+            {staffsData.length}
+          </span>
+          {tab === 'staffs' && (
+            <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+          )}
         </Link>
       </div>
 
-      {/* コンテンツ表示 */}
+      {/* ── Content ── */}
       {tab === 'casts' ? (
         <DraggableCastList initialCasts={mappedCasts} />
       ) : (
