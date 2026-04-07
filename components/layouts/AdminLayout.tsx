@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, Settings, MessageSquare,
   LogOut, Briefcase, Menu, ChevronRight, X, Bell, ClipboardList,
-  UserCheck, BarChart2, Palette, BookOpen, Newspaper,
+  UserCheck, BarChart2, Palette, BookOpen, Newspaper, Moon, Sun, List,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 
@@ -70,6 +70,7 @@ export function AdminLayout({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const getBadgeCount = (badge?: string) => {
     if (badge === 'posts')        return pendingPostsCount;
@@ -164,6 +165,38 @@ export function AdminLayout({
 
       {/* Footer */}
       <div className="p-3.5 border-t border-[#ffffff08] space-y-3">
+        {/* Mode Switch */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5 px-1">
+            <List size={10} className="text-[#5a5650]" />
+            <span className="text-[9px] font-bold tracking-[1.4px] text-[#5a5650] uppercase leading-none">モード選択</span>
+          </div>
+          <div className="flex items-center bg-[#ffffff07] rounded-[10px] border border-[#ffffff08] p-1 gap-1">
+            <button
+              onClick={() => setTheme('dark')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
+                theme === 'dark'
+                  ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-sm'
+                  : 'text-[#5a5650] hover:text-[#8a8478]'
+              }`}
+            >
+              <Moon size={11} />
+              ダーク
+            </button>
+            <button
+              onClick={() => setTheme('light')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
+                theme === 'light'
+                  ? 'bg-[#ffffff15] text-[#f4f1ea] shadow-sm'
+                  : 'text-[#5a5650] hover:text-[#8a8478]'
+              }`}
+            >
+              <Sun size={11} />
+              ライト
+            </button>
+          </div>
+        </div>
+
         {/* User Profile */}
         <div className="flex items-center gap-2.5 px-2.5 py-2 bg-[#ffffff07] rounded-[11px] border border-[#ffffff08]">
           <div className="w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0">
