@@ -124,10 +124,12 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
   }
 
   // 確認済 / 未確認
-  const absentIds = new Set((checkinsRaw || []).filter(c => c.is_absent).map(c => c.cast_id));
+  // 確認済 / 未確認 の論理的な再定義
   const checkedIds = new Set((checkinsRaw || []).map(c => c.cast_id));
-  const confirmedCount = todayShiftCount - (checkinsRaw || []).filter(c => absentIds.has(c.cast_id)).length;
-  const unconfirmedCount = todayShiftCount - checkedIds.size < 0 ? 0 : todayShiftCount - checkedIds.size;
+  // 確定数: 本日シフトがあり、かつ出勤済み（欠勤以外）の人数
+  const confirmedCount = (checkinsRaw || []).filter(c => !c.is_absent).length;
+  // 未確認数: 本日シフトがある人のうち、まだチェックイン（出勤/欠勤回答）していない人数
+  const unconfirmedCount = Math.max(0, todayShiftCount - checkedIds.size);
 
   // 予定来店人数
   const totalGuests = (todayReservations || []).reduce((s, r) => s + (r.guest_count ?? 1), 0);
@@ -308,10 +310,6 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
 
       const tags: string[] = [];
       if (recentPostCastIds.has(row.cast_id)) tags.push('ブログ更新済');
-      // マッチするデザインデータ（Figma準拠のランダム付与、本来はDB属性）
-      if (castName === '桜井 あかね') tags.push('場内強い');
-      if (castName === '田中 みく') tags.push('場内強い', '出勤安定');
-      if (castName === '松本 かほ') tags.push('出勤安定');
       if (status === 'late') tags.push('確認必要');
 
       results.push({

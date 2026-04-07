@@ -13,20 +13,23 @@ export function DashboardChartsClient({
 
 
       {/* 求人応募グラフ */}
-      <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-sm">
-        <h2 className="text-sm font-bold tracking-widest text-[#171717] mb-6 flex items-center gap-2">
-          <span className="w-1 h-4 bg-gold inline-block" />
+      <div className="bg-[#17181c] border border-[#ffffff0f] shadow-sm p-6 rounded-[18px]">
+        <h2 className="text-[13px] font-semibold text-[#f4f1ea] mb-6 flex items-center gap-2">
+          <span className="w-0.5 h-3.5 bg-[linear-gradient(180deg,#dfbd69_0%,#926f34_100%)] inline-block rounded-full" />
           求人応募 推移（直近6ヶ月）
         </h2>
         <div className="h-64 w-full text-xs">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#9ca3af' }} dy={10} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9ca3af' }} allowDecimals={false} />
-              <Tooltip contentStyle={{ borderRadius: '4px', border: '1px solid #f3f4f6' }} />
-              <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-              <Line type="monotone" dataKey="applications" name="応募者数" stroke="#d4af37" strokeWidth={3} dot={{ strokeWidth: 2, r: 4, fill: '#fff' }} activeDot={{ r: 6 }} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} dy={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} allowDecimals={false} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1c1d22', border: '1px solid #ffffff0f', borderRadius: '10px', fontSize: '12px', color: '#f4f1ea' }} 
+                itemStyle={{ color: '#dfbd69' }}
+              />
+              <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', color: '#8a8478', fontSize: '10px' }} />
+              <Line type="monotone" dataKey="applications" name="応募者数" stroke="#dfbd69" strokeWidth={3} dot={{ strokeWidth: 2, r: 4, fill: '#17181c', stroke: '#dfbd69' }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
