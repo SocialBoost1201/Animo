@@ -14,8 +14,8 @@ export async function DashboardCastRanking() {
             <Trophy size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
-            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">キャスト別ランキング</p>
-            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">直近30日の集計データ</p>
+            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">キャスト行動成績評価</p>
+            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">ブログ投稿数・出勤日数・場内指名本数を管理参考用に可視化</p>
           </div>
         </div>
         <Link href="/admin/analytics" className="text-[11px] font-medium text-[#dfbd69] hover:underline">
@@ -92,18 +92,6 @@ export async function DashboardCastRanking() {
         </div>
       </div>
 
-      {/* Footer / Status Highlight (Matching TodayPanelSubsection:810 style) */}
-      <div className="px-6 py-[14px] bg-[#ffffff02] border-t border-[#ffffff0a]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-1 rounded-full bg-[#dfbd69]" />
-            <p className="text-[10px] text-[#8a8478] tracking-[0.06px]">前週比 指名本数増加の傾向</p>
-          </div>
-          <div className="flex items-center gap-1 text-[#72b894]">
-            <span className="text-[10px] font-bold font-inter tracking-[0.12px]">+12.4%</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

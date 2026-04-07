@@ -15,9 +15,11 @@ export default async function HumanResourcesPage({
 }) {
   const { q, month, tab = 'casts' } = await searchParams;
   
-  // 共通データ取得
-  const castsData = await getCasts(q);
-  const staffsData = await getStaffs(true); // 全スタッフ（非在籍含む）取得
+  // 共通データ並列取得
+  const [castsData, staffsData] = await Promise.all([
+    getCasts(q),
+    getStaffs(true) // 全スタッフ（非在籍含む）取得
+  ]);
 
   // キャスト表示用の処理
   const targetMonth = month || new Date().toISOString().substring(0, 7);
