@@ -99,11 +99,16 @@ export const Footer = () => {
 
         {/* Legal & Copyright */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-xs text-center md:text-left">
-            &copy; {new Date().getFullYear()} Club Animo. All rights reserved. <br className="md:hidden" />
-            <span className="md:ml-2">20歳未満の方のご入店はお断りしております。</span>
-          </p>
+          <div className="text-gray-500 text-xs text-center md:text-left space-y-1">
+            <p>
+              &copy; {new Date().getFullYear()}{' '}
+              <Link href="/tokusho" className="hover:text-gray-300 transition-colors">株式会社KTG COBOMO</Link>
+              {' '}（Club Animo）. All rights reserved.
+            </p>
+            <p>20歳未満の方のご入店はお断りしております。</p>
+          </div>
           <div className="flex space-x-6 text-xs text-gray-500">
+            <Link href="/tokusho" className="hover:text-white transition-colors">運営会社</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
