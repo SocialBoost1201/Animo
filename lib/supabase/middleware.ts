@@ -2,6 +2,16 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin', 'staff'])
+const ADMIN_PUBLIC_PATHS = new Set([
+  '/admin/login',
+  '/admin/register',
+  '/admin/forgot-password',
+  '/admin/reset-password',
+  '/admin/m/login',
+  '/admin/m/register',
+  '/admin/m/forgot-password',
+  '/admin/m/reset-password',
+])
 
 async function getAppRole(
   supabase: ReturnType<typeof createServerClient>,
@@ -73,7 +83,7 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Protect /admin routes
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+  if (pathname.startsWith('/admin') && !ADMIN_PUBLIC_PATHS.has(pathname)) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
@@ -94,8 +104,8 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // Redirect logged in users away from login page
-  if (pathname.startsWith('/admin/login') && user) {
+  // Redirect logged in users away from auth pages
+  if (ADMIN_PUBLIC_PATHS.has(pathname) && user) {
     const role = await getAppRole(supabase, user.id)
 
     if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
