@@ -39,9 +39,9 @@ export async function DashboardTodayOps() {
   ].filter(Boolean) as { tag: string; tagBg: string; tagText: string; cardBorder: string; content: string }[];
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border border-[#8a8478] font-inter h-full">
       {/* Header row (Matching TodayPanelSubsection:99) */}
-      <div className="flex items-center justify-between px-6 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+      <div className="flex items-center justify-between px-6 h-[75px] border-b border-[#8a847830] shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
              <div className="w-[15px] h-3.5 bg-[#dfbd69] [mask-image:url(/icon-calendar.svg)] [mask-repeat:no-repeat] [mask-size:100%]" />
@@ -60,7 +60,7 @@ export async function DashboardTodayOps() {
       </div>
 
       {/* Body: two columns (Matching TodayPanelSubsection:131) */}
-      <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#ffffff0f]">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#8a847830]">
         {/* Left: OVERVIEW */}
         <div className="flex-1 p-5.5 flex flex-col min-w-0">
           <p className="text-[9px] font-bold tracking-[1.25px] text-[#5a5650] uppercase mb-3 px-1">OVERVIEW</p>
@@ -68,7 +68,7 @@ export async function DashboardTodayOps() {
             {overviewRows.map((row, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between py-[9px] px-1 border-b-[0.56px] border-[#ffffff0a] last:border-0"
+                className="flex items-center justify-between py-[9px] px-1 border-b border-[#8a847830] last:border-0"
               >
                 <span className="text-[12px] text-[#8a8478] font-normal leading-none">{row.label}</span>
                 <span className={`text-[12px] tracking-tight leading-none ${row.bold ? 'font-semibold text-[#cbc3b3]' : 'font-medium text-[#cbc3b3]'}`}>

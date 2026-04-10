@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import { CastFavoriteButton } from '@/components/features/system/CastFavoriteButton';
@@ -17,6 +17,8 @@ type CastPrivateInfo = {
   real_name?: string | null;
   date_of_birth?: string | null;
 };
+
+const getPublicCastBySlugCached = cache(async (slug: string) => getPublicCastBySlug(slug));
 
 function normalizePrivateInfo(raw: CastPrivateInfo | CastPrivateInfo[] | null | undefined) {
   if (!raw) return null;
@@ -44,7 +46,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const cast = await getPublicCastBySlug(slug);
+  const cast = await getPublicCastBySlugCached(slug);
 
   if (!cast) {
     return {
@@ -85,7 +87,7 @@ export default async function CastDetailPage({
 }) {
   const { slug } = await params;
   const sParams = await searchParams;
-  const cast = await getPublicCastBySlug(slug);
+  const cast = await getPublicCastBySlugCached(slug);
 
   if (!cast) notFound();
 

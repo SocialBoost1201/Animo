@@ -175,7 +175,7 @@ export const getPublishedPosts = unstable_cache(
       const supabase = createServiceClient();
       let query = supabase
         .from('cast_posts')
-        .select('*, casts(name, slug, stage_name, image_url)')
+        .select('id, created_at, updated_at, image_url, content, casts(slug, stage_name, name)')
         .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(limit);

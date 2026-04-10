@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, Settings, MessageSquare,
   LogOut, Briefcase, Menu, ChevronRight, X, Bell, ClipboardList,
-  UserCheck, BarChart2, Palette, BookOpen, Newspaper, Moon, Sun, List,
+  UserCheck, BarChart2, Palette, BookOpen, Newspaper,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 
@@ -214,38 +214,6 @@ export function AdminLayout({
 
       {/* Footer */}
       <div className={`p-3.5 border-t space-y-3 ${T.footerBorder}`}>
-        {/* Mode Switch */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 px-1">
-            <List size={10} className={T.sectionLabel} />
-            <span className={`text-[9px] font-bold tracking-[1.4px] uppercase leading-none ${T.sectionLabel}`}>モード選択</span>
-          </div>
-          <div className={`flex items-center rounded-[10px] border p-1 gap-1 ${T.toggleWrap}`}>
-            <button
-              onClick={() => setTheme('dark')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
-                isDark
-                  ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-sm'
-                  : T.toggleInactive
-              }`}
-            >
-              <Moon size={11} />
-              ダーク
-            </button>
-            <button
-              onClick={() => setTheme('light')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-[7px] text-[11px] font-semibold transition-all duration-150 ${
-                !isDark
-                  ? T.toggleLightActive
-                  : T.toggleInactive
-              }`}
-            >
-              <Sun size={11} />
-              ライト
-            </button>
-          </div>
-        </div>
-
         {/* User Profile */}
         <div className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[11px] border ${T.userCard}`}>
           <div className="w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0">

@@ -1,0 +1,174 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "CLUB ANIMO ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+            - img [ref=e9]
+            - generic [ref=e14]:
+              - generic [ref=e15]: CLUB ANIMO
+              - generic [ref=e16]: ANIMO CMS
+          - navigation [ref=e18]:
+            - generic [ref=e19]:
+              - paragraph [ref=e21]: OVERVIEW
+              - link "本日の営業状況" [ref=e22] [cursor=pointer]:
+                - /url: /admin/today
+                - img [ref=e23]
+                - generic [ref=e26]: 本日の営業状況
+                - img [ref=e27]
+              - link "ダッシュボード" [ref=e29] [cursor=pointer]:
+                - /url: /admin/dashboard
+                - img [ref=e30]
+                - generic [ref=e35]: ダッシュボード
+            - generic [ref=e36]:
+              - paragraph [ref=e38]: OPERATIONS
+              - link "キャスト管理" [ref=e39] [cursor=pointer]:
+                - /url: /admin/human-resources
+                - img [ref=e40]
+                - generic [ref=e45]: キャスト管理
+              - link "スタッフ管理" [ref=e46] [cursor=pointer]:
+                - /url: /admin/staffs
+                - img [ref=e47]
+                - generic [ref=e51]: スタッフ管理
+              - link "出勤調整" [ref=e52] [cursor=pointer]:
+                - /url: /admin/shift-requests
+                - img [ref=e53]
+                - generic [ref=e56]: 出勤調整
+              - link "シフト管理" [ref=e57] [cursor=pointer]:
+                - /url: /admin/monthly-shifts
+                - img [ref=e58]
+                - generic [ref=e60]: シフト管理
+              - link "通知" [ref=e61] [cursor=pointer]:
+                - /url: /admin/internal-notices
+                - img [ref=e62]
+                - generic [ref=e65]: 通知
+            - generic [ref=e66]:
+              - paragraph [ref=e68]: CUSTOMER
+              - link "顧客データ" [ref=e69] [cursor=pointer]:
+                - /url: /admin/customers
+                - img [ref=e70]
+                - generic [ref=e72]: 顧客データ
+            - generic [ref=e73]:
+              - paragraph [ref=e75]: RECRUITMENT
+              - link "求人応募" [ref=e76] [cursor=pointer]:
+                - /url: /admin/applications
+                - img [ref=e77]
+                - generic [ref=e80]: 求人応募
+            - generic [ref=e81]:
+              - paragraph [ref=e83]: CONTENT
+              - link "キャスト投稿" [ref=e84] [cursor=pointer]:
+                - /url: /admin/posts
+                - img [ref=e85]
+                - generic [ref=e87]: キャスト投稿
+              - link "ニュース" [ref=e88] [cursor=pointer]:
+                - /url: /admin/contents
+                - img [ref=e89]
+                - generic [ref=e92]: ニュース
+              - link "サイト分析" [ref=e93] [cursor=pointer]:
+                - /url: /admin/analytics
+                - img [ref=e94]
+                - generic [ref=e95]: サイト分析
+            - generic [ref=e96]:
+              - paragraph [ref=e98]: SYSTEM
+              - link "デザイン" [ref=e99] [cursor=pointer]:
+                - /url: /admin/design
+                - img [ref=e100]
+                - generic [ref=e106]: デザイン
+              - link "設定" [ref=e107] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e108]
+                - generic [ref=e111]: 設定
+          - generic [ref=e113]:
+            - generic [ref=e115]: 店
+            - generic [ref=e116]:
+              - paragraph [ref=e117]: 田中 マネージャー
+              - paragraph [ref=e118]: Club Animo · 管理者
+            - button "ログアウト" [ref=e120]:
+              - img [ref=e121]
+      - main [ref=e124]:
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - heading "本日の営業状況" [level=1] [ref=e129]
+              - paragraph [ref=e130]: 当日オペレーション・シフト・来店予定を一元管理
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - img [ref=e133]
+                - generic [ref=e135]: 4月11日（Sat）
+              - button "来店予定を追加" [ref=e136]:
+                - img [ref=e137]
+                - text: 来店予定を追加
+          - generic [ref=e138]:
+            - generic [ref=e139]:
+              - paragraph [ref=e140]: 確定出勤
+              - generic [ref=e141]:
+                - generic [ref=e142]: "0"
+                - generic [ref=e143]: 名
+            - generic [ref=e144]:
+              - paragraph [ref=e145]: 未確認
+              - generic [ref=e146]:
+                - generic [ref=e147]: "0"
+                - generic [ref=e148]: 名
+            - generic [ref=e149]:
+              - paragraph [ref=e150]: 来店予定
+              - generic [ref=e151]:
+                - generic [ref=e152]: "0"
+                - generic [ref=e153]: 件
+            - generic [ref=e154]:
+              - paragraph [ref=e155]: 同伴
+              - generic [ref=e156]:
+                - generic [ref=e157]: "0"
+                - generic [ref=e158]: 件
+            - generic [ref=e159]:
+              - paragraph [ref=e160]: 体入
+              - generic [ref=e161]:
+                - generic [ref=e162]: "0"
+                - generic [ref=e163]: 名
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - button "全体" [ref=e167]: 全体
+                - button "キャスト" [ref=e169]
+                - button "来店" [ref=e170]
+                - button "スタッフ" [ref=e171]
+                - button "要確認" [ref=e172]
+              - paragraph [ref=e175]: 本日の登録データがありません
+            - generic [ref=e176]:
+              - generic [ref=e177]:
+                - generic [ref=e178]:
+                  - img [ref=e180]
+                  - paragraph [ref=e182]: 優先アラート
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - paragraph [ref=e187]: シフト未提出
+                    - paragraph [ref=e188]: 17名が今週未提出
+                  - generic [ref=e189]:
+                    - paragraph [ref=e192]: 未返信案件
+                    - paragraph [ref=e193]: 応募返信待ち 4件
+              - generic [ref=e194]:
+                - generic [ref=e195]:
+                  - img [ref=e197]
+                  - paragraph [ref=e200]: 営業メモ
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - paragraph [ref=e203]: VIP
+                    - paragraph [ref=e204]: 未入力
+                  - generic [ref=e205]:
+                    - paragraph [ref=e206]: EVENT
+                    - paragraph [ref=e207]: 未入力
+                  - generic [ref=e208]:
+                    - paragraph [ref=e209]: STAFF
+                    - paragraph [ref=e210]: 未入力
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - generic [ref=e213]:
+                - img [ref=e215]
+                - paragraph [ref=e218]: LINE 共有テキスト
+              - button "コピー" [ref=e219]:
+                - img [ref=e220]
+                - text: コピー
+            - generic [ref=e224]: 生成中...
+  - button "Open Next.js Dev Tools" [ref=e230] [cursor=pointer]:
+    - img [ref=e231]

@@ -46,6 +46,7 @@ export type TodayCheckin = {
   has_change: boolean
   change_note?: string
   is_absent: boolean
+  attendance_status?: 'work' | 'douhan' | 'off'
   memo?: string
 }
 
@@ -316,7 +317,7 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
   const absentAll = [...new Set([...absentNames, ...changeAbsents])]
   if (absentAll.length > 0) {
     lines.push('')
-    lines.push('当日欠勤')
+    lines.push('当日欠勤（罰金対象）')
     for (const name of absentAll) {
       lines.push(name)
     }
@@ -526,6 +527,7 @@ export async function getCastTodayReservations() {
     .select('*')
     .eq('cast_id', cast.id)
     .eq('reservation_date', today)
+    .order('sort_order', { ascending: true, nullsFirst: false })
     .order('visit_time')
 
   return data || []
@@ -552,4 +554,178 @@ export async function getCastTodayCheckin() {
     .maybeSingle()
 
   return data
+}
+
+// ==========================================
+// キャスト側: 出勤確認 + 来店確認（固定5行）
+// ==========================================
+function normalizeText(value: FormDataEntryValue | null) {
+  if (typeof value !== 'string') return ''
+  return value.trim()
+}
+
+function parseOptionalPositiveInt(value: string) {
+  if (value.trim() === '') return null
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isInteger(parsed) || parsed <= 0) return { error: '人数は1以上の整数で入力してください' as const }
+  return parsed
+}
+
+type DailyCheckAttendanceStatus = 'work' | 'douhan' | 'off'
+type DailyVisitRow = {
+  sort_order: number
+  visit_time: string
+  reservation_type: 'douhan' | 'reservation'
+  guest_name: string
+  guest_count: number | null
+  note: string | null
+}
+
+export async function submitDailyCheckAndVisits(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: '未認証です' }
+
+  const { data: cast } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('auth_user_id', user.id)
+    .single()
+  if (!cast) return { error: 'キャスト情報が見つかりません' }
+
+  const today = getJstDateString()
+  const attendanceStatusRaw = normalizeText(formData.get('attendance_status'))
+  const attendance_status: DailyCheckAttendanceStatus =
+    attendanceStatusRaw === 'work' || attendanceStatusRaw === 'douhan' || attendanceStatusRaw === 'off'
+      ? attendanceStatusRaw
+      : 'work'
+
+  const is_absent = attendance_status === 'off'
+
+  const { data: checkinRow, error: checkinError } = await supabase
+    .from('daily_checkins')
+    .upsert(
+      {
+        cast_id: cast.id,
+        checkin_date: today,
+        attendance_status,
+        is_absent,
+        submitted_at: new Date().toISOString(),
+      },
+      { onConflict: 'cast_id,checkin_date' }
+    )
+    .select('id')
+    .maybeSingle()
+
+  if (checkinError) return { error: checkinError.message }
+  if (!checkinRow?.id) return { error: '当日確認の保存に失敗しました' }
+
+  const dailyCheckId = checkinRow.id as string
+
+  // If OFF, clear today's visit entries (to avoid admin-side contradiction)
+  if (attendance_status === 'off') {
+    const { error: clearError } = await supabase
+      .from('daily_reservations')
+      .delete()
+      .eq('cast_id', cast.id)
+      .eq('reservation_date', today)
+
+    if (clearError) return { error: clearError.message }
+
+    revalidatePath('/cast/daily-check')
+    revalidatePath('/cast/dashboard')
+    revalidatePath('/admin/today')
+    return { success: true }
+  }
+
+  const rows: DailyVisitRow[] = []
+  for (let i = 1; i <= 5; i++) {
+    const visit_time = normalizeText(formData.get(`visit_time_${i}`))
+    const reservation_type_raw = normalizeText(formData.get(`visit_type_${i}`))
+    const guest_name = normalizeText(formData.get(`customer_name_${i}`))
+    const guest_count_raw = normalizeText(formData.get(`guest_count_${i}`))
+    const note_raw = normalizeText(formData.get(`note_${i}`))
+
+    const hasAnyInput =
+      visit_time !== '' ||
+      reservation_type_raw !== '' ||
+      guest_name !== '' ||
+      guest_count_raw !== '' ||
+      note_raw !== ''
+
+    if (!hasAnyInput) continue
+
+    if (visit_time === '' || reservation_type_raw === '' || guest_name === '') {
+      return { error: `来店確認の${i}行目は「時間・同伴/来店・顧客名」を入力してください` }
+    }
+
+    const reservation_type =
+      reservation_type_raw === 'douhan' || reservation_type_raw === 'reservation'
+        ? reservation_type_raw
+        : null
+    if (!reservation_type) return { error: `来店確認の${i}行目の種別が不正です` }
+
+    const guestCountParsed = parseOptionalPositiveInt(guest_count_raw)
+    if (typeof guestCountParsed === 'object' && guestCountParsed && 'error' in guestCountParsed) {
+      return { error: guestCountParsed.error }
+    }
+
+    rows.push({
+      sort_order: i,
+      visit_time,
+      reservation_type,
+      guest_name,
+      guest_count: typeof guestCountParsed === 'number' ? guestCountParsed : null,
+      note: note_raw === '' ? null : note_raw,
+    })
+  }
+
+  // Upsert rows (safe via UNIQUE(daily_check_id, sort_order))
+  if (rows.length > 0) {
+    const { error: upsertError } = await supabase
+      .from('daily_reservations')
+      .upsert(
+        rows.map((row) => ({
+          cast_id: cast.id,
+          reservation_date: today,
+          daily_check_id: dailyCheckId,
+          sort_order: row.sort_order,
+          visit_time: row.visit_time,
+          guest_name: row.guest_name,
+          guest_count: row.guest_count,
+          reservation_type: row.reservation_type,
+          note: row.note,
+        })),
+        { onConflict: 'daily_check_id,sort_order' }
+      )
+
+    if (upsertError) return { error: upsertError.message }
+  }
+
+  // Delete rows that were cleared by the user (only within this daily check context)
+  const keepOrders = rows.map((r) => r.sort_order)
+  const { error: deleteExtraError } = await supabase
+    .from('daily_reservations')
+    .delete()
+    .eq('daily_check_id', dailyCheckId)
+    .eq('cast_id', cast.id)
+    .eq('reservation_date', today)
+    .not('sort_order', 'in', `(${keepOrders.length ? keepOrders.join(',') : '0'})`)
+
+  if (deleteExtraError) return { error: deleteExtraError.message }
+
+  // Remove legacy rows for the same day (created by older UI) to avoid duplicates
+  const { error: deleteLegacyError } = await supabase
+    .from('daily_reservations')
+    .delete()
+    .eq('cast_id', cast.id)
+    .eq('reservation_date', today)
+    .is('sort_order', null)
+
+  if (deleteLegacyError) return { error: deleteLegacyError.message }
+
+  revalidatePath('/cast/daily-check')
+  revalidatePath('/cast/dashboard')
+  revalidatePath('/admin/today')
+  return { success: true }
 }

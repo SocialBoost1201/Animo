@@ -41,9 +41,9 @@ export async function DashboardAlertCard() {
   };
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border border-[#8a8478] font-inter h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+      <div className="flex items-center justify-between px-5 h-[64px] border-b border-[#8a847830] shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#d4785a1a] rounded-[7px] shrink-0">
             <AlertTriangle size={16} className="text-[#d4785a]" strokeWidth={2.5} />

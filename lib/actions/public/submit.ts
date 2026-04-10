@@ -182,7 +182,7 @@ export async function submitRecruitApplication(formData: FormData) {
   }
 
   await sendAdminNotification({
-    type: type as 'cast' | 'staff',
+    type: type as 'cast' | 'staff' | 'escort',
     data: { name, age, phone, experience, schedule, message }
   });
 

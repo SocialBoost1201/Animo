@@ -5,9 +5,9 @@ export async function DashboardShiftCoverage() {
   const data = await getDashboardShiftCoverage();
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border border-[#8a8478] font-inter h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+      <div className="flex items-center justify-between px-6 h-[64px] border-b border-[#8a847830] shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
             <BarChart3 size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
@@ -65,7 +65,7 @@ export async function DashboardShiftCoverage() {
             </div>
           )}
 
-          <div className="divide-y divide-[#ffffff0a] border-y border-[#ffffff0a]">
+          <div className="divide-y divide-[#8a847820] border-y border-[#8a847820]">
             {[
               { label: '週平均充足率', value: `${data.avgRate}%`, color: 'text-[#c7c0b2]', weight: 'font-semibold' },
               { label: '最低充足日', value: `${data.minDay}曜 ${data.minRate}%`, color: 'text-[#d4785a]', weight: 'font-semibold' },

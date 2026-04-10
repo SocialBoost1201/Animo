@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
@@ -162,10 +163,10 @@ const POSITIONS = {
 // ─── メインコンポーネント ──────────────────────────────────────
 
 function StaffRecruitPageContent() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'staff' | 'escort'>('staff');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -179,19 +180,15 @@ function StaffRecruitPageContent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!executeRecaptcha) {
-      setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
-      return;
-    }
-
+    const form = e.currentTarget;
     setIsSubmitting(true);
     setErrorMessage('');
 
     try {
-      const token = await executeRecaptcha('staff_recruit_submit');
-      const formData = new FormData(e.currentTarget);
+      const token = executeRecaptcha ? await executeRecaptcha('staff_recruit_submit') : null;
+      const formData = new FormData(form);
       formData.append('type', data.formRole);
-      formData.append('recaptchaToken', token);
+      if (token) formData.append('recaptchaToken', token);
       
       const result = await submitRecruitApplication(formData);
       setIsSubmitting(false);
@@ -199,8 +196,8 @@ function StaffRecruitPageContent() {
       if (result.error) {
         setErrorMessage(result.error);
       } else {
-        setIsSuccess(true);
         trackRecruitSubmit('staff');
+        router.push(`/recruit/thanks?type=${data.formRole}`);
       }
     } catch (err) {
       console.error(err);
@@ -208,23 +205,6 @@ function StaffRecruitPageContent() {
       setIsSubmitting(false);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-white pb-32 flex items-center justify-center pt-32">
-        <div className="bg-white p-12 max-w-lg w-full text-center shadow-luxury border border-gold/20">
-          <CheckCircle2 className="w-12 h-12 text-gold mx-auto mb-6" />
-          <h2 className="text-xl font-serif text-foreground mb-6 luxury-tracking">ご応募ありがとうございます</h2>
-          <p className="text-gray-500 mb-10 leading-[2.5] font-serif luxury-tracking text-xs">
-            2営業日以内に採用担当よりご連絡いたします。
-          </p>
-          <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <Link href="/">トップページへ戻る</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">

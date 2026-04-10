@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
               当店は、法令の変更等に伴い、本プライバシーポリシーの継続的な見直しと改善を行い、必要に応じて改定することがあります。
             </p>
 
-            <div className="mt-12 flex justify-end text-sm text-gray-500">
+            <div className="mt-12 flex justify-end text-[10px] md:text-xs text-gray-400 luxury-tracking uppercase font-sans">
               制定日：2023年10月1日
             </div>
           </FadeIn>

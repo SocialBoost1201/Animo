@@ -41,9 +41,9 @@ export async function DashboardTodayShifts() {
   const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border border-[#8a8478] font-inter h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+      <div className="flex items-center justify-between px-6 h-[64px] border-b border-[#8a847830] shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
             <Users size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
@@ -59,7 +59,7 @@ export async function DashboardTodayShifts() {
         </div>
         <Link
           href="/admin/today"
-          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[0.56px] border-[#ffffff0f] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
+          className="flex items-center gap-1 px-3 h-[24px] rounded-[8px] bg-[#ffffff06] border border-[#ffffff0f] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
         >
           <span>詳細</span>
           <ChevronRight size={12} className="-mt-px" />
@@ -70,7 +70,7 @@ export async function DashboardTodayShifts() {
       <div className="flex-1 overflow-x-auto custom-scrollbar">
         <div className="min-w-[700px]">
           {/* Table Header Row */}
-          <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6">
+          <div className="flex items-center h-[42px] border-t border-b border-[#8a847830] px-6">
             <div className="w-[200px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">キャスト名</div>
             <div className="w-[120px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">出勤時間</div>
             <div className="w-[110px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">ステータス</div>
@@ -78,7 +78,7 @@ export async function DashboardTodayShifts() {
           </div>
 
           {/* Table Body */}
-          <div className="divide-y divide-[#ffffff0a]">
+          <div className="divide-y divide-[#8a847820]">
             {casts.length === 0 ? (
               <div className="h-40 flex items-center justify-center italic">
                 <p className="text-[12px] text-[#5a5650]">出勤登録がありません</p>

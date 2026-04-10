@@ -1,72 +1,137 @@
-# AGENTS.md — Animo
+# Animo Execution Contract
 
-> Applies to: Claude Code, Codex, Antigravity
-> This file is a compact operating contract. Details live in `.claude/rules/` and `docs/ai/`.
+This file defines the project-specific execution contract for all AI agents working in this repository. 
+It merges existing operational rules with comprehensive multi-agent protocols to ensure production-grade stability and clarity.
 
----
+## 1. Purpose
 
-## Quick Start
+This project exists to support the public site, cast-facing flows, and admin-side operations of Animo. It must be treated as a production-grade business system.
+- Stable public-facing experience.
+- Reliable cast and admin workflows.
+- Safe and maintainable implementation.
+- Operational clarity for future updates.
 
-1. Read `CLAUDE.md` — commands, tech stack, pnpm, framework rules
-2. Load `.claude/rules/` — scoped operating rules for your task type
-3. Check `.claude/skills/` — 7 core workflow skills
-4. Read `docs/ai/architecture-summary.md` if you need architecture context
+**Do not optimize for demo quality over operational quality.**
 
----
+## 2. Authority Order
 
-## Operating Rules (by concern)
+When instructions conflict, use the following priority order:
+1. Laws, contracts, real data, existing system facts, and existing files.
+2. GEMINI.md
+3. This AGENTS.md
+4. Files under `.agent/rules/` (Multi-agent operational rules).
+5. Files under `.claude/rules/` (Legacy or Claude Code specific rules).
+6. Approved design documents, specifications, and operational documents.
+7. The latest explicit user instruction.
+8. General best practices.
 
-| File | Scope |
-|------|-------|
-| `.claude/rules/01-core-operating-rules.md` | Implementation flow, completion requirements |
-| `.claude/rules/02-git-safety-rules.md` | Branch safety, commit format |
-| `.claude/rules/03-architecture-and-stack-rules.md` | Directory conventions, component rules, AI SDK, pnpm |
-| `.claude/rules/04-ui-ux-rules.md` | Design system, GSAP, Three.js, Lenis, Embla |
-| `.claude/rules/05-data-and-db-safety-rules.md` | Supabase Auth, RLS, rate limiting, security |
-| `.claude/rules/06-testing-and-validation-rules.md` | Lint, build, verification |
-| `.claude/rules/07-reporting-and-delivery-rules.md` | Completion report format |
-| `.claude/rules/08-skill-loading-and-context-rules.md` | Skill load order, context budget (critical) |
-| `.claude/rules/09-multi-agent-collaboration-rules.md` | Agent routing, MCP rules |
+## 3. Project Mission
 
----
+Always optimize for operational stability, maintainability, correct role separation, safe admin and cast flows, and production readiness. Prefer operational clarity over visual novelty.
 
-## Core Skill Shelf (7 skills)
+## 4. Definition of Done
 
-`.claude/skills/` — always-available workflow skills:
+Work is not done unless:
+- The intended file changes actually exist in the repository.
+- The changed files can be identified explicitly.
+- The impact scope is understood.
+- Required validation (Code/UI/Auth/Flow) has been performed.
+- Unverified items and remaining risks are explicitly listed.
 
-| Skill | Use when |
-|-------|----------|
-| `commit-writer` | Any commit |
-| `bugfix-flow` | Any bug (AI SDK, TipTap, Three.js patterns included) |
-| `implementation-flow` | Any feature |
-| `ui-qa-check` | Any UI change (GSAP cleanup, Three.js SSR included) |
-| `db-safe-update` | Any Supabase / auth / rate-limit change |
-| `docs-writer` | Any documentation |
-| `handoff-flow` | Session end or agent switch |
+## 5. Required Reporting Language
 
-Runtime skills: see `.claude/skills-runtime/README.md`
+All progress reports, summaries, change reports, and validation reports must be written in **Japanese (日本語)**.
+English is allowed only for code, commands, logs, identifiers, library names, API names, file names, and branch names.
 
----
+## 6. Project Overview
 
-## Context Safety Warning
+- **Project Name:** Animo
+- **Type:** Business website plus admin and cast operational system.
+- **Audience:** Public visitors, Cast users, Internal Admin users.
 
-This repo previously had 134 skills active (anomaly, now fixed).
-- Core shelf: `.claude/skills/` (7 skills) — canonical active shelf
-- Reference vault: `.agent/skills/` (134 skills) — do NOT bulk-load
-- Runtime catalog: `.claude/skills-runtime/README.md`
+## 7. Tech Stack
 
----
+- **Core:** Next.js, TypeScript, Tailwind CSS.
+- **Backend/Storage:** Supabase, Vercel.
+Do not replace core technology choices without explicit justification.
 
-## Shared Policy
+## 8. Repository Structure and Responsibilities
 
-Full workspace contract: `/Users/takumashinnyo/workspace/projects/docs/ai/execution-contract.md`
+- `app/` = Routes and page-level structure.
+- `components/` = Reusable UI components.
+- `lib/` = Business logic and integrations.
+- `.agent/` = Multi-agent rules and workflows (New).
+- `.claude/` = Legacy configuration and Claude specific rules.
 
----
+## 9. Non-Negotiable Constraints
 
-## Key Rules (non-negotiable)
+- URL structure and public/cast/admin role boundaries.
+- Access control and authentication-related behavior.
+- **Existing Rules:**
+    - **Plan-first:** Propose a plan and wait for explicit approval ("Proceed"/"承認") before any repo-tracked edits.
+    - **Minimal diff:** Smallest safe change; keep existing architecture and conventions.
+    - **No unrelated refactor:** No formatting-only edits, renames, or file moves unless required.
 
-- Present plan and wait for approval before implementing
-- Verify before claiming completion (file-level evidence required)
-- All AI endpoints must have Upstash Rate Limit applied
-- Three.js: dynamic import + `ssr: false` + Suspense — always
-- Skill Usage Report required in every completion response
+## 10. UI and UX Rules
+
+Prioritize clarity over decorative effects. CTA and important states must remain visible.
+- **Existing Rule:** UI preservation (Do not change UI/animations/visual design unless explicitly requested).
+
+## 11. Copy and Content Rules
+
+All copy must be operationally credible and business-natural. Avoid vague abstractions or overstatement.
+
+## 12. SEO and AI Search Rules
+
+Headings must follow a logical structure. H1 must clearly describe the page topic. Avoid unnatural SEO text.
+
+## 13. Data Design Rules
+
+Display content should be manageable from proper data/admin sources. Preserve stable identifiers.
+
+## 14. Implementation Style
+
+- Use the smallest safe diff.
+- Avoid `any` unless unavoidable.
+- Do not leave temporary implementations or placeholder comments.
+- Follow the **Plan-first** protocol for non-trivial changes.
+
+## 15. Validation Rules
+
+- **Code:** Type check, lint, and diff review.
+- **UI:** Desktop/Mobile check, spacing/layout check, navigation check.
+- **Existing Rule:** **Evidence** (Verify with commands/tests; report exact commands + touched file paths).
+
+## 16. Required Artifacts
+
+Use the following for non-trivial tasks:
+- `task.md`, `implementation_plan.md`, `walkthrough.md`, `handover.md`, `audit.md`.
+
+## 17. Completion Report Requirements
+
+Include: Conclusion (結論), Changed files, Validation results, Unvalidated items, Remaining risks, and Next action.
+
+## 18. Skill Usage Policy
+
+Use only relevant skills. Treat Shared Vault as storage, not default active context. Prefer workflows for repeatable procedures.
+
+## 19. Local Pointers
+
+- **Multi-agent rules:** `.agent/rules/`
+- **Multi-agent workflows:** `.agent/workflows/`
+- **Legacy rules/skills:** `.claude/rules/`, `.claude/skills/`
+
+## 20. Forbidden Behaviors
+
+- Claiming verification that did not happen.
+- Making silent breaking changes.
+- Guessing role/auth behavior or inventing outcomes.
+- Prioritizing visual novelty over operational clarity.
+
+## 21. Review and Maintenance
+
+This file should be reviewed when major architecture, routing, or mission changes occur. Keep it strong and operational.
+
+## 22. Final Principle
+
+If a rule does not help execution quality, operational safety, maintainability, or reporting accuracy, do not add it.

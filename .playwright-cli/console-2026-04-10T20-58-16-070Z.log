@@ -1,0 +1,64 @@
+[     467ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[     514ms] [LOG] [HMR] connected @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[    3717ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[    4015ms] [LOG] [Fast Refresh] done in 212ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[    4478ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[    9107ms] [LOG] [Fast Refresh] done in 4730ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   33251ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   33568ms] [LOG] [Fast Refresh] done in 214ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   33684ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   33688ms] [LOG] [Fast Refresh] done in 105ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   34195ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   34202ms] [LOG] [Fast Refresh] done in 109ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   34462ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   34566ms] [LOG] [Fast Refresh] done in 204ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   34670ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   35108ms] [LOG] [Fast Refresh] done in 540ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   35209ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   35467ms] [LOG] [Fast Refresh] done in 359ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   35731ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   36709ms] [LOG] [Fast Refresh] done in 1079ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   36811ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   37203ms] [LOG] [Fast Refresh] done in 492ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   37304ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   37868ms] [LOG] [Fast Refresh] done in 664ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   38040ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   39163ms] [LOG] [Fast Refresh] done in 1223ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   39330ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   40579ms] [LOG] [Fast Refresh] done in 1350ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   40681ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   41854ms] [LOG] [Fast Refresh] done in 1274ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   46564ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   46577ms] [LOG] [Fast Refresh] done in 114ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   53291ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   53412ms] [LOG] [Fast Refresh] done in 223ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   76393ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   76633ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3000/admin/login?_rsc=xrimv:0
+[   76649ms] [LOG] [Fast Refresh] done in 114ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   77160ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[   77177ms] [LOG] [HMR] connected @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  124359ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  125003ms] [LOG] [Fast Refresh] done in 746ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  125887ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  125989ms] [LOG] [Fast Refresh] done in 203ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  126090ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  126125ms] [LOG] [Fast Refresh] done in 136ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  234131ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  234403ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3000/admin/login?_rsc=xrimv:0
+[  234419ms] [LOG] [Fast Refresh] done in 202ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  234770ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[  234811ms] [LOG] [HMR] connected @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[ 1098034ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[ 1098061ms] [LOG] [Fast Refresh] done in 128ms @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_54c05ad0._.js:2297
+[ 2003171ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2004172ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2005175ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2006177ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2007181ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2012184ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2017195ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2022209ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2027254ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2032284ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2037337ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878
+[ 2042549ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:3000/_next/webpack-hmr?id=Ut4bNcGn9iRgtgec4PYsQ' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:3000/_next/static/chunks/f631c_next_dist_client_db5377da._.js:10878

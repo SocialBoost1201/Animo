@@ -47,13 +47,29 @@ export async function getPublicCasts() {
     const { data, error } = await supabase
       .from('casts')
       .select(`
-        *,
-        cast_images(image_url, image_type, is_primary, sort_order),
+        id,
+        slug,
+        stage_name,
+        name,
+        name_kana,
+        age,
+        height,
+        comment,
+        quiz_tags,
+        is_today,
+        display_order,
+        image_url,
+        created_at,
+        updated_at,
+        cast_images(image_url, is_primary, sort_order),
         cast_posts(created_at)
       `)
       .eq('is_active', true)
       .order('display_order', { ascending: true })
       .order('created_at', { ascending: false })
+      // Payload reduction: only need latest post timestamp per cast
+      .order('created_at', { foreignTable: 'cast_posts', ascending: false })
+      .limit(1, { foreignTable: 'cast_posts' })
 
     if (error) { console.error('getPublicCasts:', error); return [] }
 

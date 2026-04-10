@@ -442,10 +442,11 @@ function AllTab({
       {/* Absent */}
       {absentNames.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤</p>
+          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤（罰金対象）</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
               <Badge color="red">欠勤</Badge>
+              <Badge color="orange">罰金対象</Badge>
               <span className="text-[12px] text-[#d4785a]">{name}</span>
             </Row>
           ))}
@@ -638,10 +639,11 @@ function CastTab({
       {/* Absent */}
       {absentNames.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤</p>
+          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤（罰金対象）</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
               <Badge color="red">欠勤</Badge>
+              <Badge color="orange">罰金対象</Badge>
               <span className="text-[12px] text-[#d4785a]">{name}</span>
             </Row>
           ))}

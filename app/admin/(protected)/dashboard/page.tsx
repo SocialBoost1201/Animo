@@ -3,12 +3,10 @@ import Link from 'next/link';
 import { Calendar, Bell, Plus } from 'lucide-react';
 
 import { DashboardKPIs }          from '@/components/features/admin/dashboard/DashboardKPIs';
-import { DashboardTodayOps }       from '@/components/features/admin/dashboard/DashboardTodayOps';
-import { DashboardTodayShifts }    from '@/components/features/admin/dashboard/DashboardTodayShifts';
 import { DashboardCastRanking }    from '@/components/features/admin/dashboard/DashboardCastRanking';
 import { DashboardAlertCard }      from '@/components/features/admin/dashboard/DashboardAlertCard';
-import { DashboardReservations }   from '@/components/features/admin/dashboard/DashboardReservations';
-import { DashboardMemoCard }       from '@/components/features/admin/dashboard/DashboardMemoCard';
+import { DashboardShiftCoverage }  from '@/components/features/admin/dashboard/DashboardShiftCoverage';
+import { DashboardQuickActions }   from '@/components/features/admin/dashboard/DashboardQuickActions';
 import { getJstDateLabel } from '@/lib/date-utils';
 
 function Skeleton({ className = 'h-32' }: { className?: string }) {
@@ -19,22 +17,24 @@ export default async function DashboardPage() {
   const dateLabel = getJstDateLabel();
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="space-y-[14px] font-inter">
       {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+      <div className="flex items-center justify-between h-[49px]">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">本日の営業状況</h1>
-          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">今日の営業判断に必要な情報を確認できます</p>
+          <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">ダッシュボード</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">KPI・アラート・主要指標の一覧</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[0.56px] border-[#ffffff0f]">
-            <Calendar size={13} className="text-[#8a8478]" />
-            <span className="text-[11px] font-medium text-[#c7c0b2] tracking-[3.06px] uppercase">{dateLabel}</span>
+        <div className="flex items-center gap-[10px]">
+          {/* Date pill */}
+          <div className="flex items-center gap-2 h-[37px] px-4 bg-[#ffffff06] rounded-[10px] border border-[#8a8478]">
+            <Calendar size={13} className="text-[#c7c0b2]" />
+            <span className="text-[11px] font-medium text-[#c7c0b2] tracking-[3.06px]">{dateLabel}</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[0.56px] border-[#ffffff0f] w-48 transition-all focus-within:w-64 focus-within:border-[#dfbd6940]">
-            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+          {/* Search */}
+          <div className="hidden sm:flex items-center gap-2 h-[37px] px-3 bg-[#ffffff06] rounded-[10px] border border-[#8a8478] w-[208px]">
+            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" className="shrink-0">
               <circle cx="5" cy="5" r="4" stroke="#c7c0b2" strokeOpacity="0.5" strokeWidth="1.2" />
               <path d="M8 9l2 2" stroke="#c7c0b2" strokeOpacity="0.5" strokeWidth="1.2" strokeLinecap="round" />
             </svg>
@@ -45,21 +45,21 @@ export default async function DashboardPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <button className="p-2 bg-[#ffffff0a] rounded-[9px] border-[0.56px] border-[#ffffff0f] hover:bg-[#ffffff15] transition-colors relative">
-              <Bell size={14} className="text-[#c7c0b2]" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
-            </button>
+          {/* Filter button */}
+          <button className="h-[37px] w-[32px] flex items-center justify-center bg-[#ffffff06] rounded-[9px] border border-[#8a8478] hover:bg-[#ffffff10] transition-colors relative">
+            <Bell size={13} className="text-[#c7c0b2]" />
+            <span className="absolute top-[5px] right-[4px] w-[6px] h-[6px] rounded-[3px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+          </button>
 
-            <Link
-              href="/admin/today"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-              style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
-            >
-              <Plus size={14} strokeWidth={3} />
-              来店予定を追加
-            </Link>
-          </div>
+          {/* CTA */}
+          <Link
+            href="/admin/today"
+            className="flex items-center justify-center gap-1.5 h-[37px] w-[132px] rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
+          >
+            来店予定を追加
+            <Plus size={12} strokeWidth={3} />
+          </Link>
         </div>
       </div>
 
@@ -68,34 +68,33 @@ export default async function DashboardPage() {
         <DashboardKPIs />
       </Suspense>
 
-      {/* ── 本日の営業状況（全幅）── */}
-      <Suspense fallback={<Skeleton className="h-72" />}>
-        <DashboardTodayOps />
-      </Suspense>
+      {/* ── 2-Column Main Layout ── */}
+      {/* left: main content / right: sidebar panels (fixed ~265px) */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_265px] gap-[14px] items-start">
 
-      {/* ── 本日の出勤キャスト（全幅）── */}
-      <Suspense fallback={<Skeleton className="h-64" />}>
-        <DashboardTodayShifts />
-      </Suspense>
+        {/* ── LEFT COLUMN ── */}
+        <div className="flex flex-col gap-[14px] min-w-0">
+          {/* キャスト行動成績評価 */}
+          <Suspense fallback={<Skeleton className="h-[498px]" />}>
+            <DashboardCastRanking />
+          </Suspense>
+        </div>
 
-      {/* ── キャスト行動成績評価 ＋ 重要アラート ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4">
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardCastRanking />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardAlertCard />
-        </Suspense>
-      </div>
+        {/* ── RIGHT COLUMN ── */}
+        <div className="flex flex-col gap-[14px] xl:sticky xl:top-6">
+          {/* クイックアクション */}
+          <DashboardQuickActions />
 
-      {/* ── 来店予定一覧 ＋ 営業メモ ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4">
-        <Suspense fallback={<Skeleton className="h-56" />}>
-          <DashboardReservations />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-56" />}>
-          <DashboardMemoCard />
-        </Suspense>
+          {/* シフト充足率 */}
+          <Suspense fallback={<Skeleton className="h-[400px]" />}>
+            <DashboardShiftCoverage />
+          </Suspense>
+
+          {/* 重要アラート */}
+          <Suspense fallback={<Skeleton className="h-[280px]" />}>
+            <DashboardAlertCard />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ function getResend() {
 }
 
 export async function sendAdminNotification(payload: {
-  type: 'reserve' | 'contact' | 'cast' | 'staff';
+  type: 'reserve' | 'contact' | 'cast' | 'staff' | 'escort';
   data: Record<string, unknown>;
 }) {
   if (!process.env.RESEND_API_KEY) {
@@ -36,6 +36,10 @@ export async function sendAdminNotification(payload: {
     case 'staff':
       subject = `【新着】スタッフ応募: ${data.name}様`;
       title = '新着：スタッフ応募';
+      break;
+    case 'escort':
+      subject = `【新着】エスコート応募: ${data.name}様`;
+      title = '新着：エスコート応募';
       break;
   }
 

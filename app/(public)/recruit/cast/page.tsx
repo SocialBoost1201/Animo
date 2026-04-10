@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import Image from 'next/image';
@@ -123,28 +124,24 @@ const RECRUIT_DETAILS_TAGS: RecruitTag[] = [
 // ─── メインコンポーネント ──────────────────────────────────────
 
 function CastRecruitPageContent() {
+  const router = useRouter();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!executeRecaptcha) {
-      setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
-      return;
-    }
-
+    const form = e.currentTarget;
     setIsSubmitting(true);
     setErrorMessage('');
-    
+
     try {
-      const token = await executeRecaptcha('recruit_submit');
-      const formData = new FormData(e.currentTarget);
+      const token = executeRecaptcha ? await executeRecaptcha('recruit_submit') : null;
+      const formData = new FormData(form);
       formData.append('type', 'cast');
-      formData.append('recaptchaToken', token);
+      if (token) formData.append('recaptchaToken', token);
       
       const result = await submitRecruitApplication(formData);
       setIsSubmitting(false);
@@ -152,8 +149,8 @@ function CastRecruitPageContent() {
       if (result.error) {
         setErrorMessage(result.error);
       } else {
-        setIsSuccess(true);
         trackRecruitSubmit('cast');
+        router.push('/recruit/thanks?type=cast');
       }
     } catch (err) {
       console.error(err);
@@ -168,24 +165,6 @@ function CastRecruitPageContent() {
   const heroCtaPrimary = `${heroCtaBase} border-[#f1ddb1]/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.98)_0%,rgba(245,234,209,0.97)_38%,rgba(191,154,89,0.96)_100%)] text-[#18130d] hover:-translate-y-0.5 hover:shadow-[0_30px_75px_-28px_rgba(179,146,87,0.72)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.06)_38%,rgba(255,255,255,0.02)_100%)] before:content-['']`;
 
   const heroCtaSecondary = `${heroCtaBase} border-white/20 bg-[linear-gradient(135deg,rgba(14,12,10,0.78)_0%,rgba(30,25,19,0.62)_52%,rgba(73,58,37,0.5)_100%)] text-white hover:-translate-y-0.5 hover:border-[#d7ba84]/55 hover:shadow-[0_30px_72px_-30px_rgba(222,187,124,0.36)] before:absolute before:inset-[1px] before:rounded-[22px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.03)_32%,rgba(255,255,255,0)_100%)] before:content-['']`;
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-white pb-32 flex items-center justify-center pt-32">
-        <div className="bg-white p-12 max-w-lg w-full text-center shadow-luxury border border-gold/20 relative">
-          <CheckCircle2 className="w-12 h-12 text-gold mx-auto mb-6" />
-          <h2 className="text-xl font-serif text-foreground mb-6 luxury-tracking">ご応募ありがとうございます</h2>
-          <p className="text-gray-500 mb-10 leading-[2.5] font-serif luxury-tracking text-xs">
-            入力いただいた情報が送信されました。<br />
-            2営業日以内に採用担当よりご連絡いたします。
-          </p>
-          <Button asChild className="px-10 text-xs font-serif luxury-tracking">
-            <Link href="/">トップページへ戻る</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">
