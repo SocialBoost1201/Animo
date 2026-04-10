@@ -10,7 +10,6 @@ import { Magnetic } from '@/components/motion/Magnetic';
 const NAV_ITEMS = [
   { label: 'System', href: '/system' },
   { label: 'Cast', href: '/cast' },
-  { label: 'Shift', href: '/shift' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Access', href: '/access' },
 ];
