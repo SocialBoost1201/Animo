@@ -42,7 +42,6 @@ export function InviteStaffButton() {
 
     setIsSending(true)
     try {
-      // 現在のセッションのJWTトークンを取得
       const supabase = createClient()
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
@@ -75,73 +74,72 @@ export function InviteStaffButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[#171717] hover:bg-gold text-white px-4 py-2 rounded-sm text-sm font-bold tracking-widest flex items-center gap-2 transition-colors"
+        className="flex items-center justify-center gap-1.5 h-[37px] px-5 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+        style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
       >
-        <UserPlus size={16} />
+        <UserPlus size={13} strokeWidth={3} />
         新規スタッフ招待
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-sm shadow-xl w-full max-w-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#1c1d22] rounded-[18px] border border-[#ffffff0f] shadow-2xl w-full max-w-md overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-bold tracking-widest text-[#171717]">スタッフ招待</h2>
-              <button onClick={handleClose} className="text-gray-400 hover:text-[#171717] transition-colors">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#ffffff08]">
+              <h2 className="text-[14px] font-bold tracking-tight text-[#f4f1ea]">スタッフ招待</h2>
+              <button onClick={handleClose} className="text-[#5a5650] hover:text-[#f4f1ea] transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             {/* Body */}
             {sent ? (
-              // 送信完了画面
               <div className="px-6 py-10 text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                  <Send size={24} className="text-green-600" />
+                <div className="w-[56px] h-[56px] rounded-full bg-[#72b8941a] flex items-center justify-center mx-auto border border-[#72b89430]">
+                  <Send size={24} className="text-[#72b894]" />
                 </div>
-                <p className="text-base font-bold text-[#171717]">招待メールを送信しました</p>
-                <p className="text-sm text-gray-500">
-                  <span className="font-bold text-[#171717]">{email}</span> に招待メールを送信しました。<br />
-                  対象者がリンクをクリックしてパスワードを設定すると、<br />
-                  スタッフ一覧に自動的に追加されます。
+                <p className="text-[15px] font-bold text-[#f4f1ea]">招待メールを送信しました</p>
+                <p className="text-[12px] text-[#8a8478] leading-relaxed">
+                  <span className="font-bold text-[#dfbd69]">{email}</span> に送信完了。<br />
+                  参加者がリンクから登録すると、<br />
+                  管理画面へアクセス可能になります。
                 </p>
                 <button
                   onClick={handleClose}
-                  className="mt-4 w-full py-2.5 border border-gray-200 text-sm text-gray-600 hover:border-gray-400 transition-colors rounded-sm"
+                  className="mt-4 w-full h-[40px] rounded-[10px] bg-[#ffffff08] border border-[#ffffff0f] text-[12px] font-semibold text-[#c7c0b2] hover:bg-[#ffffff0f] transition-colors"
                 >
                   閉じる
                 </button>
               </div>
             ) : (
-              // 招待フォーム
               <div className="px-6 py-6 space-y-5">
-                {/* メールアドレス入力 */}
+                {/* Email input */}
                 <div>
-                  <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">
-                    招待するメールアドレス *
+                  <label className="block text-[10px] font-bold tracking-[0.1em] text-[#5a5650] uppercase mb-2">
+                    メールアドレス
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="staff@example.com"
-                    className="w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors"
+                    className="w-full bg-[#0e0e10] border border-[#ffffff14] rounded-[10px] px-4 py-2.5 text-[13px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-[#dfbd6940] transition-colors"
                   />
                 </div>
 
-                {/* 権限選択 */}
+                {/* Role selection */}
                 <div>
-                  <label className="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">
-                    付与する権限 *
+                  <label className="block text-[10px] font-bold tracking-[0.1em] text-[#5a5650] uppercase mb-2">
+                    権限
                   </label>
                   <div className="space-y-2">
                     {ROLE_OPTIONS.map((option) => (
                       <label
                         key={option.value}
-                        className={`flex items-start gap-3 px-4 py-3 border rounded-sm cursor-pointer transition-colors ${
+                        className={`flex items-start gap-3 px-4 py-3 border rounded-[12px] cursor-pointer transition-all ${
                           role === option.value
-                            ? 'border-gold bg-gold/5'
-                            : 'border-gray-200 hover:border-gold/50'
+                            ? 'border-[#dfbd6940] bg-[#dfbd690a]'
+                            : 'border-[#ffffff08] bg-[#ffffff02] hover:bg-[#ffffff05]'
                         }`}
                       >
                         <input
@@ -150,19 +148,19 @@ export function InviteStaffButton() {
                           value={option.value}
                           checked={role === option.value}
                           onChange={() => setRole(option.value)}
-                          className="mt-0.5 accent-gold"
+                          className="mt-1 accent-[#dfbd69]"
                         />
                         <div>
-                          <p className="text-sm font-bold text-[#171717]">{option.label}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{option.description}</p>
+                          <p className="text-[13px] font-bold text-[#f4f1ea]">{option.label}</p>
+                          <p className="text-[11px] text-[#8a8478] mt-0.5 leading-relaxed">{option.description}</p>
                         </div>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-400">
-                  招待メールの有効期限は24時間です。期限切れの場合は再度招待してください。
+                <p className="text-[10px] text-[#5a5650] leading-relaxed">
+                  ※招待メールの有効期限は24時間です。
                 </p>
               </div>
             )}
@@ -172,19 +170,19 @@ export function InviteStaffButton() {
               <div className="px-6 pb-6 flex gap-3">
                 <button
                   onClick={handleClose}
-                  className="flex-1 py-2.5 border border-gray-200 text-sm text-gray-600 hover:border-gray-400 transition-colors rounded-sm"
+                  className="flex-1 h-[40px] border border-[#ffffff0f] text-[12px] font-semibold text-[#c7c0b2] hover:bg-[#ffffff08] transition-colors rounded-[10px]"
                 >
                   キャンセル
                 </button>
                 <button
                   onClick={handleInvite}
                   disabled={isSending || !email.trim()}
-                  className="flex-1 py-2.5 bg-[#171717] hover:bg-gold text-white text-sm font-bold tracking-widest flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-sm"
+                  className="flex-1 h-[40px] bg-[#f4f1ea] hover:bg-white text-[#0b0b0d] text-[12px] font-bold tracking-tight flex items-center justify-center gap-2 transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:scale-100 rounded-[10px]"
                 >
                   {isSending ? (
-                    <><Loader2 size={14} className="animate-spin" /> 送信中...</>
+                    <><Loader2 size={13} className="animate-spin" /> 送信中...</>
                   ) : (
-                    <><Send size={14} /> 招待メールを送信</>
+                    <><Send size={13} /> 招待を送る</>
                   )}
                 </button>
               </div>

@@ -45,11 +45,10 @@ export default async function ShiftRequestsPage({
   ];
 
   return (
-    <div className="space-y-6 font-inter">
-      {/* ── Page Header ── */}
-      <div className="py-2">
-        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">出勤調整</h1>
-        <p className="text-[11px] text-[#8a8478] mt-0.5">シフト提出・変更申請・当日調整の管理</p>
+    <div className="space-y-[14px] font-inter">
+      <div className="flex flex-col gap-0.5 h-[49px] justify-center">
+        <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">出勤調整</h1>
+        <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">シフト提出・変更申請・当日調整の管理</p>
       </div>
 
       {/* ── Main Tabs ── */}
@@ -73,7 +72,7 @@ export default async function ShiftRequestsPage({
         ))}
       </div>
 
-      <div className="flex flex-col xl:flex-row gap-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_265px] gap-[14px] items-start">
         {/* Left: List */}
         <div className="flex-1 w-full min-w-0">
           {tab === 'new' ? (
@@ -119,11 +118,9 @@ export default async function ShiftRequestsPage({
           )}
         </div>
 
-        {/* Right: Unsubmitted */}
-        <div className="w-full xl:w-[300px] shrink-0">
-          <div className="sticky top-[80px]">
-            <UnsubmittedCastsList statuses={castStatuses || []} targetWeekMonday={nextMondayStr} />
-          </div>
+        {/* Right Column */}
+        <div className="flex flex-col gap-[14px] xl:sticky xl:top-6">
+          <UnsubmittedCastsList statuses={castStatuses || []} targetWeekMonday={nextMondayStr} />
         </div>
       </div>
     </div>

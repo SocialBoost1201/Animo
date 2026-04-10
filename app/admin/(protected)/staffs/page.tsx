@@ -8,12 +8,12 @@ export default async function StaffsPage() {
   const staffsData = await getStaffs(true)
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="space-y-[14px] font-inter">
       {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 h-[49px]">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">スタッフ管理</h1>
-          <p className="text-[11px] text-[#8a8478]">
+          <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">スタッフ管理</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">
             スタッフ {staffsData.length}名 · 役割・スケジュールの管理
           </p>
         </div>

@@ -27,32 +27,32 @@ export default async function AdminMonthlyShiftsPage({
   const castsData = await getAdminMonthlyShifts(year, month);
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="space-y-[14px] font-inter">
       {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 h-[49px]">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">シフト管理</h1>
-          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">キャストから提出された月間シフトを確認・管理します</p>
+          <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">シフト管理（月間）</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">キャストから提出された月間シフトを確認・管理します</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[10px] border border-[#ffffff0f] px-1 py-1">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center h-[37px] bg-[#ffffff06] rounded-[10px] border border-[#8a8478] p-[3px]">
             <Link
               href={`/admin/monthly-shifts?year=${prevYear}&month=${prevMonth}`}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08] text-[11px]"
+              className="flex items-center justify-center w-[60px] h-full text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08] text-[11px] font-bold"
             >
-              <ChevronLeft size={13} />
-              <span className="hidden sm:inline font-medium">先月</span>
+              <ChevronLeft size={12} className="mr-1" />
+              先月
             </Link>
-            <div className="px-3 text-[12px] font-semibold text-[#c7c0b2] min-w-[80px] text-center">
+            <div className="px-3 text-[11px] font-bold text-[#f4f1ea] min-w-[86px] text-center tracking-tight">
               {year}年{month}月
             </div>
             <Link
               href={`/admin/monthly-shifts?year=${nextYear}&month=${nextMonth}`}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08] text-[11px]"
+              className="flex items-center justify-center w-[60px] h-full text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08] text-[11px] font-bold"
             >
-              <span className="hidden sm:inline font-medium">翌月</span>
-              <ChevronRight size={13} />
+              次月
+              <ChevronRight size={12} className="ml-1" />
             </Link>
           </div>
           <ExcelExportButton year={year} month={month} />
@@ -64,20 +64,20 @@ export default async function AdminMonthlyShiftsPage({
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead>
-              <tr className="bg-[#1c1d22] border-b border-[#ffffff08]">
-                <th className="sticky left-0 bg-[#1c1d22] px-4 py-3 min-w-[120px] z-10 border-r border-[#ffffff08]">
-                  <span className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase">キャスト名</span>
+              <tr className="border-b border-[#ffffff08] bg-[#ffffff02]">
+                <th className="sticky left-0 z-10 px-5 py-4 text-[10px] font-bold text-[#5a5650] uppercase tracking-[0.1em] w-[140px] bg-[#17181c] border-r border-[#ffffff05]">
+                  キャスト
                 </th>
                 {days.map((day) => {
                   const dow = new Date(year, month - 1, day).getDay();
                   return (
                     <th
                       key={day}
-                      className={`px-2 py-3 text-center min-w-[34px] border-r border-[#ffffff06] ${
-                        dow === 0 ? 'text-[#d4785a]' : dow === 6 ? 'text-[#6ab0d4]' : 'text-[#5a5650]'
+                      className={`px-1 py-3 text-center min-w-[34px] border-l border-[#ffffff05] ${
+                        dow === 0 ? 'text-[#d4785a]' : dow === 6 ? 'text-[#6ab0d4]' : 'text-[#8a8478]'
                       }`}
                     >
-                      <span className="text-[10px] font-bold">{day}</span>
+                      <span className="text-[11px] font-bold">{day}</span>
                     </th>
                   );
                 })}

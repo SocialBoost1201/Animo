@@ -160,50 +160,50 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   }
 
   return (
-    <div className="space-y-5 font-inter">
+    <div className="space-y-[14px] font-inter">
 
       {/* ── Page Header ─────────────────────────────────────────────────── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 h-[49px]">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">本日の営業状況</h1>
-          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">当日オペレーション・シフト・来店予定を一元管理</p>
+          <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">本日の営業状況</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">当日オペレーション・シフト・来店予定を一元管理</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[0.56px] border-[#ffffff0f]">
-            <Calendar size={13} className="text-[#8a8478]" />
+          <div className="flex items-center gap-2 h-[37px] px-4 bg-[#ffffff06] rounded-[10px] border border-[#8a8478]">
+            <Calendar size={13} className="text-[#c7c0b2]" />
             <span className="text-[11px] font-medium text-[#c7c0b2] tracking-[3.06px] uppercase">{dateLabel}</span>
           </div>
 
           <button
             onClick={() => setActiveTab('visit')}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center justify-center gap-1.5 h-[37px] w-[132px] rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
           >
-            <Plus size={14} strokeWidth={3} />
-            来店予定を確認
+            <Plus size={12} strokeWidth={3} />
+            来店予定を追加
           </button>
         </div>
       </div>
 
       {/* ── KPI Bar ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-[14px]">
         {kpiCards.map((card) => (
           <div
             key={card.label}
-            className="flex flex-col bg-[#17181c] rounded-[14px] border-[0.56px] border-[#ffffff0f] px-5 py-4"
+            className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] px-5 py-4"
           >
-            <p className="text-[10px] font-medium text-[#5a5650] tracking-[0.6px] uppercase mb-1.5">{card.label}</p>
+            <p className="text-[10px] font-bold text-[#5a5650] tracking-[0.6px] uppercase mb-1.5">{card.label}</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-[24px] font-bold text-[#f4f1ea] leading-none">{card.value}</span>
-              <span className="text-[11px] text-[#8a8478]">{card.unit}</span>
+              <span className="text-[24px] font-bold text-[#f4f1ea] leading-none tracking-tighter">{card.value}</span>
+              <span className="text-[11px] text-[#8a8478] font-medium">{card.unit}</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* ── Main Content ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_265px] gap-[14px] items-start">
 
         {/* ── Left: Ops Table ─────────────────────────────────────────── */}
         <div className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] overflow-hidden min-h-[480px]">
@@ -241,8 +241,8 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </div>
         </div>
 
-        {/* ── Right: Alerts + Memo ────────────────────────────────────── */}
-        <div className="flex flex-col gap-4">
+        {/* ── Right Column ── */}
+        <div className="flex flex-col gap-[14px] xl:sticky xl:top-6">
 
           {/* Alerts */}
           <div className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] overflow-hidden">

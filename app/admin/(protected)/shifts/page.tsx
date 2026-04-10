@@ -13,12 +13,10 @@ export default async function ShiftsPage({
     : await getWeeklySchedules(targetDate)
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">Shifts Management</h1>
-          <p className="text-sm text-gray-500 mt-2">出勤スケジュールの登録と管理（チェックボックス一括更新）</p>
-        </div>
+    <div className="space-y-[14px] font-inter">
+      <div className="flex flex-col gap-0.5 h-[49px] justify-center">
+        <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">シフト管理</h1>
+        <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">出勤スケジュールの登録と管理（一括更新・保存）</p>
       </div>
 
       <ShiftManager 

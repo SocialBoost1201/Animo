@@ -10,19 +10,19 @@ export default async function InternalNoticesPage() {
   const notices = await getAdminNotices();
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="space-y-[14px] font-inter">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 h-[49px]">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">通知</h1>
-          <p className="text-[11px] text-[#8a8478]">キャスト向けお知らせ・既読状況の管理</p>
+          <h1 className="text-[16px] font-semibold text-[#f4f1ea] tracking-[-0.31px] leading-[20.8px]">通知</h1>
+          <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[16.5px]">キャスト向けお知らせ・既読状況の管理</p>
         </div>
         <Link
           href="/admin/internal-notices/new"
-          className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] whitespace-nowrap"
+          className="flex items-center justify-center gap-1.5 h-[37px] px-5 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] whitespace-nowrap"
           style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
         >
-          <Plus size={13} strokeWidth={3} />
+          <Plus size={12} strokeWidth={3} />
           新規作成
         </Link>
       </div>
@@ -70,14 +70,14 @@ export default async function InternalNoticesPage() {
                 <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-4 shrink-0 md:pl-5 md:border-l md:border-[#ffffff08]">
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-[9px] text-[#5a5650] font-bold mb-0.5 uppercase tracking-wider">既読率</p>
+                      <p className="text-[9px] text-[#5a5650] font-bold mb-1 uppercase tracking-widest">既読状況</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-[20px] font-bold text-[#f4f1ea] leading-none">{notice.reads_count}</span>
-                        <span className="text-[10px] text-[#5a5650]">/ {notice.total_casts}</span>
+                        <span className="text-[20px] font-bold text-[#f4f1ea] leading-none tracking-tighter">{notice.reads_count}</span>
+                        <span className="text-[10px] font-bold text-[#8a8478]">/ {notice.total_casts}</span>
                       </div>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-[#dfbd6914] flex items-center justify-center">
-                      <Users size={15} className="text-[#dfbd69]" />
+                    <div className="w-[32px] h-[32px] rounded-[8px] bg-[#dfbd6914] flex items-center justify-center border border-[#dfbd6930]">
+                      <Users size={14} className="text-[#dfbd69]" />
                     </div>
                   </div>
 
