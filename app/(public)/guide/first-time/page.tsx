@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
-import { Clock3, CreditCard, HelpCircle, MapPin, Phone, Sparkles } from 'lucide-react';
+import { CreditCard, HelpCircle, MapPin, Phone, Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: '初めての方向け来店ガイド｜関内キャバクラ CLUB Animo',
@@ -49,7 +49,7 @@ const FLOW_ITEMS = [
   },
   {
     title: 'キャストとの時間',
-    body: '雰囲気や会話を楽しみながら、CLUB Animoらしい上質な時間をお過ごしいただけます。出勤中のキャストは当日のシフトページでも確認できます。',
+    body: '雰囲気や会話を楽しみながら、CLUB Animoらしい上質な時間をお過ごしいただけます。気になるキャストは、お電話またはスタッフからなどでご尋ねいただけます。',
   },
   {
     title: 'ご精算',
@@ -219,15 +219,10 @@ export default function FirstTimeGuidePage() {
           </div>
 
           <FadeIn delay={0.2} className="mt-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button asChild variant="outline">
                 <Link href="/guide/price" className="px-8 luxury-tracking font-serif text-xs uppercase">
                   料金ガイド
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/shift" className="px-8 luxury-tracking font-serif text-xs uppercase">
-                  本日の出勤
                 </Link>
               </Button>
               <Button asChild variant="outline">
@@ -287,9 +282,9 @@ export default function FirstTimeGuidePage() {
                 </a>
               </Button>
               <Button asChild size="lg" className="btn-sheen px-10">
-                <Link href="/shift">
-                  <Clock3 className="mr-3 w-4 h-4" />
-                  本日の出勤を見る
+                <Link href="/system">
+                  <CreditCard className="mr-3 w-4 h-4" />
+                  料金を確認する
                 </Link>
               </Button>
             </div>

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
-import { MapPin, Train, CalendarDays, Sparkles } from 'lucide-react';
+import { MapPin, Train, Sparkles } from 'lucide-react';
 import { getPublicCasts, getPublicContents } from '@/lib/actions/public/data';
 import { LazyGoogleMap } from '@/components/ui/LazyGoogleMap';
 import { getPublishedPosts } from '@/lib/actions/cast-posts';
@@ -111,15 +111,6 @@ export default async function HomePage() {
     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full px-6 sm:px-0">
       <Magnetic strength={0.3}>
         <Link
-          href="/shift"
-          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-white/10 backdrop-blur-sm border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/20 transition-all"
-        >
-          <CalendarDays className="w-4 h-4" />
-          本日の出勤を見る
-        </Link>
-      </Magnetic>
-      <Magnetic strength={0.3}>
-        <Link
           href="/system"
           className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
         >
@@ -163,7 +154,7 @@ export default async function HomePage() {
       )}
 
       {/* 2. TODAY'S CAST */}
-      <section className="py-section bg-transparent px-6 overflow-hidden">
+      <section id="today-cast" className="py-section bg-transparent px-6 overflow-hidden">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif luxury-tracking-super text-foreground uppercase mb-4">
@@ -171,9 +162,6 @@ export default async function HomePage() {
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
             <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
-            <Link href="/shift" className="inline-flex items-center text-gold text-xs font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
-              View Schedule →
-            </Link>
           </FadeIn>
 
           <div
@@ -241,11 +229,7 @@ export default async function HomePage() {
             </div>
           )}
 
-          <div className="mt-8 text-center md:hidden">
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/shift">出勤スケジュールを見る</Link>
-            </Button>
-          </div>
+
         </div>
       </section>
 
