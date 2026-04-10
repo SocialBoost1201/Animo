@@ -1,8 +1,21 @@
 import { NextResponse } from 'next/server';
 import * as crypto from 'crypto';
 
+function normalizeChannelSecret(secret: string) {
+  const trimmed = secret.trim();
+  // Vercel 等で値をクォート付きで設定してしまうケースを吸収する
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1).trim();
+  }
+  return trimmed;
+}
+
 function verifyLineSignature(rawBody: Buffer, signature: string, channelSecret: string) {
-  if (!signature) return false;
+  const sig = signature.trim();
+  if (!sig) return false;
   const hash = crypto
     .createHmac('SHA256', channelSecret)
     .update(rawBody)
@@ -10,26 +23,32 @@ function verifyLineSignature(rawBody: Buffer, signature: string, channelSecret: 
 
   // timingSafeEqual requires buffers with the same length
   const a = Buffer.from(hash);
-  const b = Buffer.from(signature);
+  const b = Buffer.from(sig);
   if (a.length !== b.length) return false;
   return crypto.timingSafeEqual(a, b);
 }
 
 export async function POST(req: Request) {
-  const channelSecret = process.env.LINE_CHANNEL_SECRET;
+  const channelSecretRaw = process.env.LINE_CHANNEL_SECRET;
 
-  if (!channelSecret) {
+  if (!channelSecretRaw) {
     console.error('[LINE] LINE_CHANNEL_SECRET が未設定です。');
     return NextResponse.json({ error: 'LINE_CHANNEL_SECRET is not set' }, { status: 500 });
   }
+
+  const channelSecret = normalizeChannelSecret(channelSecretRaw);
 
   try {
     const rawBodyBuffer = Buffer.from(await req.arrayBuffer());
     const signature = req.headers.get('x-line-signature') ?? '';
 
     if (!verifyLineSignature(rawBodyBuffer, signature, channelSecret)) {
-      console.error('[LINE] 署名検証失敗');
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+      console.error('[LINE] 署名検証失敗', {
+        rawBodyLength: rawBodyBuffer.length,
+        signatureLength: signature.length,
+        secretLength: channelSecret.length,
+      });
+      return NextResponse.json({ ok: false, error: 'Invalid signature' }, { status: 401 });
     }
 
     const body = JSON.parse(rawBodyBuffer.toString('utf-8'));
