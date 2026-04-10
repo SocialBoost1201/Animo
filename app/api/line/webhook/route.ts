@@ -21,9 +21,9 @@ function verifyLineSignature(rawBody: Buffer, signature: string, channelSecret: 
     .update(rawBody)
     .digest('base64');
 
-  // timingSafeEqual requires buffers with the same length
-  const a = Buffer.from(hash);
-  const b = Buffer.from(sig);
+  // base64 のパディング有無など表現差を吸収するため、デコード後のバイト列で比較する
+  const a = Buffer.from(hash, 'base64');
+  const b = Buffer.from(sig, 'base64');
   if (a.length !== b.length) return false;
   return crypto.timingSafeEqual(a, b);
 }
