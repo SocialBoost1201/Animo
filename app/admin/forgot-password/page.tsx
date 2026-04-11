@@ -55,7 +55,7 @@ export default function AdminForgotPasswordPage() {
               ANIMO CMS
             </h1>
             <p
-              className="text-lg font-bold"
+              className="text-2xl font-bold"
               style={{
                 background:
                   'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
