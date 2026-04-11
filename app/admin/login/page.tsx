@@ -57,8 +57,13 @@ export default function LoginPage() {
             ANIMO CMS
           </h1>
           <p
-            className="text-sm font-semibold tracking-wide"
-            style={{ color: '#C9A84C' }}
+            className="text-2xl font-bold"
+            style={{
+              background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent',
+            }}
           >
             Welcome to Animo Dashboard
           </p>

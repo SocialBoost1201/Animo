@@ -73,7 +73,7 @@ export default function AdminRegisterPage() {
               ANIMO CMS
             </h1>
             <p
-              className="text-xl font-bold"
+              className="text-lg font-bold"
               style={{
                 background:
                   'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
