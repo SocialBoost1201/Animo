@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -118,14 +118,45 @@ export function AdminLayout({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [pendingCounts, setPendingCounts] = useState({
+    pendingPostsCount,
+    pendingShiftsCount,
+    pendingApplicationsCount,
+  });
 
   const T = theme === 'dark' ? DARK : LIGHT;
   const isDark = theme === 'dark';
 
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/admin/pending-counts', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          pendingPostsCount?: number;
+          pendingShiftsCount?: number;
+        };
+        if (cancelled) return;
+        setPendingCounts((prev) => ({
+          ...prev,
+          pendingPostsCount: data.pendingPostsCount ?? prev.pendingPostsCount,
+          pendingShiftsCount: data.pendingShiftsCount ?? prev.pendingShiftsCount,
+        }));
+      } catch {
+        // ignore
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const getBadgeCount = (badge?: string) => {
-    if (badge === 'posts')        return pendingPostsCount;
-    if (badge === 'shifts')       return pendingShiftsCount;
-    if (badge === 'applications') return pendingApplicationsCount;
+    if (badge === 'posts') return pendingCounts.pendingPostsCount;
+    if (badge === 'shifts') return pendingCounts.pendingShiftsCount;
+    if (badge === 'applications') return pendingCounts.pendingApplicationsCount;
     return 0;
   };
 

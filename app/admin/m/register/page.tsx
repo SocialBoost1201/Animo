@@ -28,6 +28,15 @@ function MailIcon() {
   )
 }
 
+function ArrowRightIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </svg>
+  )
+}
+
 export default function AdminRegisterMobilePage() {
   const [state, formAction, isPending] = useActionState(adminRegisterAction, null)
   const [showPassword, setShowPassword] = useState(false)
@@ -84,7 +93,7 @@ export default function AdminRegisterMobilePage() {
                 <input
                   name="lastName"
                   required
-                  className="w-full rounded-[10px] px-2.5 py-2 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                  className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="山田"
                   style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
@@ -96,7 +105,7 @@ export default function AdminRegisterMobilePage() {
                 <input
                   name="firstName"
                   required
-                  className="w-full rounded-[10px] px-2.5 py-2 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                  className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="太郎"
                   style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
@@ -110,7 +119,7 @@ export default function AdminRegisterMobilePage() {
               <input
                 name="stageName"
                 required
-                className="w-full rounded-[10px] px-2.5 py-2 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="源氏名を入力してください"
                 style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
@@ -124,7 +133,7 @@ export default function AdminRegisterMobilePage() {
                 name="phone"
                 inputMode="tel"
                 required
-                className="w-full rounded-[10px] px-2.5 py-2 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="090-1234-5678"
                 style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
@@ -147,7 +156,7 @@ export default function AdminRegisterMobilePage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="w-full rounded-[10px] pl-9 pr-2.5 py-2 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                  className="w-full rounded-[10px] pl-9 pr-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="example@email.com"
                   style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
@@ -164,7 +173,7 @@ export default function AdminRegisterMobilePage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
-                  className="w-full rounded-[10px] px-2.5 py-2 pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                  className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="パスワードを入力"
                   style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
@@ -189,7 +198,7 @@ export default function AdminRegisterMobilePage() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
-                  className="w-full rounded-[10px] px-2.5 py-2 pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                  className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="パスワードを再入力"
                   style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
@@ -219,14 +228,19 @@ export default function AdminRegisterMobilePage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full h-[36px] rounded-[10px] text-sm font-semibold transition-opacity disabled:opacity-60"
+              className="w-full h-[36px] rounded-[10px] text-sm font-semibold transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
               style={{
                 background:
                   'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
                 color: '#18181b',
               }}
             >
-              {isPending ? '送信中...' : '新規登録'}
+              {isPending ? '送信中...' : (
+                <>
+                  新規登録
+                  <ArrowRightIcon />
+                </>
+              )}
             </button>
 
             <Link
