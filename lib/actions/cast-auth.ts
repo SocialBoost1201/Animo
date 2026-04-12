@@ -63,10 +63,18 @@ export async function castRegister(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
-  const realName = (formData.get('realName') as string)?.trim();
-  const dateOfBirth = formData.get('dateOfBirth') as string;
+  const lastName = (formData.get('lastName') as string)?.trim();
+  const firstName = (formData.get('firstName') as string)?.trim();
+  const stageName = (formData.get('stageName') as string)?.trim();
+  const phone = (formData.get('phone') as string)?.trim();
+  const legacyRealName = (formData.get('realName') as string)?.trim();
+  const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
+  const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
+  const normalizedEmail = email?.trim().toLowerCase();
+  const normalizedPhone = phone?.replace(/\D/g, '');
+  const normalizedStageName = stageName?.replace(/\s+/g, '').toLowerCase();
 
-  if (!email || !password || !realName || !dateOfBirth) {
+  if (!normalizedEmail || !password || !confirmPassword || !realName || !phone) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
   if (password !== confirmPassword) {
@@ -82,13 +90,11 @@ export async function castRegister(formData: FormData) {
   const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
 
   try {
-    // 個人情報テーブルは匿名ユーザーに公開せず、サーバー側のみで照合する。
-    const { data: exactPrivateInfo, error: privateInfoError } = await serviceRoleClient
+    // Figma準拠の登録画面入力でキャスト本人を特定する。
+    const { data: privateInfoCandidates, error: privateInfoError } = await serviceRoleClient
       .from('cast_private_info')
-      .select('cast_id, real_name, casts!inner(id, stage_name, auth_user_id)')
-      .eq('real_name', realName)
-      .eq('date_of_birth', dateOfBirth)
-      .maybeSingle();
+      .select('cast_id, real_name, date_of_birth, phone, email, casts!inner(id, stage_name, auth_user_id)')
+      .limit(500);
 
     if (privateInfoError) {
       return {
@@ -98,41 +104,37 @@ export async function castRegister(formData: FormData) {
       };
     }
 
-    let privateInfo = exactPrivateInfo;
+    const matchedCandidates = (privateInfoCandidates ?? []).filter((candidate) => {
+      const candidatePhone = (candidate.phone ?? '').replace(/\D/g, '');
+      const candidateEmail = (candidate.email ?? '').trim().toLowerCase();
+      const candidateStageName = (((candidate.casts as unknown as { stage_name?: string } | null)?.stage_name) ?? '')
+        .replace(/\s+/g, '')
+        .toLowerCase();
 
-    if (!privateInfo) {
-      const { data: sameBirthDateCandidates, error: sameBirthDateError } = await serviceRoleClient
-        .from('cast_private_info')
-        .select('cast_id, real_name, casts!inner(id, stage_name, auth_user_id)')
-        .eq('date_of_birth', dateOfBirth);
+      const isSameRealName =
+        normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
+      const isSamePhone = Boolean(normalizedPhone) && candidatePhone === normalizedPhone;
+      const isSameEmail = candidateEmail ? candidateEmail === normalizedEmail : true;
+      const isSameStageName = normalizedStageName ? candidateStageName === normalizedStageName : true;
+      const isSameBirthDate = dateOfBirth ? candidate.date_of_birth === dateOfBirth : true;
 
-      if (sameBirthDateError) {
-        return {
-          success: false,
-          error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。',
-          code: 'MATCH_LOOKUP_FAILED',
-        };
-      }
+      return isSameRealName && isSamePhone && isSameEmail && isSameStageName && isSameBirthDate;
+    });
 
-      const matchedCandidates = (sameBirthDateCandidates ?? []).filter((candidate) => {
-        return normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
-      });
-
-      if (matchedCandidates.length === 1) {
-        privateInfo = matchedCandidates[0];
-      } else if (matchedCandidates.length > 1) {
-        return {
-          success: false,
-          error: '同一の本人確認情報に一致するキャストが複数見つかりました。担当者にお問い合わせください。',
-          code: 'MULTIPLE_MATCHES',
-        };
-      }
+    if (matchedCandidates.length > 1) {
+      return {
+        success: false,
+        error: '同一の本人確認情報に一致するキャストが複数見つかりました。担当者にお問い合わせください。',
+        code: 'MULTIPLE_MATCHES',
+      };
     }
+
+    const privateInfo = matchedCandidates[0];
 
     if (!privateInfo) {
       return {
         success: false,
-        error: '入力された本名・生年月日に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
+        error: '入力された情報に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
         code: 'NO_MATCH',
       };
     }
@@ -152,7 +154,7 @@ export async function castRegister(formData: FormData) {
     }
 
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
       options: {
         emailRedirectTo: `${authBaseUrl}/cast/verify-email`,
@@ -173,7 +175,7 @@ export async function castRegister(formData: FormData) {
 
         const { data: fallbackData, error: fallbackError } =
           await serviceRoleClient.auth.admin.createUser({
-            email,
+            email: normalizedEmail,
             password,
             email_confirm: true,
           });
@@ -206,7 +208,7 @@ export async function castRegister(formData: FormData) {
             };
           }
 
-          const existingUser = usersData.users.find((user) => user.email?.toLowerCase() === email.toLowerCase());
+          const existingUser = usersData.users.find((user) => user.email?.toLowerCase() === normalizedEmail);
 
           if (!existingUser) {
             return {

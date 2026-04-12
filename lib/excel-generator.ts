@@ -29,7 +29,7 @@ export async function generateMonthlyShiftExcel(year: number, month: number, shi
 
   // 日付ヘッダー行作成 (A列=空白、B列〜AF列=1〜31)
   const daysInMonth = new Date(year, month, 0).getDate();
-  const headerRow: any[] = ['キャスト名'];
+  const headerRow: Array<string | number> = ['キャスト名'];
   for (let i = 1; i <= daysInMonth; i++) {
     headerRow.push(i);
   }
@@ -40,7 +40,7 @@ export async function generateMonthlyShiftExcel(year: number, month: number, shi
 
   // データ行の書き込み
   shiftsData.forEach(castData => {
-    const rowContent: any[] = [castData.stageName];
+    const rowContent: string[] = [castData.stageName];
     for (let day = 1; day <= daysInMonth; day++) {
        const detail = castData.shifts[day];
        let mark = '';

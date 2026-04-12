@@ -81,3 +81,29 @@ export async function markNoticeAsRead(castId: string, noticeId: string) {
   revalidatePath('/admin/internal-notices');
   return { success: true };
 }
+
+export async function markAllCastNoticesAsRead(castId: string) {
+  const notices = await getCastNotices(castId);
+  const unreadIds = notices.filter((notice) => !notice.is_read).map((notice) => notice.id);
+
+  if (unreadIds.length === 0) {
+    return { success: true };
+  }
+
+  const supabase = await createClient();
+  const payload = unreadIds.map((noticeId) => ({ cast_id: castId, notice_id: noticeId }));
+
+  const { error } = await supabase
+    .from('notice_reads')
+    .upsert(payload, { onConflict: 'notice_id,cast_id', ignoreDuplicates: true });
+
+  if (error) {
+    console.error('Error marking all notices as read:', error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/cast/dashboard');
+  revalidatePath('/cast/notices');
+  revalidatePath('/admin/internal-notices');
+  return { success: true };
+}

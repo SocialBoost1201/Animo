@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import { Users, X, CheckCircle2, Clock, Eye, Sparkles } from 'lucide-react';
-import { getNoticeReadStatus } from '@/lib/actions/internal-notices';
+import { getNoticeReadStatus, type NoticeReadStatus } from '@/lib/actions/internal-notices';
 import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
 
 export function NoticeReadStatusModal({ 
   notice 
@@ -13,7 +12,7 @@ export function NoticeReadStatusModal({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [statuses, setStatuses] = useState<any[]>([]);
+  const [statuses, setStatuses] = useState<NoticeReadStatus[]>([]);
 
   const openModal = async () => {
     setIsOpen(true);
@@ -39,8 +38,8 @@ export function NoticeReadStatusModal({
 
   // Read: is_read === true
   // Unread: is_read === false
-  const readCasts = statuses.filter(s => s.is_read);
-  const unreadCasts = statuses.filter(s => !s.is_read);
+  const readCasts = statuses.filter((status) => status.is_read);
+  const unreadCasts = statuses.filter((status) => !status.is_read);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">

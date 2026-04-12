@@ -4,8 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LuxuryCarousel } from '@/components/ui/LuxuryCarousel';
+import type { CastPostWithAuthor } from '@/lib/types/cast-ui';
 
-export const CastPostSlider = ({ posts }: { posts: any[] }) => {
+export const CastPostSlider = ({ posts }: { posts: CastPostWithAuthor[] }) => {
   if (!posts || posts.length === 0) return null;
 
   const slides = posts.map((post) => {

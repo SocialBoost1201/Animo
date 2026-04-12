@@ -77,7 +77,7 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
       } else {
         toast.error(result.error || '投稿に失敗しました。');
       }
-    } catch (err) {
+    } catch {
       toast.error('システムエラーが発生しました。');
     } finally {
       setIsSubmitting(false);
@@ -85,123 +85,139 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-3xl shadow-aura overflow-hidden border border-gray-100 p-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 画像アップロードエリア */}
-        <div 
-          className="relative w-full aspect-4/5 bg-gray-50 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer overflow-hidden group"
-          onClick={() => fileInputRef.current?.click()}
+    <div className="mx-auto max-w-md">
+      <div className="mb-5 flex w-fit rounded-[12px] border border-white/8 bg-[#181d27] p-1">
+        <button
+          type="button"
+          onClick={() => setStep('edit')}
+          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
+            step === 'edit' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
+          }`}
         >
-          {previewUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-          ) : (
-            <div className="flex flex-col items-center text-gray-400 group-hover:text-gold transition-colors">
-              <Camera className="w-12 h-12 mb-3" />
-              <span className="text-xs font-bold tracking-widest uppercase">Tap to upload</span>
-            </div>
-          )}
-          
-          <input 
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-          
-          {previewUrl && (
-            <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm p-2 rounded-full text-white cursor-pointer hover:bg-black/80 transition-colors">
-              <ImageIcon className="w-5 h-5" />
-            </div>
-          )}
-        </div>
+          <Camera className="h-[13px] w-[13px]" />
+          編集
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep('preview')}
+          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
+            step === 'preview' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
+          }`}
+        >
+          <ImageIcon className="h-[13px] w-[13px]" />
+          プレビュー
+        </button>
+      </div>
 
-        {/* コメント入力 */}
-        <div>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="今日の出来事やメッセージを入力..."
-            className="w-full min-h-[120px] p-4 bg-gray-50 border border-gray-100 rounded-xl resize-none focus:outline-hidden focus:ring-2 focus:ring-gold/30 text-sm md:text-base"
-            required
-            maxLength={500}
-          />
-          {/* SEO推奨タグサジェスト */}
-          <div className="mt-3">
-            <p className="text-xs text-gray-400 tracking-widest mb-2 font-bold uppercase">suggested tags / おすすめタグ</p>
-            <div className="flex flex-wrap gap-2">
-              {SUGGESTED_TAGS.map(tag => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => appendTag(tag)}
-                  className={`text-xs px-2.5 py-1 rounded-full transition-colors border ${
-                    content.includes(tag) 
-                    ? 'bg-gold border-gold text-white font-bold' 
-                    : 'bg-white border-gray-200 text-gray-500 hover:border-gold hover:text-gold'
-                  }`}
-                >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {step === 'edit' ? (
+          <>
+            <div>
+              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">タイトル</label>
+              <input
+                value={content.split('\n')[0] ?? ''}
+                onChange={(e) => {
+                  const rest = content.split('\n').slice(1).join('\n');
+                  setContent(rest ? `${e.target.value}\n${rest}` : e.target.value);
+                }}
+                placeholder="ブログのタイトル..."
+                className="h-[49px] w-full rounded-[12px] border border-white/8 bg-[#181d27] px-[14px] text-[16px] font-medium text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden"
+                maxLength={60}
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">本文</label>
+              <textarea
+                value={content.split('\n').slice(1).join('\n')}
+                onChange={(e) => {
+                  const title = content.split('\n')[0] ?? '';
+                  setContent(title ? `${title}\n${e.target.value}` : e.target.value);
+                }}
+                placeholder="今日あったこと、お客様へのメッセージ..."
+                className="min-h-[270px] w-full resize-none rounded-[12px] border border-white/8 bg-[#181d27] px-[14px] py-3 text-[14px] leading-[24.5px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden"
+                maxLength={500}
+              />
+              <div className="mt-2 text-right text-[11px] text-[#6b7280]">{content.length} 文字</div>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">画像（任意）</label>
+              <div
+                className="flex h-[126px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[14px] border border-dashed border-white/14"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {previewUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={previewUrl} alt="Preview" className="h-full w-full rounded-[14px] object-cover" />
+                ) : (
+                  <>
+                    <ImageIcon className="h-6 w-6 text-[#6b7280]" />
+                    <div className="text-[13px] font-medium text-[#a9afbc]">画像を追加</div>
+                    <div className="text-[11px] text-[#6b7280]">JPG / PNG / WebP</div>
+                  </>
+                )}
+              </div>
+              <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+            </div>
+
+            <div className="hidden">
+              {SUGGESTED_TAGS.map((tag) => (
+                <button key={tag} type="button" onClick={() => appendTag(tag)}>
                   {tag}
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* ボタン周り */}
-        {step === 'edit' ? (
-          <Button 
-            type="button" 
-            disabled={!file || !content.trim()}
-            onClick={() => setStep('preview')}
-            className="w-full bg-[#171717] hover:bg-gold text-white font-bold tracking-widest uppercase py-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            プレビューを確認する
-          </Button>
+          </>
         ) : (
-          <div className="space-y-3">
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
-              <p className="text-xs text-center text-gray-500 font-bold mb-4">以下の内容で投稿をご提出しますか？</p>
-              
-              {/* 簡易プレビュー */}
-              <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
-                <div className="aspect-4/5 w-full bg-gray-100 relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={previewUrl!} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap wrap-break-word">{content}</p>
-                </div>
+          <div className="flex min-h-[192px] flex-col items-center justify-center gap-3 rounded-[12px] py-12">
+            {content.trim() ? (
+              <div className="w-full rounded-[16px] border border-white/8 bg-[#131720] p-4">
+                <h2 className="text-[18px] font-bold text-[#f7f4ed]">{content.split('\n')[0]}</h2>
+                <p className="mt-3 whitespace-pre-wrap text-[14px] leading-[24px] text-[#a9afbc]">{content.split('\n').slice(1).join('\n')}</p>
+                {previewUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={previewUrl} alt="Preview" className="mt-4 w-full rounded-[12px] object-cover" />
+                ) : null}
               </div>
-            </div>
+            ) : (
+              <>
+                <ImageIcon className="h-8 w-8 text-[#6b7280]" />
+                <div className="text-[14px] text-[#a9afbc]">プレビューを表示するには</div>
+                <div className="text-[13px] text-[#6b7280]">タイトルまたは本文を入力してください</div>
+              </>
+            )}
+          </div>
+        )}
 
-            <Button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="w-full bg-gold hover:bg-gold/90 text-white font-bold tracking-widest uppercase py-6 rounded-xl transition-all"
+        <div className="border-t border-white/8 pt-4">
+          {step === 'preview' ? (
+            <Button
+              type="submit"
+              disabled={isSubmitting || !content.trim()}
+              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                  Posting...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  投稿中...
                 </>
               ) : (
-                'この内容で投稿する'
+                'タイトルと本文を入力してください'
               )}
             </Button>
-            
-            <Button 
-              type="button" 
-              variant="outline"
-              disabled={isSubmitting}
-              onClick={() => setStep('edit')}
-              className="w-full bg-white text-gray-500 font-bold tracking-widest py-6 rounded-xl transition-all"
+          ) : (
+            <Button
+              type="button"
+              disabled={!content.trim()}
+              onClick={() => setStep('preview')}
+              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
             >
-              修正にもどる
+              タイトルと本文を入力してください
             </Button>
-          </div>
-        )}
+          )}
+          <div className="mt-3 text-center text-[12px] text-[#6b7280]">タイトルと本文を入力すると投稿できます</div>
+        </div>
       </form>
     </div>
   );

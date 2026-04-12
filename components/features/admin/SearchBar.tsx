@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useTransition, useState, useEffect, useRef } from 'react';
+import { useTransition, useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
@@ -15,20 +15,15 @@ export function SearchBar({ placeholder = '検索...' }: { placeholder?: string 
   const [text, setText] = useState(currentQuery);
   const [debouncedText] = useDebounce(text, 400);
 
-  // ref で searchParams の最新値を保持する。
-  // effect の dep に searchParams を追加すると router.push → URL 変化 →
-  // searchParams 変化 → effect 再実行の無限ループが発生するため、
-  // レンダー本体で ref を同期することで stale closure を回避する。
-  const searchParamsRef = useRef(searchParams);
-  searchParamsRef.current = searchParams;
+  useEffect(() => {
+    setText(currentQuery);
+  }, [currentQuery]);
 
   useEffect(() => {
-    const params = searchParamsRef.current;
-    // URL に q がなく入力も空の場合は push しない（初期レンダーでの空 push を防ぐ）
-    if (params.get('q') === null && debouncedText === '') return;
+    if (debouncedText === currentQuery) return;
 
     startTransition(() => {
-      const newParams = new URLSearchParams(params.toString());
+      const newParams = new URLSearchParams(searchParams.toString());
       if (debouncedText) {
         newParams.set('q', debouncedText);
       } else {
@@ -36,7 +31,7 @@ export function SearchBar({ placeholder = '検索...' }: { placeholder?: string 
       }
       router.push(`${pathname}?${newParams.toString()}`);
     });
-  }, [debouncedText, pathname, router]);
+  }, [currentQuery, debouncedText, pathname, router, searchParams]);
 
   return (
     <div className="relative flex items-center w-full max-w-sm">

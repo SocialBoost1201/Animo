@@ -3,8 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { CastPostWithAuthor } from '@/lib/types/cast-ui';
 
-export const CastPostFeed = ({ posts }: { posts: any[] }) => {
+export const CastPostFeed = ({ posts }: { posts: CastPostWithAuthor[] }) => {
   if (!posts || posts.length === 0) {
     return (
       <div className="py-24 text-center text-gray-400 font-serif text-sm px-6">

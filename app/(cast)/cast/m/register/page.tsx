@@ -38,7 +38,7 @@ function ArrowRightIcon() {
   );
 }
 
-export default function CastRegisterPage() {
+export default function CastRegisterMobilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -108,18 +108,18 @@ export default function CastRegisterPage() {
 
   if (isCompleted) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
         <div
-          className="w-full max-w-[448px] rounded-[16px] p-1"
+          className="w-full max-w-[420px] rounded-[16px] p-1"
           style={{
-            background: 'linear-gradient(125deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+            background: 'linear-gradient(124deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
             boxShadow: '0 0 48px rgba(223,189,105,0.25)',
           }}
         >
           <div
-            className="w-full rounded-[14px] p-8 text-center"
+            className="w-full rounded-[14px] px-6 py-6 text-center"
             style={{
-              background: 'linear-gradient(125deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
+              background: 'linear-gradient(124deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
               boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)',
             }}
           >
@@ -131,7 +131,7 @@ export default function CastRegisterPage() {
               {completedMessage}
             </p>
             <Link
-              href="/cast/login"
+              href="/cast/m/login"
               className="inline-block w-full h-[48px] leading-[48px] rounded-[10px] text-base font-semibold text-center"
               style={{
                 background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
@@ -147,7 +147,7 @@ export default function CastRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
       {isLoading && (
         <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-[2px] flex flex-col items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin mb-4" style={{ borderColor: '#dfbd69', borderTopColor: 'transparent' }} />
@@ -156,27 +156,27 @@ export default function CastRegisterPage() {
       )}
 
       <div
-        className="w-full max-w-[448px] rounded-[16px] p-1"
+        className="w-full max-w-[420px] rounded-[16px] p-1"
         style={{
-          background: 'linear-gradient(125deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+          background: 'linear-gradient(124deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           boxShadow: '0 0 48px rgba(223,189,105,0.25)',
         }}
       >
         <div
-          className="w-full rounded-[14px] p-8"
+          className="w-full rounded-[14px] px-6 py-6"
           style={{
-            background: 'linear-gradient(125deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
+            background: 'linear-gradient(124deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
             boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)',
           }}
         >
-          <div className="text-center mb-5">
+          <div className="text-center mb-4">
             <p
-              className="text-white text-sm tracking-[0.3em] uppercase font-light mb-1"
+              className="text-white text-xs tracking-[0.3em] uppercase font-light mb-1"
               style={{ fontFamily: 'var(--font-serif, serif)' }}
             >
               CLUB ANIMO
             </p>
-            <h1 className="text-white text-2xl font-bold tracking-[0.2em] uppercase mb-3">
+            <h1 className="text-white text-xl font-bold tracking-[0.2em] uppercase mb-3">
               ANIMO CMS
             </h1>
             <p
@@ -193,7 +193,7 @@ export default function CastRegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
                   苗字
@@ -203,7 +203,7 @@ export default function CastRegisterPage() {
                   required
                   className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="山田"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
               </div>
               <div>
@@ -215,7 +215,7 @@ export default function CastRegisterPage() {
                   required
                   className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="太郎"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function CastRegisterPage() {
                 required
                 className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="源氏名を入力してください"
-                style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
             </div>
 
@@ -243,7 +243,7 @@ export default function CastRegisterPage() {
                 required
                 className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="090-1234-5678"
-                style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
             </div>
 
@@ -252,11 +252,7 @@ export default function CastRegisterPage() {
                 メールアドレス
               </label>
               <div className="relative">
-                <span
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2"
-                  style={{ color: '#71717b' }}
-                  aria-hidden
-                >
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: '#71717b' }} aria-hidden>
                   <MailIcon />
                 </span>
                 <input
@@ -266,7 +262,7 @@ export default function CastRegisterPage() {
                   required
                   className="w-full rounded-[10px] pl-9 pr-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="example@email.com"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
               </div>
             </div>
@@ -283,7 +279,7 @@ export default function CastRegisterPage() {
                   required
                   className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="パスワードを入力"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
                 <button
                   type="button"
@@ -308,7 +304,7 @@ export default function CastRegisterPage() {
                   required
                   className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="パスワードを再入力"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
                 <button
                   type="button"
@@ -323,7 +319,7 @@ export default function CastRegisterPage() {
 
             {feedback && (
               <p
-                className="text-xs text-center rounded-lg py-2.5 px-4"
+                className="text-xs text-center rounded-lg py-2 px-3"
                 style={{
                   color: feedback.type === 'error' ? '#f87171' : '#9f9fa9',
                   background: feedback.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(63,63,71,0.35)',
@@ -351,7 +347,7 @@ export default function CastRegisterPage() {
             </button>
 
             <Link
-              href="/cast/login"
+              href="/cast/m/login"
               className="block w-full h-[37px] rounded-[10px] border text-center leading-[37px] text-sm"
               style={{ borderColor: '#3f3f47', color: '#d4d4d8' }}
             >
@@ -360,8 +356,8 @@ export default function CastRegisterPage() {
           </form>
 
           <div className="mt-3 text-center">
-            <Link href="/cast/m/register" className="text-sm hover:underline" style={{ color: '#9f9fa9' }}>
-              モバイル版はこちら
+            <Link href="/cast/register" className="text-sm hover:underline" style={{ color: '#9f9fa9' }}>
+              PC版はこちら
             </Link>
           </div>
         </div>

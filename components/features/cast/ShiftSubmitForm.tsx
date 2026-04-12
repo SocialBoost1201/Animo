@@ -4,10 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { getTargetWeekMonday, formatDate, getWeekDates } from '@/lib/shift-utils';
 import { getMyShiftSubmission, submitMyShift, WeeklyShiftSubmission, ShiftType } from '@/lib/actions/cast-shifts';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Send, ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
+import {
+  CastMobileBackLink,
+  CastMobileHeader,
+  CastMobileShell,
+} from '@/components/features/cast/CastMobileShell';
 
 function getInitialTargetMonday() {
   const nextWeek = new Date();
@@ -20,7 +23,7 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [targetMonday, setTargetMonday] = useState<string>(getInitialTargetMonday);
+  const [targetMonday] = useState<string>(getInitialTargetMonday);
   const [shifts, setShifts] = useState<WeeklyShiftSubmission>({});
 
   useEffect(() => {
@@ -58,24 +61,10 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
     loadShifts();
   }, [targetMonday]);
 
-  const changeWeek = (direction: 'prev' | 'next') => {
-    if (!targetMonday) return;
-    const current = new Date(targetMonday);
-    current.setDate(current.getDate() + (direction === 'next' ? 7 : -7));
-    setTargetMonday(current.toISOString().split('T')[0]);
-  };
-
   const handleTypeChange = (dateStr: string, type: ShiftType) => {
       setShifts(prev => ({
           ...prev,
           [dateStr]: { ...prev[dateStr], type }
-      }));
-  };
-
-  const handleTimeChange = (dateStr: string, field: 'start' | 'end', value: string) => {
-      setShifts(prev => ({
-          ...prev,
-          [dateStr]: { ...prev[dateStr], [field]: value }
       }));
   };
 
@@ -103,44 +92,29 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
 
   const days = targetMonday ? getWeekDates(targetMonday) : [];
   const weekDayStrs = ['月', '火', '水', '木', '金', '土', '日']; // 月曜始まり
+  const workCount = days.filter((d) => {
+    const shift = shifts[formatDate(d)];
+    return shift?.type === 'work';
+  }).length;
+  const daysToShow = days.slice(0, 6);
 
   return (
-    <PageShell width="narrow" className="space-y-6 px-5 py-8">
-      <PageHeader
-        eyebrow="Shift Schedule"
-        title="来週のシフトを提出"
-        description="出勤日だけを選んで、時間を入力してください。提出後も管理者承認前なら再提出できます。"
-        actions={
-          <Link
-            href="/cast/dashboard"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-4 py-3 text-sm font-medium text-gray-500 transition-colors hover:text-[#171717]"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            ダッシュボードへ戻る
-          </Link>
-        }
-      />
+    <CastMobileShell>
+      <CastMobileHeader />
+      <main className="mx-auto flex w-full max-w-[422px] flex-col gap-5 px-4 pb-28 pt-6">
+      <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
+      <div>
+        <div className="text-[10px] uppercase tracking-[1px] text-[#6b7280]">WEEKLY SHIFT</div>
+        <h1 className="mt-1 text-[22px] font-bold leading-[33px] text-[#f7f4ed]">翌週シフト提出</h1>
+      </div>
 
-      <SectionCard tone="subtle" className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <button onClick={() => changeWeek('prev')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50 transition-colors">
-              <ChevronLeft className="w-5 h-5 text-[#171717]" />
-            </button>
-            <div className="flex flex-col items-center">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Target Period</span>
-                <p className="text-sm text-[#171717] font-bold tracking-tight">
-                    {targetMonday.replace(/-/g, '/')} 〜 {days.length > 0 ? formatDate(days[6]).replace(/-/g, '/') : ''}
-                </p>
-            </div>
-            <button onClick={() => changeWeek('next')} className="p-1.5 hover:bg-gold/10 rounded disabled:opacity-50 transition-colors">
-              <ChevronRight className="w-5 h-5 text-[#171717]" />
-            </button>
-          </div>
-          <p className="text-[11px] text-gray-500 text-center leading-relaxed mt-3 px-4">
-              出勤する日を選択し、希望する時間を選んでください。<br/>
-              ※開始・終了時間は後から変更可能です。
-          </p>
-      </SectionCard>
+      <div className="flex items-center gap-3 rounded-[14px] border border-[rgba(230,162,60,0.25)] bg-[rgba(230,162,60,0.12)] px-4 py-4">
+        <AlertTriangle className="h-[18px] w-[18px] text-[#e6a23c]" />
+        <div>
+          <div className="text-[13px] font-bold leading-[19.5px] text-[#e6a23c]">締切: 土曜 23:55<span className="ml-1 text-[11px] font-normal text-[#a9afbc]">残り4日</span></div>
+          <div className="text-[12px] leading-[18px] text-[#a9afbc]">対象: {targetMonday.replace(/-/g, '/')} 〜 {days.length > 0 ? formatDate(days[5]).replace(/-/g, '/') : ''} ／ 営業時間 21:00〜26:00</div>
+        </div>
+      </div>
 
       {isLoading ? (
           <div className="flex justify-center items-center py-20">
@@ -148,91 +122,69 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
           </div>
       ) : (
       <div className="space-y-3">
-          {days.map((d, i) => {
+          {daysToShow.map((d, i) => {
               const dateStr = formatDate(d);
               const shift = shifts[dateStr] || { type: 'off', start: '21:00', end: 'LAST' };
               const isWork = shift.type === 'work';
 
               return (
-                  <div key={dateStr} className={`p-4 rounded-xl border transition-colors ${
-                      isWork ? 'bg-white border-gold/40 shadow-xs' : 'bg-gray-50/50 border-gray-100'
-                  }`}>
-                      <div className="flex items-center justify-between mb-3">
-                          <div className="font-serif font-bold text-sm text-[#171717]">
-                              {d.getMonth() + 1}/{d.getDate()} <span className="text-xs text-gray-400 ml-1">({weekDayStrs[i]})</span>
-                          </div>
-                          <div className="flex bg-gray-100 rounded-lg p-1">
-                              <button 
-                                onClick={() => handleTypeChange(dateStr, 'off')}
-                                className={`px-3 py-1.5 text-xs rounded-md font-bold transition-all ${
-                                    !isWork ? 'bg-white text-gray-500 shadow-xs' : 'text-gray-400 hover:text-gray-600'
-                                }`}
-                              >
-                                  休み
-                              </button>
-                              <button 
-                                onClick={() => handleTypeChange(dateStr, 'work')}
-                                className={`px-3 py-1.5 text-xs rounded-md font-bold transition-all ${
-                                    isWork ? 'bg-[#171717] text-gold shadow-xs' : 'text-gray-400 hover:text-gray-600'
-                                }`}
-                              >
-                                  出勤
-                              </button>
-                          </div>
+                  <div key={dateStr} className="rounded-[16px] border border-white/8 bg-[#131720] px-4 py-[14px]">
+                      <div className="flex items-center gap-3">
+                        <div className="w-[44px] text-center">
+                          <div className={`text-[11px] font-bold leading-[16.5px] ${i === 5 ? 'text-[#7bb8f5]' : 'text-[#a9afbc]'}`}>{weekDayStrs[i]}</div>
+                          <div className="text-[18px] font-bold leading-[19.8px] text-[#f7f4ed]">{d.getDate()}</div>
+                          <div className="text-[9px] leading-[13.5px] text-[#6b7280]">{d.getMonth() + 1}月</div>
+                        </div>
+                        <div className="h-9 w-px bg-white/8" />
+                        <div className="flex flex-1 gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleTypeChange(dateStr, 'work')}
+                            className={`h-[37px] flex-1 rounded-[10px] text-[13px] leading-[19.5px] ${isWork ? 'bg-[rgba(255,255,255,0.08)] text-[#a9afbc]' : 'bg-[rgba(255,255,255,0.04)] text-[#a9afbc]'}`}
+                          >
+                            出勤
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleTypeChange(dateStr, 'off')}
+                            className={`h-[37px] flex-1 rounded-[10px] text-[13px] leading-[19.5px] ${!isWork ? 'bg-[rgba(255,255,255,0.08)] text-[#6b7280]' : 'bg-[rgba(255,255,255,0.04)] text-[#6b7280]'}`}
+                          >
+                            休み
+                          </button>
+                        </div>
+                        <span className="h-[6px] w-[6px] rounded-full bg-[rgba(255,255,255,0.15)]" />
                       </div>
-
-                      {/* 時間選択（出勤時のみ表示） */}
-                      {isWork && (
-                          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
-                              <div className="flex-1">
-                                  <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 ml-1">START</label>
-                                  <select 
-                                      value={shift.start}
-                                      onChange={(e) => handleTimeChange(dateStr, 'start', e.target.value)}
-                                      className="w-full bg-gray-50 border border-gray-200 text-sm font-bold text-[#171717] rounded-lg p-2.5 focus:outline-hidden focus:border-gold focus:ring-1 focus:ring-gold"
-                                  >
-                                      {['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30','23:00','00:00','01:00'].map(t => (
-                                          <option key={`start-${t}`} value={t}>{t}</option>
-                                      ))}
-                                  </select>
-                              </div>
-                              <span className="text-gray-300 font-bold mt-5">〜</span>
-                              <div className="flex-1">
-                                  <label className="block text-xs text-gray-400 uppercase tracking-widest mb-1.5 ml-1">END</label>
-                                  <select 
-                                      value={shift.end}
-                                      onChange={(e) => handleTimeChange(dateStr, 'end', e.target.value)}
-                                      className="w-full bg-gray-50 border border-gray-200 text-sm font-bold text-[#171717] rounded-lg p-2.5 focus:outline-hidden focus:border-gold focus:ring-1 focus:ring-gold"
-                                  >
-                                      {['LAST','00:00','00:30','01:00','01:30','02:00'].map(t => (
-                                          <option key={`end-${t}`} value={t}>{t}</option>
-                                      ))}
-                                  </select>
-                              </div>
-                          </div>
-                      )}
                   </div>
               );
           })}
       </div>
       )}
 
-      <div className="pt-4 sticky z-10" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="rounded-[14px] border border-white/8 bg-[#181d27] px-4 py-4">
+        <div className="flex items-center justify-between text-[13px]">
+          <span className="text-[#a9afbc]">入力済み: <strong className="text-[#f7f4ed]">{workCount} / 6日</strong></span>
+          <span className="font-bold text-[#e6a23c]">出勤 {workCount}日 (4日以上必要)</span>
+        </div>
+        <div className="mt-3 h-[3px] rounded-full bg-[rgba(255,255,255,0.06)]">
+          <div className="h-[3px] rounded-full bg-[#c9a76a]" style={{ width: `${Math.min((workCount / 4) * 100, 100)}%` }} />
+        </div>
+      </div>
+
+      <div className="pt-1">
           <button 
               onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="w-full bg-[#171717] hover:bg-gold text-white font-bold tracking-[0.2em] uppercase py-5 rounded-2xl shadow-xl shadow-black/10 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+              disabled={isSubmitting || workCount < 4}
+              className="flex h-[58px] w-full items-center justify-center rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] transition-all disabled:cursor-not-allowed disabled:opacity-50"
           >
               {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                  <>
-                      提出する
-                      <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </>
+                  'シフトを提出する'
               )}
           </button>
+          <p className="mt-3 text-center text-[12px] text-[#6b7280]">出勤日を 4 日以上選択してください</p>
       </div>
-    </PageShell>
+      </main>
+    </CastMobileShell>
   );
 }

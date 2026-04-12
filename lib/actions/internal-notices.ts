@@ -14,6 +14,14 @@ export type Notice = {
   created_by: string;
 };
 
+export type NoticeReadStatus = {
+  cast_id: string;
+  stage_name: string;
+  image_url: string | null;
+  is_read: boolean;
+  read_at: string | null;
+};
+
 type CastImage = {
   image_url: string | null;
   is_primary: boolean;
@@ -101,7 +109,7 @@ export async function getNoticeReadStatus(noticeId: string) {
 
   const readMap = new Map(reads?.map(r => [r.cast_id, r.read_at]));
 
-  return casts.map(cast => {
+  return casts.map((cast): NoticeReadStatus => {
     const imageUrl = cast.cast_images?.find((img: CastImage) => img.is_primary)?.image_url;
     return {
       cast_id: cast.id,

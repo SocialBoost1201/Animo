@@ -2,6 +2,42 @@
 
 import { createClient } from '@/lib/supabase/server';
 
+type CastPostViewRow = {
+  cast_id: string;
+  view_count: number | null;
+};
+
+type RankedCastPostRow = {
+  id: string;
+  cast_id: string;
+  content: string | null;
+  image_url: string | null;
+  view_count: number | null;
+  created_at: string;
+  casts: {
+    id: string;
+    stage_name: string | null;
+    image_url: string | null;
+  } | null;
+};
+
+type RankedCastPostQueryRow = Omit<RankedCastPostRow, 'casts'> & {
+  casts:
+    | RankedCastPostRow['casts']
+    | Array<NonNullable<RankedCastPostRow['casts']>>;
+};
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function normalizeRankedCastPost(row: RankedCastPostQueryRow): RankedCastPostRow {
+  return {
+    ...row,
+    casts: Array.isArray(row.casts) ? row.casts[0] ?? null : row.casts,
+  };
+}
+
 // キャスト用のPV情報・ランキング取得アクション
 export async function getCastPVStats(castId: string) {
   const supabase = await createClient();
@@ -15,7 +51,8 @@ export async function getCastPVStats(castId: string) {
 
     if (myError) throw myError;
 
-    const totalPV = myPosts?.reduce((sum, post) => sum + (post.view_count || 0), 0) || 0;
+    const totalPV =
+      (myPosts as CastPostViewRow[] | null)?.reduce((sum, post) => sum + (post.view_count || 0), 0) || 0;
 
     // 2. 所属している店舗内の全キャストのPVを集計して順位を算出
     // （※シンプルに全キャストの投稿データを引いて合算＆ソート）
@@ -27,7 +64,7 @@ export async function getCastPVStats(castId: string) {
     if (allError) throw allError;
 
     const castPVSumMap: Record<string, number> = {};
-    allPosts?.forEach((post) => {
+    (allPosts as CastPostViewRow[] | null)?.forEach((post) => {
       const cid = post.cast_id;
       if (!castPVSumMap[cid]) castPVSumMap[cid] = 0;
       castPVSumMap[cid] += (post.view_count || 0);
@@ -41,9 +78,9 @@ export async function getCastPVStats(castId: string) {
     const rank = myRankIndex !== -1 ? myRankIndex + 1 : sortedCasts.length + 1;
 
     return { success: true, totalPV, rank, totalCasts: sortedCasts.length };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to get cast PV stats:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: getErrorMessage(error, 'PV集計に失敗しました。') };
   }
 }
 
@@ -61,9 +98,12 @@ export async function getAdminPostRankings(limitCount: number = 20) {
 
     if (error) throw error;
 
-    return { success: true, data: rankedPosts };
-  } catch (error: any) {
+    return {
+      success: true,
+      data: (rankedPosts as RankedCastPostQueryRow[] | null)?.map(normalizeRankedCastPost) ?? null,
+    };
+  } catch (error: unknown) {
     console.error('Failed to get admin post rankings:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: getErrorMessage(error, '投稿ランキングの取得に失敗しました。') };
   }
 }

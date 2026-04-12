@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import { sendLineGroupMessage } from '@/lib/line'
 
 /**
  * 本日確認 自動メール送信 Cron
@@ -166,10 +167,32 @@ export async function GET(request: Request) {
         )
     }
 
+    let lineReminderSent = false
+    if ((alreadySent ?? []).length === 0) {
+      const lineMessage = [
+        '【本日の出勤確認と来店予定確認】',
+        '本日出勤予定のキャストは、19:00までに提出をお願いします。',
+        '',
+        '提出内容',
+        '・本日の出勤確認',
+        '・来店予定 / 同伴予定',
+        '',
+        `提出URL: ${dashboardUrl}`,
+      ].join('\n')
+
+      const lineResult = await sendLineGroupMessage(lineMessage)
+      if (!lineResult.ok) {
+        console.warn('[LINE] daily-checkin-reminder のグループ通知に失敗しました', lineResult)
+      } else {
+        lineReminderSent = true
+      }
+    }
+
     return NextResponse.json({
       success: true,
       date: todayJst,
       targets: targets.length,
+      lineReminderSent,
       ...results,
     })
   } catch (error: unknown) {

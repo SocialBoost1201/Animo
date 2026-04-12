@@ -13,6 +13,10 @@ import {
   addTrial, deleteTrial,
   addShiftChange, deleteShiftChange,
   addStaffAttendance, deleteStaffAttendance,
+  approveCheckin,
+  rejectCheckin,
+  approveReservation,
+  rejectReservation,
   generateLineText,
 } from '@/lib/actions/today'
 import { type DashboardKPIData } from '@/lib/actions/dashboard'
@@ -112,6 +116,9 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
     alerts.push({ label: 'シフト未提出', detail: `${kpi.shiftMissingCount}名が今週未提出`, level: 'warn' })
   if (kpi.unconfirmedCount > 0)
     alerts.push({ label: '来店予定未確定', detail: `${kpi.unconfirmedCount}名が確認待ち`, level: 'danger' })
+  const pendingApprovalCount = data.pendingCheckins.length + data.pendingReservations.length
+  if (pendingApprovalCount > 0)
+    alerts.push({ label: '承認待ち', detail: `${pendingApprovalCount}件の当日提出が承認待ち`, level: 'warn' })
   if (kpi.unreadApplications > 0)
     alerts.push({ label: '未返信案件', detail: `応募返信待ち ${kpi.unreadApplications}件`, level: 'warn' })
 
@@ -155,7 +162,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       case 'cast':   return <CastTab data={data} activeCasts={activeCasts} absentNames={absentNames} handleAction={handleAction} casts={casts} showDispatch={showDispatch} setShowDispatch={setShowDispatch} showTrial={showTrial} setShowTrial={setShowTrial} showChange={showChange} setShowChange={setShowChange} />
       case 'visit':  return <VisitTab data={data} />
       case 'staff':  return <StaffTab data={data} handleAction={handleAction} showStaff={showStaff} setShowStaff={setShowStaff} />
-      case 'unconfirmed': return <UnconfirmedTab data={data} />
+      case 'unconfirmed': return <UnconfirmedTab data={data} handleAction={handleAction} />
     }
   }
 
@@ -775,29 +782,117 @@ function StaffTab({
 // ─────────────────────────────────────────────────────────────────────────────
 // Tab: 要確認
 // ─────────────────────────────────────────────────────────────────────────────
-function UnconfirmedTab({ data }: { data: TodayDashboardData }) {
+function UnconfirmedTab({
+  data,
+  handleAction,
+}: {
+  data: TodayDashboardData
+  handleAction: (fn: () => Promise<{ error?: string } | { success: boolean }>) => void
+}) {
   return (
     <div className="space-y-2">
-      {data.unconfirmedCasts.length === 0 ? (
+      {data.pendingCheckins.length > 0 && (
+        <div className="space-y-2 pb-3">
+          <p className="text-[10px] text-[#dfbd69] px-3 pb-1">本日の確認 承認待ち</p>
+          {data.pendingCheckins.map(checkin => (
+            <div key={checkin.id} className="rounded-[8px] border border-[#dfbd6926] bg-[#dfbd6908] px-3 py-2.5">
+              <div className="flex items-start gap-2">
+                <Badge color="orange">承認待ち</Badge>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[12px] font-semibold text-[#f4f1ea]">{checkin.stage_name}</p>
+                  <p className="mt-1 text-[11px] text-[#cbc3b3]">
+                    欠勤: {checkin.is_absent ? 'あり' : 'なし'} / 出勤変更: {checkin.has_change ? 'あり' : 'なし'}
+                  </p>
+                  {checkin.change_note ? (
+                    <p className="mt-1 text-[10px] text-[#8a8478]">変更内容: {checkin.change_note}</p>
+                  ) : null}
+                  {checkin.memo ? (
+                    <p className="mt-1 text-[10px] text-[#8a8478]">メモ: {checkin.memo}</p>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => handleAction(() => approveCheckin(checkin.id))}
+                  className="rounded-[6px] bg-[#72b894] px-3 py-1.5 text-[10px] font-bold text-[#0b0b0d]"
+                >
+                  承認
+                </button>
+                <button
+                  onClick={() => handleAction(() => rejectCheckin(checkin.id))}
+                  className="rounded-[6px] border border-[#d4785a40] px-3 py-1.5 text-[10px] font-bold text-[#d4785a]"
+                >
+                  差し戻し
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {data.pendingReservations.length > 0 && (
+        <div className="space-y-2 pb-3">
+          <p className="text-[10px] text-[#dfbd69] px-3 pb-1">来店予定 承認待ち</p>
+          {data.pendingReservations.map(reservation => (
+            <div key={reservation.id} className="rounded-[8px] border border-[#6ab0d426] bg-[#6ab0d408] px-3 py-2.5">
+              <div className="flex items-start gap-2">
+                <Badge color="blue">{reservation.reservation_type === 'douhan' ? '同伴' : '来店'}</Badge>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[12px] font-semibold text-[#f4f1ea]">
+                    {reservation.visit_time.substring(0, 5)} / {reservation.stage_name}
+                  </p>
+                  <p className="mt-1 text-[11px] text-[#cbc3b3]">
+                    {reservation.guest_name}様
+                    {reservation.guest_count ? ` / ${reservation.guest_count}名` : ''}
+                  </p>
+                  {reservation.note ? (
+                    <p className="mt-1 text-[10px] text-[#8a8478]">メモ: {reservation.note}</p>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => handleAction(() => approveReservation(reservation.id))}
+                  className="rounded-[6px] bg-[#72b894] px-3 py-1.5 text-[10px] font-bold text-[#0b0b0d]"
+                >
+                  承認
+                </button>
+                <button
+                  onClick={() => handleAction(() => rejectReservation(reservation.id))}
+                  className="rounded-[6px] border border-[#d4785a40] px-3 py-1.5 text-[10px] font-bold text-[#d4785a]"
+                >
+                  差し戻し
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {data.unconfirmedCasts.length === 0 && data.pendingCheckins.length === 0 && data.pendingReservations.length === 0 ? (
         <p className="text-[12px] text-[#72b894] italic text-center py-8">未確認キャストなし ✓</p>
       ) : (
         <>
-          <p className="text-[10px] text-[#d4785a] px-3 pb-2">本日の確認フォームを未送信のキャストです</p>
-          {data.unconfirmedCasts.map(c => {
-            const mailSent = data.mailSentCastIds?.includes(c.cast_id)
-            return (
-              <Row key={c.cast_id}>
-                <AlertTriangle size={11} className="text-[#d4785a]" />
-                <span className="text-[12px] font-medium text-[#d4785a]">{c.stage_name}</span>
-                <span className="ml-auto">
-                  {mailSent
-                    ? <Badge color="blue">📧 メール済み</Badge>
-                    : <Badge color="red">未連絡</Badge>
-                  }
-                </span>
-              </Row>
-            )
-          })}
+          {data.unconfirmedCasts.length > 0 ? (
+            <>
+              <p className="text-[10px] text-[#d4785a] px-3 pb-2">本日の確認フォームを未送信のキャストです</p>
+              {data.unconfirmedCasts.map(c => {
+                const mailSent = data.mailSentCastIds?.includes(c.cast_id)
+                return (
+                  <Row key={c.cast_id}>
+                    <AlertTriangle size={11} className="text-[#d4785a]" />
+                    <span className="text-[12px] font-medium text-[#d4785a]">{c.stage_name}</span>
+                    <span className="ml-auto">
+                      {mailSent
+                        ? <Badge color="blue">📧 メール済み</Badge>
+                        : <Badge color="red">未連絡</Badge>
+                      }
+                    </span>
+                  </Row>
+                )
+              })}
+            </>
+          ) : null}
         </>
       )}
     </div>

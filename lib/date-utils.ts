@@ -36,3 +36,23 @@ export function getJstDateLabel(date: Date = new Date()): string {
 
   return `${parts.month}月${parts.day}日（${parts.weekday}）`
 }
+
+export function getJstHourMinute(date: Date = new Date()): { hour: number; minute: number } {
+  const parts = getPartMap(date, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+
+  return {
+    hour: Number(parts.hour),
+    minute: Number(parts.minute),
+  }
+}
+
+export function isPastJstTime(hour: number, minute: number, date: Date = new Date()): boolean {
+  const current = getJstHourMinute(date)
+  const currentMinutes = current.hour * 60 + current.minute
+  const targetMinutes = hour * 60 + minute
+  return currentMinutes >= targetMinutes
+}
