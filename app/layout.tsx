@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Shippori_Mincho, Zen_Kaku_Gothic_New, Inter } from "next/font/google";
+import { Noto_Serif_JP, Zen_Kaku_Gothic_New, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-inter'});
 
-const shippori = Shippori_Mincho({
-  variable: "--font-shippori",
+const notoSerif = Noto_Serif_JP({
+  variable: "--font-serif-jp",
   weight: ["400", "700"],
   subsets: ["latin"],
   display: 'swap',
@@ -73,7 +73,7 @@ export default function RootLayout({
     <html lang="ja" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <head />
       <body
-        className={`${shippori.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${notoSerif.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
         suppressHydrationWarning
       >
         {children}

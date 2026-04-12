@@ -15,7 +15,7 @@
   --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
   /* Brand Typography */
-  --font-serif: var(--font-shippori), "Times New Roman", Times, serif;
+  --font-serif: var(--font-serif-jp), "Times New Roman", Times, serif;
   --font-sans: var(--font-zen-kaku), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Brand Spacing & Border Radius */
