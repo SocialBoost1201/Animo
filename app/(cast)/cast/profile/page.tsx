@@ -1,66 +1,84 @@
-import React from 'react';
 import { redirect } from 'next/navigation';
-import { getCurrentCast } from '@/lib/actions/cast-auth';
+import { ShieldCheck, CalendarRange, Trophy } from 'lucide-react';
+import { getCurrentCast, castLogout } from '@/lib/actions/cast-auth';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import {
+  CastMobileBackLink,
+  CastMobileCard,
+  CastMobileHeader,
+  CastMobileShell,
+} from '@/components/features/cast/CastMobileShell';
 
 export default async function CastProfilePage() {
   const cast = await getCurrentCast();
   if (!cast) redirect('/cast/login');
 
-  const profileFields = [
-    { label: 'Stage Name', value: cast.stage_name || cast.name },
-    { label: 'Age', value: cast.age ? `${cast.age}歳` : '-' },
-    { label: 'Height', value: cast.height ? `${cast.height}cm` : '-' },
-    { label: 'Hobby', value: cast.hobby || '-' },
+  const metrics = [
+    { icon: CalendarRange, value: cast.start_date || '2年', label: '在籍期間' },
+    { icon: ShieldCheck, value: '92%', label: '出勤率' },
+    { icon: Trophy, value: 'No.1', label: 'グレード' },
+  ];
+
+  const details = [
+    { label: '本名', value: cast.name || '-' },
+    { label: 'ステージ名', value: cast.stage_name || '-' },
+    { label: '所属店舗', value: cast.store_name || 'Club Animo Shinjuku' },
+    { label: '入店日', value: cast.start_date || '-' },
   ];
 
   return (
-    <div className="px-5 py-8 max-w-lg mx-auto">
-      <div className="mb-6">
-        <Link href="/cast/dashboard" className="inline-flex items-center text-xs text-gray-400 hover:text-gold transition-colors tracking-wider">
-          <ArrowLeft className="w-4 h-4 mr-1" /> Dashboard
-        </Link>
-      </div>
+    <CastMobileShell>
+      <CastMobileHeader />
+      <main className="mx-auto flex w-full max-w-[422px] flex-col gap-[19px] px-4 pb-28 pt-6">
+        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
 
-      <div className="text-center mb-8">
-        <h1 className="font-serif text-xl tracking-widest text-[#171717] mb-1">Profile</h1>
-        <p className="text-xs text-gray-400 tracking-wider">プロフィール情報</p>
-      </div>
-
-      {/* Profile Image */}
-      <div className="w-40 h-40 mx-auto mb-8 rounded-full overflow-hidden bg-gray-100 border-2 border-gold/20">
-        <PlaceholderImage
-          src={cast.image_url}
-          alt={cast.stage_name || cast.name}
-          ratio="square"
-          placeholderText={cast.stage_name || cast.name}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Profile Details */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50">
-        {profileFields.map((field) => (
-          <div key={field.label} className="flex items-center justify-between px-5 py-4">
-            <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif">{field.label}</span>
-            <span className="text-sm text-[#171717] font-bold">{field.value}</span>
+        <CastMobileCard className="rounded-[16px] px-6 py-6 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-[1.8px] border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)]">
+            <PlaceholderImage
+              src={cast.image_url}
+              alt={cast.stage_name || cast.name}
+              ratio="square"
+              placeholderText={cast.stage_name || cast.name}
+              className="h-full w-full object-cover"
+            />
           </div>
-        ))}
-      </div>
+          <h1 className="mt-[14px] text-[22px] font-bold leading-[33px] text-[#f7f4ed]">{cast.stage_name || cast.name}</h1>
+          <p className="mt-[2px] text-[13px] leading-[19.5px] text-[#6b7280]">{cast.name || '-'}</p>
+          <p className="mt-[2px] text-[12px] leading-[18px] text-[#c9a76a]">{cast.store_name || 'Club Animo Shinjuku'}</p>
+          <Link href="/cast/profile/edit" className="mt-[16px] inline-flex items-center gap-2 rounded-[14px] border border-[rgba(201,167,106,0.2)] bg-[rgba(201,167,106,0.15)] px-4 py-[9px] text-[13px] font-bold leading-[19.5px] text-[#c9a76a]">
+            プロフィールを編集
+          </Link>
+        </CastMobileCard>
 
-      {/* Comment / Message */}
-      {cast.comment && (
-        <div className="mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif block mb-3">Message</span>
-          <p className="text-sm text-gray-600 font-serif leading-relaxed whitespace-pre-wrap">{cast.comment}</p>
+        <div className="grid grid-cols-3 gap-3">
+          {metrics.map((metric) => (
+            <CastMobileCard key={metric.label} className="rounded-[14px] px-3 py-4 text-center">
+              <metric.icon className="mx-auto h-[18px] w-[18px] text-[#c9a76a]" strokeWidth={1.8} />
+              <div className="mt-[8px] text-[16px] font-bold leading-6 text-[#f7f4ed]">{metric.value}</div>
+              <div className="mt-[2px] text-[11px] leading-[16.5px] text-[#6b7280]">{metric.label}</div>
+            </CastMobileCard>
+          ))}
         </div>
-      )}
 
-      <p className="mt-8 text-center text-xs text-gray-300 leading-relaxed">
-        ※ プロフィールの変更は管理者までお問い合わせください。
-      </p>
-    </div>
+        <CastMobileCard className="overflow-hidden rounded-[16px] divide-y divide-white/8">
+          {details.map((detail) => (
+            <div key={detail.label} className="flex items-center justify-between px-5 py-4">
+              <span className="text-[13px] leading-[19.5px] text-[#6b7280]">{detail.label}</span>
+              <span className="text-[13px] font-medium leading-[19.5px] text-[#f7f4ed]">{detail.value}</span>
+            </div>
+          ))}
+        </CastMobileCard>
+
+        <form action={castLogout}>
+          <button
+            type="submit"
+            className="w-full rounded-[14px] border border-[rgba(224,106,106,0.2)] bg-[rgba(224,106,106,0.12)] px-4 py-3 text-[14px] font-bold leading-[21px] text-[#e06a6a]"
+          >
+            ログアウト
+          </button>
+        </form>
+      </main>
+    </CastMobileShell>
   );
 }

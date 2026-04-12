@@ -2,8 +2,13 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { format } from 'date-fns';
+import type { CastScoreLog } from '@/lib/types/cast-ui';
 
 type ActionType = 'shift_submitted_on_time' | 'blog_posted' | 'blog_pv_milestone' | 'help_shift_accepted' | 'other';
+type CastScoreRow = {
+  total_score: number;
+  current_level: number;
+};
 
 /**
  * キャストにスコア（ポイント）を付与または減算し、ログを残す
@@ -75,9 +80,12 @@ export async function addCastScore(
     }
 
     return { success: true, newTotal, newLevel };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to add cast score:', error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'スコア加算に失敗しました。',
+    };
   }
 }
 
@@ -114,7 +122,7 @@ export async function getCastScoreAndLogs(castId: string, targetMonth?: string, 
   }
 
   return {
-    score: scoreData || { total_score: 0, current_level: 1 },
-    logs: logsData || []
+    score: (scoreData as CastScoreRow | null) || { total_score: 0, current_level: 1 },
+    logs: (logsData as CastScoreLog[] | null) || []
   };
 }

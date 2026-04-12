@@ -2,13 +2,89 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { getJstDateString } from '@/lib/date-utils'
+import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
+import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
 import { StaffSlave } from './staffs'
 import { getAnalyticsSummary } from './analytics'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
+const TODAY_SUBMISSION_DEADLINE_HOUR = 19
+const TODAY_SUBMISSION_DEADLINE_MINUTE = 0
+
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
+
+function isTodaySubmissionClosed(date: Date = new Date()): boolean {
+  return isPastJstTime(TODAY_SUBMISSION_DEADLINE_HOUR, TODAY_SUBMISSION_DEADLINE_MINUTE, date)
+}
+
+function getTodaySubmissionDeadlineLabel() {
+  return `${String(TODAY_SUBMISSION_DEADLINE_HOUR).padStart(2, '0')}:${String(TODAY_SUBMISSION_DEADLINE_MINUTE).padStart(2, '0')}`
+}
+
+function buildCheckinLineMessage(params: {
+  castName: string
+  today: string
+  isAbsent: boolean
+  hasChange: boolean
+  changeNote: string | null
+  memo: string | null
+}) {
+  const lines = [
+    '【本日の確認提出】',
+    `${params.castName} さん`,
+    `日付: ${params.today}`,
+    `欠勤: ${params.isAbsent ? 'あり' : 'なし'}`,
+    `出勤変更: ${params.hasChange ? 'あり' : 'なし'}`,
+    '状態: 店長承認待ち',
+  ]
+
+  if (params.changeNote) {
+    lines.push(`変更内容: ${params.changeNote}`)
+  }
+
+  if (params.memo) {
+    lines.push(`メモ: ${params.memo}`)
+  }
+
+  return lines.join('\n')
+}
+
+function buildReservationLineMessage(params: {
+  castName: string
+  today: string
+  visitTime: string
+  guestName: string
+  guestCount: number | null
+  reservationType: string
+  note: string | null
+}) {
+  const typeLabel = params.reservationType === 'douhan' ? '同伴' : '来店予定'
+  const lines = [
+    '【来店予定提出】',
+    `${params.castName} さん`,
+    `日付: ${params.today}`,
+    `時間: ${params.visitTime.substring(0, 5)}`,
+    `お客様: ${params.guestName} 様`,
+    `種別: ${typeLabel}`,
+    '状態: 店長承認待ち',
+  ]
+
+  if (params.guestCount) {
+    lines.push(`人数: ${params.guestCount}名`)
+  }
+
+  if (params.note) {
+    lines.push(`メモ: ${params.note}`)
+  }
+
+  return lines.join('\n')
+}
+
+function getSubmissionClosedError() {
+  return `本日の提出締切 ${getTodaySubmissionDeadlineLabel()} を過ぎたため送信できません。`
+}
 
 export type TodayShiftCast = {
   cast_id: string
@@ -37,6 +113,7 @@ export type TodayReservation = {
   guest_count?: number | null
   reservation_type: 'douhan' | 'reservation'
   note?: string
+  approval_status: ApprovalStatus
 }
 
 export type TodayCheckin = {
@@ -47,6 +124,7 @@ export type TodayCheckin = {
   change_note?: string
   is_absent: boolean
   memo?: string
+  approval_status: ApprovalStatus
 }
 
 export type TodayShiftChange = {
@@ -84,6 +162,8 @@ export type TodayDashboardData = {
   allStaffs: StaffSlave[]
   mailSentCastIds: string[]  // 当日に確認メールを送信済みのキャストID一覧
   analytics: AnalyticsSummary
+  pendingCheckins: TodayCheckin[]
+  pendingReservations: TodayReservation[]
 }
 
 // ==========================================
@@ -133,8 +213,9 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // 来店予定
   const { data: reservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
     .eq('reservation_date', today)
+    .eq('approval_status', 'approved')
     .order('visit_time')
 
   const reservations: TodayReservation[] = (reservationsRaw || []).map(r => {
@@ -148,14 +229,38 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       guest_count: r.guest_count,
       reservation_type: r.reservation_type,
       note: r.note,
+      approval_status: r.approval_status,
+    }
+  })
+
+  const { data: pendingReservationsRaw } = await supabase
+    .from('daily_reservations')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
+    .eq('reservation_date', today)
+    .eq('approval_status', 'pending')
+    .order('visit_time')
+
+  const pendingReservations: TodayReservation[] = (pendingReservationsRaw || []).map(r => {
+    const cast = r.casts as unknown as { stage_name: string } | null
+    return {
+      id: r.id,
+      cast_id: r.cast_id,
+      stage_name: cast?.stage_name || '不明',
+      visit_time: r.visit_time,
+      guest_name: r.guest_name,
+      guest_count: r.guest_count,
+      reservation_type: r.reservation_type,
+      note: r.note,
+      approval_status: r.approval_status,
     }
   })
 
   // 当日確認チェックイン
   const { data: checkinsRaw } = await supabase
     .from('daily_checkins')
-    .select('id, cast_id, has_change, change_note, is_absent, memo, casts(stage_name)')
+    .select('id, cast_id, has_change, change_note, is_absent, memo, approval_status, casts(stage_name)')
     .eq('checkin_date', today)
+    .eq('approval_status', 'approved')
 
   const checkins: TodayCheckin[] = (checkinsRaw || []).map(c => {
     const cast = c.casts as unknown as { stage_name: string } | null
@@ -167,6 +272,27 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       change_note: c.change_note,
       is_absent: c.is_absent,
       memo: c.memo,
+      approval_status: c.approval_status,
+    }
+  })
+
+  const { data: pendingCheckinsRaw } = await supabase
+    .from('daily_checkins')
+    .select('id, cast_id, has_change, change_note, is_absent, memo, approval_status, casts(stage_name)')
+    .eq('checkin_date', today)
+    .eq('approval_status', 'pending')
+
+  const pendingCheckins: TodayCheckin[] = (pendingCheckinsRaw || []).map(c => {
+    const cast = c.casts as unknown as { stage_name: string } | null
+    return {
+      id: c.id,
+      cast_id: c.cast_id,
+      stage_name: cast?.stage_name || '不明',
+      has_change: c.has_change,
+      change_note: c.change_note,
+      is_absent: c.is_absent,
+      memo: c.memo,
+      approval_status: c.approval_status,
     }
   })
 
@@ -234,6 +360,8 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
     allStaffs: allStaffs || [],
     mailSentCastIds,
     analytics: await getAnalyticsSummary(),
+    pendingCheckins,
+    pendingReservations,
   }
 }
 
@@ -437,28 +565,81 @@ export async function submitCheckin(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
+  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
-    .select('id')
+    .select('id, stage_name, name')
     .eq('auth_user_id', user.id)
     .single()
   if (!cast) return { error: 'キャスト情報が見つかりません' }
 
   const today = getJstDateString()
+  const { data: existing } = await supabase
+    .from('daily_checkins')
+    .select('id, approval_status')
+    .eq('cast_id', cast.id)
+    .eq('checkin_date', today)
+    .maybeSingle()
+
+  if (existing?.approval_status === 'approved') {
+    return { error: 'この本日の確認はすでに承認済みです。修正が必要な場合は店長に連絡してください。' }
+  }
+
+  const hasChange = formData.get('has_change') === 'true'
+  const isAbsent = formData.get('is_absent') === 'true'
+  const changeNote = (formData.get('change_note') as string) || null
+  const memo = (formData.get('memo') as string) || null
   const { error } = await supabase.from('daily_checkins').upsert({
     cast_id: cast.id,
     checkin_date: today,
-    has_change: formData.get('has_change') === 'true',
-    change_note: (formData.get('change_note') as string) || null,
-    is_absent: formData.get('is_absent') === 'true',
-    memo: (formData.get('memo') as string) || null,
+    has_change: hasChange,
+    change_note: changeNote,
+    is_absent: isAbsent,
+    memo,
     submitted_at: new Date().toISOString(),
+    approval_status: 'pending',
+    approved_at: null,
+    approved_by: null,
   }, { onConflict: 'cast_id,checkin_date' })
 
   if (error) return { error: error.message }
+  const castName = cast.stage_name || cast.name || '不明'
+  const lineResult = await sendLineGroupMessage(
+    buildCheckinLineMessage({
+      castName,
+      today,
+      isAbsent,
+      hasChange,
+      changeNote,
+      memo,
+    })
+  )
+
+  if (!lineResult.ok) {
+    console.warn('[LINE] 本日の確認通知の送信に失敗しました', {
+      castId: cast.id,
+      reason: lineResult.reason,
+      skipped: lineResult.skipped,
+      status: lineResult.status,
+    })
+  }
+
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  revalidatePath('/admin/today')
+  if (!lineResult.ok) {
+    return {
+      success: true,
+      warning: lineResult.skipped
+        ? '提出は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
+        : '提出は保存されましたが、LINE通知の送信に失敗しました。',
+      message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
+    }
+  }
+  return {
+    success: true,
+    message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
+  }
 }
 
 // ==========================================
@@ -468,10 +649,11 @@ export async function addReservation(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
+  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
-    .select('id')
+    .select('id, stage_name, name')
     .eq('auth_user_id', user.id)
     .single()
   if (!cast) return { error: 'キャスト情報が見つかりません' }
@@ -486,25 +668,77 @@ export async function addReservation(formData: FormData) {
     return { error: '人数は1以上の整数で入力してください' }
   }
 
+  const visitTime = formData.get('visit_time') as string
+  const guestName = formData.get('guest_name') as string
+  const reservationType = formData.get('reservation_type') as string
+  const note = (formData.get('note') as string) || null
+
   const { error } = await supabase.from('daily_reservations').insert({
     cast_id: cast.id,
     reservation_date: today,
-    visit_time: formData.get('visit_time') as string,
-    guest_name: formData.get('guest_name') as string,
+    visit_time: visitTime,
+    guest_name: guestName,
     guest_count: guestCount,
-    reservation_type: formData.get('reservation_type') as string,
-    note: (formData.get('note') as string) || null,
+    reservation_type: reservationType,
+    note,
+    approval_status: 'pending',
+    approved_at: null,
+    approved_by: null,
   })
 
   if (error) return { error: error.message }
+  const castName = cast.stage_name || cast.name || '不明'
+  const lineResult = await sendLineGroupMessage(
+    buildReservationLineMessage({
+      castName,
+      today,
+      visitTime,
+      guestName,
+      guestCount,
+      reservationType,
+      note,
+    })
+  )
+
+  if (!lineResult.ok) {
+    console.warn('[LINE] 来店予定通知の送信に失敗しました', {
+      castId: cast.id,
+      reason: lineResult.reason,
+      skipped: lineResult.skipped,
+      status: lineResult.status,
+    })
+  }
+
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  revalidatePath('/admin/today')
+  return {
+    success: true,
+    warning: !lineResult.ok
+      ? lineResult.skipped
+        ? '来店予定は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
+        : '来店予定は保存されましたが、LINE通知の送信に失敗しました。'
+      : undefined,
+    message: '来店予定を提出しました。店長の承認後に営業状況へ反映されます。',
+  }
 }
 
 export async function deleteReservation(id: string) {
   const supabase = await createClient()
+  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+
+  const { data: reservation } = await supabase
+    .from('daily_reservations')
+    .select('approval_status')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (reservation?.approval_status === 'approved') {
+    return { error: '承認済みの来店予定は削除できません。修正が必要な場合は店長に連絡してください。' }
+  }
+
   await supabase.from('daily_reservations').delete().eq('id', id)
   revalidatePath('/cast/dashboard')
+  revalidatePath('/admin/today')
   return { success: true }
 }
 
@@ -526,6 +760,7 @@ export async function getCastTodayReservations() {
     .select('*')
     .eq('cast_id', cast.id)
     .eq('reservation_date', today)
+    .neq('approval_status', 'rejected')
     .order('visit_time')
 
   return data || []
@@ -552,4 +787,87 @@ export async function getCastTodayCheckin() {
     .maybeSingle()
 
   return data
+}
+
+export async function approveCheckin(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: '未認証です', success: false }
+
+  const { error } = await supabase
+    .from('daily_checkins')
+    .update({
+      approval_status: 'approved',
+      approved_at: new Date().toISOString(),
+      approved_by: user.id,
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message, success: false }
+  revalidatePath('/admin/today')
+  revalidatePath('/cast/dashboard')
+  return { success: true }
+}
+
+export async function rejectCheckin(id: string) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('daily_checkins')
+    .update({
+      approval_status: 'rejected',
+      approved_at: null,
+      approved_by: null,
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message, success: false }
+  revalidatePath('/admin/today')
+  revalidatePath('/cast/dashboard')
+  return { success: true }
+}
+
+export async function approveReservation(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: '未認証です', success: false }
+
+  const { error } = await supabase
+    .from('daily_reservations')
+    .update({
+      approval_status: 'approved',
+      approved_at: new Date().toISOString(),
+      approved_by: user.id,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message, success: false }
+  revalidatePath('/admin/today')
+  revalidatePath('/cast/dashboard')
+  return { success: true }
+}
+
+export async function rejectReservation(id: string) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('daily_reservations')
+    .update({
+      approval_status: 'rejected',
+      approved_at: null,
+      approved_by: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message, success: false }
+  revalidatePath('/admin/today')
+  revalidatePath('/cast/dashboard')
+  return { success: true }
+}
+
+export async function getTodaySubmissionState(date: Date = new Date()) {
+  return {
+    isClosed: isTodaySubmissionClosed(date),
+    deadlineLabel: getTodaySubmissionDeadlineLabel(),
+  }
 }

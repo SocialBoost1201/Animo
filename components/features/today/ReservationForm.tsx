@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { addReservation, deleteReservation } from '@/lib/actions/today'
 import { toast } from 'sonner'
-import { Plus, Trash2, Clock } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 type Reservation = {
@@ -13,14 +13,23 @@ type Reservation = {
   guest_count?: number | null
   reservation_type: string
   note?: string
+  approval_status?: 'pending' | 'approved' | 'rejected'
 }
 
-export function ReservationForm({ reservations }: { reservations: Reservation[] }) {
+export function ReservationForm({
+  reservations,
+  isSubmissionClosed,
+  deadlineLabel,
+}: {
+  reservations: Reservation[]
+  isSubmissionClosed: boolean
+  deadlineLabel: string
+}) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [showForm, setShowForm] = useState(false)
 
-  const inputClass = 'w-full border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold transition-colors'
+  const inputClass = 'h-[39px] w-full rounded-[10px] border border-white/8 bg-[#131720] px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -30,7 +39,10 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('来店予定を追加しました')
+        toast.success(result.message || '来店予定を追加しました')
+        if ('warning' in result && result.warning) {
+          toast.error(result.warning)
+        }
         setShowForm(false)
         router.refresh()
       }
@@ -39,51 +51,82 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
 
   async function handleDelete(id: string) {
     startTransition(async () => {
-      await deleteReservation(id)
+      const result = await deleteReservation(id)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
       router.refresh()
     })
   }
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-      <p className="text-xs font-bold tracking-widest uppercase text-gray-500 mb-4">来店予定</p>
+    <div className="rounded-[18px] border border-white/8 bg-[#131720] p-4">
+      <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">03 — 来店予定</p>
+
+      {isSubmissionClosed ? (
+        <p className="mb-4 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-600">
+          本日の提出締切 {deadlineLabel} を過ぎたため、現在は編集できません。
+        </p>
+      ) : null}
 
       {reservations.length > 0 ? (
-        <div className="space-y-2 mb-4">
+        <div className="mb-4 space-y-3">
           {reservations.map(r => (
-            <div key={r.id} className="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-0">
-              <Clock size={14} className="text-gold shrink-0" />
-              <span className="text-sm font-bold text-gold w-12 shrink-0">{r.visit_time.substring(0, 5)}</span>
-              <span className="text-sm text-gray-700">{r.guest_name}様</span>
-              {r.guest_count ? (
-                <span className="text-xs text-gray-500 shrink-0">{r.guest_count}名</span>
-              ) : null}
-              <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${r.reservation_type === 'douhan' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>
-                {r.reservation_type === 'douhan' ? '同伴' : '来店予定'}
-              </span>
-              <button onClick={() => handleDelete(r.id)} className="ml-auto shrink-0">
-                <Trash2 size={13} className="text-gray-300 hover:text-red-400 transition-colors" />
-              </button>
+            <div key={r.id} className="rounded-[16px] border border-white/8 bg-[#181d27] p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[13px] text-[#6b7280]">
+                  <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.08)] text-[11px] font-bold">{reservations.findIndex((item) => item.id === r.id) + 1}</span>
+                  {reservations.findIndex((item) => item.id === r.id) + 1}組目
+                </div>
+                <button onClick={() => handleDelete(r.id)} className="text-[#6b7280]">
+                  <Trash2 size={14} />
+                </button>
+              </div>
+              <div className="grid gap-3">
+                <div className="grid grid-cols-[1fr_auto] items-center gap-3">
+                  <div className="text-[13px] text-[#f7f4ed]">{r.guest_name}様</div>
+                  <div className="text-[13px] font-medium text-[#f7f4ed]">{r.visit_time.substring(0, 5)}</div>
+                </div>
+                <div className="grid grid-cols-[80px_1fr] gap-3">
+                  <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#f7f4ed]">{r.guest_count ?? 1}名</div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {['approved', 'pending', 'rejected'].map((status) => (
+                      <div
+                        key={status}
+                        className={`rounded-[8px] px-2 py-2 text-center text-[11px] font-bold ${
+                          (status === 'approved' && r.approval_status === 'approved')
+                            ? 'border border-[rgba(51,179,107,0.27)] bg-[rgba(51,179,107,0.12)] text-[#33b36b]'
+                            : 'border border-white/8 bg-[#131720] text-[#6b7280]'
+                        }`}
+                      >
+                        {status === 'approved' ? '確定' : status === 'pending' ? '来るかも' : '連絡中'}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {r.note ? <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#a9afbc]">{r.note}</div> : null}
+              </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-xs text-gray-300 mb-4">本日の来店予定はまだ登録されていません</p>
+        <p className="mb-4 text-[13px] text-[#a9afbc]">来店予定がある方は入力してください</p>
       )}
 
-      {showForm ? (
-        <form onSubmit={handleSubmit} className="space-y-3 p-4 bg-gray-50 rounded-xl">
+      {showForm && !isSubmissionClosed ? (
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-[16px] border border-white/8 bg-[#181d27] p-4">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">時間 *</label>
+            <label className="mb-1 block text-[11px] text-[#6b7280]">時間 *</label>
             <input name="visit_time" type="time" required className={inputClass} />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">お客様名 *</label>
+            <label className="mb-1 block text-[11px] text-[#6b7280]">お客様名 *</label>
             <input name="guest_name" type="text" required placeholder="山田" className={inputClass} />
-            <p className="text-xs text-gray-300 mt-1">「様」はつけずに入力してください</p>
+            <p className="mt-1 text-[11px] text-[#6b7280]">「様」はつけずに入力してください</p>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">人数</label>
+            <label className="mb-1 block text-[11px] text-[#6b7280]">人数</label>
             <input
               name="guest_count"
               type="number"
@@ -94,7 +137,7 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">種別 *</label>
+            <label className="mb-1 block text-[11px] text-[#6b7280]">種別 *</label>
             <select name="reservation_type" required className={inputClass}>
               <option value="">選択してください</option>
               <option value="douhan">同伴</option>
@@ -102,21 +145,21 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
             </select>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">メモ（任意）</label>
+            <label className="mb-1 block text-[11px] text-[#6b7280]">メモ（任意）</label>
             <input name="note" type="text" placeholder="テーブル、備考など" className={inputClass} />
           </div>
           <div className="flex gap-2 pt-1">
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 py-3 bg-[#171717] text-white text-xs font-bold rounded-xl disabled:opacity-50"
+              className="flex-1 rounded-[12px] bg-[#c9a76a] py-3 text-[13px] font-bold text-[#0b0d12] disabled:opacity-50"
             >
               {isPending ? '追加中...' : '追加する'}
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="px-4 py-3 text-xs text-gray-500 rounded-xl border"
+              className="rounded-[12px] border border-white/8 px-4 py-3 text-[13px] text-[#6b7280]"
             >
               キャンセル
             </button>
@@ -124,8 +167,9 @@ export function ReservationForm({ reservations }: { reservations: Reservation[] 
         </form>
       ) : (
         <button
+          disabled={isSubmissionClosed}
           onClick={() => setShowForm(true)}
-          className="w-full flex items-center justify-center gap-2 py-3 text-xs text-gray-400 hover:text-gold border border-dashed border-gray-200 rounded-xl transition-colors"
+          className="flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] border border-dashed border-white/14 text-[13px] text-[#6b7280] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Plus size={14} />
           来店予定を追加

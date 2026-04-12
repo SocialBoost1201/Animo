@@ -1,327 +1,314 @@
-import React from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getCurrentCast, castLogout } from '@/lib/actions/cast-auth';
+import { CalendarDays, Bell, PenLine, ChevronRight, ClipboardCheck, FileText } from 'lucide-react';
+import { formatDistanceToNowStrict } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getMyShiftSubmission } from '@/lib/actions/cast-shifts';
 import { getTargetWeekMonday } from '@/lib/shift-utils';
-import { getMyConfirmedSchedules, getMyPendingChangeRequests } from '@/lib/actions/cast-change-requests';
-import { getCastPVStats } from '@/lib/actions/posts-analytics';
-import { getActiveShiftRequests, getMyShiftRequestResponses } from '@/lib/actions/cast-shift-requests';
-import { getCastScoreAndLogs } from '@/lib/actions/scores';
-import { createClient } from '@/lib/supabase/server';
+import { getMyConfirmedSchedules } from '@/lib/actions/cast-change-requests';
 import { getCastTodayCheckin, getCastTodayReservations } from '@/lib/actions/today';
-import { PenLine, FileText, User, LogOut, CalendarDays, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react';
-import Image from 'next/image';
-import { CastScheduleList } from '@/components/features/cast/CastScheduleList';
-import { CastHelpRequestList } from '@/components/features/cast/CastHelpRequestList';
-import { CastScoreWidget } from '@/components/features/cast/CastScoreWidget';
-import { CastNoticeWidget } from '@/components/features/cast/CastNoticeWidget';
 import { getCastNotices } from '@/lib/actions/cast-notices';
-import { CheckinForm } from '@/components/features/today/CheckinForm';
-import { ReservationForm } from '@/components/features/today/ReservationForm';
-import { PageHeader, PageShell, SectionCard } from '@/components/ui/app-shell';
+import { createClient } from '@/lib/supabase/server';
+import {
+  CastMobileCard,
+  CastMobileHeader,
+  CastMobileHeaderBell,
+  CastMobileShell,
+} from '@/components/features/cast/CastMobileShell';
 import { getJstDateString } from '@/lib/date-utils';
 
-type CastDashboardRecentPost = {
-  id: string;
-  image_url: string | null;
-  content: string | null;
-  status: 'published' | 'pending' | 'draft';
-  created_at: string;
-};
+function getWeeklySummaryLabel(value: 'work' | 'off' | 'unknown') {
+  if (value === 'work') return { text: '●', color: 'text-[#33b36b]' };
+  if (value === 'off') return { text: 'OFF', color: 'text-[#6b7280]' };
+  return { text: '未', color: 'text-[#e6a23c]' };
+}
 
-type CastDashboardReservationRow = {
-  id: string;
-  visit_time: string;
-  guest_name: string;
-  guest_count?: number | null;
-  reservation_type: 'douhan' | 'reservation';
-  note?: string | null;
-};
+function getNoticeTone(importance: 'high' | 'normal') {
+  return importance === 'high'
+    ? {
+        iconWrap: 'bg-[rgba(230,162,60,0.09)] text-[#e6a23c]',
+        title: 'text-[#f7f4ed]',
+      }
+    : {
+        iconWrap: 'bg-[rgba(201,167,106,0.09)] text-[#c9a76a]',
+        title: 'text-[#a9afbc]',
+      };
+}
 
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
   if (!cast) redirect('/cast/login');
 
   const supabase = await createClient();
-
-  // 最新の投稿3件を取得
-  const { data: recentPosts } = await supabase
-    .from('cast_posts')
-    .select('*')
-    .eq('cast_id', cast.id)
-    .order('created_at', { ascending: false })
-    .limit(3);
-
-  // 本日の出勤
   const today = getJstDateString();
-  const { data: todayShift } = await supabase
-    .from('cast_schedules')
-    .select('*')
-    .eq('cast_id', cast.id)
-    .eq('work_date', today)
-    .maybeSingle();
 
-  // 直近の確定済みスケジュールと未承認の変更申請を取得
-  const { data: schedules } = await getMyConfirmedSchedules(cast.id, 14);
-  const { data: pendingRequests } = await getMyPendingChangeRequests(cast.id);
-
-  // 次週のシフト提出状況
   const nextWeekBaseDate = new Date();
   nextWeekBaseDate.setDate(nextWeekBaseDate.getDate() + 7);
   const nextMondayDate = getTargetWeekMonday(nextWeekBaseDate);
   const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-  const { data: shiftSubmission } = await getMyShiftSubmission(nextMondayStr);
 
-  // PV統計情報
-  const pvStats = await getCastPVStats(cast.id);
-
-  // 期限判定（前週金曜の23:55）
-  const deadlineDate = new Date(nextMondayDate);
-  deadlineDate.setDate(deadlineDate.getDate() - 3); // 前週金曜
-  deadlineDate.setHours(23, 55, 0, 0); // 23:55
-
-  const now = new Date();
-  const isPastDeadline = now > deadlineDate;
-  // 木・金は期限間近アラート
-  const isNearDeadline = !isPastDeadline && now.getDay() >= 4 && now < deadlineDate;
-
-  // 出勤要請（ヘルプ）の取得
-  const activeHelpRequests = await getActiveShiftRequests();
-  const myHelpResponses = await getMyShiftRequestResponses();
-
-  // スコアと履歴の取得
-  const currentMonth = new Date().toISOString().substring(0, 7);
-  const { score, logs } = await getCastScoreAndLogs(cast.id, currentMonth);
-
-  // 全体お知らせ一覧の取得
-  const notices = await getCastNotices(cast.id);
-
-  // 本日の確認・来店予定
-  const [todayCheckin, todayReservations] = await Promise.all([
+  const [
+    { data: shiftSubmission },
+    { data: schedules },
+    notices,
+    todayCheckin,
+    todayReservations,
+    { data: todayShift },
+    { data: recentPosts },
+  ] = await Promise.all([
+    getMyShiftSubmission(nextMondayStr),
+    getMyConfirmedSchedules(cast.id, 7),
+    getCastNotices(cast.id),
     getCastTodayCheckin(),
     getCastTodayReservations(),
+    supabase
+      .from('cast_schedules')
+      .select('*')
+      .eq('cast_id', cast.id)
+      .eq('work_date', today)
+      .maybeSingle(),
+    supabase
+      .from('cast_posts')
+      .select('id, content, status, created_at')
+      .eq('cast_id', cast.id)
+      .order('created_at', { ascending: false })
+      .limit(3),
   ]);
 
-  // ReservationForm は optional string を期待するため null は undefined に正規化する
-  const reservationsForForm = (todayReservations || []).map((r: CastDashboardReservationRow) => ({
-    id: r.id,
-    visit_time: r.visit_time,
-    guest_name: r.guest_name,
-    guest_count: r.guest_count ?? null,
-    reservation_type: r.reservation_type,
-    note: r.note ?? undefined,
-  }));
+  const hasTodayCheckin = Boolean(todayCheckin);
+  const reservationCount = todayReservations?.length ?? 0;
+  const hasBlogPost = Boolean(recentPosts && recentPosts.length > 0 && recentPosts[0]?.created_at?.startsWith(today));
 
-  const menuItems = [
-    { href: '/cast/shift', icon: CalendarDays, label: 'シフト提出', desc: '来週のシフトを提出', accent: true },
-    { href: '/cast/post', icon: PenLine, label: '新規投稿', desc: '日記を投稿する', accent: false },
-    { href: '/cast/posts', icon: FileText, label: '投稿一覧', desc: '過去の投稿を見る', accent: false },
-    { href: '/cast/profile', icon: User, label: 'プロフィール', desc: '自分の情報を確認', accent: false },
-  ];
+  const statusChips = [
+    !hasTodayCheckin ? '本日の確認 未送信' : null,
+    !hasBlogPost ? 'ブログ 未投稿' : null,
+    !shiftSubmission ? 'シフト 残り4日' : null,
+  ].filter(Boolean) as string[];
+
+  const unreadNotices = notices.filter((notice) => !notice.is_read).slice(0, 3);
+  const summaryDates = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(nextMondayDate);
+    date.setDate(nextMondayDate.getDate() + index);
+    return date;
+  });
+
+  const scheduleStatusMap = new Map(
+    (schedules ?? []).map((schedule) => [
+      schedule.work_date,
+      schedule.status === 'confirmed' ? 'work' : 'unknown',
+    ])
+  );
+
+  const submittedCount = summaryDates.filter((date) =>
+    Boolean(scheduleStatusMap.get(date.toISOString().split('T')[0]))
+  ).length;
 
   return (
-    <PageShell width="narrow" className="space-y-8 px-5 py-8">
-      <PageHeader
-        eyebrow="Cast Dashboard"
-        title={`${cast.stage_name || cast.name}さんの今日のタスク`}
-        description="提出状況、本日の確認、来店予約、ブログ投稿までを迷わず進められるように整理したホーム画面です。"
-        actions={
-          <form action={castLogout} className="w-full md:w-auto">
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-4 py-3 text-sm font-medium text-gray-500 transition-colors hover:text-red-400 md:w-auto"
-              title="ログアウト"
-            >
-              <LogOut className="h-4 w-4" />
-              ログアウト
-            </button>
-          </form>
-        }
-      />
+    <CastMobileShell>
+      <CastMobileHeader rightSlot={<CastMobileHeaderBell />} />
 
-      {/* アクセス分析ランキング */}
-      {pvStats.success && (
-        <SectionCard tone="accent" className="relative overflow-hidden p-5 transition-all hover:scale-[1.01]">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-          <div className="flex items-start justify-between relative z-10">
-            <div>
-              <div className="flex items-center gap-2 text-gold mb-1">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-xs tracking-[0.2em] font-bold">ブログアクセス分析</span>
-              </div>
-              <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-3xl font-serif font-bold tracking-wider">{pvStats.totalPV?.toLocaleString() || 0}</span>
-                <span className="text-xs text-gray-300">PV</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-xs text-gray-400 block mb-1">店舗内ランキング</span>
-              <div className="flex items-baseline justify-end gap-1">
-                <span className="text-2xl font-serif font-bold text-gold">{pvStats.rank}</span>
-                <span className="text-xs text-gray-300">位</span>
-                <span className="text-xs text-gray-500 ml-1">/ {pvStats.totalCasts}人中</span>
-              </div>
-            </div>
+      <main className="mx-auto flex min-h-[calc(100vh-108px)] w-full max-w-[422px] flex-col gap-4 px-4 pb-28 pt-5">
+        <section className="space-y-3">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">
+            <span>{new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}</span>
+            <Link href="/cast/notices" className="relative flex h-6 w-6 items-center justify-center rounded-full text-[#8f96a3]">
+              <Bell className="h-4 w-4" />
+              {unreadNotices.length > 0 ? <span className="absolute right-0.5 top-1 h-1.5 w-1.5 rounded-full bg-[#e06a6a]" /> : null}
+            </Link>
           </div>
-        </SectionCard>
-      )}
-
-      {/* 重要：未読お知らせウィジェット */}
-      <CastNoticeWidget notices={notices} castId={cast.id} />
-
-      {/* === 本日の確認 & 来店予定 === */}
-      <div className="space-y-4">
-        <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-serif">本日の入力</p>
-        <CheckinForm existing={todayCheckin} />
-        <ReservationForm reservations={reservationsForForm} />
-      </div>
-
-      {/* スコアウィジェット */}
-      <CastScoreWidget score={score} logs={logs} targetMonth={currentMonth} />
-
-      {/* 急募出勤リクエスト */}
-      {activeHelpRequests.length > 0 && (
-        <CastHelpRequestList
-          activeRequests={activeHelpRequests}
-          myResponses={myHelpResponses}
-        />
-      )}
-
-      {/* 本日の出勤 */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-        <div className="flex items-center gap-3 mb-3">
-          <CalendarDays className="w-4 h-4 text-gold" />
-          <span className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif">Today&apos;s Schedule</span>
-        </div>
-        {todayShift ? (
-          <p className="text-sm text-[#171717] font-bold">
-            {todayShift.start_time?.slice(0, 5)} 〜 {todayShift.end_time?.slice(0, 5)}
-          </p>
-        ) : (
-          <p className="text-sm text-gray-400">本日の出勤予定はありません</p>
-        )}
-      </div>
-
-      {/* 確定済みシフト・変更申請 */}
-      <CastScheduleList
-        castId={cast.id}
-        schedules={schedules || []}
-        pendingRequests={pendingRequests || []}
-      />
-
-      {/* 来週のシフト提出状況・アラート */}
-      <Link href="/cast/shift" className="block relative overflow-hidden rounded-2xl border transition-all hover:scale-[0.98] shadow-sm">
-        {shiftSubmission ? (
-          shiftSubmission.status === 'approved' ? (
-            <div className="bg-green-50/50 border-green-200 p-5">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                <div>
-                  <p className="text-sm font-bold text-green-800">来週のシフト: 承認済み</p>
-                  <p className="text-xs text-green-600 mt-1">公開シフト表に反映されています</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-50 border-gray-200 p-5">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-400 border-t-transparent animate-spin" />
-                <div>
-                  <p className="text-sm font-bold text-gray-700">来週のシフト: 承認待ち</p>
-                  <p className="text-xs text-gray-500 mt-1">管理者の確認をお待ちください（再提出も可能です）</p>
-                </div>
-              </div>
-            </div>
-          )
-        ) : (
-          isPastDeadline ? (
-            <div className="bg-red-50 border-red-200 p-5 ring-2 ring-red-500/20">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-bold text-red-700">【重要】シフト未提出（期限超過）</p>
-                  <p className="text-xs text-red-600 font-bold mt-1">金曜23:55の期限を過ぎています。至急提出してください。</p>
-                </div>
-              </div>
-            </div>
-          ) : isNearDeadline ? (
-            <div className="bg-yellow-50 border-yellow-200 p-5">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-bold text-yellow-800">シフト提出の期限が近づいています</p>
-                  <p className="text-xs text-yellow-700 mt-1">期限は金曜日の 23:55 です。未提出の場合は罰金対象となります。</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white border-gray-100 p-5">
-              <div className="flex items-center gap-3">
-                <CalendarDays className="w-5 h-5 text-gold" />
-                <div>
-                  <p className="text-sm font-bold text-[#171717]">来週のシフトが未提出です</p>
-                  <p className="text-xs text-gray-500 mt-1">タップしてシフトを入力してください</p>
-                </div>
-              </div>
-            </div>
-          )
-        )}
-      </Link>
-
-      {/* Menu */}
-      <div className="grid grid-cols-1 gap-3">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-4 p-5 rounded-2xl border transition-all active:scale-[0.98] ${
-              item.accent
-                ? 'bg-[#171717] text-white border-transparent shadow-lg hover:bg-gold'
-                : 'bg-white text-[#171717] border-gray-100 shadow-sm hover:border-gold/30'
-            }`}
-          >
-            <item.icon className={`w-5 h-5 ${item.accent ? 'text-gold' : 'text-gold/60'}`} />
-            <div>
-              <div className={`text-sm font-bold tracking-widest ${item.accent ? '' : 'text-[#171717]'}`}>{item.label}</div>
-              <div className={`text-xs mt-0.5 tracking-wider ${item.accent ? 'text-white/60' : 'text-gray-400'}`}>{item.desc}</div>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {/* Recent Posts */}
-      <div>
-        <h2 className="text-xs uppercase tracking-[0.2em] text-gray-500 font-serif mb-4">最近の投稿</h2>
-        {recentPosts && recentPosts.length > 0 ? (
-          <div className="space-y-3">
-            {recentPosts.map((post: CastDashboardRecentPost) => (
-              <div key={post.id} className="flex items-start gap-4 bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-                <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
-                  <Image src={post.image_url || '/images/placeholder.webp'} alt="" fill className="object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-600 line-clamp-2 mb-1">{post.content}</p>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                      post.status === 'published' ? 'bg-green-50 text-green-600' :
-                      post.status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
-                      'bg-gray-50 text-gray-400'
-                    }`}>
-                      {post.status === 'published' ? '公開中' : post.status === 'pending' ? '承認待ち' : '下書き'}
-                    </span>
-                    <span className="text-xs text-gray-300 font-mono">
-                      {new Date(post.created_at).toLocaleDateString('ja-JP')}
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <div>
+            <h1 className="text-[22px] leading-[1.3] text-[#f7f4ed]">
+              こんばんは、<span className="font-bold">{cast.stage_name || cast.name}</span>
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {statusChips.map((chip) => (
+              <span key={chip} className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
+                {chip}
+              </span>
             ))}
           </div>
-        ) : (
-          <p className="text-sm text-gray-400 text-center py-8">まだ投稿がありません</p>
-        )}
-      </div>
-    </PageShell>
+        </section>
+
+        <Link href="/cast/today">
+          <CastMobileCard className="overflow-hidden border-t-2 border-t-[rgba(201,167,106,0.18)]">
+            <div className="space-y-4 px-5 py-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-[13px] bg-[rgba(201,167,106,0.15)] text-[#c9a76a]">
+                    <ClipboardCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.14em] text-[#6b7280]">Today&apos;s Priority</div>
+                    <div className="text-[17px] font-bold text-[#f7f4ed]">本日の確認</div>
+                  </div>
+                </div>
+                <span className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
+                  {hasTodayCheckin ? '送信済' : '未送信'}
+                </span>
+              </div>
+              <p className="text-[13px] leading-[1.7] text-[#a9afbc]">
+                出勤確認・送りの有無・来店予定をまとめて送信してください
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs text-[#a9afbc]">
+                  {todayShift ? `出勤 ${todayShift.start_time?.slice(0, 5)}〜` : '出勤 未設定'}
+                </span>
+                <span className="rounded-full border border-[rgba(51,179,107,0.2)] bg-[rgba(51,179,107,0.12)] px-3 py-1.5 text-xs text-[#33b36b]">
+                  来店予定 {reservationCount}件{reservationCount > 0 ? ` (確定${reservationCount})` : ''}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 border-t border-[rgba(201,167,106,0.25)] bg-[#c9a76a] px-6 py-4 text-[15px] font-bold text-[#0b0d12]">
+              本日の確認をする
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </CastMobileCard>
+        </Link>
+
+        <Link href="/cast/shift">
+          <CastMobileCard className="p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(201,167,106,0.15)] text-[#c9a76a]">
+                  <CalendarDays className="h-4.5 w-4.5" />
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.14em] text-[#6b7280]">Weekly Shift</div>
+                  <div className="text-base font-bold text-[#f7f4ed]">翌週シフト提出</div>
+                </div>
+              </div>
+              <span className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
+                {shiftSubmission ? (shiftSubmission.status === 'approved' ? '承認済' : '提出済') : '未提出'}
+              </span>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">対象期間</div>
+                <div className="font-bold text-[#f7f4ed]">
+                  {summaryDates[0].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                  {' 〜 '}
+                  {summaryDates[6].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                </div>
+              </div>
+              <div className="border-l border-white/8 pl-4">
+                <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">締切</div>
+                <div className="font-bold text-[#e6a23c]">土曜 23:55</div>
+              </div>
+            </div>
+            <div className="mt-5 rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]">
+              シフトを提出する
+            </div>
+          </CastMobileCard>
+        </Link>
+
+        <Link href="/cast/posts">
+          <CastMobileCard className="p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(201,167,106,0.15)] text-[#c9a76a]">
+                  <PenLine className="h-4.5 w-4.5" />
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.14em] text-[#6b7280]">Daily Blog</div>
+                  <div className="text-base font-bold text-[#f7f4ed]">今日のブログ</div>
+                </div>
+              </div>
+              <span className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
+                {hasBlogPost ? '投稿済' : '未投稿'}
+              </span>
+            </div>
+            <div className="mt-4 space-y-2 text-sm">
+              <p className="text-[#a9afbc]">
+                {hasBlogPost ? '本日の投稿があります。内容確認や追加投稿ができます。' : '本日のブログはまだ投稿されていません'}
+              </p>
+              <p className="text-xs text-[#6b7280]">
+                前回: {recentPosts?.[0]?.content ? `${recentPosts[0].content.slice(0, 18)}...` : '未投稿'}
+              </p>
+            </div>
+            <div className="mt-5 rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]">
+              ブログを書く
+            </div>
+          </CastMobileCard>
+        </Link>
+
+        <CastMobileCard className="p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#f7f4ed]">
+              <CalendarDays className="h-4 w-4 text-[#c9a76a]" />
+              今週のスケジュール
+            </div>
+            <Link href="/cast/shift" className="flex items-center gap-1 text-xs text-[#8f96a3]">
+              詳細
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-7 gap-1.5">
+            {summaryDates.map((date) => {
+              const dateKey = date.toISOString().split('T')[0];
+              const indicator = getWeeklySummaryLabel((scheduleStatusMap.get(dateKey) as 'work' | 'off' | 'unknown') ?? 'unknown');
+
+              return (
+                <div key={dateKey} className="rounded-[10px] border border-transparent px-1 py-2 text-center">
+                  <div className="text-[10px] text-[#6b7280]">{date.toLocaleDateString('ja-JP', { weekday: 'short' }).replace('曜', '')}</div>
+                  <div className={`mt-2 text-[9px] font-bold ${indicator.color}`}>{indicator.text}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex items-center justify-between border-t border-white/8 pt-3 text-xs">
+            <div className="flex gap-4">
+              <span className="text-[#a9afbc]">出勤: <strong className="text-[#f7f4ed]">{submittedCount}日</strong></span>
+              <span className="text-[#e6a23c]">未提出 {Math.max(7 - submittedCount, 0)}日</span>
+            </div>
+            <span className="font-bold text-[#c9a76a]">
+              {todayShift ? `本日 ${todayShift.start_time?.slice(0, 5)}-${todayShift.end_time?.slice(0, 5)}` : '本日 OFF'}
+            </span>
+          </div>
+        </CastMobileCard>
+
+        <CastMobileCard className="overflow-hidden bg-[#181d27]">
+          <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
+            <div className="text-sm font-bold text-[#f7f4ed]">お知らせ</div>
+            <Link href="/cast/notices" className="flex items-center gap-1 text-xs text-[#8f96a3]">
+              すべて見る
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div>
+            {unreadNotices.length > 0 ? (
+              unreadNotices.map((notice) => {
+                const tone = getNoticeTone(notice.importance);
+                return (
+                  <Link
+                    key={notice.id}
+                    href="/cast/notices"
+                    className="flex items-start gap-3 border-b border-white/8 px-5 py-4 last:border-b-0"
+                  >
+                    <div className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg ${tone.iconWrap}`}>
+                      <Bell className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-[13px] leading-5 ${tone.title}`}>{notice.title}</p>
+                      <p className="mt-1 text-[11px] text-[#6b7280]">
+                        {formatDistanceToNowStrict(new Date(notice.created_at), { addSuffix: true, locale: ja })}
+                      </p>
+                    </div>
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#c9a76a]" />
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="px-5 py-6 text-sm text-[#8f96a3]">新しいお知らせはありません。</div>
+            )}
+          </div>
+        </CastMobileCard>
+
+        <div className="hidden">
+          <FileText />
+        </div>
+      </main>
+    </CastMobileShell>
   );
 }

@@ -20,7 +20,7 @@ function EyeIcon({ open }: { open: boolean }) {
   );
 }
 
-export default function CastLoginPage() {
+export default function CastLoginMobilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,18 +42,18 @@ export default function CastLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
       <div
-        className="w-full max-w-[448px] rounded-[16px] p-1"
+        className="w-full max-w-[420px] rounded-[16px] p-1"
         style={{
-          background: 'linear-gradient(128deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+          background: 'linear-gradient(126deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           boxShadow: '0 0 48px rgba(223,189,105,0.25)',
         }}
       >
         <div
-          className="w-full rounded-[14px] p-10"
+          className="w-full rounded-[14px] px-8 py-10"
           style={{
-            background: 'linear-gradient(128deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
+            background: 'linear-gradient(126deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
             boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)',
           }}
         >
@@ -64,7 +64,7 @@ export default function CastLoginPage() {
             >
               CLUB ANIMO
             </p>
-            <h1 className="text-white text-3xl font-bold tracking-[0.2em] uppercase mb-5">
+            <h1 className="text-white text-2xl font-bold tracking-[0.2em] uppercase mb-5">
               ANIMO CMS
             </h1>
             <p
@@ -82,43 +82,33 @@ export default function CastLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label
-                htmlFor="cast-email"
-                className="block text-sm mb-2"
-                style={{ color: '#9f9fa9' }}
-              >
+              <label className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
                 ログインID
               </label>
               <input
-                id="cast-email"
                 name="email"
                 type="email"
                 required
                 autoComplete="email"
                 className="w-full rounded-[10px] px-4 py-3 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="IDを入力してください"
-                style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
             </div>
 
             <div>
-              <label
-                htmlFor="cast-password"
-                className="block text-sm mb-2"
-                style={{ color: '#9f9fa9' }}
-              >
+              <label className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
                 ログインパスワード
               </label>
               <div className="relative">
                 <input
-                  id="cast-password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   autoComplete="current-password"
                   className="w-full rounded-[10px] px-4 py-3 pr-12 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="パスワードを入力してください"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
                 <button
                   type="button"
@@ -145,17 +135,17 @@ export default function CastLoginPage() {
           </form>
 
           <div className="mt-7 text-center space-y-3">
-            <Link href="/cast/forgot-password" className="block text-sm transition-colors" style={{ color: '#9f9fa9' }}>
+            <Link href="/cast/m/forgot-password" className="block text-sm hover:underline" style={{ color: '#9f9fa9' }}>
               パスワードを忘れた方はこちら
             </Link>
-            <p className="text-sm tracking-wide" style={{ color: '#9f9fa9' }}>
+            <p className="text-sm" style={{ color: '#9f9fa9' }}>
               アカウントをお持ちでない方は{' '}
-              <Link href="/cast/register" className="font-medium transition-colors hover:underline" style={{ color: '#dfbd69' }}>
+              <Link href="/cast/m/register" className="font-medium hover:underline" style={{ color: '#dfbd69' }}>
                 新規登録
               </Link>
             </p>
-            <Link href="/cast/m/login" className="block text-sm hover:underline" style={{ color: '#9f9fa9' }}>
-              モバイル版はこちら
+            <Link href="/cast/login" className="block text-sm hover:underline" style={{ color: '#9f9fa9' }}>
+              PC版はこちら
             </Link>
           </div>
         </div>

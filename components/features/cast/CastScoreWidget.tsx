@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Trophy, Star, TrendingUp, History, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import type { CastScoreLog } from '@/lib/types/cast-ui';
 
 export function CastScoreWidget({
   score,
@@ -11,7 +12,7 @@ export function CastScoreWidget({
   targetMonth
 }: {
   score: { total_score: number; current_level: number; };
-  logs: any[];
+  logs: CastScoreLog[];
   targetMonth?: string;
 }) {
   const [showLogs, setShowLogs] = useState(false);

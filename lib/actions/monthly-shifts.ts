@@ -11,6 +11,27 @@ export type MonthlyShiftDetail = {
   isDouhan?: boolean;
 };
 
+type CastShiftRow = {
+  cast_id: string;
+  work_date: string;
+  status: ShiftStatus;
+  start_time: string | null;
+  is_douhan: boolean | null;
+};
+
+type CastRow = {
+  id: string;
+  stage_name: string;
+};
+
+type MonthlyShiftUpsertRow = {
+  cast_id: string;
+  work_date: string;
+  status: Exclude<ShiftStatus, null>;
+  start_time: string | null;
+  is_douhan: boolean;
+};
+
 /**
  * 年月を指定して、特定キャストのシフトレコードを取得する（フロントエンド描画用）
  */
@@ -50,7 +71,7 @@ export async function getCastMonthlyShifts(castId: string, year: number, month: 
 export async function saveMonthlyShifts(castId: string, shiftsData: Record<string, MonthlyShiftDetail>) {
   const supabase = await createClient();
 
-  const upsertData: any[] = [];
+  const upsertData: MonthlyShiftUpsertRow[] = [];
   const deleteDates: string[] = [];
 
   for (const [dateStr, detail] of Object.entries(shiftsData)) {
@@ -93,9 +114,10 @@ export async function saveMonthlyShifts(castId: string, shiftsData: Record<strin
     revalidatePath('/admin/monthly-shifts');
     return { success: true };
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error saving monthly shifts:', error);
-    return { success: false, error: error.message };
+    const message = error instanceof Error ? error.message : 'シフト保存に失敗しました。';
+    return { success: false, error: message };
   }
 }
 
@@ -130,16 +152,16 @@ export async function getAdminMonthlyShifts(year: number, month: number) {
     return [];
   }
 
-  return casts.map(cast => {
-    const castShifts = shifts?.filter(s => s.cast_id === cast.id) || [];
+  return (casts satisfies CastRow[]).map((cast) => {
+    const castShifts = (shifts satisfies CastShiftRow[] | null)?.filter((shift) => shift.cast_id === cast.id) || [];
     const shiftMap: Record<number, MonthlyShiftDetail> = {};
     
-    castShifts.forEach(s => {
-      const day = new Date(s.work_date).getDate();
+    castShifts.forEach((shift) => {
+      const day = new Date(shift.work_date).getDate();
       shiftMap[day] = {
-        status: s.status as ShiftStatus,
-        startTime: s.start_time ? s.start_time.substring(0, 5) : null,
-        isDouhan: !!s.is_douhan,
+        status: shift.status,
+        startTime: shift.start_time ? shift.start_time.substring(0, 5) : null,
+        isDouhan: !!shift.is_douhan,
       };
     });
 

@@ -24,7 +24,7 @@ function MailIcon() {
   );
 }
 
-export default function CastForgotPasswordPage() {
+export default function CastForgotPasswordMobilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
@@ -45,18 +45,18 @@ export default function CastForgotPasswordPage() {
 
   if (isSent) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
         <div
-          className="w-full max-w-[448px] rounded-[16px] p-px"
+          className="w-full max-w-[408px] rounded-[16px] p-px"
           style={{
-            background: 'linear-gradient(131deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+            background: 'linear-gradient(128deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
             boxShadow: '0 0 48px rgba(223,189,105,0.25)',
           }}
         >
           <div
             className="w-full rounded-[14px] px-8 py-10 text-center"
             style={{
-              background: 'linear-gradient(131deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
+              background: 'linear-gradient(128deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
               boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)',
             }}
           >
@@ -68,7 +68,7 @@ export default function CastForgotPasswordPage() {
               パスワード再設定用のリンクを送信しました。<br />メールをご確認ください。
             </p>
             <Link
-              href="/cast/login"
+              href="/cast/m/login"
               className="inline-block w-full h-[48px] leading-[48px] rounded-[10px] text-base font-semibold text-center"
               style={{
                 background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
@@ -84,18 +84,18 @@ export default function CastForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4 py-10">
       <div
-        className="w-full max-w-[448px] rounded-[16px] p-px"
+        className="w-full max-w-[408px] rounded-[16px] p-px"
         style={{
-          background: 'linear-gradient(131deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
+          background: 'linear-gradient(128deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           boxShadow: '0 0 48px rgba(223,189,105,0.25)',
         }}
       >
         <div
-          className="w-full rounded-[14px] px-8 py-8"
+          className="w-full rounded-[14px] px-8 py-10"
           style={{
-            background: 'linear-gradient(131deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
+            background: 'linear-gradient(128deg, rgb(24,24,27) 0%, rgb(39,39,42) 50%, rgb(24,24,27) 100%)',
             boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)',
           }}
         >
@@ -129,11 +129,7 @@ export default function CastForgotPasswordPage() {
                 メールアドレス
               </label>
               <div className="relative">
-                <span
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                  style={{ color: '#71717b' }}
-                  aria-hidden
-                >
+                <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#71717b' }} aria-hidden>
                   <MailIcon />
                 </span>
                 <input
@@ -143,7 +139,7 @@ export default function CastForgotPasswordPage() {
                   autoComplete="email"
                   className="w-full rounded-[10px] pl-11 pr-4 py-3 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                   placeholder="example@email.com"
-                  style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
                 />
               </div>
             </div>
@@ -161,7 +157,7 @@ export default function CastForgotPasswordPage() {
             </button>
 
             <Link
-              href="/cast/login"
+              href="/cast/m/login"
               className="block w-full h-[49px] rounded-[10px] border text-center leading-[49px] text-base"
               style={{ borderColor: '#3f3f47', color: '#d4d4d8' }}
             >
@@ -170,8 +166,8 @@ export default function CastForgotPasswordPage() {
           </form>
 
           <div className="mt-4 text-center">
-            <Link href="/cast/m/forgot-password" className="text-sm hover:underline" style={{ color: '#9f9fa9' }}>
-              モバイル版はこちら
+            <Link href="/cast/forgot-password" className="text-sm hover:underline" style={{ color: '#9f9fa9' }}>
+              PC版はこちら
             </Link>
           </div>
         </div>
