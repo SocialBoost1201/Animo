@@ -1,0 +1,31 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - paragraph [ref=e8]: CLUB ANIMO
+        - heading "ANIMO CMS" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Welcome to Animo Dashboard
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]: ログインID
+          - textbox "ログインID" [ref=e14]:
+            - /placeholder: IDを入力してください
+        - generic [ref=e15]:
+          - generic [ref=e16]: ログインパスワード
+          - generic [ref=e17]:
+            - textbox "ログインパスワード" [ref=e18]:
+              - /placeholder: パスワードを入力してください
+            - button "パスワードを表示" [ref=e19]:
+              - img [ref=e20]
+        - button "ログイン" [ref=e24]
+      - generic [ref=e25]:
+        - link "パスワードを忘れた方はこちら" [ref=e26] [cursor=pointer]:
+          - /url: /cast/forgot-password
+        - paragraph [ref=e27]:
+          - text: アカウントをお持ちでない方は
+          - link "新規登録" [ref=e28] [cursor=pointer]:
+            - /url: /cast/register
+        - link "モバイル版はこちら" [ref=e29] [cursor=pointer]:
+          - /url: /cast/m/login
+    - region "Notifications alt+T"
+  - alert [ref=e30]

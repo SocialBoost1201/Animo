@@ -120,11 +120,11 @@ export default async function HomePage() {
       </Magnetic>
       <Magnetic strength={0.3}>
         <Link
-          href="/system"
-          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-gold text-white font-serif luxury-tracking text-xs uppercase hover:bg-white hover:text-[#171717] transition-all"
+          href="https://line.me/R/ti/p/@your_line_id"
+          className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-gold text-[#171717] font-serif luxury-tracking text-xs font-bold uppercase hover:bg-white transition-all shadow-lg shadow-gold/20"
         >
           <Sparkles className="w-4 h-4" />
-          料金を確認する
+          ご予約・お問い合わせ
         </Link>
       </Magnetic>
     </div>

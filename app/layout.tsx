@@ -64,6 +64,45 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'CLUB Animo',
+  image: 'https://club-animo.jp/images/ogp.webp',
+  '@id': 'https://club-animo.jp',
+  url: 'https://club-animo.jp',
+  telephone: '045-228-8777', // 仮の番号。後で確認が必要。
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '相生町３丁目５３ グランドパークビル2F',
+    addressLocality: '横浜市中区',
+    addressRegion: '神奈川県',
+    postalCode: '231-0012',
+    addressCountry: 'JP',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 35.4475, // 近傍の座標。
+    longitude: 139.6364,
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ],
+    opens: '20:00',
+    closes: '01:00'
+  },
+  sameAs: [
+    'https://www.instagram.com/club_animo_kannai/',
+  ]
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -71,7 +110,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
-      <head />
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${notoSerif.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
         suppressHydrationWarning

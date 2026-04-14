@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "Animo",
-      "runtimeExecutable": "/Users/takumashinnyo/workspace/projects/Animo/.claude/pnpm-wrapper.sh",
+      "runtimeExecutable": "/Users/takumashinnyo/workspace/projects/10_active_projects/Animo/.claude/pnpm-wrapper.sh",
       "runtimeArgs": ["run", "dev"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": false
     }
   ]
 }

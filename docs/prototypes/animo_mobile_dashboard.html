@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Club Animo Mobile Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--page-bg:#0B0B0D;--card-bg:#17181C;--surface-bg:#1C1D22;--text-primary:#F4F1EA;--text-secondary:#C7C0B2;--text-muted:#8A8478;--gold-light:#DFBD69;--gold-dark:#926F34;--gold-grad:linear-gradient(135deg,var(--gold-light) 0%,var(--gold-dark) 100%);--alert:#D25454;--safe-bottom:env(safe-area-inset-bottom, 20px);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--page-bg);color:var(--text-primary);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.5;padding-bottom:calc(80px + var(--safe-bottom));overflow-x:hidden;}
+.brand{font-family:'Cinzel',serif;}
+.text-gold{background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:var(--gold-light);}
+.text-sec{color:var(--text-secondary);}.text-mut{color:var(--text-muted);}.text-alert{color:var(--alert);}
+.fw-b{font-weight:700;}.fw-m{font-weight:500;}
+.fs-xs{font-size:11px;}.fs-sm{font-size:12px;}.fs-md{font-size:14px;}.fs-lg{font-size:16px;}.fs-xl{font-size:20px;}.fs-xxl{font-size:26px;}
+.flex{display:flex;}.flex-col{display:flex;flex-direction:column;}.items-center{align-items:center;}.justify-between{justify-content:space-between;}.gap-1{gap:4px;}.gap-2{gap:8px;}.gap-3{gap:12px;}
+.mt-4{margin-top:16px;}.mt-6{margin-top:24px;}.mb-4{margin-bottom:16px;}
+.header{padding:16px 16px 12px;background:var(--page-bg);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(223,189,105,0.1);backdrop-filter:blur(10px);}
+.icon-btn{background:0 0;border:none;color:var(--text-primary);width:36px;height:36px;display:flex;align-items:center;justify-content:center;position:relative;}
+.icon-btn.has-notif::after{content:'';position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--gold-grad);border-radius:50%;border:2px solid var(--page-bg);}
+.container{padding:0 16px;}
+.card{background:var(--card-bg);border-radius:16px;border:1px solid rgba(223,189,105,0.05);padding:16px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold-grad);opacity:0.3;}
+.hero{background:radial-gradient(circle at top right,rgba(223,189,105,0.1),transparent 50%),var(--card-bg);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-item{background:var(--surface-bg);padding:12px;border-radius:12px;}
+.badge{padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;}
+.badge.gold{background:rgba(223,189,105,0.15);color:var(--gold-light);border:1px solid rgba(223,189,105,0.3);}
+.badge.alert{background:rgba(210,84,84,0.15);color:var(--alert);}
+.memo{background:rgba(210,84,84,0.1);border-left:3px solid var(--alert);padding:12px;border-radius:0 8px 8px 0;margin-top:16px;}
+.kpi-h{display:flex;overflow-x:auto;gap:12px;padding:4px 16px;margin:0 -16px;scrollbar-width:none;}
+.kpi-h::-webkit-scrollbar{display:none;}
+.kpi-card{background:var(--card-bg);border:1px solid rgba(223,189,105,0.1);border-radius:12px;padding:12px;min-width:130px;flex-shrink:0;}
+.kpi-card .v{font-size:22px;font-weight:700;}
+.kpi-card.alert{background:rgba(210,84,84,0.05);border-color:rgba(210,84,84,0.3);}
+.sec-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;margin-bottom:12px;}
+.sec-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold-grad);border-radius:2px;}
+.list-card{background:var(--card-bg);border-radius:16px;border:1px solid rgba(255,255,255,0.05);}
+.list-item{padding:16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);}
+.list-item:last-child{border:none;}
+.av{width:40px;height:40px;border-radius:50%;background:var(--surface-bg);border:1px solid rgba(223,189,105,0.3);object-fit:cover;}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.act-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:0 0;border:none;color:var(--text-sec);}
+.act-icon{width:48px;height:48px;border-radius:12px;background:var(--surface-bg);border:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;color:var(--gold-light);transition:transform 0.2s;}
+.act-btn:active .act-icon{transform:scale(0.95);background:rgba(223,189,105,0.1);}
+.btn-pri{width:100%;padding:14px;border-radius:8px;background:var(--gold-grad);color:#000;font-weight:700;border:none;cursor:pointer;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,11,13,0.9);backdrop-filter:blur(10px);border-top:1px solid rgba(223,189,105,0.1);display:flex;justify-content:space-around;padding:12px 16px calc(12px + var(--safe-bottom));z-index:100;}
+.nav-i{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-mut);text-decoration:none;}
+.nav-i.active{color:var(--gold-light);}
+.rank-1{color:var(--gold-light);}.rank-num{font-size:18px;font-weight:700;width:24px;text-align:center;}
+</style>
+</head>
+<body>
+<header class="header flex items-center justify-between">
+    <div class="flex-col">
+        <span class="fs-xs text-sec">2026年4月3日(金)</span>
+        <div class="brand fs-lg text-gold fw-b">ANIMO CMS</div>
+    </div>
+    <div class="flex gap-1">
+        <button class="icon-btn"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+        <button class="icon-btn has-notif"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg></button>
+    </div>
+</header>
+<main class="container">
+    <div class="card hero mt-4">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex-col">
+                <span class="fs-sm text-sec">本日の営業ステータス</span>
+                <span class="fs-xl fw-b mt-1">OPEN<span class="fs-sm text-mut fw-m ml-2" style="margin-left:8px;">19:00 - 01:00</span></span>
+            </div>
+            <div class="badge gold">営業中</div>
+        </div>
+        <div class="stat-grid">
+            <div class="stat-item flex-col gap-1">
+                <span class="fs-xs text-sec">確定キャスト</span>
+                <div class="flex items-baseline gap-1"><span class="fs-xxl fw-b text-gold">24</span><span class="fs-xs text-mut">/30名</span></div>
+            </div>
+            <div class="stat-item flex-col gap-1">
+                <span class="fs-xs text-sec">本指名予約</span>
+                <div class="flex items-baseline gap-1"><span class="fs-xxl fw-b">12</span><span class="fs-xs text-mut">件</span></div>
+            </div>
+            <div class="stat-item flex-col gap-1">
+                <span class="fs-xs text-sec">体験入店</span>
+                <div class="flex items-baseline gap-1"><span class="fs-xl fw-b">2</span><span class="fs-xs text-mut">名</span></div>
+            </div>
+            <div class="stat-item flex-col gap-1">
+                <span class="fs-xs text-sec">予定来店数</span>
+                <div class="flex items-baseline gap-1"><span class="fs-xl fw-b">28</span><span class="fs-xs text-mut">名</span></div>
+            </div>
+        </div>
+        <div class="memo flex items-start gap-2">
+            <span class="text-alert">!</span>
+            <div class="flex-col gap-1">
+                <span class="fs-sm fw-b text-alert">重要連絡</span>
+                <span class="fs-xs text-sec">VIPルーム1の空調メンテナンスが21時に入ります。</span>
+            </div>
+        </div>
+    </div>
+    <div class="mt-6">
+        <div class="kpi-h">
+            <div class="kpi-card"><span class="fs-xs text-sec">シフト未提出</span><span class="v">4<span class="fs-xs fw-m text-mut ml-1">名</span></span></div>
+            <div class="kpi-card alert"><span class="fs-xs text-alert">対応待ち連絡</span><span class="v text-alert">3<span class="fs-xs fw-m ml-1">件</span></span></div>
+            <div class="kpi-card"><span class="fs-xs text-sec">当欠/遅刻</span><span class="v">1<span class="fs-xs fw-m text-mut ml-1">名</span></span></div>
+        </div>
+    </div>
+    <div class="mt-6">
+        <div class="sec-title">クイックアクション</div>
+        <div class="actions">
+            <button class="act-btn"><div class="act-icon">+</div><span class="fs-xs">予約追加</span></button>
+            <button class="act-btn"><div class="act-icon">📅</div><span class="fs-xs">シフト</span></button>
+            <button class="act-btn"><div class="act-icon">✉️</div><span class="fs-xs">一斉送信</span></button>
+            <button class="act-btn"><div class="act-icon">📝</div><span class="fs-xs">日報</span></button>
+        </div>
+    </div>
+    <div class="mt-6">
+        <div class="flex justify-between items-center mb-2">
+            <div class="sec-title" style="margin:0;">近日予約<span class="badge gold ml-1" style="margin-left:6px;">12</span></div>
+        </div>
+        <div class="list-card">
+            <div class="list-item">
+                <div class="flex gap-3">
+                    <div class="flex-col items-center justify-center rounded-lg" style="background:rgba(255,255,255,0.05);width:44px;height:44px;"><span class="fs-xs text-mut">20:00</span></div>
+                    <div class="flex-col"><span class="fs-md fw-m">佐藤 様 (2名)</span><span class="fs-xs text-sec mt-1">担当: 美咲 | VIP 2</span></div>
+                </div>
+                <div class="badge gold">本指名</div>
+            </div>
+            <div class="list-item">
+                <div class="flex gap-3">
+                    <div class="flex-col items-center justify-center rounded-lg" style="background:rgba(255,255,255,0.05);width:44px;height:44px;"><span class="fs-xs text-mut">21:30</span></div>
+                    <div class="flex-col"><span class="fs-md fw-m">田中 様 (4名)</span><span class="fs-xs text-sec mt-1">新規フリー | BOX 5</span></div>
+                </div>
+                <div class="badge" style="background:rgba(255,255,255,0.1);">フリー</div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-6">
+        <div class="flex justify-between items-center mb-2">
+            <div class="sec-title" style="margin:0;">出勤キャスト<span class="badge gold ml-1" style="margin-left:6px;">24</span></div>
+        </div>
+        <div class="list-card">
+            <div class="list-item">
+                <div class="flex items-center gap-3"><img src="https://ui-avatars.com/api/?name=美咲&background=1C1D22&color=DFBD69" class="av"><div class="flex-col"><span class="fs-md fw-m">美咲</span><span class="fs-xs text-sec mt-1">19:00 - 01:00</span></div></div>
+                <div class="flex-col items-end"><div class="badge gold mb-1" style="margin-bottom:4px">同伴予約</div><span class="fs-xs text-mut">接客中</span></div>
+            </div>
+            <div class="list-item">
+                <div class="flex items-center gap-3"><img src="https://ui-avatars.com/api/?name=ユア&background=1C1D22&color=D25454" class="av" style="border-color:var(--alert)"><div class="flex-col"><span class="fs-md fw-m">ユア</span><span class="fs-xs text-alert mt-1">遅刻 (20:30着)</span></div></div>
+            </div>
+        </div>
+        <button class="btn-pri mt-4" style="margin-top:16px;">キャスト一覧を見る</button>
+    </div>
+    <div class="mt-6 mb-4">
+        <div class="flex justify-between items-center mb-2">
+            <div class="sec-title" style="margin:0;">成績トップ</div><span class="fs-xs text-mut">4/3 現在</span>
+        </div>
+        <div class="list-card">
+            <div class="list-item"><div class="flex items-center gap-3"><span class="rank-num rank-1">1</span><span class="fs-sm fw-m">リオ</span></div><span class="fs-sm text-gold fw-b">1,450,000 P</span></div>
+            <div class="list-item"><div class="flex items-center gap-3"><span class="rank-num">2</span><span class="fs-sm fw-m">美咲</span></div><span class="fs-sm">980,000 P</span></div>
+        </div>
+    </div>
+</main>
+<nav class="bottom-nav">
+    <a href="#" class="nav-i active"><svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span class="fs-xs">ホーム</span></a>
+    <a href="#" class="nav-i"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="fs-xs">予約/ｼﾌﾄ</span></a>
+    <a href="#" class="nav-i"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span class="fs-xs">キャスト</span></a>
+</nav>
+</body>
+</html>

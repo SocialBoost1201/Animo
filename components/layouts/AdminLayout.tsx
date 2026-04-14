@@ -116,6 +116,7 @@ export function AdminLayout({
   role?: string;
 }) {
   const pathname = usePathname();
+  const isDashboardPage = pathname === '/admin/dashboard';
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
@@ -130,10 +131,27 @@ export function AdminLayout({
   };
 
   const renderSidebarContent = () => (
-    <div className={`flex flex-col h-full font-inter border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
+    <div
+      className={`flex flex-col h-full font-inter transition-colors duration-200 ${T.sidebarBg}`}
+      style={
+        isDashboardPage
+          ? {
+              width: '217px',
+              minWidth: '217px',
+              height: '785px',
+              minHeight: '785px',
+              maxHeight: '785px',
+              background: 'rgba(20, 20, 20, 0.86)',
+              borderRadius: '18px',
+              boxShadow: '1px 1px 8px rgba(146,111,52,0.22)',
+              borderRight: 'none',
+            }
+          : undefined
+      }
+    >
       {/* Branding */}
-      <div className="h-[72px] px-5 flex items-center gap-3 shrink-0">
-        <Link prefetch={false} href="/admin/dashboard" className="flex items-center gap-3">
+      <div className={`px-5 flex items-center gap-3 shrink-0 ${isDashboardPage ? 'h-[74px]' : 'h-[72px]'}`}>
+        <Link prefetch={false} href="/admin/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-3">
           <div className="w-[36px] h-[36px] flex items-center justify-center rounded-[10px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 shadow-lg transition-transform hover:scale-105">
             <LayoutDashboard size={17} className="text-[#0b0b0d]" />
           </div>
@@ -153,7 +171,7 @@ export function AdminLayout({
       <div className={`mx-4 h-px ${T.divider}`} />
 
       {/* Navigation */}
-      <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
+      <nav className={`flex-1 overflow-y-auto space-y-5 custom-scrollbar ${isDashboardPage ? 'py-[14px] px-[16px]' : 'py-5 px-3'}`}>
         {Object.keys(SECTIONS).map((section) => {
           const items = NAV_ITEMS.filter((i) => {
             if (i.section !== section) return false;
@@ -182,11 +200,13 @@ export function AdminLayout({
                     key={`${section}-${item.href}`}
                     href={item.href}
                     prefetch={false}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-3 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
                       isActive
                         ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
                         : T.navInactive
                     }`}
+                    style={isDashboardPage ? { height: '33px', paddingTop: 0, paddingBottom: 0 } : { paddingTop: '10px', paddingBottom: '10px' }}
                   >
                     <Icon
                       size={13}
@@ -268,7 +288,10 @@ export function AdminLayout({
   return (
     <div className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
       {/* Desktop Sidebar */}
-      <aside className="w-[220px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
+      <aside
+        className="flex-col hidden md:flex shrink-0 sticky top-0 h-screen"
+        style={isDashboardPage ? { width: '217px', minWidth: '217px', paddingTop: '3px' } : { width: '220px', minWidth: '220px' }}
+      >
         {renderSidebarContent()}
       </aside>
 
@@ -303,7 +326,10 @@ export function AdminLayout({
           </Link>
         </header>
 
-        <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
+        <div
+          className={isDashboardPage ? '' : 'p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto'}
+          style={isDashboardPage ? { width: '1223px', minWidth: '1223px', margin: 0 } : undefined}
+        >
           {children}
         </div>
       </main>
