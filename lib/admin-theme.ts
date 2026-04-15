@@ -24,9 +24,46 @@ export const SIDEBAR_DARK = {
   mobileTabInactive:'text-[#8a8478]',
 };
 
-// ... (SIDEBAR_LIGHT remains same)
+export const SIDEBAR_LIGHT = {
+  pageBg:           'bg-[#f0ece5]',
+  sidebarBg:        'bg-[#faf8f4]',
+  sidebarBorder:    'border-[#0000000f]',
+  divider:          'bg-[#0000000a]',
+  sectionLabel:     'text-[#b0a898]',
+  navInactive:      'text-[#7a7268] hover:bg-[#00000008] hover:text-[#1a1710]',
+  navIconInactive:  'text-[#b0a898] group-hover:text-[#1a1710]',
+  footerBorder:     'border-[#0000000a]',
+  toggleWrap:       'bg-[#f0ece5] border border-[#0000000f]',
+  toggleInactive:   'text-[#b0a898] hover:text-[#7a7268]',
+  toggleLightActive:'bg-white text-[#1a1710] shadow-sm',
+  userCard:         'bg-[#f0ece5] border border-[#0000000f]',
+  userName:         'text-[#2e2b26]',
+  userSub:          'text-[#b0a898]',
+  primaryText:      'text-[#1a1710]',
+  mobileHeader:     'bg-[#faf8f4] border-[#0000000f]',
+  mobileTab:        'bg-[#faf8f4] border-[#0000000f]',
+  mobileMenuBtn:    'text-[#b0a898] hover:text-[#7a7268]',
+  mobileTabActive:  'text-[#926f34]',
+  mobileTabInactive:'text-[#b0a898]',
+};
 
-// ...
+// ── Form / Page tokens ──────────────────────────────────────────────────────
+
+export type AdminFormTokens = {
+  card:        string;
+  input:       string;
+  label:       string;
+  heading:     string;
+  subtle:      string;
+  divider:     string;
+  snsSection:  string;
+  backLink:    string;
+  activeLabel: string;
+  tagInactive: string;
+  tagActive:   string;
+  error:       string;
+  noteText:    string;
+};
 
 export const FORM_DARK: AdminFormTokens = {
   card:        'bg-black/94 border border-[#ffffff10] rounded-[18px] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] backdrop-blur-md',

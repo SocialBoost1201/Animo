@@ -198,7 +198,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           <div
             key={card.label}
             className="flex flex-col bg-black/94 rounded-[18px] border border-[#ffffff10] px-6 py-5 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] backdrop-blur-md"
-           Dirk/          >
+          >
             <p className="text-[10px] font-bold text-[#8a8478] tracking-[2px] uppercase mb-2">{card.label}</p>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold text-[#f4f1ea] leading-none tracking-tight">{card.value}</span>
