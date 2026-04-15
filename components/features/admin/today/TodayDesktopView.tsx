@@ -177,7 +177,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[0.56px] border-[#ffffff0f]">
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[1.5px] border-[#927624]">
             <Calendar size={13} className="text-[#8a8478]" />
             <span className="text-[11px] font-medium text-[#c7c0b2] tracking-[3.06px] uppercase">{dateLabel}</span>
           </div>
@@ -198,7 +198,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         {kpiCards.map((card) => (
           <div
             key={card.label}
-            className="flex flex-col bg-[#17181c] rounded-[14px] border-[0.56px] border-[#ffffff0f] px-5 py-4"
+            className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[14px] border-[1.5px] border-[#927624] px-5 py-4"
           >
             <p className="text-[10px] font-medium text-[#5a5650] tracking-[0.6px] uppercase mb-1.5">{card.label}</p>
             <div className="flex items-baseline gap-1">
@@ -213,7 +213,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4">
 
         {/* ── Left: Ops Table ─────────────────────────────────────────── */}
-        <div className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] overflow-hidden min-h-[480px]">
+        <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden min-h-[480px]">
           {/* Tabs */}
           <div className="flex items-center gap-1 px-4 pt-4 pb-0 border-b border-[#ffffff08]">
             {TABS.map((tab) => {
@@ -252,7 +252,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         <div className="flex flex-col gap-4">
 
           {/* Alerts */}
-          <div className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] overflow-hidden">
+          <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden">
             <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
               <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#d4785a1a] rounded-[6px]">
                 <AlertTriangle size={14} className="text-[#d4785a]" strokeWidth={2.5} />
@@ -282,7 +282,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </div>
 
           {/* Memo */}
-          <div className="flex flex-col bg-[#17181c] rounded-[18px] border-[0.56px] border-[#ffffff0f] overflow-hidden flex-1">
+          <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden flex-1">
             <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
               <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#dfbd691a] rounded-[6px]">
                 <StickyNote size={14} className="text-[#dfbd69]" strokeWidth={2.5} />
@@ -308,7 +308,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       </div>
 
       {/* ── LINE Share ───────────────────────────────────────────────────── */}
-      <div className="flex flex-col bg-[#17181c] rounded-[18px] border border-[#dfbd6930] overflow-hidden">
+      <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border border-[#dfbd6930] overflow-hidden">
         <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff08]">
           <div className="flex items-center gap-2.5">
             <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#dfbd691a] rounded-[6px]">
@@ -337,7 +337,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
 
       {/* Pending indicator */}
       {isPending && (
-        <div className="fixed bottom-5 right-5 bg-[#17181c] border border-[#ffffff0f] text-[#c7c0b2] text-[11px] px-4 py-2 rounded-full shadow-lg">
+        <div className="fixed bottom-5 right-5 bg-[rgba(0,0,0,0.80)] border border-[#ffffff0f] text-[#c7c0b2] text-[11px] px-4 py-2 rounded-full shadow-lg">
           処理中...
         </div>
       )}

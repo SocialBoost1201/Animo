@@ -117,7 +117,7 @@ export async function DashboardKPIs() {
           <Link
             key={card.id}
             href={card.href}
-            className={`group relative flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] hover:border-[#dfbd6940] transition-all duration-300 hover:shadow-2xl h-[150px] min-w-0 ${card.width}`}
+            className={`group relative flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] hover:border-[#dfbd6940] transition-all duration-300 shadow-[4px_4px_10px_0_#A68A32] hover:shadow-[4px_4px_16px_0_#A68A32] h-[150px] min-w-0 ${card.width}`}
           >
             {/* Design Token: Top Highlight Bar (New Design: Card 1 has linear gold bar) */}
             {card.topBar && (

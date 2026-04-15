@@ -41,7 +41,7 @@ export async function DashboardTodayShifts() {
   const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
         <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ export async function DashboardTodayShifts() {
         </div>
         <Link
           href="/admin/today"
-          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[0.56px] border-[#ffffff0f] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
+          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[1.5px] border-[#927624] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
         >
           <span>詳細</span>
           <ChevronRight size={12} className="-mt-px" />

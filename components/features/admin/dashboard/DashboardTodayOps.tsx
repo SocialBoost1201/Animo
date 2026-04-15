@@ -39,7 +39,7 @@ export async function DashboardTodayOps() {
   ].filter(Boolean) as { tag: string; tagBg: string; tagText: string; cardBorder: string; content: string }[];
 
   return (
-    <div className="flex flex-col bg-[#17181c] rounded-[18px] overflow-hidden border-[0.56px] border-[#ffffff0f] font-inter h-full">
+    <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
       {/* Header row (Matching TodayPanelSubsection:99) */}
       <div className="flex items-center justify-between px-6 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
         <div className="flex items-center gap-3">

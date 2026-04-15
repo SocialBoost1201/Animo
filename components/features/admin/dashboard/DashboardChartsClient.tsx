@@ -13,7 +13,7 @@ export function DashboardChartsClient({
 
 
       {/* 求人応募グラフ */}
-      <div className="bg-[#17181c] border border-[#ffffff0f] shadow-sm p-6 rounded-[18px]">
+      <div className="bg-[rgba(0,0,0,0.80)] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] p-6 rounded-[18px]">
         <h2 className="text-[13px] font-semibold text-[#f4f1ea] mb-6 flex items-center gap-2">
           <span className="w-0.5 h-3.5 bg-[linear-gradient(180deg,#dfbd69_0%,#926f34_100%)] inline-block rounded-full" />
           求人応募 推移（直近6ヶ月）
