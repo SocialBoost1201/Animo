@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
-import { Noto_Serif_JP, Zen_Kaku_Gothic_New, Inter } from "next/font/google";
+import { Noto_Sans_JP, Noto_Sans_Lao } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-inter'});
-
-const notoSerif = Noto_Serif_JP({
-  variable: "--font-serif-jp",
+const notoSansLao = Noto_Sans_Lao({
+  variable: "--font-noto-lao",
   weight: ["400", "700"],
-  subsets: ["latin"],
+  subsets: ["latin", "lao"],
   display: 'swap',
 });
 
-const zenKaku = Zen_Kaku_Gothic_New({
-  variable: "--font-zen-kaku",
-  weight: ["400", "500"],
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-sans-jp",
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
   display: 'swap',
 });
@@ -70,10 +68,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
+    <html lang="ja" className={cn("font-sans", notoSansLao.variable, notoSansJP.variable)} suppressHydrationWarning>
       <head />
       <body
-        className={`${notoSerif.variable} ${zenKaku.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${notoSansLao.variable} ${notoSansJP.variable} antialiased bg-background text-foreground overflow-x-hidden`}
         suppressHydrationWarning
       >
         {children}

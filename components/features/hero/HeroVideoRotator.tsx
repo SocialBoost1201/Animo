@@ -63,10 +63,10 @@ export const HeroVideoRotator: React.FC<ExtendedHeroProps> = ({
 
       {/* 3. Copy & CTA */}
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4 w-full">
-        <h1 className="text-white font-serif luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-normal mb-6">
+        <h1 className="text-white font-heading-en luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
           CLUB Animo
         </h1>
-        <p className="text-white/80 font-serif luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10">
+        <p className="text-white/80 font-heading-jp luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10">
           煌びやかなシャンデリアの下で<br />
           特別な時間を
         </p>

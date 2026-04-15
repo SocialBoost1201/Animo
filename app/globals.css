@@ -14,9 +14,18 @@
   --color-ink-black: #0F0F0F;
   --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
-  /* Brand Typography */
-  --font-serif: var(--font-serif-jp), "Times New Roman", Times, serif;
-  --font-sans: var(--font-zen-kaku), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Brand Typography Base */
+  --font-noto-lao: var(--font-noto-lao), sans-serif;
+  --font-noto-sans-jp: var(--font-noto-sans-jp), sans-serif;
+  
+  /* Role-based Font Utilities (Tailwind utility: font-*) */
+  --font-serif: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-sans: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-heading: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-body: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-ui: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-heading-en: var(--font-noto-lao);
+  --font-heading-jp: var(--font-noto-sans-jp);
 
   /* Brand Spacing & Border Radius */
   --spacing-section: 160px;
@@ -165,8 +174,14 @@ body {
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
+  --font-noto-lao: var(--font-noto-lao);
+  --font-noto-sans-jp: var(--font-noto-sans-jp);
+  --font-heading-en: var(--font-heading-en);
+  --font-heading-jp: var(--font-heading-jp);
+  --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
+  --font-body: var(--font-body);
+  --font-ui: var(--font-ui);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
