@@ -62,12 +62,12 @@ export default function AdminRegisterMobilePage() {
         >
           <div className="text-center mb-4">
             <p
-              className="text-white text-xs tracking-[0.3em] uppercase font-light mb-1"
+              className="text-xs tracking-[0.3em] uppercase font-light mb-1 bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent"
               style={{ fontFamily: 'var(--font-serif, serif)' }}
             >
               CLUB ANIMO
             </p>
-            <h1 className="text-white text-xl font-bold tracking-[0.2em] uppercase mb-3">
+            <h1 className="text-xl font-bold tracking-[0.2em] uppercase mb-3 bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent">
               ANIMO CMS
             </h1>
             <p
