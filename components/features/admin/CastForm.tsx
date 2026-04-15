@@ -195,8 +195,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     }
   }
 
-  const inputClass = 'w-full border border-gray-200 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-gold transition-colors'
-  const labelClass = 'block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2'
+  const inputClass = 'w-full bg-[#0e0e10] border border-[#ffffff10] rounded-lg px-3 py-2 text-sm text-[#c7c0b2] placeholder-[#3a3830] focus:outline-none focus:border-[#dfbd69] transition-colors'
+  const labelClass = 'block text-xs font-bold tracking-widest text-[#8a8478] uppercase mb-2'
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -261,19 +261,19 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link prefetch={false} href="/admin/human-resources" className="inline-flex items-center text-sm text-gray-500 hover:text-[#171717] transition-colors">
+        <Link prefetch={false} href="/admin/human-resources" className="inline-flex items-center text-sm text-[#8a8478] hover:text-[#f4f1ea] transition-colors">
           <ArrowLeft size={16} className="mr-1" /> 一覧へ戻る
         </Link>
       </div>
 
-      <div className="bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm p-5 md:p-8">
-        <h2 className="text-xl font-serif tracking-widest text-[#171717] mb-8">
+      <div className="bg-[#18181c] border border-[#ffffff10] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)] p-5 md:p-8">
+        <h2 className="text-xl font-serif tracking-widest text-[#f4f1ea] mb-8">
           {isEditing ? 'Edit Cast' : 'New Cast'}
         </h2>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           {formError && (
-            <div className="rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="rounded-lg border border-[#d4785a40] bg-[#d4785a10] px-4 py-3 text-sm text-[#d4785a]">
               {formError}
             </div>
           )}
@@ -408,7 +408,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <input type="hidden" name="slug" value={initialData.slug} />
           )}
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[#5a5650]">
             名前・生年月日・電話番号・メールアドレスは管理者専用情報です。公開ページには表示されません。
           </p>
 
@@ -427,9 +427,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           </div>
 
           {/* SNS連携（任意） */}
-          <div className="bg-gray-50 border border-gray-100 rounded-sm p-4 space-y-4">
+          <div className="bg-[#0e0e10] border border-[#ffffff08] rounded-xl p-4 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">SNS連携 (Optional)</span>
+              <span className="text-xs font-bold text-[#5a5650] tracking-widest uppercase">SNS連携 (Optional)</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -460,17 +460,17 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* AI診断タグ */}
           <div>
             <label className={labelClass}>AI診断タグ (Quiz Tags)</label>
-            <p className="text-xs text-gray-400 mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
+            <p className="text-xs text-[#5a5650] mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
             <div className="grid grid-cols-2 gap-2">
               {QUIZ_TAG_OPTIONS.map((tag) => {
                 const isChecked = selectedTags.includes(tag.value)
                 return (
                   <label
                     key={tag.value}
-                    className={`flex items-center gap-2 px-3 py-2 border rounded-sm cursor-pointer text-sm transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer text-sm transition-colors ${
                       isChecked
-                        ? 'border-gold bg-gold/5 text-[#171717]'
-                        : 'border-gray-200 text-gray-500 hover:border-gold/50'
+                        ? 'border-[#dfbd69] bg-[#dfbd6910] text-[#f4f1ea]'
+                        : 'border-[#ffffff10] text-[#8a8478] hover:border-[#dfbd6940]'
                     }`}
                   >
                     <input
@@ -497,7 +497,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* コメント */}
           <div>
             <div className="flex items-end justify-between mb-2">
-              <label htmlFor="comment_input" className="block text-xs font-bold tracking-widest text-gray-500 uppercase">一言コメント (Comment)</label>
+              <label htmlFor="comment_input" className="block text-xs font-bold tracking-widest text-[#8a8478] uppercase">一言コメント (Comment)</label>
             </div>
             <textarea id="comment_input" name="comment" rows={6} defaultValue={initialData?.comment}
               className={inputClass} placeholder="お客様へのメッセージやプロフィール文" />
@@ -514,7 +514,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                       alt="プレビュー"
                       fill
                       unoptimized
-                      className="object-cover rounded shadow-sm border border-gray-100"
+                      className="object-cover rounded shadow-sm border border-[#ffffff10]"
                     />
                     <p className="text-xs text-gray-400 mt-28 text-center">プレビュー</p>
                   </div>
@@ -528,7 +528,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     onChange={handleImageChange}
                     className={inputClass}
                   />
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-xs text-[#5a5650] mt-2">
                     ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
                     ※ 後から追加することもできます。
                   </p>
@@ -538,7 +538,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           )}
 
           {/* 在籍フラグ */}
-          <div className="border-t border-gray-100 pt-6">
+          <div className="border-t border-[#ffffff08] pt-6">
             <label htmlFor="is_active" className="flex items-center gap-3 cursor-pointer">
               <input
                 id="is_active"
@@ -548,9 +548,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 value="true"
                 className="w-5 h-5 accent-gold"
               />
-              <span className="text-sm font-bold text-[#171717]">在籍中（公開する）</span>
+              <span className="text-sm font-bold text-[#f4f1ea]">在籍中（公開する）</span>
             </label>
-            <p className="text-xs text-gray-400 mt-1 ml-8">オフにすると公開ページに表示されません</p>
+            <p className="text-xs text-[#5a5650] mt-1 ml-8">オフにすると公開ページに表示されません</p>
           </div>
 
           <div className="pt-4">
