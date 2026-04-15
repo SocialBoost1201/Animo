@@ -110,8 +110,8 @@ export function RealtimeInbox({ initialContacts }: { initialContacts: Contact[] 
               <div
                 id={`contact-${c.id}`}
                 key={c.id}
-                className={`bg-black/95 border transition-all duration-500 ${
-                  isUnread ? 'border-amber-900/50 ring-1 ring-amber-900/30' : 'border-white/10 shadow-lg'
+                className={`bg-black/94 border transition-all duration-500 rounded-[18px] font-sans ${
+                  isUnread ? 'border-amber-900/50 ring-1 ring-amber-900/30 shadow-[0_8px_16px_-4px_rgba(251,191,36,0.1)]' : 'border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)]'
                 }`}
               >
                 <div className="px-5 py-4 flex items-center justify-between flex-wrap gap-3">

@@ -41,7 +41,7 @@ export async function DashboardTodayShifts() {
   const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
+    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
         <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ export async function DashboardTodayShifts() {
             <Users size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
-            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤キャスト</p>
+            <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤キャスト</p>
             <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">
               確定 {confirmedCount}名
               {lateCount > 0 && ` / 遅刻 ${lateCount}名`}
@@ -59,7 +59,7 @@ export async function DashboardTodayShifts() {
         </div>
         <Link
           href="/admin/today"
-          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[1.5px] border-[#927624] text-[11px] font-medium text-[#8a8478] hover:text-[#f4f1ea] transition-all"
+          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[1.5px] border-[#dfbd6940] text-[11px] font-bold text-[#8a8478] hover:text-[#f4f1ea] transition-all"
         >
           <span>詳細</span>
           <ChevronRight size={12} className="-mt-px" />
@@ -92,7 +92,7 @@ export async function DashboardTodayShifts() {
                     className="flex items-center min-h-[52px] hover:bg-[#ffffff05] transition-colors px-6"
                   >
                     <div className="w-[200px] flex items-center gap-3 shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-[#1c1d22] border-[0.56px] border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative">
+                      <div className="w-8 h-8 rounded-full bg-[#1c1d22] border-[0.56px] border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative shadow-inner">
                         {cast.avatarUrl ? (
                            <img 
                              src={cast.avatarUrl} 
@@ -104,12 +104,12 @@ export async function DashboardTodayShifts() {
                           <span className="text-[10px] font-bold text-[#5a5650]">{cast.initial}</span>
                         )}
                       </div>
-                      <span className="text-[12px] font-semibold text-[#f4f1ea] truncate">{cast.castName}</span>
+                      <span className="text-[12px] font-bold text-[#f4f1ea] truncate">{cast.castName}</span>
                     </div>
                     
                     {/* Time */}
                     <div className="w-[120px] px-4">
-                      <div className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#dfbd69] font-inter">
+                      <div className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#dfbd69] font-sans">
                         <span>{cast.startTime}</span>
                         <span className="text-[#5a5650] font-normal">—</span>
                         <span className="text-[#8a8478] font-normal">{cast.endTime || 'Last'}</span>

@@ -21,7 +21,7 @@ export function CustomerCard({
   const [isExpanded, setIsExpanded] = useState(hasUnread); // 未読時は最初から開く
 
   return (
-    <div className={`bg-black/95 border transition-all rounded-sm ${hasUnread ? 'border-amber-900/50 ring-1 ring-amber-900/30' : 'border-white/10 shadow-lg'}`}>
+    <div className={`bg-black/94 border transition-all rounded-[18px] font-sans ${hasUnread ? 'border-amber-900/50 ring-1 ring-amber-900/30 shadow-[0_8px_16px_-4px_rgba(251,191,36,0.1)]' : 'border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)]'}`}>
       <div className="px-6 py-4 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
           {hasUnread && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />}

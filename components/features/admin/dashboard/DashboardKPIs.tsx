@@ -110,24 +110,24 @@ export async function DashboardKPIs() {
   ] as const;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-[13.8px] font-inter">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-[13.8px] font-sans">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
           <Link
             key={card.id}
             href={card.href}
-            className={`group relative flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] hover:border-[#dfbd6940] transition-all duration-300 shadow-[4px_4px_10px_0_#A68A32] hover:shadow-[4px_4px_16px_0_#A68A32] h-[150px] min-w-0 ${card.width}`}
+            className={`group relative flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] hover:border-[#dfbd6940] transition-all duration-300 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,0,0,0.5)] h-[150px] min-w-0 ${card.width}`}
           >
             {/* Design Token: Top Highlight Bar (New Design: Card 1 has linear gold bar) */}
             {card.topBar && (
-              <div className="mx-[18.6px] h-[1.5px] rounded-b-btn bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0" />
+              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0" />
             )}
 
             <div className="p-[20.6px] flex flex-col flex-1 min-w-0">
               {/* Header: Label + Icon */}
               <div className="flex items-start justify-between mb-2">
-                <span className="text-[11px] text-[#8a8478] tracking-[0.06px] font-medium truncate pr-1">
+                <span className="text-[11px] text-[#8a8478] tracking-[0.06px] font-bold truncate pr-1">
                   {card.label}
                 </span>
                 <div className={`w-[26px] h-[26px] flex items-center justify-center rounded-[7px] shrink-0 transition-colors ${card.iconBg}`}>
@@ -144,7 +144,7 @@ export async function DashboardKPIs() {
               </div>
 
               {/* Footer: Subtitle / Status */}
-              <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[1.4] line-clamp-1 mb-2 font-normal" title={card.sub}>
+              <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[1.4] line-clamp-1 mb-2 font-medium" title={card.sub}>
                 {card.sub}
               </p>
 

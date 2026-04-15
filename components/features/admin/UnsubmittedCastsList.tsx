@@ -16,7 +16,7 @@ export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses:
   const unsubmitted = statuses.filter(s => s.status === 'unsubmitted' || s.status === 'rejected');
 
   return (
-    <div className="bg-black/95 rounded-xl border border-white/10 shadow-2xl overflow-hidden">
+    <div className="bg-black/94 rounded-[18px] border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] overflow-hidden font-sans">
       <div className="p-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center sm:items-start flex-col sm:flex-row gap-4">
         <div>
           <h2 className="font-bold text-[#f4f1ea] flex items-center gap-2 tracking-tight">

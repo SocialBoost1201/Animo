@@ -6,7 +6,7 @@ export async function DashboardCastRanking() {
   const ranking = await getDashboardCastRanking();
 
   return (
-    <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
+    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
       {/* Header (Matching AnalyticsSectionSubsection:382 style container) */}
       <div className="flex items-center justify-between px-6 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
         <div className="flex items-center gap-3">
@@ -14,11 +14,11 @@ export async function DashboardCastRanking() {
             <Trophy size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
-            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">キャスト行動成績評価</p>
+            <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">キャスト行動成績評価</p>
             <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">ブログ投稿数・出勤日数・場内指名本数を管理参考用に可視化</p>
           </div>
         </div>
-        <Link href="/admin/analytics" className="text-[11px] font-medium text-[#dfbd69] hover:underline">
+        <Link href="/admin/analytics" className="text-[11px] font-bold text-[#dfbd69] hover:underline">
           詳細を見る
         </Link>
       </div>
@@ -67,7 +67,7 @@ export async function DashboardCastRanking() {
                       style={{ width: `${Math.min(r.score, 100)}%` }}
                     />
                   </div>
-                  <span className="w-[20px] text-[10px] font-semibold text-[#f4f1ea] text-right font-inter leading-none">
+                  <span className="w-[20px] text-[10px] font-bold text-[#f4f1ea] text-right font-sans leading-none">
                     {r.score}
                   </span>
                 </div>

@@ -69,8 +69,8 @@ function SortableCastRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-black/95 border rounded-2xl p-4 md:p-0 transition-all duration-300 ${
-        isDragging ? 'shadow-2xl scale-[1.02] border-yellow-400 bg-black/90 ring-4 ring-yellow-400/10' : 'shadow-xs hover:shadow-md'
+      className={`group relative bg-black/94 border rounded-[18px] p-4 md:p-0 transition-all duration-300 font-sans ${
+        isDragging ? 'shadow-2xl scale-[1.02] border-yellow-400 bg-black/90 ring-4 ring-yellow-400/10' : 'shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-lg'
       } ${isSelected ? 'border-yellow-400 bg-yellow-400/10' : 'border-[#ffffff10] hover:border-[#ffffff20]'}`}
     >
       {/* Mobile Top Controls */}

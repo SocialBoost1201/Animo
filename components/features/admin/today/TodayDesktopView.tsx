@@ -197,8 +197,8 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         {kpiCards.map((card) => (
           <div
             key={card.label}
-            className="flex flex-col bg-black/94 rounded-sm border border-white/10 px-6 py-5 shadow-2xl backdrop-blur-md"
-          >
+            className="flex flex-col bg-black/94 rounded-[18px] border border-[#ffffff10] px-6 py-5 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] backdrop-blur-md"
+           Dirk/          >
             <p className="text-[10px] font-bold text-[#8a8478] tracking-[2px] uppercase mb-2">{card.label}</p>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold text-[#f4f1ea] leading-none tracking-tight">{card.value}</span>
@@ -212,7 +212,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
 
         {/* ── Left: Ops Table ─────────────────────────────────────────── */}
-        <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden min-h-[520px]">
+        <div className="flex flex-col bg-black/94 rounded-[18px] border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] backdrop-blur-md overflow-hidden min-h-[520px]">
           {/* Tabs */}
           <div className="flex items-center gap-1 px-6 pt-6 pb-0 border-b border-white/5 bg-white/[0.01]">
             {TABS.map((tab) => {
