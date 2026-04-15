@@ -44,20 +44,20 @@ const TABS: { id: Tab; label: string }[] = [
 
 // ── Inline input style ──────────────────────────────────────────────────────
 const inputCls =
-  'w-full bg-[#0e0e10] border border-[#ffffff14] rounded-[8px] px-3 py-2 text-[12px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-[#dfbd6940] transition-colors'
+  'w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-[12px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-gold/40 transition-all outline-none'
 
 // ── Tiny Badge ──────────────────────────────────────────────────────────────
 function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?: 'gold' | 'red' | 'blue' | 'green' | 'orange' | 'purple' }) {
   const palette: Record<string, string> = {
-    gold:   'bg-[#dfbd6914] text-[#dfbd69]',
-    red:    'bg-[#d4785a14] text-[#d4785a]',
-    blue:   'bg-[#6ab0d414] text-[#6ab0d4]',
-    green:  'bg-[#72b89414] text-[#72b894]',
-    orange: 'bg-[#c8884d14] text-[#c8884d]',
-    purple: 'bg-[#a882d814] text-[#a882d8]',
+    gold:   'bg-gold/10 text-gold border border-gold/20',
+    red:    'bg-red-500/10 text-red-400 border border-red-500/20',
+    blue:   'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+    green:  'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+    orange: 'bg-orange-500/10 text-orange-400 border border-orange-500/20',
+    purple: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
   }
   return (
-    <span className={`text-[9px] font-bold tracking-[0.8px] px-2 py-0.5 rounded-full ${palette[color]}`}>
+    <span className={`text-[9px] font-bold tracking-[0.05em] px-2 py-0.5 rounded-sm ${palette[color]}`}>
       {children}
     </span>
   )
@@ -66,7 +66,7 @@ function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?
 // ── Section row ─────────────────────────────────────────────────────────────
 function Row({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`flex items-center h-[36px] gap-3 px-3 hover:bg-[#ffffff04] rounded-[6px] transition-colors ${className}`}>
+    <div className={`flex items-center h-[36px] gap-3 px-3 hover:bg-white/[0.03] rounded-sm transition-colors ${className}`}>
       {children}
     </div>
   )
@@ -75,14 +75,14 @@ function Row({ children, className = '' }: { children: React.ReactNode; classNam
 // ── Add form wrapper ─────────────────────────────────────────────────────────
 function AddFormWrapper({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="mt-2 rounded-[10px] bg-[#0e0e10] border border-[#ffffff0a] p-3 space-y-2">
+    <div className="mt-2 rounded-sm bg-black/40 border border-white/10 p-4 space-y-3 backdrop-blur-sm">
       {children}
       <button
         type="button"
         onClick={onClose}
-        className="text-[11px] text-[#5a5650] hover:text-[#8a8478] transition-colors"
+        className="text-[11px] font-bold tracking-widest text-[#5a5650] hover:text-[#f4f1ea] transition-colors uppercase"
       >
-        キャンセル
+        CANCEL
       </button>
     </div>
   )
@@ -141,7 +141,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   const handleAction = (action: () => Promise<{ error?: string } | { success: boolean }>) => {
     startTransition(async () => {
       const result = await action()
-      if ('error' in result && result.error) toast.error(result.error)
+      if (result && 'error' in result && result.error) toast.error(result.error)
       else router.refresh()
     })
   }
@@ -167,75 +167,74 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   }
 
   return (
-    <div className="space-y-5 font-inter">
+    <div className="space-y-6 font-sans">
 
       {/* ── Page Header ─────────────────────────────────────────────────── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">本日の営業状況</h1>
-          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">当日オペレーション・シフト・来店予定を一元管理</p>
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 py-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">Operation Dashboard</h1>
+          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日オペレーション・一元管理</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-[#ffffff0a] rounded-[10px] border-[1.5px] border-[#927624]">
-            <Calendar size={13} className="text-[#8a8478]" />
-            <span className="text-[11px] font-medium text-[#c7c0b2] tracking-[3.06px] uppercase">{dateLabel}</span>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-sm border border-white/10">
+            <Calendar size={14} className="text-gold" />
+            <span className="text-xs font-bold text-[#c7c0b2] tracking-[0.2em] uppercase">{dateLabel}</span>
           </div>
 
           <button
             onClick={() => setActiveTab('visit')}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
+            className="group relative flex items-center gap-2 px-6 py-2.5 bg-gold rounded-sm text-[11px] font-bold text-black tracking-[2px] uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
           >
             <Plus size={14} strokeWidth={3} />
-            来店予定を確認
+            Check Reservations
           </button>
         </div>
       </div>
 
       {/* ── KPI Bar ──────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {kpiCards.map((card) => (
           <div
             key={card.label}
-            className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[14px] border-[1.5px] border-[#927624] px-5 py-4"
+            className="flex flex-col bg-black/94 rounded-sm border border-white/10 px-6 py-5 shadow-2xl backdrop-blur-md"
           >
-            <p className="text-[10px] font-medium text-[#5a5650] tracking-[0.6px] uppercase mb-1.5">{card.label}</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[24px] font-bold text-[#f4f1ea] leading-none">{card.value}</span>
-              <span className="text-[11px] text-[#8a8478]">{card.unit}</span>
+            <p className="text-[10px] font-bold text-[#8a8478] tracking-[2px] uppercase mb-2">{card.label}</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-[#f4f1ea] leading-none tracking-tight">{card.value}</span>
+              <span className="text-xs font-bold text-[#5a5650] uppercase">{card.unit}</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* ── Main Content ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
 
         {/* ── Left: Ops Table ─────────────────────────────────────────── */}
-        <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden min-h-[480px]">
+        <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden min-h-[520px]">
           {/* Tabs */}
-          <div className="flex items-center gap-1 px-4 pt-4 pb-0 border-b border-[#ffffff08]">
+          <div className="flex items-center gap-1 px-6 pt-6 pb-0 border-b border-white/5 bg-white/[0.01]">
             {TABS.map((tab) => {
               const count = tab.id === 'unconfirmed' ? data.unconfirmedCasts.length : undefined
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative px-4 py-2.5 text-[12px] font-medium rounded-t-[8px] transition-colors ${
+                  className={`relative px-6 py-4 text-[11px] font-bold tracking-[2px] uppercase transition-all ${
                     activeTab === tab.id
-                      ? 'text-[#f4f1ea] bg-[#ffffff08]'
-                      : 'text-[#5a5650] hover:text-[#8a8478]'
+                      ? 'text-[#f4f1ea] bg-white/[0.03]'
+                      : 'text-[#5a5650] hover:text-[#8a8478] hover:bg-white/[0.01]'
                   }`}
                 >
                   {tab.label}
                   {count !== undefined && count > 0 && (
-                    <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#d4785a] text-[9px] font-bold text-white">
+                    <span className="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-sm bg-red-500 text-[9px] font-bold text-white shadow-lg shadow-red-500/20">
                       {count}
                     </span>
                   )}
                   {activeTab === tab.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
                   )}
                 </button>
               )
@@ -243,7 +242,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </div>
 
           {/* Tab Body */}
-          <div className="flex-1 p-4 overflow-y-auto custom-scrollbar">
+          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
             {renderTabContent()}
           </div>
         </div>
@@ -252,7 +251,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         <div className="flex flex-col gap-4">
 
           {/* Alerts */}
-          <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden">
+          <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden">
             <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
               <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#d4785a1a] rounded-[6px]">
                 <AlertTriangle size={14} className="text-[#d4785a]" strokeWidth={2.5} />
@@ -282,7 +281,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </div>
 
           {/* Memo */}
-          <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden flex-1">
+          <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden flex-1">
             <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
               <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#dfbd691a] rounded-[6px]">
                 <StickyNote size={14} className="text-[#dfbd69]" strokeWidth={2.5} />
@@ -308,37 +307,37 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       </div>
 
       {/* ── LINE Share ───────────────────────────────────────────────────── */}
-      <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] border border-[#dfbd6930] overflow-hidden">
-        <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff08]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#dfbd691a] rounded-[6px]">
-              <Copy size={14} className="text-[#dfbd69]" strokeWidth={2.5} />
+      <div className="flex flex-col bg-black/94 rounded-sm border border-gold/30 shadow-2xl backdrop-blur-md overflow-hidden">
+        <div className="flex items-center justify-between px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+          <div className="flex items-center gap-3">
+            <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
+              <Copy size={16} className="text-gold" strokeWidth={2} />
             </div>
-            <p className="text-[12px] font-semibold text-[#f4f1ea]">LINE 共有テキスト</p>
+            <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">LINE Distribution Text</p>
           </div>
           <button
             onClick={handleCopy}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-[8px] text-[11px] font-semibold transition-all ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-sm text-[10px] font-bold tracking-[2px] transition-all uppercase shadow-lg ${
               copied
-                ? 'bg-[#72b89420] text-[#72b894] border border-[#72b89440]'
-                : 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d]'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                : 'bg-gold text-black hover:bg-[#e6c982]'
             }`}
           >
             {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
-            {copied ? 'コピー済み' : 'コピー'}
+            {copied ? 'COPIED' : 'COPY TEXT'}
           </button>
         </div>
-        <div className="p-4">
-          <pre className="text-[11px] text-[#8a8478] leading-relaxed whitespace-pre-wrap font-inter min-h-[80px]">
-            {lineText || '生成中...'}
+        <div className="p-6 bg-white/[0.01]">
+          <pre className="text-[12px] text-[#cbc3b3] leading-relaxed whitespace-pre-wrap font-mono bg-black/40 p-5 rounded-sm border border-white/5 scrollbar-thin">
+            {lineText || 'Generating content...'}
           </pre>
         </div>
       </div>
 
       {/* Pending indicator */}
       {isPending && (
-        <div className="fixed bottom-5 right-5 bg-[rgba(0,0,0,0.80)] border border-[#ffffff0f] text-[#c7c0b2] text-[11px] px-4 py-2 rounded-full shadow-lg">
-          処理中...
+        <div className="fixed bottom-8 right-8 bg-black/94 border border-white/10 text-gold text-[10px] font-bold tracking-[2px] px-6 py-3 rounded-sm shadow-2xl backdrop-blur-md uppercase animate-in fade-in slide-in-from-bottom-4">
+          Processing...
         </div>
       )}
     </div>

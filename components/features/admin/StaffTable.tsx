@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { updateStaffRole, removeStaff } from '@/lib/actions/staffs'
 import { showToast } from '@/components/ui/Toast'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Loader2 } from 'lucide-react'
 
 type Profile = {
   id: string
@@ -19,9 +19,9 @@ const ROLE_LABELS: Record<string, string> = {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  owner: 'bg-purple-100 text-purple-800',
-  manager: 'bg-blue-100 text-blue-800',
-  staff: 'bg-gray-100 text-gray-800',
+  owner: 'bg-gold/10 text-gold border border-gold/20',
+  manager: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+  staff: 'bg-white/5 text-[#f4f1ea] border border-white/10',
 }
 
 export function StaffTable({
@@ -58,18 +58,18 @@ export function StaffTable({
   }
 
   return (
-    <div className="bg-white border border-gray-200 overflow-hidden">
+    <div className="bg-black/94 border border-white/10 overflow-hidden shadow-2xl rounded-2xl animate-in fade-in duration-500">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 font-medium tracking-wider">ユーザー名</th>
-              <th className="px-6 py-4 font-medium tracking-wider">現在の権限</th>
-              <th className="px-6 py-4 font-medium tracking-wider">登録日</th>
-              <th className="px-6 py-4 font-medium tracking-wider text-right">操作</th>
+        <table className="w-full text-sm text-left border-collapse">
+          <thead>
+            <tr className="bg-white/5 border-b border-white/10">
+              <th className="px-8 py-5 text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase whitespace-nowrap">ユーザー名</th>
+              <th className="px-8 py-5 text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase whitespace-nowrap">現在の権限</th>
+              <th className="px-8 py-5 text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase whitespace-nowrap">登録日</th>
+              <th className="px-8 py-5 text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase whitespace-nowrap text-right">操作</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/[0.03]">
             {profiles.length > 0 ? (
               profiles.map((profile) => {
                 const isOwner = profile.role === 'owner'
@@ -78,41 +78,50 @@ export function StaffTable({
                 const isRemoving = removing === profile.id
 
                 return (
-                  <tr key={profile.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-[#171717]">
+                  <tr key={profile.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-8 py-6">
+                      <div className="font-bold text-[#f4f1ea] leading-none mb-1.5 flex items-center gap-2">
                         {profile.display_name || '名前未設定'}
                         {isSelf && (
-                          <span className="ml-2 text-xs text-gray-400 font-normal">（自分）</span>
+                          <span className="px-2 py-0.5 rounded-full bg-gold/10 text-gold text-[8px] font-black tracking-widest uppercase border border-gold/20">Self</span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-400 font-mono mt-0.5">
-                        {profile.id.substring(0, 13)}...
+                      <div className="text-[10px] text-[#5a5650] font-mono tracking-tighter">
+                        {profile.id.substring(0, 18)}...
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${ROLE_COLORS[profile.role] ?? 'bg-gray-100 text-gray-800'}`}>
+                    <td className="px-8 py-6">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase border ${ROLE_COLORS[profile.role] ?? 'bg-white/5 text-gray-500 border-white/10'}`}>
                         {ROLE_LABELS[profile.role] ?? profile.role.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">
-                      {new Date(profile.created_at).toLocaleDateString('ja-JP')}
+                    <td className="px-8 py-6 text-[#8a8478] font-medium tabular-nums">
+                      {new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.')}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex items-center justify-end gap-4 overflow-visible">
                         {/* 権限変更ドロップダウン */}
-                        <select
-                          defaultValue={profile.role}
-                          disabled={isOwner || isUpdating}
-                          onChange={(e) => handleRoleChange(profile.id, e.target.value)}
-                          className="text-sm border border-gray-200 rounded px-2 py-1 bg-white hover:border-gray-300 focus:outline-none focus:border-gold disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <option value="owner">Owner</option>
-                          <option value="manager">Manager</option>
-                          <option value="staff">Staff</option>
-                        </select>
+                        <div className="relative group/select">
+                          <select
+                            defaultValue={profile.role}
+                            disabled={isOwner || isUpdating}
+                            onChange={(e) => handleRoleChange(profile.id, e.target.value)}
+                            className="text-[11px] font-bold tracking-wider border border-white/10 rounded-lg px-4 py-2 bg-black/60 text-[#f4f1ea] hover:border-gold/50 focus:outline-none focus:border-gold disabled:opacity-30 disabled:cursor-not-allowed transition-all outline-none appearance-none pr-10 cursor-pointer shadow-lg"
+                          >
+                            <option value="owner" className="bg-black text-white">Owner</option>
+                            <option value="manager" className="bg-black text-white">Manager</option>
+                            <option value="staff" className="bg-black text-white">Staff</option>
+                          </select>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#5a5650] group-hover/select:text-gold transition-colors">
+                            <svg className="w-4 h-4 fill-current opacity-50" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                          </div>
+                        </div>
+                        
                         {isUpdating && (
-                          <span className="text-xs text-gray-400">更新中...</span>
+                          <div className="flex items-center gap-2 text-[10px] text-gold font-bold animate-pulse">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Updating</span>
+                          </div>
                         )}
 
                         {/* 削除ボタン（オーナー・自分自身は不可） */}
@@ -120,10 +129,10 @@ export function StaffTable({
                           <button
                             onClick={() => handleRemove(profile.id, profile.display_name ?? '未設定')}
                             disabled={isRemoving}
-                            className="text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50 p-1"
+                            className="text-[#5a5650] hover:text-red-500 transition-all duration-300 disabled:opacity-50 p-2.5 rounded-xl hover:bg-red-500/10 hover:scale-110 active:scale-90"
                             title="削除"
                           >
-                            <Trash2 size={15} />
+                            <Trash2 size={18} />
                           </button>
                         )}
                       </div>
@@ -133,8 +142,9 @@ export function StaffTable({
               })
             ) : (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-gray-400">
-                  スタッフアカウントが見つかりません
+                <td colSpan={4} className="px-8 py-20 text-center space-y-3">
+                  <div className="text-[#3a3630] font-black text-2xl opacity-10 uppercase tracking-[10px]">Empty</div>
+                  <p className="text-[#8a8478] text-sm italic font-medium">スタッフアカウントが見つかりません</p>
                 </td>
               </tr>
             )}

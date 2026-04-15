@@ -15,17 +15,16 @@
   --color-pale-gold: #D4AF37; /* 明るめのゴールド */
 
   /* Brand Typography Base */
-  --font-noto-lao: var(--font-noto-lao), sans-serif;
-  --font-noto-sans-jp: var(--font-noto-sans-jp), sans-serif;
+  /* variables starting with --font- are provided by next/font in layout.tsx */
   
   /* Role-based Font Utilities (Tailwind utility: font-*) */
-  --font-serif: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-serif: var(--font-cormorant), var(--font-noto-serif-jp), serif;
   --font-sans: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
-  --font-heading: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
+  --font-heading: var(--font-cormorant), var(--font-noto-serif-jp), serif;
   --font-body: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
   --font-ui: var(--font-noto-lao), var(--font-noto-sans-jp), sans-serif;
-  --font-heading-en: var(--font-noto-lao);
-  --font-heading-jp: var(--font-noto-sans-jp);
+  --font-heading-en: var(--font-cormorant), var(--font-noto-lao), serif;
+  --font-heading-jp: var(--font-noto-serif-jp), serif;
 
   /* Brand Spacing & Border Radius */
   --spacing-section: 160px;
@@ -175,6 +174,8 @@ body {
 
 @theme inline {
   --font-noto-lao: var(--font-noto-lao);
+  --font-cormorant: var(--font-cormorant);
+  --font-noto-serif-jp: var(--font-noto-serif-jp);
   --font-noto-sans-jp: var(--font-noto-sans-jp);
   --font-heading-en: var(--font-heading-en);
   --font-heading-jp: var(--font-heading-jp);

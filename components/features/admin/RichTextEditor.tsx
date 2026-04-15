@@ -12,71 +12,71 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 p-2 bg-gray-50 border-b border-gray-200">
+    <div className="flex flex-wrap items-center gap-1 p-2 bg-white/[0.03] border-b border-white/5">
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleBold().run(); }}
         disabled={!editor.can().chain().focus().toggleBold().run()}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('bold') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('bold') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="太字"
       >
-        <Bold size={16} />
+        <Bold size={14} />
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleItalic().run(); }}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('italic') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('italic') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="斜体"
       >
-        <Italic size={16} />
+        <Italic size={14} />
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleStrike().run(); }}
         disabled={!editor.can().chain().focus().toggleStrike().run()}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('strike') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('strike') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="取り消し線"
       >
-        <Strikethrough size={16} />
+        <Strikethrough size={14} />
       </button>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-white/5 mx-1" />
 
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleHeading({ level: 2 }).run(); }}
-        className={`p-1.5 rounded transition-colors font-bold text-sm leading-none ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`px-2 py-1.5 rounded-sm transition-all font-bold text-[10px] tracking-tighter leading-none ${editor.isActive('heading', { level: 2 }) ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="見出し2"
       >
         H2
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleHeading({ level: 3 }).run(); }}
-        className={`p-1.5 rounded transition-colors font-bold text-sm leading-none ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`px-2 py-1.5 rounded-sm transition-all font-bold text-[10px] tracking-tighter leading-none ${editor.isActive('heading', { level: 3 }) ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="見出し3"
       >
         H3
       </button>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-white/5 mx-1" />
 
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleBulletList().run(); }}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('bulletList') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('bulletList') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="箇条書きリスト"
       >
-        <List size={16} />
+        <List size={14} />
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleOrderedList().run(); }}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('orderedList') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('orderedList') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="番号付きリスト"
       >
-        <ListOrdered size={16} />
+        <ListOrdered size={14} />
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleBlockquote().run(); }}
-        className={`p-1.5 rounded transition-colors ${editor.isActive('blockquote') ? 'bg-gray-200 text-black' : 'text-gray-600 hover:bg-gray-200'}`}
+        className={`p-2 rounded-sm transition-all ${editor.isActive('blockquote') ? 'bg-gold text-black' : 'text-[#8a8478] hover:bg-white/10 hover:text-[#f4f1ea]'}`}
         title="引用"
       >
-        <Quote size={16} />
+        <Quote size={14} />
       </button>
 
       <div className="flex-1" />
@@ -84,18 +84,18 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().undo().run(); }}
         disabled={!editor.can().chain().focus().undo().run()}
-        className="p-1.5 rounded text-gray-500 hover:text-black hover:bg-gray-200 disabled:opacity-30 disabled:hover:bg-transparent"
+        className="p-2 rounded-sm text-[#5a5650] hover:text-[#f4f1ea] hover:bg-white/10 disabled:opacity-20 transition-all"
         title="元に戻す"
       >
-        <RotateCcw size={16} />
+        <RotateCcw size={14} />
       </button>
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().redo().run(); }}
         disabled={!editor.can().chain().focus().redo().run()}
-        className="p-1.5 rounded text-gray-500 hover:text-black hover:bg-gray-200 disabled:opacity-30 disabled:hover:bg-transparent"
+        className="p-2 rounded-sm text-[#5a5650] hover:text-[#f4f1ea] hover:bg-white/10 disabled:opacity-20 transition-all"
         title="やり直し"
       >
-        <RotateCw size={16} />
+        <RotateCw size={14} />
       </button>
     </div>
   );
@@ -119,7 +119,7 @@ export function RichTextEditor({
     content,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[200px] p-4 bg-white prose-p:my-1 prose-headings:my-2 prose-ul:my-1 text-[#171717]',
+        class: 'prose prose-sm prose-invert max-w-none focus:outline-none min-h-[200px] p-4 bg-black/95 prose-p:my-1 prose-headings:my-2 prose-ul:my-1 text-[#f4f1ea]',
       },
     },
     onUpdate: ({ editor }) => {
@@ -135,7 +135,7 @@ export function RichTextEditor({
   }, [content, editor]);
 
   return (
-    <div className="border border-gray-300 rounded overflow-hidden shadow-sm">
+    <div className="border border-white/10 rounded overflow-hidden shadow-2xl">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </div>

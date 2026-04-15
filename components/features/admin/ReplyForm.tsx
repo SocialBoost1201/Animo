@@ -22,13 +22,13 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
   // 返信済みの場合は履歴表示
   if (repliedAt) {
     return (
-      <div className="mt-4 p-4 bg-green-50 border border-green-100 rounded-sm">
+      <div className="mt-4 p-4 bg-green-900/10 border border-green-500/20 rounded-sm">
         <div className="flex items-center gap-2 mb-2">
-          <CheckCircle2 size={14} className="text-green-600" />
-          <span className="text-xs font-bold text-green-700 tracking-widest uppercase">返信済み</span>
-          <span className="text-xs text-gray-400 ml-auto">{repliedAt.slice(0, 16).replace('T', ' ')}</span>
+          <CheckCircle2 size={14} className="text-green-500" />
+          <span className="text-xs font-bold text-green-400 tracking-widest uppercase">返信済み</span>
+          <span className="text-xs text-[#5a5650] ml-auto">{repliedAt.slice(0, 16).replace('T', ' ')}</span>
         </div>
-        <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">{replyText}</p>
+        <p className="text-xs text-[#cbc3b3] whitespace-pre-wrap leading-relaxed">{replyText}</p>
       </div>
     );
   }
@@ -63,20 +63,20 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
           )}
           <button
             onClick={() => setOpen(true)}
-            className="text-xs font-bold tracking-widest uppercase px-4 py-2 border border-gold text-gold hover:bg-gold/5 transition-colors flex items-center gap-2 rounded-sm"
+            className="text-xs font-bold tracking-widest uppercase px-4 py-2 border border-gold/50 text-gold hover:bg-gold/5 transition-colors flex items-center gap-2 rounded-sm"
           >
             <SendHorizonal size={12} />
             返信する
           </button>
         </div>
       ) : (
-        <form ref={formRef} onSubmit={handleSubmit} className="mt-2 bg-gray-50 border border-gray-100 rounded-sm p-4 space-y-3">
+        <form ref={formRef} onSubmit={handleSubmit} className="mt-2 bg-white/5 border border-white/10 rounded-sm p-4 space-y-3">
           <input type="hidden" name="id" value={id} />
           <input type="hidden" name="table" value={table} />
           <input type="hidden" name="customerName" value={customerName} />
 
           <div>
-            <label className="block text-xs tracking-widest uppercase text-gray-400 mb-1">
+            <label className="block text-xs tracking-widest uppercase text-[#8a8478] mb-1">
               返信先 (Email)
             </label>
             <input
@@ -84,7 +84,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
               type="text"
               defaultValue={hasEmail ? toEmail : ''}
               placeholder={hasEmail ? toEmail : 'メールアドレスを入力（任意）'}
-              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm"
+              className="w-full text-xs border border-white/10 bg-black/50 text-[#f4f1ea] px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm"
             />
             {!hasEmail && (
               <p className="text-xs text-amber-600 mt-1">
@@ -94,7 +94,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
           </div>
 
           <div>
-            <label className="block text-xs tracking-widest uppercase text-gray-400 mb-1">
+            <label className="block text-xs tracking-widest uppercase text-[#8a8478] mb-1">
               返信内容 <span className="text-red-400">*</span>
             </label>
             <textarea
@@ -102,7 +102,7 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
               required
               rows={6}
               placeholder={`${customerName} 様への返信内容を入力してください`}
-              className="w-full text-xs border border-gray-200 bg-white px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm resize-none leading-relaxed"
+              className="w-full text-xs border border-white/10 bg-black/50 text-[#f4f1ea] px-3 py-2 outline-none focus:border-gold transition-colors rounded-sm resize-none leading-relaxed"
             />
           </div>
 
@@ -114,14 +114,14 @@ export function ReplyForm({ id, table, customerName, toEmail, repliedAt, replyTe
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-xs text-gray-400 hover:text-gray-600 tracking-widest uppercase transition-colors px-3 py-2"
+              className="text-xs text-[#5a5650] hover:text-[#8a8478] tracking-widest uppercase transition-colors px-3 py-2"
             >
               キャンセル
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="text-xs font-bold tracking-widest uppercase px-5 py-2 bg-[#171717] text-white hover:bg-[#333] transition-colors flex items-center gap-2 rounded-sm disabled:opacity-50"
+              className="text-xs font-bold tracking-widest uppercase px-5 py-2 bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-colors flex items-center gap-2 rounded-sm disabled:opacity-50"
             >
               {submitting ? <Loader2 size={12} className="animate-spin" /> : <SendHorizonal size={12} />}
               {submitting ? '送信中...' : '送信する'}

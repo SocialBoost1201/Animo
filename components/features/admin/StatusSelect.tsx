@@ -30,7 +30,7 @@ export function StatusSelect({ id, currentStatus }: Props) {
       defaultValue={currentStatus}
       onChange={handleChange}
       disabled={isPending}
-      className="text-xs border border-gray-200 rounded px-2 py-1.5 text-gray-600 bg-white focus:outline-none focus:border-gold disabled:opacity-50"
+      className="text-xs border border-white/10 rounded px-2 py-1.5 text-[#f4f1ea] bg-black/95 focus:outline-none focus:border-gold disabled:opacity-50 transition-colors"
     >
       {STATUS_OPTIONS.map((opt) => (
         <option key={opt.value} value={opt.value}>

@@ -121,18 +121,18 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717] dark:text-gray-100">Shifts</h1>
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+          <h1 className="text-2xl font-serif tracking-widest text-[#f4f1ea]">Shifts</h1>
+          <p className="text-sm text-[#8a8478] mt-1">
             セル・日付をタップして出勤ON/OFF切替。時間は時計アイコンで調整。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* View Toggle */}
-          <div className="flex bg-gray-100/80 dark:bg-black/50 p-1 rounded-sm border border-gray-200/50 dark:border-white/10">
+          <div className="flex bg-white/5 p-1 rounded-sm border border-white/10">
             <button
               onClick={() => router.push('?view=week')}
               className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
-                viewType === 'week' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
+                viewType === 'week' ? 'bg-white/10 shadow-lg text-[#f4f1ea]' : 'text-[#8a8478] hover:text-[#f4f1ea]'
               }`}
             >
               <List size={13} /> 1週間
@@ -140,7 +140,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
             <button
               onClick={() => router.push('?view=month')}
               className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold tracking-widest uppercase transition-all duration-200 rounded-sm ${
-                viewType === 'month' ? 'bg-white dark:bg-[#1a1a1a] shadow-sm text-[#171717] dark:text-gray-100' : 'text-gray-500 dark:text-gray-400 hover:text-[#171717] dark:hover:text-gray-200'
+                viewType === 'month' ? 'bg-white/10 shadow-lg text-[#f4f1ea]' : 'text-[#8a8478] hover:text-[#f4f1ea]'
               }`}
             >
               <CalendarDays size={13} /> 1ヶ月
@@ -150,7 +150,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="flex items-center gap-2 bg-[#171717] hover:bg-gold text-white px-5 py-2 text-sm font-bold tracking-wider transition-all duration-200 disabled:opacity-60 rounded-sm shadow-sm"
+            className="flex items-center gap-2 bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 px-5 py-2 text-sm font-bold tracking-wider transition-all duration-200 disabled:opacity-60 rounded-sm shadow-xl"
           >
             {isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
             {isPending ? '保存中...' : '保存する'}
@@ -159,23 +159,23 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs text-gray-400">
+      <div className="flex items-center gap-4 text-xs text-[#5a5650]">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded bg-gold/20 border border-gold/40" />
           <span>出勤あり</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-gray-100" />
+          <div className="w-3 h-3 rounded bg-white/5 border border-white/5" />
           <span>未設定</span>
         </div>
       </div>
 
       {/* Desktop Calendar Grid */}
-      <div className="hidden md:block bg-white dark:bg-[#141414] border border-gray-100 dark:border-white/5 shadow-sm rounded-sm overflow-x-auto">
+      <div className="hidden md:block bg-black/95 border border-white/10 shadow-2xl rounded-sm overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
-            <tr className="border-b border-gray-100 dark:border-white/5">
-              <th className="px-4 py-3 text-xs text-gray-400 dark:text-gray-500 font-normal w-32 bg-gray-50/70 dark:bg-white/5">
+            <tr className="border-b border-white/10">
+              <th className="px-4 py-3 text-xs text-[#8a8478] font-normal w-32 bg-white/5">
                 キャスト
               </th>
               {dates.map((date, i) => {
@@ -183,25 +183,25 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                 const isSat = d.getDay() === 6
                 const isSun = d.getDay() === 0
                 return (
-                  <th key={date} className="px-2 py-3 text-center bg-gray-50/70 border-l border-gray-50">
-                    <p className={`text-xs font-bold tracking-widest ${isSat ? 'text-blue-500' : isSun ? 'text-red-500' : 'text-gray-500'}`}>
+                  <th key={date} className="px-2 py-3 text-center bg-white/5 border-l border-white/5">
+                    <p className={`text-xs font-bold tracking-widest ${isSat ? 'text-blue-400' : isSun ? 'text-red-400' : 'text-[#8a8478]'}`}>
                       {DAYS_SHORT[i]}
                     </p>
-                    <p className="text-sm font-serif text-[#171717] mt-0.5">{d.getDate()}</p>
+                    <p className="text-sm font-serif text-[#f4f1ea] mt-0.5">{d.getDate()}</p>
                   </th>
                 )
               })}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-white/5">
             {casts?.map((cast) => (
               <tr key={cast.id} className="hover:bg-gray-50/40 transition-colors">
                 {/* Cast Name */}
                 <td className="px-4 py-3">
-                  <p className="text-sm font-bold text-[#171717] truncate max-w-[120px]">
+                  <p className="text-sm font-bold text-[#f4f1ea] truncate max-w-[120px]">
                     {cast.stage_name}
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-[#5a5650] mt-0.5">
                     {dates.filter(d => shiftMap.has(`${cast.id}_${d}`)).length}日出勤
                   </p>
                 </td>
@@ -213,21 +213,21 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                   const isEditing = editingCell?.castId === cast.id && editingCell?.date === date
 
                   return (
-                    <td key={date} className="px-2 py-2 border-l border-gray-50 text-center align-middle">
+                    <td key={date} className="px-2 py-2 border-l border-white/5 text-center align-middle">
                       {isEditing && hasShift ? (
                         /* Time Picker Popup */
                         <div className="flex flex-col gap-1 items-center">
                           <select
                             value={shift?.start_time}
                             onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
-                            className="text-xs border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                            className="text-xs border border-white/10 rounded px-1 py-0.5 w-20 text-center bg-black text-[#f4f1ea]"
                           >
                             {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
                           <select
                             value={shift?.end_time}
                             onChange={e => updateTime(cast.id, date, 'end_time', e.target.value)}
-                            className="text-xs border border-gray-200 rounded px-1 py-0.5 w-20 text-center"
+                            className="text-xs border border-white/10 rounded px-1 py-0.5 w-20 text-center bg-black text-[#f4f1ea]"
                           >
                             {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
@@ -246,7 +246,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                             className={`w-9 h-9 rounded-md transition-all duration-200 flex items-center justify-center text-xs font-bold ${
                               hasShift
                                 ? 'bg-gold/15 border border-gold/40 text-gold hover:bg-gold/25'
-                                : 'bg-gray-50 border border-gray-200 text-gray-300 hover:border-gray-300'
+                                : 'bg-white/5 border border-white/10 text-[#5a5650] hover:border-white/20'
                             }`}
                           >
                             {hasShift ? <Check size={14} strokeWidth={3} /> : <span className="text-base">+</span>}
@@ -255,7 +255,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                           {hasShift && (
                             <button
                               onClick={() => setEditingCell({ castId: cast.id, date })}
-                              className="flex items-center gap-0.5 text-xs text-gray-400 hover:text-gold transition-colors"
+                              className="flex items-center gap-0.5 text-xs text-[#5a5650] hover:text-gold transition-colors"
                             >
                               <Clock size={9} />
                               {shift?.start_time?.slice(0, 5)}
@@ -310,19 +310,19 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                      return (
                        <div key={date} className="relative flex flex-col items-center">
                          {isEditing && hasShift ? (
-                           <div className="absolute top-0 left-0 bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-white/10 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-section-mobile">
-                             <p className="text-xs text-gray-500 font-bold border-b pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
+                           <div className="absolute top-0 left-0 bg-black/95 border border-white/10 shadow-xl p-2 rounded-sm z-50 flex flex-col gap-1.5 min-w-section-mobile">
+                             <p className="text-xs text-[#8a8478] font-bold border-b border-white/10 pb-1 text-center">{dObj.getDate()}日({dLabel})</p>
                              <select
                                value={shift?.start_time}
                                onChange={e => updateTime(cast.id, date, 'start_time', e.target.value)}
-                               className="text-xs border border-gray-200 rounded px-1 py-1 w-full text-center"
+                               className="text-xs border border-white/10 rounded px-1 py-1 w-full text-center bg-black text-[#f4f1ea]"
                              >
                                {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                              </select>
                              <select
                                value={shift?.end_time}
                                onChange={e => updateTime(cast.id, date, 'end_time', e.target.value)}
-                               className="text-xs border border-gray-200 rounded px-1 py-1 w-full text-center"
+                               className="text-xs border border-white/10 rounded px-1 py-1 w-full text-center bg-black text-[#f4f1ea]"
                              >
                                {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
                              </select>
@@ -342,7 +342,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                               className={`w-11 h-11 rounded border transition-colors flex flex-col items-center justify-center ${
                                 hasShift 
                                   ? 'bg-gold/10 border-gold text-gold' 
-                                  : 'bg-gray-50 border-gray-100 text-gray-400'
+                                  : 'bg-white/5 border-white/10 text-[#5a5650]'
                               }`}
                             >
                               <span className={`text-xs font-bold mb-0.5 ${!hasShift && isWeekend ? (dObj.getDay()===0?'text-red-400':'text-blue-400') : ''}`}>
@@ -355,7 +355,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                               {hasShift && (
                                 <button
                                   onClick={() => setEditingCell({ castId: cast.id, date })}
-                                  className="flex items-center gap-0.5 text-xs text-gray-400 px-1 hover:text-gold"
+                                  className="flex items-center gap-0.5 text-xs text-[#5a5650] px-1 hover:text-gold"
                                 >
                                   <Clock size={8} />{shift?.start_time?.slice(0, 5)}
                                 </button>
@@ -373,7 +373,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
       </div>
 
       {/* Summary Footer */}
-      <div className="flex items-center justify-between text-xs text-gray-400 pt-2">
+      <div className="flex items-center justify-between text-xs text-[#8a8478] pt-2">
         <span>
           {casts?.length ?? 0}名 / 週合計{' '}
           {[...shiftMap.keys()].length}枠登録済み

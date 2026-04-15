@@ -33,7 +33,7 @@ export async function DashboardReservations() {
   const unconfirmedCount = reservations.filter((r) => r.status === 'unconfirmed').length;
 
   return (
-    <div className="flex flex-col bg-[rgba(0,0,0,0.80)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
+    <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] overflow-hidden border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] font-inter h-full">
       {/* Header (Matching AnalyticsSectionSubsection:383) */}
       <div className="flex flex-wrap items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] gap-4 shrink-0">
         <div className="flex items-center gap-3">

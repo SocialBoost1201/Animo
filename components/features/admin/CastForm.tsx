@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { useAdminTheme } from '@/components/providers/AdminThemeProvider'
 
 const QUIZ_TAG_OPTIONS = [
   { value: 'gentle', label: '癒し系・優しい' },
@@ -195,8 +196,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     }
   }
 
-  const inputClass = 'w-full bg-[#0e0e10] border border-[#ffffff10] rounded-lg px-3 py-2 text-sm text-[#c7c0b2] placeholder-[#3a3830] focus:outline-none focus:border-[#dfbd69] transition-colors'
-  const labelClass = 'block text-xs font-bold tracking-widest text-[#8a8478] uppercase mb-2'
+  const { F } = useAdminTheme()
+  const inputClass = F.input
+  const labelClass = F.label
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -261,19 +263,19 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link prefetch={false} href="/admin/human-resources" className="inline-flex items-center text-sm text-[#8a8478] hover:text-[#f4f1ea] transition-colors">
+        <Link prefetch={false} href="/admin/human-resources" className={F.backLink}>
           <ArrowLeft size={16} className="mr-1" /> 一覧へ戻る
         </Link>
       </div>
 
-      <div className="bg-[#18181c] border border-[#ffffff10] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)] p-5 md:p-8">
-        <h2 className="text-xl font-serif tracking-widest text-[#f4f1ea] mb-8">
+      <div className={`${F.card} p-5 md:p-8`}>
+        <h2 className={`text-xl font-serif tracking-widest mb-8 ${F.heading}`}>
           {isEditing ? 'Edit Cast' : 'New Cast'}
         </h2>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           {formError && (
-            <div className="rounded-lg border border-[#d4785a40] bg-[#d4785a10] px-4 py-3 text-sm text-[#d4785a]">
+            <div className={F.error}>
               {formError}
             </div>
           )}
@@ -408,7 +410,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             <input type="hidden" name="slug" value={initialData.slug} />
           )}
 
-          <p className="text-xs text-[#5a5650]">
+          <p className={F.noteText}>
             名前・生年月日・電話番号・メールアドレスは管理者専用情報です。公開ページには表示されません。
           </p>
 
@@ -427,9 +429,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           </div>
 
           {/* SNS連携（任意） */}
-          <div className="bg-[#0e0e10] border border-[#ffffff08] rounded-xl p-4 space-y-4">
+          <div className={F.snsSection}>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#5a5650] tracking-widest uppercase">SNS連携 (Optional)</span>
+              <span className={`text-xs font-bold tracking-widest uppercase ${F.subtle}`}>SNS連携 (Optional)</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -460,7 +462,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* AI診断タグ */}
           <div>
             <label className={labelClass}>AI診断タグ (Quiz Tags)</label>
-            <p className="text-xs text-[#5a5650] mb-3">お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
+            <p className={`${F.noteText} mb-3`}>お客様向けのキャスト診断で絞り込みに使用します。当てはまるものを複数選択してください。</p>
             <div className="grid grid-cols-2 gap-2">
               {QUIZ_TAG_OPTIONS.map((tag) => {
                 const isChecked = selectedTags.includes(tag.value)
@@ -468,9 +470,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   <label
                     key={tag.value}
                     className={`flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer text-sm transition-colors ${
-                      isChecked
-                        ? 'border-[#dfbd69] bg-[#dfbd6910] text-[#f4f1ea]'
-                        : 'border-[#ffffff10] text-[#8a8478] hover:border-[#dfbd6940]'
+                      isChecked ? F.tagActive : F.tagInactive
                     }`}
                   >
                     <input
@@ -497,7 +497,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* コメント */}
           <div>
             <div className="flex items-end justify-between mb-2">
-              <label htmlFor="comment_input" className="block text-xs font-bold tracking-widest text-[#8a8478] uppercase">一言コメント (Comment)</label>
+              <label htmlFor="comment_input" className={`block text-xs font-bold tracking-widest uppercase ${F.label}`}>一言コメント (Comment)</label>
             </div>
             <textarea id="comment_input" name="comment" rows={6} defaultValue={initialData?.comment}
               className={inputClass} placeholder="お客様へのメッセージやプロフィール文" />
@@ -528,7 +528,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     onChange={handleImageChange}
                     className={inputClass}
                   />
-                  <p className="text-xs text-[#5a5650] mt-2">
+                  <p className={`${F.noteText} mt-2`}>
                     ※ 5MB以下の JPEG, PNG, WEBP 画像（省略可）<br />
                     ※ 後から追加することもできます。
                   </p>
@@ -538,7 +538,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           )}
 
           {/* 在籍フラグ */}
-          <div className="border-t border-[#ffffff08] pt-6">
+          <div className={`border-t ${F.divider} pt-6`}>
             <label htmlFor="is_active" className="flex items-center gap-3 cursor-pointer">
               <input
                 id="is_active"
@@ -548,9 +548,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 value="true"
                 className="w-5 h-5 accent-gold"
               />
-              <span className="text-sm font-bold text-[#f4f1ea]">在籍中（公開する）</span>
+              <span className={`text-sm font-bold ${F.activeLabel}`}>在籍中（公開する）</span>
             </label>
-            <p className="text-xs text-[#5a5650] mt-1 ml-8">オフにすると公開ページに表示されません</p>
+            <p className={`${F.noteText} mt-1 ml-8`}>オフにすると公開ページに表示されません</p>
           </div>
 
           <div className="pt-4">

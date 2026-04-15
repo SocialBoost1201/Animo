@@ -9,6 +9,7 @@ import {
   UserCheck, BarChart2, Palette, BookOpen, Newspaper, Moon, Sun, List,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
+import { AdminThemeProvider, useAdminTheme } from '@/components/providers/AdminThemeProvider';
 
 const NAV_ITEMS = [
   // ── OVERVIEW ──────────────────────────────────────────────────────────────
@@ -55,77 +56,38 @@ const BOTTOM_TAB_ITEMS = [
   { href: '/admin/applications',    icon: Briefcase,       label: '応募' },
 ];
 
-// ── Theme token maps ────────────────────────────────────────────────────────
-const DARK = {
-  pageBg:          'bg-[#121316]',
-  sidebarBg:       'bg-[#0e0e10]',
-  sidebarBorder:   'border-[#ffffff0f]',
-  divider:         'bg-[#ffffff08]',
-  sectionLabel:    'text-[#5a5650]',
-  navInactive:     'text-[#8a8478] hover:bg-[#ffffff06] hover:text-[#cbc3b3]',
-  navIconInactive: 'text-[#8a8478] group-hover:text-[#cbc3b3]',
-  footerBorder:    'border-[#ffffff08]',
-  toggleWrap:      'bg-[#ffffff07] border-[#ffffff08]',
-  toggleInactive:  'text-[#5a5650] hover:text-[#8a8478]',
-  toggleLightActive: 'bg-[#ffffff15] text-[#f4f1ea]',
-  userCard:        'bg-[#ffffff07] border-[#ffffff08]',
-  userName:        'text-[#c7c0b2]',
-  userSub:         'text-[#5a5650]',
-  primaryText:     'text-[#f4f1ea]',
-  mobileHeader:    'bg-[#0e0e10] border-[#ffffff0f]',
-  mobileTab:       'bg-[#0e0e10] border-[#ffffff0f]',
-  mobileMenuBtn:   'text-[#5a5650] hover:text-[#8a8478]',
-  mobileTabActive: 'text-[#dfbd69]',
-  mobileTabInactive:'text-[#8a8478]',
-};
-
-const LIGHT = {
-  pageBg:          'bg-[#f0ece5]',
-  sidebarBg:       'bg-[#faf8f4]',
-  sidebarBorder:   'border-[#00000012]',
-  divider:         'bg-[#0000000a]',
-  sectionLabel:    'text-[#b0a898]',
-  navInactive:     'text-[#7a7268] hover:bg-[#0000000a] hover:text-[#2e2b26]',
-  navIconInactive: 'text-[#7a7268] group-hover:text-[#2e2b26]',
-  footerBorder:    'border-[#00000010]',
-  toggleWrap:      'bg-[#0000000a] border-[#00000010]',
-  toggleInactive:  'text-[#b0a898] hover:text-[#7a7268]',
-  toggleLightActive: 'bg-[#0000001a] text-[#2e2b26]',
-  userCard:        'bg-[#0000000a] border-[#00000010]',
-  userName:        'text-[#2e2b26]',
-  userSub:         'text-[#b0a898]',
-  primaryText:     'text-[#1a1710]',
-  mobileHeader:    'bg-[#faf8f4] border-[#00000012]',
-  mobileTab:       'bg-[#faf8f4] border-[#00000012]',
-  mobileMenuBtn:   'text-[#b0a898] hover:text-[#7a7268]',
-  mobileTabActive: 'text-[#926f34]',
-  mobileTabInactive:'text-[#b0a898]',
-};
-
-export function AdminLayout({
-  children,
-  pendingPostsCount    = 0,
-  pendingShiftsCount   = 0,
-  pendingApplicationsCount = 0,
-  role = 'staff',
-}: {
+type AdminLayoutProps = {
   children: React.ReactNode;
   pendingPostsCount?: number;
   pendingShiftsCount?: number;
   pendingApplicationsCount?: number;
   role?: string;
-}) {
+};
+
+// ── AdminLayout: wraps children with theme provider ──────────────────────────
+export function AdminLayout(props: AdminLayoutProps) {
+  return (
+    <AdminThemeProvider>
+      <AdminLayoutInner {...props} />
+    </AdminThemeProvider>
+  );
+}
+
+function AdminLayoutInner({
+  children,
+  pendingPostsCount    = 0,
+  pendingShiftsCount   = 0,
+  pendingApplicationsCount = 0,
+  role = 'staff',
+}: AdminLayoutProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const { T, isDark, theme, setTheme } = useAdminTheme();
   const [pendingCounts, setPendingCounts] = useState({
     pendingPostsCount,
     pendingShiftsCount,
     pendingApplicationsCount,
   });
-
-  const T = theme === 'dark' ? DARK : LIGHT;
-  const isDark = theme === 'dark';
 
   useEffect(() => {
     let cancelled = false;

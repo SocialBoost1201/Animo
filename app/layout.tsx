@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Noto_Sans_Lao } from "next/font/google";
+import { Noto_Sans_JP, Noto_Serif_JP, Cormorant_Garamond, Noto_Sans_Lao } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const notoSansLao = Noto_Sans_Lao({
-  variable: "--font-noto-lao",
-  weight: ["400", "700"],
-  subsets: ["latin", "lao"],
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: 'swap',
+});
+
+const notoSerifJP = Noto_Serif_JP({
+  variable: "--font-noto-serif-jp",
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
   display: 'swap',
 });
 
@@ -14,6 +21,13 @@ const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   weight: ["400", "500", "700"],
   subsets: ["latin"],
+  display: 'swap',
+});
+
+const notoSansLao = Noto_Sans_Lao({
+  variable: "--font-noto-lao",
+  weight: ["400", "700"],
+  subsets: ["latin", "lao"],
   display: 'swap',
 });
 
@@ -68,10 +82,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cn("font-sans", notoSansLao.variable, notoSansJP.variable)} suppressHydrationWarning>
+    <html lang="ja" className={cn("font-sans", cormorant.variable, notoSerifJP.variable, notoSansJP.variable, notoSansLao.variable)} suppressHydrationWarning>
       <head />
       <body
-        className={`${notoSansLao.variable} ${notoSansJP.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        className={cn(
+          "antialiased bg-background text-foreground overflow-x-hidden",
+          cormorant.variable,
+          notoSerifJP.variable,
+          notoSansJP.variable,
+          notoSansLao.variable
+        )}
         suppressHydrationWarning
       >
         {children}

@@ -10,17 +10,17 @@ export function AdminTabs({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+    <div className="flex bg-white/5 p-1 rounded-sm w-fit border border-white/10">
       {options.map((opt) => {
         const isActive = value === opt.value;
         return (
           <button
             key={opt.value}
             onClick={() => onChange(opt.value)}
-            className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${
+            className={`px-4 py-2 text-xs font-bold tracking-widest uppercase rounded-sm transition-all ${
               isActive
-                ? 'bg-white text-[#171717] shadow-sm'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                ? 'bg-white/10 text-[#f4f1ea] shadow-lg'
+                : 'text-[#8a8478] hover:text-[#f4f1ea] hover:bg-white/5'
             }`}
           >
             {opt.label}

@@ -28,10 +28,10 @@ export function NoticeReadStatusModal({
     return (
       <button
         onClick={openModal}
-        className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm"
+        className="flex items-center gap-2.5 px-6 py-3 bg-black border border-white/10 text-[#f4f1ea] rounded-sm text-[11px] font-bold tracking-[1.5px] hover:bg-white/5 hover:border-gold/30 transition-all shadow-xl active:scale-95 group"
       >
-        <Eye size={16} />
-        既読状況を見る
+        <Eye size={14} className="text-[#8a8478] group-hover:text-gold transition-colors" />
+        既読状況を確認
       </button>
     );
   }
@@ -42,109 +42,112 @@ export function NoticeReadStatusModal({
   const unreadCasts = statuses.filter((status) => !status.is_read);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-500"
         onClick={() => setIsOpen(false)}
       ></div>
 
       {/* Modal */}
-      <div className="relative w-full sm:max-w-xl bg-white rounded-t-[32px] sm:rounded-[24px] overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-5 duration-300">
+      <div className="relative w-full sm:max-w-xl bg-black border-t sm:border border-white/10 sm:rounded-sm overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[80vh] animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-500">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100 bg-white/50 backdrop-blur-md flex items-start justify-between shrink-0">
+        <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02] flex items-start justify-between shrink-0">
           <div>
-            <h3 className="text-lg font-bold text-[#171717] tracking-tight mb-1 flex items-center gap-2">
-              <Users size={18} className="text-gray-400" /> 既読ステータス
+            <span className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-2 block">ADMIN NOTICE</span>
+            <h3 className="text-xl font-serif font-bold text-[#f4f1ea] tracking-tight">
+              既読ステータス
             </h3>
-            <p className="text-xs text-gray-500 truncate max-w-[280px]">対象: {notice.title}</p>
+            <p className="text-[11px] text-[#5a5650] truncate max-w-[280px] mt-1 font-medium italic">対象: {notice.title}</p>
           </div>
           <button 
             onClick={() => setIsOpen(false)}
-            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black bg-gray-50 hover:bg-gray-100 rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center text-[#8a8478] hover:text-[#f4f1ea] hover:bg-white/10 rounded-full transition-all border border-transparent hover:border-white/10"
           >
-            <X size={16} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50">
+        <div className="p-8 overflow-y-auto flex-1 bg-transparent custom-scrollbar">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-              <Sparkles className="w-6 h-6 animate-pulse mb-3" />
-              <p className="text-sm font-medium">読み込み中...</p>
+            <div className="flex flex-col items-center justify-center py-20 text-[#5a5650]">
+              <div className="w-1 track-h-16 bg-white/5 rounded-full overflow-hidden mb-6 relative">
+                 <div className="absolute inset-0 bg-gold animate-progress-vertical"></div>
+              </div>
+              <p className="text-[11px] font-bold tracking-widest uppercase animate-pulse">Establishing Connection...</p>
             </div>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-10">
               
               {/* Unread Section */}
-              <div>
-                <div className="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
-                  <h4 className="font-bold text-red-600 flex items-center gap-2">
-                    <Clock size={16} /> 未読メンバー
+              <section>
+                <div className="flex items-center justify-between mb-5 border-b border-white/5 pb-3">
+                  <h4 className="text-[10px] font-bold tracking-[2px] text-red-500/80 flex items-center gap-2 uppercase">
+                    <Clock size={14} /> Unread Members
                   </h4>
-                  <span className="text-xs font-bold bg-red-50 text-red-600 px-2.5 py-1 rounded-full border border-red-100">
-                    {unreadCasts.length} 名
+                  <span className="text-[10px] font-bold bg-red-500/10 text-red-400 px-3 py-1 rounded-full border border-red-500/20">
+                    {unreadCasts.length}
                   </span>
                 </div>
                 
                 {unreadCasts.length === 0 ? (
-                  <p className="text-sm text-gray-500 py-4 text-center bg-white rounded-xl border border-gray-100 shadow-sm">
-                    すべてのキャストが既読です 🎉
-                  </p>
+                  <div className="p-10 text-center bg-white/[0.02] rounded-sm border border-white/5 shadow-inner">
+                    <p className="text-xs text-[#8a8478] font-medium tracking-wide">
+                      すべてのキャストが既読です
+                    </p>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {unreadCasts.map(c => (
-                      <div key={c.cast_id} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-red-100 shadow-sm">
-                        <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                      <div key={c.cast_id} className="flex items-center gap-3 p-3 bg-white/[0.03] rounded-sm border border-white/5 group hover:border-red-500/30 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10 shadow-lg group-hover:scale-105 transition-transform">
                           {c.image_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={c.image_url} alt="" className="w-full h-full object-cover" />
+                            <img src={c.image_url} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-serif">{c.stage_name[0]}</div>
+                            <div className="w-full h-full flex items-center justify-center text-[#5a5650] text-xs font-serif italic">{c.stage_name[0]}</div>
                           )}
                         </div>
-                        <span className="font-bold text-gray-700 text-sm truncate">{c.stage_name}</span>
+                        <span className="font-bold text-[#8a8478] group-hover:text-[#f4f1ea] text-sm truncate transition-colors font-serif">{c.stage_name}</span>
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
+              </section>
 
               {/* Read Section */}
-              <div>
-                <div className="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
-                  <h4 className="font-bold text-green-700 flex items-center gap-2">
-                    <CheckCircle2 size={16} /> 既読メンバー
+              <section>
+                <div className="flex items-center justify-between mb-5 border-b border-white/5 pb-3">
+                  <h4 className="text-[10px] font-bold tracking-[2px] text-green-500/80 flex items-center gap-2 uppercase">
+                    <CheckCircle2 size={14} /> Read Members
                   </h4>
-                  <span className="text-xs font-bold bg-green-50 text-green-700 px-2.5 py-1 rounded-full border border-green-200">
-                    {readCasts.length} 名
+                  <span className="text-[10px] font-bold bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20">
+                    {readCasts.length}
                   </span>
                 </div>
                 
                 {readCasts.length === 0 ? (
-                  <p className="text-sm text-gray-500 py-4 text-center bg-white rounded-xl border border-gray-100 shadow-sm">
-                    まだ誰も読んでいません
-                  </p>
+                  <div className="p-10 text-center bg-white/[0.02] rounded-sm border border-white/5 shadow-inner">
+                    <p className="text-xs text-[#5a5650] italic"> まだ誰も読んでいません </p>
+                  </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     {readCasts.map(c => (
-                      <div key={c.cast_id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 shadow-sm transition-colors hover:border-gray-200">
+                      <div key={c.cast_id} className="flex items-center justify-between p-4 bg-white/[0.02] rounded-sm border border-white/5 transition-all hover:bg-white/[0.05] hover:border-gold/20 group">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                          <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10 shadow-lg group-hover:border-gold/30 transition-all">
                             {c.image_url ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={c.image_url} alt="" className="w-full h-full object-cover" />
+                              <img src={c.image_url} alt="" className="w-full h-full object-cover transition-all duration-700" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-serif">{c.stage_name[0]}</div>
+                              <div className="w-full h-full flex items-center justify-center text-[#5a5650] text-xs font-serif italic">{c.stage_name[0]}</div>
                             )}
                           </div>
-                          <span className="font-bold text-gray-700 text-sm">{c.stage_name}</span>
+                          <span className="font-bold text-[#f4f1ea] text-sm font-serif">{c.stage_name}</span>
                         </div>
-                        <div className="text-right">
-                          <span className="text-xs text-gray-400 font-medium tracking-wider">READ AT</span>
-                          <p className="text-xs font-bold text-gray-600">
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <span className="text-[9px] text-gold/60 font-bold tracking-[2px] uppercase">CONFIRMED</span>
+                          <p className="text-[11px] font-bold text-[#8a8478] tracking-widest tabular-nums">
                             {c.read_at ? format(new Date(c.read_at), 'MM/dd HH:mm') : '-'}
                           </p>
                         </div>
@@ -152,15 +155,27 @@ export function NoticeReadStatusModal({
                     ))}
                   </div>
                 )}
-              </div>
+              </section>
 
             </div>
           )}
         </div>
         
-        {/* Mobile Safe Area Padding */}
-        <div className="h-6 bg-gray-50/50 sm:hidden"></div>
+        {/* Footer info/padding */}
+        <div className="px-8 py-4 border-t border-white/5 bg-black/50 text-center">
+            <p className="text-[10px] text-[#5a5650] uppercase tracking-widest">End of Report</p>
+        </div>
       </div>
+
+      <style jsx>{`
+        @keyframes progress-vertical {
+          0% { transform: translateY(100%); }
+          100% { transform: translateY(-100%); }
+        }
+        .animate-progress-vertical {
+          animation: progress-vertical 2s infinite ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

@@ -90,17 +90,17 @@ export function HelpRequestList({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* 募集要項の管理セクション */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-lg font-bold text-[#171717]">出勤リクエスト（ヘルプ募集）の発行</h2>
-            <p className="text-sm text-gray-500 mt-1">人手が足りない日に特定条件でキャストへ出勤を要請します。</p>
+      <section className="bg-black/94 border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-8 space-y-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold text-[#f4f1ea] leading-tight">出勤リクエスト（ヘルプ募集）の発行</h2>
+            <p className="text-sm text-[#8a8478]">人手が足りない日に特定条件でキャストへ出勤を要請します。</p>
           </div>
           <button
             onClick={() => setIsCreating(!isCreating)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#171717] text-white text-sm font-bold rounded-lg hover:bg-black transition-colors"
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${isCreating ? 'bg-white/5 text-[#8a8478] border border-white/10 hover:bg-white/10' : 'bg-gold hover:bg-[#d4b35a] text-black hover:scale-105 active:scale-95 shadow-lg shadow-gold/20'}`}
           >
             {isCreating ? <X size={16} /> : <Plus size={16} />}
             {isCreating ? 'キャンセル' : '新規募集を作成'}
@@ -108,38 +108,38 @@ export function HelpRequestList({
         </div>
 
         {isCreating && (
-          <form onSubmit={handleCreate} className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleCreate} className="bg-white/[0.02] p-6 rounded-2xl border border-white/5 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <CalendarIcon size={16} /> 募集対象日
+                <label className="text-xs font-bold text-[#8a8478] tracking-widest uppercase flex items-center gap-2">
+                  <CalendarIcon size={14} className="text-gold" /> 募集対象日
                 </label>
                 <input 
                   type="date" 
                   value={newDate}
                   onChange={(e) => setNewDate(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black outline-none"
+                  className="w-full px-5 py-3 bg-black/40 border border-white/10 text-[#f4f1ea] rounded-xl focus:border-gold/50 focus:ring-1 focus:ring-gold/20 outline-none transition-all placeholder:text-[#5a5650]"
                   required
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <MessageSquare size={16} /> 募集メッセージ（条件・理由など）
+                <label className="text-xs font-bold text-[#8a8478] tracking-widest uppercase flex items-center gap-2">
+                  <MessageSquare size={14} className="text-gold" /> 募集メッセージ（条件・理由など）
                 </label>
                 <textarea 
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="例: 【急募】団体予約があるため出勤できる方を募集！この日は指名バック率を10%UPします！"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black outline-none h-24"
+                  className="w-full px-5 py-3 bg-black/40 border border-white/10 text-[#f4f1ea] rounded-xl focus:border-gold/50 focus:ring-1 focus:ring-gold/20 outline-none h-32 transition-all placeholder:text-[#5a5650] resize-none"
                   required
                 />
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="px-8 py-3 bg-gold text-black font-bold rounded-full hover:bg-[#d4b35a] disabled:opacity-50 transition-all shadow-lg shadow-gold/20 active:scale-95"
               >
                 {isSubmitting ? '作成中...' : '募集を発行する'}
               </button>
@@ -148,115 +148,137 @@ export function HelpRequestList({
         )}
 
         {/* 募集一覧 */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {requests.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center py-6">現在、発行済みの募集はありません。</p>
+            <div className="bg-white/[0.01] border border-dashed border-white/5 rounded-2xl py-12 text-center space-y-2">
+              <p className="text-[#8a8478] text-sm italic">現在、発行済みの募集はありません。</p>
+            </div>
           ) : (
-            requests.map(req => (
-              <div key={req.id} className={`p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-start md:items-center justify-between ${req.is_active ? 'border-amber-200 bg-amber-50/50' : 'border-gray-200 bg-gray-50'}`}>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="font-bold text-lg text-[#171717]">
-                      {format(new Date(req.target_date), 'M月d日 (E)', { locale: ja })}
-                    </span>
-                    {req.is_active ? (
-                      <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full animate-pulse">募集中</span>
-                    ) : (
-                      <span className="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-bold rounded-full">終了</span>
-                    )}
+            <div className="grid gap-4">
+              {requests.map(req => (
+                <div key={req.id} className={`p-6 rounded-2xl border transition-all duration-300 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group ${req.is_active ? 'border-gold/30 bg-gold/[0.03] shadow-lg shadow-gold/5' : 'border-white/5 bg-white/[0.01] grayscale opacity-70'}`}>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-4">
+                      <span className="font-bold text-xl text-[#f4f1ea] tracking-tight">
+                        {format(new Date(req.target_date), 'M月d日 (E)', { locale: ja })}
+                      </span>
+                      {req.is_active ? (
+                        <span className="px-3 py-1 bg-gold/10 text-gold text-[10px] font-black tracking-widest uppercase rounded-full border border-gold/20 animate-pulse">Recruiting</span>
+                      ) : (
+                        <span className="px-3 py-1 bg-white/5 text-[#8a8478] text-[10px] font-black tracking-widest uppercase rounded-full border border-white/10">Ended</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-[#8a8478] leading-relaxed max-w-2xl">{req.message}</p>
                   </div>
-                  <p className="text-sm text-gray-700">{req.message}</p>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      onClick={() => handleToggle(req.id, req.is_active)}
+                      disabled={processingId === req.id}
+                      className={`p-3 rounded-xl border transition-all duration-300 ${
+                        req.is_active ? 'bg-white/5 border-white/10 text-[#f4f1ea] hover:bg-white/10' : 'bg-gold text-black border-gold hover:scale-105'
+                      } disabled:opacity-50`}
+                      title={req.is_active ? "受付を終了する" : "募集を再開する"}
+                    >
+                      <Power size={20} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(req.id)}
+                      disabled={processingId === req.id}
+                      className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded-xl transition-all duration-300 disabled:opacity-50 hover:scale-105"
+                      title="削除する"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => handleToggle(req.id, req.is_active)}
-                    disabled={processingId === req.id}
-                    className={`p-2 rounded-lg border transition-colors ${
-                      req.is_active ? 'bg-white hover:bg-gray-100 text-gray-600' : 'bg-[#171717] text-white hover:bg-black'
-                    } disabled:opacity-50`}
-                    title={req.is_active ? "受付を終了する" : "募集を再開する"}
-                  >
-                    <Power size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(req.id)}
-                    disabled={processingId === req.id}
-                    className="p-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                    title="削除する"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
-      </div>
+      </section>
 
       {/* キャストからの応募一覧 */}
-      <div>
-        <h3 className="text-lg font-bold text-[#171717] mb-4 flex items-center gap-2">
-          <AlertCircle size={20} className="text-blue-500" />
-          キャストからの応募一覧
-        </h3>
+      <section className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h3 className="text-xl font-bold text-[#f4f1ea] flex items-center gap-3">
+            <span className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center">
+              <MessageSquare size={16} className="text-gold" />
+            </span>
+            キャストからの応募一覧
+          </h3>
+          <span className="text-xs font-bold text-[#5a5650] bg-white/5 px-3 py-1 rounded-full border border-white/5">
+            {responses.length} 件の応募
+          </span>
+        </div>
         
-        <div className="space-y-3">
+        <div className="space-y-4">
           {responses.length === 0 ? (
-             <div className="bg-white border rounded-xl p-8 text-center text-gray-500 text-sm">
-             条件に一致する応募はありません
-           </div>
+             <div className="bg-black/94 border border-white/10 rounded-2xl py-16 text-center space-y-4 shadow-2xl">
+               <div className="w-16 h-16 bg-white/[0.02] rounded-full flex items-center justify-center mx-auto border border-white/5">
+                 <AlertCircle size={32} className="text-[#3a3630]" />
+               </div>
+               <p className="text-[#8a8478] text-sm italic">条件に一致する応募はありません</p>
+             </div>
           ) : (
             responses.map((res) => (
-              <div key={res.id} className="bg-white border p-4 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center">
-                <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div key={res.id} className="bg-black/94 border border-white/10 p-6 rounded-2xl shadow-xl flex flex-col lg:flex-row gap-8 items-center group hover:border-gold/30 transition-all duration-500">
+                <div className="flex-1 w-full flex flex-col md:flex-row gap-8 items-center">
                   {/* キャスト情報 */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center font-bold text-blue-700 shrink-0">
+                  <div className="flex items-center gap-4 min-w-[200px]">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center font-bold text-xl text-[#f4f1ea] shrink-0 group-hover:border-gold/30 transition-colors">
                       {res.cast.stage_name.charAt(0)}
                     </div>
-                    <div>
-                      <p className="font-bold text-[#171717]">{res.cast.stage_name}</p>
-                      <p className="text-xs text-gray-500">
-                        {format(new Date(res.created_at), 'M/d HH:mm')} 応募
+                    <div className="space-y-1">
+                      <p className="text-lg font-bold text-[#f4f1ea] group-hover:text-gold transition-colors">{res.cast.stage_name}</p>
+                      <p className="text-[10px] font-black tracking-widest text-[#5a5650] uppercase">
+                        Applied: {format(new Date(res.created_at), 'MM/dd HH:mm')}
                       </p>
                     </div>
                   </div>
 
                   {/* 応募内容 */}
-                  <div className="md:col-span-2 bg-blue-50/50 p-3 rounded-lg flex flex-col justify-center">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">募集対象</span>
-                      <span className="text-sm font-bold">{format(new Date(res.shift_request.target_date), 'M月d日 (E)', { locale: ja })}</span>
+                  <div className="flex-1 w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl flex flex-col justify-center gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded uppercase border border-gold/20">募集対象日</span>
+                      <span className="text-md font-bold text-[#f4f1ea]">{format(new Date(res.shift_request.target_date), 'M月d日 (E)', { locale: ja })}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <Clock size={16} className="text-gray-400" />
-                      <span>提案時間: <strong>{res.proposed_start_time}</strong> 〜 <strong>{res.proposed_end_time}</strong></span>
+                    <div className="flex items-center gap-4 text-sm text-[#8a8478]">
+                      <div className="flex items-center gap-2">
+                        <Clock size={16} className="text-gold/50" />
+                        <span className="font-bold text-[#f4f1ea]">{res.proposed_start_time}</span>
+                        <span className="text-[#5a5650]">〜</span>
+                        <span className="font-bold text-[#f4f1ea]">{res.proposed_end_time}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* アクション (未承認の場合のみ) */}
-                <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                <div className="flex flex-row gap-3 shrink-0 w-full lg:w-auto">
                   {res.status === 'pending' && currentStatus === 'pending' ? (
                     <>
                       <button
                         onClick={() => handleResponseAction(res.id, 'approve')}
                         disabled={processingId === res.id}
-                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-[#171717] text-white text-sm font-bold rounded-lg hover:bg-black transition-colors disabled:opacity-50"
+                        className="flex-1 lg:px-8 py-3 bg-gold text-black text-sm font-bold rounded-full hover:bg-[#d4b35a] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gold/20 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <Check size={16} /> 承認
+                        <Check size={18} /> 承認
                       </button>
                       <button
                         onClick={() => handleResponseAction(res.id, 'reject')}
                         disabled={processingId === res.id}
-                        className="flex-1 md:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-bold rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="flex-1 lg:px-8 py-3 bg-white/5 border border-white/10 text-[#8a8478] text-sm font-bold rounded-full hover:bg-white/10 hover:text-[#f4f1ea] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <X size={16} /> 却下
+                        <X size={18} /> 却下
                       </button>
                     </>
                   ) : (
-                    <div className={`px-4 py-2 rounded-lg text-sm font-bold text-center w-full md:w-auto ${res.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {res.status === 'approved' ? '承認済' : '却下済'}
+                    <div className={`px-8 py-3 rounded-full text-[10px] font-black tracking-widest uppercase text-center w-full lg:min-w-[140px] border shadow-sm ${
+                      res.status === 'approved' 
+                        ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                        : 'bg-red-500/10 text-red-500 border-red-500/20'
+                    }`}>
+                      {res.status === 'approved' ? 'Approved' : 'Rejected'}
                     </div>
                   )}
                 </div>
@@ -264,7 +286,7 @@ export function HelpRequestList({
             ))
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
