@@ -48,6 +48,31 @@ export type CreateLineNotificationInput = {
   schedule_once_at?: string
 }
 
+// ── LINE連携済みキャスト一覧（個別通知の送信先選択用） ───────────────────────
+
+export type LinkedCast = {
+  cast_id: string
+  stage_name: string
+  line_user_id: string
+}
+
+export async function getLinkedCasts(): Promise<LinkedCast[]> {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from('cast_private_info')
+    .select('cast_id, line_user_id, casts!inner(stage_name)')
+    .not('line_user_id', 'is', null)
+    .order('cast_id')
+
+  if (error) return []
+
+  return (data ?? []).map((row) => ({
+    cast_id: row.cast_id,
+    stage_name: (row.casts as unknown as { stage_name: string }).stage_name,
+    line_user_id: row.line_user_id as string,
+  }))
+}
+
 // ── 一覧取得 ────────────────────────────────────────────────────────────────
 
 export async function getLineNotifications(): Promise<LineNotification[]> {

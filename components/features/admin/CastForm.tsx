@@ -32,6 +32,8 @@ type CastPrivateInfo = {
   date_of_birth: string
   phone?: string | null
   email?: string | null
+  line_id?: string | null
+  line_user_id?: string | null
 }
 
 type Cast = {
@@ -79,6 +81,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const [dateOfBirth, setDateOfBirth] = useState(privateInfo?.date_of_birth || '')
   const [phone, setPhone] = useState(privateInfo?.phone || '')
   const [email, setEmail] = useState(privateInfo?.email || '')
+  const [lineId, setLineId] = useState(privateInfo?.line_id || '')
+  const [lineUserId, setLineUserId] = useState(privateInfo?.line_user_id || '')
   // もともとデータがない新規登録時のみ、自動入力をONにする
   const [isAutoKana, setIsAutoKana] = useState(!initialData?.name_kana)
 
@@ -165,6 +169,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     formData.set('date_of_birth', validation.values.dateOfBirth)
     formData.set('phone', validation.values.phone)
     formData.set('email', validation.values.email)
+    formData.set('line_id', lineId)
+    formData.set('line_user_id', lineUserId)
 
     // 圧縮済みの画像をFormDataに上書き
     if (compressedImage) {
@@ -471,6 +477,48 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 <label htmlFor="sns_tiktok" className={labelClass}>TikTok</label>
                 <input id="sns_tiktok" name="sns_tiktok" type="text" defaultValue={initialData?.sns_tiktok}
                   className={inputClass} placeholder="username" />
+              </div>
+            </div>
+
+            {/* LINE 連携情報 */}
+            <div className={F.snsSection}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-bold tracking-[2px] uppercase text-green-400/70">LINE</span>
+                {lineUserId ? (
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Push 通知 連携済み ✓</span>
+                ) : (
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#5a5650]">未連携</span>
+                )}
+              </div>
+              <div>
+                <label htmlFor="line_id" className={labelClass}>
+                  LINE ID（表示名・@ユーザー名）
+                </label>
+                <input
+                  id="line_id"
+                  type="text"
+                  value={lineId}
+                  onChange={(e) => setLineId(e.target.value)}
+                  className={inputClass}
+                  placeholder="@your-line-id"
+                />
+                <p className={`${F.noteText} mt-1`}>キャスト自身が知っている LINE の表示 ID</p>
+              </div>
+              <div>
+                <label htmlFor="line_user_id" className={labelClass}>
+                  LINE User ID（Push 通知用）
+                </label>
+                <input
+                  id="line_user_id"
+                  type="text"
+                  value={lineUserId}
+                  onChange={(e) => setLineUserId(e.target.value)}
+                  className={inputClass}
+                  placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                />
+                <p className={`${F.noteText} mt-1`}>
+                  キャストが Bot を友達追加 → 携帯番号を送信すると自動連携されます。手動入力も可。
+                </p>
               </div>
             </div>
 

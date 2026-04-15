@@ -248,6 +248,23 @@ export default function CastRegisterPage() {
             </div>
 
             <div>
+              <label className="block text-xs mb-1.5 flex items-center gap-1.5" style={{ color: '#9f9fa9' }}>
+                LINE ID
+                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: '#3f3f47', color: '#71717b' }}>任意</span>
+              </label>
+              <input
+                name="lineId"
+                type="text"
+                className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                placeholder="@your-line-id"
+                style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}
+              />
+              <p className="text-[10px] mt-1" style={{ color: '#52525b' }}>
+                LINE アプリ → プロフィール → ID で確認できます
+              </p>
+            </div>
+
+            <div>
               <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
                 メールアドレス
               </label>

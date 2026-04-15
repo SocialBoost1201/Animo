@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import {
   type LineNotification,
+  type LinkedCast,
   type CreateLineNotificationInput,
   type ScheduleType,
   type TargetType,
@@ -60,8 +61,10 @@ const EMPTY_FORM: CreateLineNotificationInput = {
 // ── メインコンポーネント ─────────────────────────────────────────────────────
 export function LineNotificationManager({
   initialNotifications,
+  linkedCasts = [],
 }: {
   initialNotifications: LineNotification[]
+  linkedCasts?: LinkedCast[]
 }) {
   const { F, isDark } = useAdminTheme()
   const [notifications, setNotifications] = useState(initialNotifications)
@@ -212,8 +215,8 @@ export function LineNotificationManager({
 
   // ── テーマ依存スタイル ───────────────────────────────────────────────────
   const cardBg = isDark
-    ? 'bg-white/[0.03] border border-white/[0.07] rounded-sm'
-    : 'bg-white border border-[#0000001a] rounded-sm'
+    ? 'bg-black/94 border border-[#ffffff10] rounded-[18px] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)]'
+    : 'bg-white border border-[#0000001a] rounded-[18px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]'
   const labelSm = isDark ? 'text-[#5a5650]' : 'text-[#b0a898]'
   const textPrimary = isDark ? 'text-[#f4f1ea]' : 'text-[#1a1710]'
   const textSecondary = isDark ? 'text-[#8a8478]' : 'text-[#7a7268]'
@@ -240,9 +243,9 @@ export function LineNotificationManager({
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true) }}
-          className="flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/30 text-gold text-[11px] font-bold tracking-widest rounded-sm hover:bg-gold/20 transition-all"
+          className="flex items-center gap-2 px-6 py-2.5 bg-gold/10 border border-gold/30 text-gold text-[12px] font-bold tracking-widest rounded-[8px] hover:bg-gold/20 transition-all font-sans"
         >
-          <Plus size={12} /> 新規追加
+          <Plus size={14} /> 新規追加
         </button>
       </div>
 
@@ -260,6 +263,7 @@ export function LineNotificationManager({
           textSecondary={textSecondary}
           divider={divider}
           tagBase={tagBase}
+          linkedCasts={linkedCasts}
           onSave={handleSave}
           onCancel={resetForm}
           toggleDay={toggleDay}
@@ -431,8 +435,8 @@ function NotificationCard({
       {isExpanded && (
         <div className={`px-4 pb-4 border-t ${isDark ? 'border-white/5' : 'border-[#0000000a]'}`}>
           <p className={`text-[10px] font-bold tracking-widest uppercase mt-3 mb-2 ${labelSm}`}>通知内容</p>
-          <pre className={`text-xs leading-relaxed whitespace-pre-wrap font-sans ${textSecondary} ${
-            isDark ? 'bg-black/40 rounded-sm p-3' : 'bg-[#0000000a] rounded-sm p-3'
+          <pre className={`text-[13px] leading-relaxed whitespace-pre-wrap font-sans ${textSecondary} ${
+            isDark ? 'bg-black/60 rounded-[12px] p-5 shadow-inner' : 'bg-[#0000000a] rounded-[12px] p-5'
           }`}>{n.content}</pre>
           {n.last_sent_at && (
             <p className={`text-[10px] mt-2 ${labelSm}`}>
@@ -448,7 +452,7 @@ function NotificationCard({
 // ── 新規/編集フォーム ─────────────────────────────────────────────────────────
 function NotificationForm({
   form, setForm, editingId, isPending, isDark, F,
-  labelSm, textPrimary, divider, tagBase,
+  labelSm, textPrimary, divider, tagBase, linkedCasts,
   onSave, onCancel, toggleDay, toggleDate,
 }: {
   form: CreateLineNotificationInput
@@ -462,6 +466,7 @@ function NotificationForm({
   textSecondary: string
   divider: string
   tagBase: string
+  linkedCasts: LinkedCast[]
   onSave: () => void
   onCancel: () => void
   toggleDay: (d: number) => void
@@ -472,7 +477,7 @@ function NotificationForm({
   const inactiveDayClass = isDark ? 'border-white/10 text-[#5a5650] hover:border-white/20' : 'border-[#0000001a] text-[#b0a898] hover:border-[#00000030]'
 
   return (
-    <div className={`border ${borderColor} rounded-sm p-5 space-y-5 ${isDark ? 'bg-gold/[0.02]' : 'bg-[#926f340a]'}`}>
+    <div className={`border ${borderColor} rounded-[18px] p-8 space-y-8 ${isDark ? 'bg-gold/[0.04]' : 'bg-[#926f340a]'}`}>
       <div className="flex items-center justify-between">
         <h4 className={`text-xs font-bold tracking-widest uppercase ${isDark ? 'text-gold' : 'text-[#926f34]'}`}>
           {editingId ? '通知を編集' : '新規通知を追加'}
@@ -519,7 +524,7 @@ function NotificationForm({
                 key={t}
                 type="button"
                 onClick={() => setForm((p) => ({ ...p, target_type: t }))}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold border rounded-sm transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2.5 py-3 text-[13px] font-bold border rounded-[8px] transition-all font-sans ${
                   form.target_type === t ? activeDayClass : inactiveDayClass
                 }`}
               >
@@ -529,17 +534,33 @@ function NotificationForm({
           </div>
         </div>
 
-        {/* LINE User ID（個別のみ） */}
+        {/* キャスト選択（個別のみ） */}
         {form.target_type === 'individual' && (
           <div>
-            <label className={F.label}>LINE User ID</label>
-            <input
-              type="text"
-              value={form.target_id ?? ''}
-              onChange={(e) => setForm((p) => ({ ...p, target_id: e.target.value }))}
-              placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-              className={F.input}
-            />
+            <label className={F.label}>送信先キャスト</label>
+            {linkedCasts.length === 0 ? (
+              <div className={`px-4 py-3 rounded-[8px] text-[12px] ${
+                isDark
+                  ? 'bg-white/5 text-[#8a8478] border border-white/10'
+                  : 'bg-[#0000000a] text-[#b0a898] border border-[#0000001a]'
+              }`}>
+                LINE連携済みのキャストがいません。<br />
+                <span className="text-[11px]">キャストがBotを友達追加し、携帯番号を送ると自動連携されます。</span>
+              </div>
+            ) : (
+              <select
+                value={form.target_id ?? ''}
+                onChange={(e) => setForm((p) => ({ ...p, target_id: e.target.value }))}
+                className={F.input}
+              >
+                <option value="">キャストを選択してください</option>
+                {linkedCasts.map((c) => (
+                  <option key={c.cast_id} value={c.line_user_id}>
+                    {c.stage_name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         )}
 
@@ -580,7 +601,7 @@ function NotificationForm({
                   key={i}
                   type="button"
                   onClick={() => toggleDay(i)}
-                  className={`w-10 h-10 text-xs font-bold border rounded-sm transition-all ${
+                  className={`w-12 h-12 text-[13px] font-bold border rounded-[8px] transition-all font-sans ${
                     (form.schedule_days ?? []).includes(i) ? activeDayClass : inactiveDayClass
                   }`}
                 >
@@ -601,7 +622,7 @@ function NotificationForm({
                   key={d}
                   type="button"
                   onClick={() => toggleDate(d)}
-                  className={`w-8 h-8 text-[11px] font-bold border rounded-sm transition-all ${
+                  className={`w-10 h-10 text-[13px] font-bold border rounded-[8px] transition-all font-sans ${
                     (form.schedule_dates ?? []).includes(d) ? activeDayClass : inactiveDayClass
                   }`}
                 >
@@ -627,8 +648,8 @@ function NotificationForm({
       </div>
 
       {/* 保存ボタン */}
-      <div className={`flex justify-end gap-3 pt-4 border-t ${divider}`}>
-        <button onClick={onCancel} className={`px-4 py-2 text-xs font-bold border rounded-sm transition-all ${
+      <div className={`flex justify-end gap-3 pt-8 border-t ${divider}`}>
+        <button onClick={onCancel} className={`px-6 py-2.5 text-[12px] font-bold border rounded-[8px] transition-all font-sans ${
           isDark ? 'border-white/10 text-[#8a8478] hover:text-[#f4f1ea]' : 'border-[#0000001a] text-[#7a7268] hover:text-[#1a1710]'
         }`}>
           キャンセル
@@ -636,13 +657,13 @@ function NotificationForm({
         <button
           onClick={onSave}
           disabled={isPending}
-          className={`flex items-center gap-2 px-6 py-2 text-xs font-bold rounded-sm transition-all ${
+          className={`flex items-center gap-2 px-8 py-2.5 text-[12px] font-bold rounded-[8px] transition-all font-sans ${
             isDark
               ? 'bg-gold/90 text-black hover:bg-gold'
               : 'bg-[#926f34] text-white hover:bg-[#7a5c2a]'
           }`}
         >
-          {isPending ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+          {isPending ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
           {editingId ? '更新する' : '追加する'}
         </button>
       </div>
