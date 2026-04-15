@@ -50,41 +50,41 @@ export default async function HumanResourcesPage({
   });
 
   return (
-    <div className="space-y-6 font-inter">
+    <div className="space-y-10 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-2">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">キャスト管理</h1>
-          <p className="text-[11px] text-[#8a8478] tracking-[0.06px]">キャストとスタッフの登録・編集・管理</p>
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 py-4 border-b border-[#ffffff08] mb-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[22px] font-bold text-[#f4f1ea] tracking-tight">キャスト・スタッフ管理</h1>
+          <p className="text-[13px] text-[#8a8478] tracking-[0.1px] opacity-70">キャストとスタッフの登録・編集・並べ替えを一元管理できます</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           {tab === 'casts' && (
             <>
-              <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[10px] border border-[#ffffff0f] px-1 py-1">
+              <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[12px] border border-[#ffffff0f] px-1 py-1 shadow-lg">
                 <Link
                   href={`/admin/human-resources?tab=casts&month=${prevMonthStr}${q ? `&q=${q}` : ''}`}
-                  className="p-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08]"
+                  className="p-2 text-[#8a8478] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
                 >
-                  <ChevronLeft size={14} />
+                  <ChevronLeft size={18} />
                 </Link>
-                <span className="text-[12px] font-semibold text-[#c7c0b2] min-w-[72px] text-center">{dFormat}</span>
+                <span className="text-[13px] font-bold text-[#c7c0b2] min-w-[100px] text-center tracking-wider">{dFormat}</span>
                 <Link
                   href={`/admin/human-resources?tab=casts&month=${nextMonthStr}${q ? `&q=${q}` : ''}`}
-                  className="p-1.5 text-[#5a5650] hover:text-[#c7c0b2] transition-colors rounded-[7px] hover:bg-[#ffffff08]"
+                  className="p-2 text-[#8a8478] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
                 >
-                  <ChevronRight size={14} />
+                  <ChevronRight size={18} />
                 </Link>
               </div>
-              <div className="w-56">
+              <div className="w-72">
                 <SearchBar placeholder="源氏名・名前で検索..." />
               </div>
               <Link
                 href="/admin/human-resources/new"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#0b0b0d] transition-transform hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                className="flex items-center gap-2.5 px-6 py-3 rounded-[12px] text-[13px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-xl shadow-gold/20 whitespace-nowrap"
                 style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
               >
-                <Plus size={13} strokeWidth={3} />
+                <Plus size={18} strokeWidth={3} />
                 キャスト登録
               </Link>
             </>
@@ -93,49 +93,55 @@ export default async function HumanResourcesPage({
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-1 border-b border-[#ffffff08]">
+      <div className="flex items-center gap-2 border-b border-[#ffffff08]">
         <Link
           href="/admin/human-resources?tab=casts"
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12px] font-medium transition-colors relative ${
+          className={`flex items-center gap-3 px-6 py-4 text-[13px] font-bold transition-all relative ${
             tab === 'casts'
-              ? 'text-[#f4f1ea]'
+              ? 'text-[#f4f1ea] bg-[#ffffff05]'
               : 'text-[#5a5650] hover:text-[#8a8478]'
           }`}
         >
-          <Users size={13} />
+          <Users size={16} className={tab === 'casts' ? 'text-gold' : ''} />
           キャスト
-          <span className="ml-0.5 text-[9px] font-bold bg-[#ffffff08] text-[#8a8478] px-1.5 py-0.5 rounded-full">
+          <span className={`ml-1 text-[10px] font-black px-2 py-0.5 rounded-full ${
+            tab === 'casts' ? 'bg-gold/20 text-gold' : 'bg-[#ffffff08] text-[#5a5650]'
+          }`}>
             {mappedCasts.length}
           </span>
           {tab === 'casts' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+            <span className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
           )}
         </Link>
         <Link
           href="/admin/human-resources?tab=staffs"
-          className={`flex items-center gap-2 px-4 py-2.5 text-[12px] font-medium transition-colors relative ${
+          className={`flex items-center gap-3 px-6 py-4 text-[13px] font-bold transition-all relative ${
             tab === 'staffs'
-              ? 'text-[#f4f1ea]'
+              ? 'text-[#f4f1ea] bg-[#ffffff05]'
               : 'text-[#5a5650] hover:text-[#8a8478]'
           }`}
         >
-          <UserCheck size={13} />
+          <UserCheck size={16} className={tab === 'staffs' ? 'text-gold' : ''} />
           スタッフ
-          <span className="ml-0.5 text-[9px] font-bold bg-[#ffffff08] text-[#8a8478] px-1.5 py-0.5 rounded-full">
+          <span className={`ml-1 text-[10px] font-black px-2 py-0.5 rounded-full ${
+            tab === 'staffs' ? 'bg-gold/20 text-gold' : 'bg-[#ffffff08] text-[#5a5650]'
+          }`}>
             {staffsData.length}
           </span>
           {tab === 'staffs' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]" />
+            <span className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
           )}
         </Link>
       </div>
 
       {/* ── Content ── */}
-      {tab === 'casts' ? (
-        <DraggableCastList initialCasts={mappedCasts} />
-      ) : (
-        <StaffList initialStaffs={staffsData} />
-      )}
+      <div className="pt-2">
+        {tab === 'casts' ? (
+          <DraggableCastList initialCasts={mappedCasts} />
+        ) : (
+          <StaffList initialStaffs={staffsData} />
+        )}
+      </div>
     </div>
   );
 }

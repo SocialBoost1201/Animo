@@ -39,39 +39,37 @@ export async function DashboardTodayOps() {
   ].filter(Boolean) as { tag: string; tagBg: string; tagText: string; cardBorder: string; content: string }[];
 
   return (
-    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
-      {/* Header row (Matching TodayPanelSubsection:99) */}
-      <div className="flex items-center justify-between px-6 h-[64px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
-             <div className="w-[15px] h-3.5 bg-[#dfbd69] [mask-image:url(/icon-calendar.svg)] [mask-repeat:no-repeat] [mask-size:100%]" />
-             {/* Fallback to Lucide if mask fails */}
-             <Plus size={14} className="text-[#dfbd69]" />
+    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
+      {/* Header row */}
+      <div className="flex items-center justify-between px-10 h-[88px] border-b border-[#ffffff0f] shrink-0">
+        <div className="flex items-center gap-5">
+          <div className="w-[42px] h-[42px] flex items-center justify-center bg-[#dfbd691a] rounded-[10px] shrink-0">
+             <Plus size={18} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[13px] font-semibold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の営業状況</p>
-            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">今夜のオペレーション概要</p>
+          <div className="flex flex-col gap-1">
+            <p className="text-[17px] font-bold text-[#f4f1ea] tracking-[-0.1px] leading-tight">本日の営業状況</p>
+            <p className="text-[12px] text-[#8a8478] tracking-[0.08px] leading-tight opacity-70">今夜のオペレーション概要</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-[9.5px] py-1 bg-[#50a0641a] rounded-[20px] border-[0.56px] border-[#50a06426]">
-          <div className="w-[5px] h-[5px] rounded-full bg-[#72b894]" />
-          <span className="text-[10px] font-semibold text-[#72b894] tracking-[0.12px]">営業準備中</span>
+        <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
+          <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
+          <span className="text-[11px] font-bold text-[#72b894] tracking-[1px] uppercase">READY</span>
         </div>
       </div>
 
-      {/* Body: two columns (Matching TodayPanelSubsection:131) */}
+      {/* Body: two columns */}
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#ffffff0f]">
         {/* Left: OVERVIEW */}
-        <div className="flex-1 p-5.5 flex flex-col min-w-0">
-          <p className="text-[9px] font-bold tracking-[1.25px] text-[#5a5650] uppercase mb-3 px-1">OVERVIEW</p>
-          <div className="flex-1 overflow-y-auto space-y-0.5 custom-scrollbar">
+        <div className="flex-1 p-10 flex flex-col min-w-0">
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">OVERVIEW</p>
+          <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
             {overviewRows.map((row, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between py-[9px] px-1 border-b-[0.56px] border-[#ffffff0a] last:border-0"
+                className="flex items-center justify-between py-4 px-1 border-b border-[#ffffff0a] last:border-0"
               >
-                <span className="text-[12px] text-[#8a8478] font-normal leading-none">{row.label}</span>
-                <span className={`text-[12px] tracking-tight leading-none ${row.bold ? 'font-semibold text-[#cbc3b3]' : 'font-medium text-[#cbc3b3]'}`}>
+                <span className="text-[14px] text-[#8a8478] font-medium leading-none">{row.label}</span>
+                <span className={`text-[15px] tracking-tight leading-none ${row.bold ? 'font-bold text-white' : 'font-semibold text-[#cbc3b3]'}`}>
                   {row.value}
                 </span>
               </div>
@@ -80,24 +78,24 @@ export async function DashboardTodayOps() {
         </div>
 
         {/* Right: MANAGEMENT MEMO */}
-        <div className="flex-1 p-5.5 flex flex-col min-w-0 bg-[#ffffff02]">
-          <p className="text-[9px] font-bold tracking-[1.25px] text-[#5a5650] uppercase mb-3 px-1">MANAGEMENT MEMO</p>
-          <div className="flex-1 overflow-y-auto space-y-3.5 custom-scrollbar pr-1">
+        <div className="flex-1 p-10 flex flex-col min-w-0 bg-white/[0.01]">
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">MANAGEMENT MEMO</p>
+          <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
-              <div className="h-24 flex flex-col items-center justify-center gap-2 border-[0.56px] border-dashed border-[#ffffff0f] rounded-xl">
-                 <Plus size={14} className="text-[#5a5650]" />
-                 <p className="text-[10px] text-[#5a5650]">メモなし</p>
+              <div className="h-40 flex flex-col items-center justify-center gap-3 border border-dashed border-[#ffffff0f] rounded-[18px]">
+                 <Plus size={18} className="text-[#5a5650] opacity-40" />
+                 <p className="text-[12px] text-[#5a5650]">管理メモはありません</p>
               </div>
             ) : (
               memos.map((memo, i) => (
                 <div
                   key={i}
-                  className={`flex flex-col gap-[5px] bg-[#1c1d22] rounded-[11px] border-[0.56px] border-solid ${memo.cardBorder} p-[13.6px] pt-[10.6px] shadow-sm`}
+                  className={`flex flex-col gap-3 bg-black/40 rounded-[15px] border ${memo.cardBorder} p-6 shadow-lg`}
                 >
-                  <div className={`self-start px-[5px] py-[1.7px] rounded-[3px] ${memo.tagBg}`}>
-                    <span className={`text-[9px] font-bold tracking-[0.89px] leading-[14.4px] ${memo.tagText}`}>{memo.tag}</span>
+                  <div className={`self-start px-2 py-0.5 rounded-[4px] ${memo.tagBg}`}>
+                    <span className={`text-[10px] font-bold tracking-[1px] leading-[1.6] ${memo.tagText}`}>{memo.tag}</span>
                   </div>
-                  <p className="text-[11px] text-[#c7c0b2] leading-[1.6] tracking-[0.06px]">{memo.content}</p>
+                  <p className="text-[13px] text-[#c7c0b2] leading-[1.7] tracking-[0.2px] font-medium">{memo.content}</p>
                 </div>
               ))
             )}
