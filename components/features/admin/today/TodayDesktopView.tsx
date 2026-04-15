@@ -248,57 +248,57 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         </div>
 
         {/* ── Right: Alerts + Memo ────────────────────────────────────── */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
 
           {/* Alerts */}
-          <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden">
-            <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
-              <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#d4785a1a] rounded-[6px]">
-                <AlertTriangle size={14} className="text-[#d4785a]" strokeWidth={2.5} />
+          <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden">
+            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+              <div className="w-[32px] h-[32px] flex items-center justify-center bg-red-500/10 rounded-sm">
+                <AlertTriangle size={16} className="text-red-400" strokeWidth={2} />
               </div>
-              <p className="text-[12px] font-semibold text-[#f4f1ea]">優先アラート</p>
+              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">Alerts</p>
             </div>
-            <div className="p-3 space-y-2">
+            <div className="p-4 space-y-3">
               {alerts.length === 0 ? (
-                <p className="text-[11px] text-[#5a5650] italic text-center py-4">アラートなし</p>
+                <p className="text-[11px] text-[#5a5650] italic text-center py-6 font-sans">No alerts available</p>
               ) : alerts.map((a) => (
                 <div
                   key={a.label}
-                  className={`rounded-[10px] border p-3 ${
+                  className={`rounded-sm border p-4 transition-all duration-300 ${
                     a.level === 'danger'
-                      ? 'border-[#d4785a30] bg-[#d4785a0a]'
-                      : 'border-[#c8884d30] bg-[#c8884d0a]'
+                      ? 'border-red-500/20 bg-red-500/5'
+                      : 'border-orange-500/20 bg-orange-500/5'
                   }`}
                 >
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <div className={`w-[5px] h-[5px] rounded-full shrink-0 ${a.level === 'danger' ? 'bg-[#d4785a]' : 'bg-[#c8884d]'}`} />
-                    <p className={`text-[11px] font-bold ${a.level === 'danger' ? 'text-[#d4785a]' : 'text-[#c8884d]'}`}>{a.label}</p>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 animate-pulse ${a.level === 'danger' ? 'bg-red-500' : 'bg-orange-500'}`} />
+                    <p className={`text-[11px] font-bold tracking-wide font-sans ${a.level === 'danger' ? 'text-red-400' : 'text-orange-400'}`}>{a.label}</p>
                   </div>
-                  <p className="text-[10px] text-[#8a8478] pl-[13px]">{a.detail}</p>
+                  <p className="text-[10px] text-[#8a8478] leading-relaxed pl-3.5 italic font-sans">{a.detail}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Memo */}
-          <div className="flex flex-col bg-[rgba(0,0,0,0.94)] rounded-[18px] border-[1.5px] border-[#927624] shadow-[4px_4px_10px_0_#A68A32] overflow-hidden flex-1">
-            <div className="flex items-center gap-2.5 px-5 h-[56px] border-b border-[#ffffff08]">
-              <div className="w-[28px] h-[28px] flex items-center justify-center bg-[#dfbd691a] rounded-[6px]">
-                <StickyNote size={14} className="text-[#dfbd69]" strokeWidth={2.5} />
+          <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden flex-1">
+            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+              <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
+                <StickyNote size={16} className="text-gold" strokeWidth={2} />
               </div>
-              <p className="text-[12px] font-semibold text-[#f4f1ea]">営業メモ</p>
+              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">Operations Memo</p>
             </div>
-            <div className="p-3 space-y-2">
+            <div className="p-4 space-y-3">
               {([
-                { type: 'VIP',   content: ops.vipMemo,    color: 'text-[#dfbd69] border-[#dfbd6930] bg-[#dfbd6908]' },
-                { type: 'EVENT', content: ops.eventMemo,  color: 'text-[#72b894] border-[#72b89430] bg-[#72b89408]' },
-                { type: 'STAFF', content: ops.urgentMemo, color: 'text-[#c8884d] border-[#c8884d30] bg-[#c8884d08]' },
+                { type: 'VIP',   content: ops.vipMemo,    color: 'text-gold border-gold/20 bg-gold/5' },
+                { type: 'EVENT', content: ops.eventMemo,  color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
+                { type: 'STAFF', content: ops.urgentMemo, color: 'text-orange-400 border-orange-500/20 bg-orange-500/5' },
               ] as const).map((m) => (
-                <div key={m.type} className={`rounded-[10px] border px-3 py-2.5 ${m.color}`}>
-                  <p className={`text-[8px] font-bold tracking-[1.4px] uppercase mb-1 opacity-80 ${m.color.split(' ')[0]}`}>{m.type}</p>
-                  <p className="text-[11px] text-[#cbc3b3] leading-relaxed">
-                    {m.content ?? <span className="text-[#5a5650] italic">未入力</span>}
-                  </p>
+                <div key={m.type} className={`rounded-sm border p-4 transition-all hover:bg-white/[0.02] ${m.color}`}>
+                  <p className={`text-[9px] font-bold tracking-[2px] uppercase mb-2 opacity-80 ${m.color.split(' ')[0]}`}>{m.type}</p>
+                  <div className="text-[11px] text-[#cbc3b3] leading-relaxed italic font-sans">
+                    {m.content ?? <span className="opacity-40 italic">Not set</span>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -371,17 +371,17 @@ function AllTab({
   const sortedGroups = Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Cast groups */}
       {sortedGroups.length > 0 && (
-        <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">出勤キャスト</p>
+        <div className="space-y-4">
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">出勤キャスト</p>
           {sortedGroups.map(([time, group]) => (
-            <div key={time} className="mb-3">
-              <div className="flex items-center gap-2 px-3 mb-1">
-                <Clock size={10} className="text-[#dfbd69]" />
-                <span className="text-[10px] font-bold text-[#dfbd69]">{time}〜</span>
-                <span className="text-[9px] text-[#5a5650]">{group.casts.length + group.dispatches.length}名</span>
+            <div key={time} className="mb-4">
+              <div className="flex items-center gap-2 px-3 mb-2">
+                <Clock size={12} className="text-gold" />
+                <span className="text-[11px] font-bold text-gold tracking-tight">{time}〜</span>
+                <span className="text-[10px] font-bold text-[#5a5650] tracking-wide ml-1">{group.casts.length + group.dispatches.length}名</span>
               </div>
               <div className="pl-6 space-y-0.5">
                 {group.casts.map(name => (
@@ -404,12 +404,12 @@ function AllTab({
       {/* Trials */}
       {data.trials.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">体入</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">体入</p>
           {data.trials.map(t => (
             <Row key={t.id}>
-              <Badge color="purple">体入</Badge>
-              <span className="text-[12px] text-[#cbc3b3]">{t.name}</span>
-              <span className="text-[10px] text-[#5a5650] ml-auto">{t.start_time.substring(0, 5)}〜</span>
+              <Badge color="purple">TRIAL</Badge>
+              <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
+              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
             </Row>
           ))}
         </div>
@@ -418,12 +418,12 @@ function AllTab({
       {/* Staff */}
       {data.staffAttendances.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">スタッフ</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">スタッフ</p>
           {data.staffAttendances.map(s => (
             <Row key={s.id}>
-              <Users size={11} className="text-[#5a5650]" />
-              <span className="text-[12px] text-[#cbc3b3]">{s.display_name}</span>
-              <span className="text-[10px] text-[#5a5650] ml-auto">{s.start_time.substring(0, 5)}〜</span>
+              <Users size={12} className="text-[#5a5650]" />
+              <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
+              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
             </Row>
           ))}
         </div>
@@ -432,12 +432,12 @@ function AllTab({
       {/* Changes */}
       {data.shiftChanges.filter(c => c.new_time).length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日変更</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">当日変更</p>
           {data.shiftChanges.filter(c => c.new_time).map(c => (
             <Row key={c.id}>
-              <Badge color="orange">変更</Badge>
-              <span className="text-[12px] text-[#cbc3b3]">{c.stage_name}</span>
-              <span className="text-[10px] text-[#5a5650] ml-auto">
+              <Badge color="orange">CHANGE</Badge>
+              <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
+              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
                 {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
               </span>
             </Row>
@@ -448,18 +448,18 @@ function AllTab({
       {/* Absent */}
       {absentNames.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">当日欠勤</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
-              <Badge color="red">欠勤</Badge>
-              <span className="text-[12px] text-[#d4785a]">{name}</span>
+              <Badge color="red">ABSENT</Badge>
+              <span className="text-[12px] font-bold text-[#d4785a]">{name}</span>
             </Row>
           ))}
         </div>
       )}
 
       {sortedGroups.length === 0 && data.trials.length === 0 && (
-        <p className="text-[12px] text-[#5a5650] italic text-center py-8">本日の登録データがありません</p>
+        <p className="text-[12px] text-[#5a5650] italic text-center py-12">No data recorded for today.</p>
       )}
     </div>
   )
@@ -487,35 +487,35 @@ function CastTab({
   const router = useRouter()
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Active casts */}
       <div>
-        <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3 flex items-center justify-between">
-          <span>確定出勤 ({activeCasts.length + data.dispatches.length}名)</span>
+        <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
+          <span>ACTIVE CASTS ({activeCasts.length + data.dispatches.length})</span>
           <button
             onClick={() => setShowDispatch(!showDispatch)}
-            className="flex items-center gap-1 text-[#dfbd69] hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
-            <Plus size={10} />
-            <span>派遣追加</span>
+            <Plus size={12} strokeWidth={2.5} />
+            <span className="text-[9px] font-bold tracking-widest uppercase">ADD DISPATCH</span>
           </button>
         </p>
         {activeCasts.map(s => (
           <Row key={s.cast_id}>
-            <span className="text-[12px] text-[#cbc3b3]">{s.stage_name}</span>
-            <span className="text-[10px] text-[#5a5650] ml-auto">{s.start_time.substring(0, 5)}〜</span>
+            <span className="text-[12px] font-bold text-[#cbc3b3]">{s.stage_name}</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
           </Row>
         ))}
         {data.dispatches.map(d => (
           <Row key={d.id}>
-            <Badge color="blue">派遣</Badge>
-            <span className="text-[12px] text-[#cbc3b3]">{d.name}</span>
-            <span className="text-[10px] text-[#5a5650] ml-auto">{d.start_time.substring(0, 5)}〜</span>
+            <Badge color="blue">DISPATCH</Badge>
+            <span className="text-[12px] font-bold text-[#cbc3b3]">{d.name}</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{d.start_time.substring(0, 5)}〜</span>
             <button
               onClick={() => handleAction(() => deleteDispatch(d.id))}
-              className="ml-1 text-[#5a5650] hover:text-[#d4785a] transition-colors"
+              className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
-              <Trash2 size={11} />
+              <Trash2 size={12} />
             </button>
           </Row>
         ))}
@@ -528,11 +528,11 @@ function CastTab({
                 setShowDispatch(false)
                 router.refresh()
               }}
-              className="space-y-2"
+              className="space-y-3"
             >
-              <input name="name" type="text" placeholder="派遣キャスト名" required className={inputCls} />
+              <input name="name" type="text" placeholder="Cast Name" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" className="w-full py-1.5 bg-[#dfbd69] text-[#0b0b0d] text-[11px] font-bold rounded-[6px]">追加</button>
+              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD DISPATCH</button>
             </form>
           </AddFormWrapper>
         )}
@@ -540,29 +540,29 @@ function CastTab({
 
       {/* Trials */}
       <div>
-        <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3 flex items-center justify-between">
-          <span>体入 ({data.trials.length}名)</span>
+        <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
+          <span>TRIALS ({data.trials.length})</span>
           <button
             onClick={() => setShowTrial(!showTrial)}
-            className="flex items-center gap-1 text-[#dfbd69] hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
-            <Plus size={10} />
-            <span>追加</span>
+            <Plus size={12} strokeWidth={2.5} />
+            <span className="text-[9px] font-bold tracking-widest uppercase">ADD</span>
           </button>
         </p>
         {data.trials.length === 0 && !showTrial && (
-          <p className="text-[11px] text-[#5a5650] italic px-3 py-2">本日の体入はありません</p>
+          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">No trials recorded for today.</p>
         )}
         {data.trials.map(t => (
           <Row key={t.id}>
-            <Badge color="purple">体入</Badge>
-            <span className="text-[12px] text-[#cbc3b3]">{t.name}</span>
-            <span className="text-[10px] text-[#5a5650] ml-auto">{t.start_time.substring(0, 5)}〜</span>
+            <Badge color="purple">TRIAL</Badge>
+            <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
             <button
               onClick={() => handleAction(() => deleteTrial(t.id))}
-              className="ml-1 text-[#5a5650] hover:text-[#d4785a] transition-colors"
+              className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
-              <Trash2 size={11} />
+              <Trash2 size={12} />
             </button>
           </Row>
         ))}
@@ -575,11 +575,11 @@ function CastTab({
                 setShowTrial(false)
                 router.refresh()
               }}
-              className="space-y-2"
+              className="space-y-3"
             >
-              <input name="name" type="text" placeholder="体入キャスト名" required className={inputCls} />
+              <input name="name" type="text" placeholder="Trial Cast Name" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" className="w-full py-1.5 bg-[#dfbd69] text-[#0b0b0d] text-[11px] font-bold rounded-[6px]">追加</button>
+              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD TRIAL</button>
             </form>
           </AddFormWrapper>
         )}
@@ -587,31 +587,31 @@ function CastTab({
 
       {/* Changes */}
       <div>
-        <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3 flex items-center justify-between">
-          <span>当日変更</span>
+        <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
+          <span>SHIFT CHANGES</span>
           <button
             onClick={() => setShowChange(!showChange)}
-            className="flex items-center gap-1 text-[#dfbd69] hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
-            <Plus size={10} />
-            <span>追加</span>
+            <Plus size={12} strokeWidth={2.5} />
+            <span className="text-[9px] font-bold tracking-widest uppercase">ADD</span>
           </button>
         </p>
         {data.shiftChanges.filter(c => c.new_time).length === 0 && !showChange && (
-          <p className="text-[11px] text-[#5a5650] italic px-3 py-2">当日変更なし</p>
+          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">No shift changes today.</p>
         )}
         {data.shiftChanges.filter(c => c.new_time).map(c => (
           <Row key={c.id}>
-            <Badge color="orange">変更</Badge>
-            <span className="text-[12px] text-[#cbc3b3]">{c.stage_name}</span>
-            <span className="text-[10px] text-[#5a5650] ml-auto">
+            <Badge color="orange">CHANGE</Badge>
+            <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
               {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
             </span>
             <button
               onClick={() => handleAction(() => deleteShiftChange(c.id))}
-              className="ml-1 text-[#5a5650] hover:text-[#d4785a] transition-colors"
+              className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
-              <Trash2 size={11} />
+              <Trash2 size={12} />
             </button>
           </Row>
         ))}
@@ -624,18 +624,18 @@ function CastTab({
                 setShowChange(false)
                 router.refresh()
               }}
-              className="space-y-2"
+              className="space-y-3"
             >
               <select name="cast_id" required className={inputCls}>
-                <option value="">キャストを選択</option>
+                <option value="">Select Cast</option>
                 {casts.map(c => <option key={c.id} value={c.id}>{c.stage_name}</option>)}
               </select>
-              <div className="grid grid-cols-2 gap-2">
-                <input name="original_time" type="time" placeholder="変更前" className={inputCls} />
-                <input name="new_time"      type="time" placeholder="変更後" className={inputCls} />
+              <div className="grid grid-cols-2 gap-3">
+                <input name="original_time" type="time" placeholder="From" className={inputCls} />
+                <input name="new_time"      type="time" placeholder="To" className={inputCls} />
               </div>
-              <input name="note" type="text" placeholder="メモ（同伴ありなど）" className={inputCls} />
-              <button type="submit" className="w-full py-1.5 bg-[#dfbd69] text-[#0b0b0d] text-[11px] font-bold rounded-[6px]">追加</button>
+              <input name="note" type="text" placeholder="Note (e.g. Douhan)" className={inputCls} />
+              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD CHANGE</button>
             </form>
           </AddFormWrapper>
         )}
@@ -644,11 +644,11 @@ function CastTab({
       {/* Absent */}
       {absentNames.length > 0 && (
         <div>
-          <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase mb-2 px-3">当日欠勤</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 font-sans">ABSENT CASTS</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
-              <Badge color="red">欠勤</Badge>
-              <span className="text-[12px] text-[#d4785a]">{name}</span>
+              <Badge color="red">ABSENT</Badge>
+              <span className="text-[12px] font-bold text-red-400">{name}</span>
             </Row>
           ))}
         </div>
@@ -664,26 +664,26 @@ function VisitTab({ data }: { data: TodayDashboardData }) {
   return (
     <div className="space-y-1">
       {data.reservations.length === 0 ? (
-        <p className="text-[12px] text-[#5a5650] italic text-center py-8">本日の来店予定はありません</p>
+        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans uppercase tracking-widest">No reservations found</p>
       ) : (
         <>
           {/* Table header */}
-          <div className="flex items-center h-[30px] px-3 mb-1 border-b border-[#ffffff08]">
-            <span className="text-[9px] font-bold tracking-[0.7px] text-[#5a5650] uppercase w-14">時間</span>
-            <span className="text-[9px] font-bold tracking-[0.7px] text-[#5a5650] uppercase w-24">キャスト</span>
-            <span className="text-[9px] font-bold tracking-[0.7px] text-[#5a5650] uppercase flex-1">お客様</span>
-            <span className="text-[9px] font-bold tracking-[0.7px] text-[#5a5650] uppercase w-16 text-right">種別</span>
+          <div className="flex items-center h-[32px] px-3 mb-1 border-b border-white/5">
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-14">Time</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-24">Cast</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase flex-1">Guest</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-16 text-right">Type</span>
           </div>
           {data.reservations.map(r => (
-            <div key={r.id} className="flex items-center h-[36px] px-3 hover:bg-[#ffffff04] rounded-[6px] transition-colors">
-              <span className="text-[12px] font-bold text-[#dfbd69] w-14 shrink-0">
+            <div key={r.id} className="flex items-center h-[40px] px-3 hover:bg-white/[0.03] rounded-sm transition-colors border-b border-white/[0.02] last:border-0 group">
+              <span className="text-[12px] font-bold text-gold w-14 shrink-0 transition-all group-hover:tracking-wider">
                 {r.visit_time.substring(0, 5)}
               </span>
-              <span className="text-[12px] text-[#cbc3b3] w-24 truncate shrink-0">{r.stage_name}</span>
-              <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                <span className="text-[12px] text-[#8a8478] truncate">{r.guest_name}様</span>
+              <span className="text-[12px] font-bold text-[#f4f1ea] w-24 truncate shrink-0">{r.stage_name}</span>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-[12px] text-[#cbc3b3] truncate">{r.guest_name} 様</span>
                 {r.guest_count && (
-                  <span className="text-[10px] text-[#5a5650] shrink-0">{r.guest_count}名</span>
+                  <span className="text-[10px] font-bold text-[#5a5650] shrink-0">/ {r.guest_count} 名</span>
                 )}
               </div>
               <div className="w-16 text-right">
@@ -713,37 +713,39 @@ function StaffTab({
   const router = useRouter()
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between px-3 mb-3">
-        <p className="text-[9px] font-bold tracking-[0.8px] text-[#5a5650] uppercase">
-          スタッフ出勤 ({data.staffAttendances.length}名)
+    <div className="space-y-4">
+      <div className="flex items-center justify-between px-3">
+        <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">
+          STAFF ATTENDANCE ({data.staffAttendances.length})
         </p>
         <button
           onClick={() => setShowStaff(!showStaff)}
-          className="flex items-center gap-1 text-[10px] text-[#dfbd69] hover:opacity-80 transition-opacity"
+          className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
         >
-          <Plus size={10} />
-          追加
+          <Plus size={12} strokeWidth={2.5} />
+          <span className="text-[9px] font-bold tracking-widest uppercase">ADD STAFF</span>
         </button>
       </div>
 
       {data.staffAttendances.length === 0 && !showStaff && (
-        <p className="text-[11px] text-[#5a5650] italic text-center py-8">スタッフ登録なし</p>
+        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans tracking-widest uppercase">No staff recorded</p>
       )}
 
-      {data.staffAttendances.map(s => (
-        <Row key={s.id}>
-          <Users size={11} className="text-[#5a5650]" />
-          <span className="text-[12px] text-[#cbc3b3]">{s.display_name}</span>
-          <span className="text-[10px] text-[#5a5650] ml-auto">{s.start_time.substring(0, 5)}〜</span>
-          <button
-            onClick={() => handleAction(() => deleteStaffAttendance(s.id))}
-            className="ml-1 text-[#5a5650] hover:text-[#d4785a] transition-colors"
-          >
-            <Trash2 size={11} />
-          </button>
-        </Row>
-      ))}
+      <div className="space-y-0.5">
+        {data.staffAttendances.map(s => (
+          <Row key={s.id}>
+            <Users size={12} className="text-[#5a5650]" />
+            <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
+            <button
+              onClick={() => handleAction(() => deleteStaffAttendance(s.id))}
+              className="ml-3 text-[#5a5650] hover:text-red-400 transition-colors"
+            >
+              <Trash2 size={12} />
+            </button>
+          </Row>
+        ))}
+      </div>
 
       {showStaff && (
         <AddFormWrapper onClose={() => setShowStaff(false)}>
@@ -757,19 +759,19 @@ function StaffTab({
               setShowStaff(false)
               router.refresh()
             }}
-            className="space-y-2"
+            className="space-y-3"
           >
             <select name="staff_id" required className={inputCls}>
-              <option value="">スタッフを選択</option>
+              <option value="">Select Staff...</option>
               {data.allStaffs.map(s => (
-                <option key={s.id} value={s.id}>{s.display_name} ({s.role || '役割なし'})</option>
+                <option key={s.id} value={s.id}>{s.display_name} ({s.role || 'No Role'})</option>
               ))}
             </select>
             <input name="start_time" type="time" required className={inputCls} />
             <input type="hidden" name="display_name" value="" />
-            <button type="submit" className="w-full py-1.5 bg-[#dfbd69] text-[#0b0b0d] text-[11px] font-bold rounded-[6px]">追加</button>
+            <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD STAFF</button>
             {data.allStaffs.length === 0 && (
-              <p className="text-[10px] text-[#d4785a]">※人材管理からスタッフを登録してください</p>
+              <p className="text-[10px] font-bold text-red-500/80 px-1">※ Please register staff in Human Resources.</p>
             )}
           </form>
         </AddFormWrapper>
@@ -789,108 +791,123 @@ function UnconfirmedTab({
   handleAction: (fn: () => Promise<{ error?: string } | { success: boolean }>) => void
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-6">
       {data.pendingCheckins.length > 0 && (
-        <div className="space-y-2 pb-3">
-          <p className="text-[10px] text-[#dfbd69] px-3 pb-1">本日の確認 承認待ち</p>
-          {data.pendingCheckins.map(checkin => (
-            <div key={checkin.id} className="rounded-[8px] border border-[#dfbd6926] bg-[#dfbd6908] px-3 py-2.5">
-              <div className="flex items-start gap-2">
-                <Badge color="orange">承認待ち</Badge>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-semibold text-[#f4f1ea]">{checkin.stage_name}</p>
-                  <p className="mt-1 text-[11px] text-[#cbc3b3]">
-                    欠勤: {checkin.is_absent ? 'あり' : 'なし'} / 出勤変更: {checkin.has_change ? 'あり' : 'なし'}
-                  </p>
-                  {checkin.change_note ? (
-                    <p className="mt-1 text-[10px] text-[#8a8478]">変更内容: {checkin.change_note}</p>
-                  ) : null}
-                  {checkin.memo ? (
-                    <p className="mt-1 text-[10px] text-[#8a8478]">メモ: {checkin.memo}</p>
-                  ) : null}
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold tracking-[2px] text-gold uppercase px-3 pb-1 border-b border-gold/10">PENDING CONFIRMATIONS</p>
+          <div className="space-y-3">
+            {data.pendingCheckins.map(checkin => (
+              <div key={checkin.id} className="rounded-sm border border-gold/20 bg-gold/[0.02] p-5 backdrop-blur-sm transition-all hover:bg-gold/[0.04]">
+                <div className="flex items-start gap-4">
+                  <Badge color="orange">PENDING</Badge>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-bold text-[#f4f1ea] tracking-tight">{checkin.stage_name}</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <div className="text-[10px] text-[#8a8478]">欠勤: <span className={checkin.is_absent ? 'text-red-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.is_absent ? 'YES' : 'NO'}</span></div>
+                      <div className="text-[10px] text-[#8a8478]">変更: <span className={checkin.has_change ? 'text-orange-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.has_change ? 'YES' : 'NO'}</span></div>
+                    </div>
+                    {checkin.change_note && (
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Note: {checkin.change_note}</p>
+                    )}
+                    {checkin.memo && (
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Memo: {checkin.memo}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-5 flex gap-2">
+                  <button
+                    onClick={() => handleAction(() => approveCheckin(checkin.id))}
+                    className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleAction(() => rejectCheckin(checkin.id))}
+                    className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => handleAction(() => approveCheckin(checkin.id))}
-                  className="rounded-[6px] bg-[#72b894] px-3 py-1.5 text-[10px] font-bold text-[#0b0b0d]"
-                >
-                  承認
-                </button>
-                <button
-                  onClick={() => handleAction(() => rejectCheckin(checkin.id))}
-                  className="rounded-[6px] border border-[#d4785a40] px-3 py-1.5 text-[10px] font-bold text-[#d4785a]"
-                >
-                  差し戻し
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
       {data.pendingReservations.length > 0 && (
-        <div className="space-y-2 pb-3">
-          <p className="text-[10px] text-[#dfbd69] px-3 pb-1">来店予定 承認待ち</p>
-          {data.pendingReservations.map(reservation => (
-            <div key={reservation.id} className="rounded-[8px] border border-[#6ab0d426] bg-[#6ab0d408] px-3 py-2.5">
-              <div className="flex items-start gap-2">
-                <Badge color="blue">{reservation.reservation_type === 'douhan' ? '同伴' : '来店'}</Badge>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-semibold text-[#f4f1ea]">
-                    {reservation.visit_time.substring(0, 5)} / {reservation.stage_name}
-                  </p>
-                  <p className="mt-1 text-[11px] text-[#cbc3b3]">
-                    {reservation.guest_name}様
-                    {reservation.guest_count ? ` / ${reservation.guest_count}名` : ''}
-                  </p>
-                  {reservation.note ? (
-                    <p className="mt-1 text-[10px] text-[#8a8478]">メモ: {reservation.note}</p>
-                  ) : null}
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold tracking-[2px] text-blue-400 uppercase px-3 pb-1 border-b border-blue-500/10">PENDING RESERVATIONS</p>
+          <div className="space-y-3">
+            {data.pendingReservations.map(reservation => (
+              <div key={reservation.id} className="rounded-sm border border-blue-500/20 bg-blue-500/[0.02] p-5 backdrop-blur-sm transition-all hover:bg-blue-500/[0.04]">
+                <div className="flex items-start gap-4">
+                  <Badge color="blue">{reservation.reservation_type === 'douhan' ? 'DOUHAN' : 'VISIT'}</Badge>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-bold text-[#f4f1ea] tracking-tight">
+                      {reservation.visit_time.substring(0, 5)} / {reservation.stage_name}
+                    </p>
+                    <p className="mt-2 text-[11px] font-bold text-[#cbc3b3]">
+                      {reservation.guest_name} 様
+                      {reservation.guest_count ? <span className="text-[#5a5650] ml-1">({reservation.guest_count} 名)</span> : ''}
+                    </p>
+                    {reservation.note && (
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Note: {reservation.note}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-5 flex gap-2">
+                  <button
+                    onClick={() => handleAction(() => approveReservation(reservation.id))}
+                    className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleAction(() => rejectReservation(reservation.id))}
+                    className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
+                  >
+                    Reject
+                  </button>
                 </div>
               </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => handleAction(() => approveReservation(reservation.id))}
-                  className="rounded-[6px] bg-[#72b894] px-3 py-1.5 text-[10px] font-bold text-[#0b0b0d]"
-                >
-                  承認
-                </button>
-                <button
-                  onClick={() => handleAction(() => rejectReservation(reservation.id))}
-                  className="rounded-[6px] border border-[#d4785a40] px-3 py-1.5 text-[10px] font-bold text-[#d4785a]"
-                >
-                  差し戻し
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
       {data.unconfirmedCasts.length === 0 && data.pendingCheckins.length === 0 && data.pendingReservations.length === 0 ? (
-        <p className="text-[12px] text-[#72b894] italic text-center py-8">未確認キャストなし ✓</p>
+        <div className="flex flex-col items-center justify-center py-16 space-y-3">
+          <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+            <CheckCheck size={20} className="text-emerald-400" />
+          </div>
+          <p className="text-[11px] text-emerald-400 font-bold tracking-[3px] uppercase">All Cleared</p>
+        </div>
       ) : (
         <>
           {data.unconfirmedCasts.length > 0 ? (
-            <>
-              <p className="text-[10px] text-[#d4785a] px-3 pb-2">本日の確認フォームを未送信のキャストです</p>
-              {data.unconfirmedCasts.map(c => {
-                const mailSent = data.mailSentCastIds?.includes(c.cast_id)
-                return (
-                  <Row key={c.cast_id}>
-                    <AlertTriangle size={11} className="text-[#d4785a]" />
-                    <span className="text-[12px] font-medium text-[#d4785a]">{c.stage_name}</span>
-                    <span className="ml-auto">
-                      {mailSent
-                        ? <Badge color="blue">📧 メール済み</Badge>
-                        : <Badge color="red">未連絡</Badge>
-                      }
-                    </span>
-                  </Row>
-                )
-              })}
-            </>
+            <div className="space-y-3 pt-2">
+              <p className="text-[10px] font-bold tracking-[2px] text-red-500/80 px-3 flex items-center gap-2 uppercase">
+                <AlertTriangle size={12} />
+                <span>UNSENT CONFIRMATION FORMS</span>
+              </p>
+              <div className="space-y-0.5">
+                {data.unconfirmedCasts.map(c => {
+                  const mailSent = data.mailSentCastIds?.includes(c.cast_id)
+                  return (
+                    <Row key={c.cast_id}>
+                      <AlertTriangle size={12} className="text-red-500/60" />
+                      <span className="text-[12px] font-bold text-red-400/90">{c.stage_name}</span>
+                      <span className="ml-auto">
+                        {mailSent
+                          ? <Badge color="blue">📧 SENT</Badge>
+                          : <Badge color="red">NOT CONTACTED</Badge>
+                        }
+                      </span>
+                    </Row>
+                  )
+                })}
+              </div>
+            </div>
           ) : null}
         </>
       )}

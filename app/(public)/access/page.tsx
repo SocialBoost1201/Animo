@@ -4,6 +4,7 @@ import { RevealText } from '@/components/motion/RevealText';
 import { MapPin, Phone, Clock, Train, Building2 } from 'lucide-react';
 
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export default function AccessPage() {
   return (
     <div className="min-h-screen bg-transparent pb-32">
+      <LocalBusinessSchema />
       <BreadcrumbSchema breadcrumbs={[
         { name: 'HOME', item: 'https://club-animo.jp/' },
         { name: 'ACCESS', item: 'https://club-animo.jp/access' }
@@ -142,7 +144,7 @@ export default function AccessPage() {
 
           {/* 周辺情報（最寄駅アクセス詳細） */}
           <FadeIn delay={0.3} className="max-w-2xl mx-auto">
-            <h2 className="text-xl font-serif text-foreground mb-12 luxury-tracking uppercase border-b border-gold/30 pb-4 inline-block">
+            <h2 className="text-xl font-serif font-bold text-foreground mb-12 luxury-tracking uppercase border-b border-gold/30 pb-4 inline-block">
               How to Access
             </h2>
             <ul className="space-y-6 text-sm text-gray-600 font-serif leading-[2.2] tracking-wider">
@@ -150,7 +152,7 @@ export default function AccessPage() {
                 <span className="text-gold text-xl mt-1">—</span>
                 <div>
                   <p className="text-foreground font-serif mb-1">
-                    JR根岸線「関内駅」北口より <strong className="text-gold">徒歩 約5分</strong>
+                    JR根岸線「関内駅」北口より <strong className="text-gold font-bold">徒歩 約5分</strong>
                   </p>
                   <p className="text-xs text-gray-400">Kannai Station (JR Negishi Line) North Exit — 5 min walk</p>
                 </div>

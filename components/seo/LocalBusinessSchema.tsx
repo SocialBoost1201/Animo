@@ -4,12 +4,12 @@ export function LocalBusinessSchema() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "NightClub",
-    "name": "Club Animo",
+    "name": "CLUB Animo",
     "alternateName": "クラブアニモ",
     "url": "https://club-animo.jp/",
     "telephone": "045-263-6961",
     "image": "https://club-animo.jp/images/ogp.webp",
-    "description": "関内の大人の社交場。煌びやかなシャンデリアの下で特別な時間をお過ごしください。",
+    "description": "関内・馬車道エリアの高級キャバクラ「CLUB Animo」。洗練された空間と上質なキャストが大人の夜を演出します。",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "相生町３丁目５３ グランドパークビル2F",
