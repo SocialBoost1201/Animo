@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -17,8 +21,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ['exceljs', 'xlsx-populate'],
   experimental: {
-    optimizePackageImports: ['lucide-react', 'date-fns', 'lucide-react'],
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      'framer-motion',
+      'gsap',
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei'
+    ],
   },
 };
 

@@ -38,16 +38,23 @@ export const HeroVideoRotatorV2: React.FC<ExtendedHeroProps> = ({
 }) => {
   const displayMedia = media.slice(0, 3);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const [isReducedMotion, setIsReducedMotion] = useState<boolean>(
+    () => typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
+  );
+
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const timer = setTimeout(() => setIsReducedMotion(mediaQuery.matches), 0);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+
     const handleChange = (e: MediaQueryListEvent) => setIsReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
+    window.addEventListener('resize', checkMobile);
+
     return () => {
-      clearTimeout(timer);
       mediaQuery.removeEventListener('change', handleChange);
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 
@@ -63,10 +70,19 @@ export const HeroVideoRotatorV2: React.FC<ExtendedHeroProps> = ({
   // ──────────────────────────────────────
   // アニメーション スタイル定義
   // ──────────────────────────────────────
-  const wrapperStyle: React.CSSProperties = isReducedMotion
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  useEffect(() => {
+    // マウント後にアニメーションを許可（SSR時は全表示状態を維持して LCP を稼ぐ）
+    const timer = setTimeout(() => setShouldAnimate(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const wrapperStyle: React.CSSProperties = (isReducedMotion || !shouldAnimate)
     ? {}
     : {
-        animation: 'clip-hero-anim 1.25s cubic-bezier(0.29, 0.8, 0.8, 0.98) both',
+        // モバイルでは LCP 悪化を避けるため clip-path アニメーションをスキップ
+        animation: isMobile ? 'none' : 'clip-hero-anim 0.8s cubic-bezier(0.29, 0.8, 0.8, 0.98) both',
         willChange: 'clip-path',
       };
 
@@ -105,14 +121,13 @@ export const HeroVideoRotatorV2: React.FC<ExtendedHeroProps> = ({
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4 w-full">
         {/* ③ CLUB Animo */}
         <h1
-          className="text-white font-serif luxury-tracking-super text-4xl md:text-5xl lg:text-6xl font-normal mb-6"
+          className="text-white font-heading-en font-bold luxury-tracking-super text-4xl md:text-5xl lg:text-7xl mb-6"
           style={makeTextStyle(1.5)}
         >
           CLUB Animo
         </h1>
 
-        {/* ④⑤ サブコピー（行ごとに分割してアニメーション） */}
-        <div className="text-white/80 font-serif luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10">
+        <div className="text-white/80 font-heading-jp luxury-tracking text-sm md:text-base max-w-lg leading-[2.5] mb-10">
           <p style={makeTextStyle(1.9)}>煌びやかなシャンデリアの下で</p>
           <p style={makeTextStyle(2.2)}>特別な時間を</p>
         </div>

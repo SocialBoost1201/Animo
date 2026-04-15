@@ -23,19 +23,19 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   mobileFallbackSrc,
   mobileFallbackAlt,
 }) => {
-  const [isMobile, setIsMobile] = useState(true);
+  const [mounted] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // アクティブな動画の再生制御
   useEffect(() => {
-    if (media.length === 0 || isReducedMotion || isMobile) return;
+    if (!mounted || media.length === 0 || isReducedMotion || isMobile) return;
 
     media.forEach((item, i) => {
       const videoEl = videoRefs.current[i];
@@ -68,93 +68,88 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
         }, transitionMs);
       }
     });
-  }, [activeIndex, isMobile, media, isReducedMotion, transitionMs]);
+  }, [activeIndex, isMobile, media, isReducedMotion, transitionMs, mounted]);
 
   if (media.length === 0) {
     return <div className="absolute inset-0 bg-[#171717]" />;
   }
 
-  if (isMobile || isReducedMotion) {
-    const fallbackMedia = media[0];
-    const fallbackSrc =
-      mobileFallbackSrc ||
-      (fallbackMedia.type === 'image'
-        ? fallbackMedia.url
-        : fallbackMedia.posterUrl || '/images/hero-poster.webp');
-
-    return (
-      <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
-        <Image
-          src={fallbackSrc}
-          alt={mobileFallbackAlt || fallbackMedia.title || 'Hero Background'}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-      </div>
-    );
-  }
-
-  // ハイドレーション後もDOM構造は同じに保つ
+  // ──────────────────────────────────────
+  // LCP 最適化戦略: 
+  // サーバーサイドと初回クライアントサイドで「全く同じ構造」を保つ。
+  // 最初のポスター画像を z-index 上位で priority 表示。
+  // ──────────────────────────────────────
+  
+  const firstMedia = media[0];
+  const firstPosterSrc = mobileFallbackSrc || (firstMedia.type === 'image' ? firstMedia.url : (firstMedia.posterUrl ?? '/images/hero-poster.webp'));
   const durationSec = `${transitionMs / 1000}s`;
-
-  // デスクトップ: 最初に表示されるポスター画像をpriority=trueで先行描画（LCP対象）
-  const firstPosterSrc = media.length > 0
-    ? (media[0].type === 'image' ? media[0].url : (media[0].posterUrl ?? null))
-    : null;
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
-      {/* LCP最適化: 最初に実際に見えるポスター画像をpriority描画（opacity:0では効果なし → 実表示） */}
-      {firstPosterSrc && (
+      {/* 
+        1. LCP Core Image: 
+        この要素はサーバー/クライアントで不変。
+        activeIndex が 0 の間（初期状態）はこれが最前面に見えるように z-index を調整。
+      */}
+      <div 
+        className="absolute inset-0 transition-opacity duration-700"
+        style={{ 
+          zIndex: (activeIndex === 0) ? 15 : 5,
+          opacity: (activeIndex === 0) ? 1 : 0 
+        }}
+      >
         <Image
           src={firstPosterSrc}
-          alt={media[0].title ?? 'Hero Background'}
+          alt={mobileFallbackAlt || firstMedia.title || 'Hero Background'}
           fill
           priority
           fetchPriority="high"
           sizes="100vw"
           className="object-cover object-center"
-          style={{ zIndex: 5 }}
         />
-      )}
+      </div>
 
-      {media.slice(0, 3).map((item, i) => {
+      {/* 
+        2. Rotator Layer:
+        ハイドレーション後にデスクトップかつ非 Reduced Motion の場合のみ描画、
+        または常に描画して opacity で制御。
+        ここではハイドレーション後にアクティブにする。
+      */}
+      {mounted && !isMobile && !isReducedMotion && media.slice(0, 3).map((item, i) => {
+        // index 0 は LCP Core Image で既に出ているので、動画でない場合は飛ばしても良いが、
+        // トランジションをスムーズにするために動画の場合はここで管理する。
+        if (i === 0 && item.type !== 'video') return null;
+
         const isActive = i === activeIndex;
 
         // トランジションのスタイリング（基本はFade）
         let enterStyle: React.CSSProperties = { opacity: 1 };
         let exitStyle: React.CSSProperties  = { opacity: 0 };
 
-        if (!isReducedMotion) {
-          switch (transitionMode) {
-            case 'slide':
-              enterStyle = { transform: 'translateX(0)', opacity: 1 };
-              exitStyle  = { transform: 'translateX(-5%)', opacity: 0 };
-              break;
-            case 'zoom':
-              enterStyle = { transform: 'scale(1)', opacity: 1 };
-              exitStyle  = { transform: 'scale(1.08)', opacity: 0 };
-              break;
-            case 'burn':
-              enterStyle = { filter: 'brightness(1)', opacity: 1 };
-              exitStyle  = { filter: 'brightness(3)', opacity: 0 };
-              break;
-            case 'ripple': // 旧エフェクトの互換性維持のため、フェードクロスに変更
-            case 'fade':
-            default:
-              enterStyle = { opacity: 1 };
-              exitStyle  = { opacity: 0 };
-              break;
-          }
+        switch (transitionMode) {
+          case 'slide':
+            enterStyle = { transform: 'translateX(0)', opacity: 1 };
+            exitStyle  = { transform: 'translateX(-5%)', opacity: 0 };
+            break;
+          case 'zoom':
+            enterStyle = { transform: 'scale(1)', opacity: 1 };
+            exitStyle  = { transform: 'scale(1.08)', opacity: 0 };
+            break;
+          case 'burn':
+            enterStyle = { filter: 'brightness(1)', opacity: 1 };
+            exitStyle  = { filter: 'brightness(3)', opacity: 0 };
+            break;
+          default:
+            enterStyle = { opacity: 1 };
+            exitStyle  = { opacity: 0 };
+            break;
         }
 
         const style: React.CSSProperties = {
           position: 'absolute',
           inset: 0,
-          transition: isReducedMotion ? 'none' : `all ${durationSec} cubic-bezier(0.4, 0, 0.2, 1)`,
-          zIndex: isActive ? 10 : 0, // アクティブなものを手前に
+          transition: `all ${durationSec} cubic-bezier(0.4, 0, 0.2, 1)`,
+          zIndex: isActive ? 10 : 0,
           ...(isActive ? enterStyle : exitStyle),
         };
 
@@ -166,21 +161,20 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
                   videoRefs.current[i] = el;
                 }}
                 poster={item.posterUrl}
-                autoPlay={false} // useEffect側で明示的にコントロールするため初期はfalse
-                preload={i === 0 ? "auto" : "none"} // 最初の動画はバッファリング開始を早める
+                autoPlay={false}
+                preload={i === 0 ? "auto" : "none"}
                 loop
                 muted
                 playsInline
                 className="w-full h-full object-cover"
-                // ※ ここで src={item.url} と書かないことでLazy Loadを実現
               />
             ) : (
               <Image
                 src={item.url}
                 alt={item.title ?? 'Hero Background'}
                 fill
-                priority={i === 0}
                 className="object-cover"
+                sizes="100vw"
               />
             )}
           </div>

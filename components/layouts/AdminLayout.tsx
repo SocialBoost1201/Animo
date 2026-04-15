@@ -164,7 +164,7 @@ export function AdminLayout({
     <div className={`flex flex-col h-full font-inter border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
       {/* Branding */}
       <div className="h-[72px] px-5 flex items-center gap-3 shrink-0">
-        <Link prefetch={false} href="/admin/dashboard" className="flex items-center gap-3">
+        <Link prefetch={false} href="/admin/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-3">
           <div className="w-[36px] h-[36px] flex items-center justify-center rounded-[10px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 shadow-lg transition-transform hover:scale-105">
             <LayoutDashboard size={17} className="text-[#0b0b0d]" />
           </div>
@@ -213,6 +213,7 @@ export function AdminLayout({
                     key={`${section}-${item.href}`}
                     href={item.href}
                     prefetch={false}
+                    onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
                       isActive
                         ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
@@ -280,11 +281,11 @@ export function AdminLayout({
         {/* User Profile */}
         <div className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[11px] border ${T.userCard}`}>
           <div className="w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0">
-            <span className="text-[10px] font-bold text-[#0b0b0d]">店</span>
+            <span className="text-[10px] font-bold text-[#0b0b0d]">A</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-[11px] font-semibold truncate leading-none mb-0.5 ${T.userName}`}>田中 マネージャー</p>
-            <p className={`text-[9px] truncate leading-none ${T.userSub}`}>Club Animo · 管理者</p>
+            <p className={`text-[11px] font-semibold truncate leading-none mb-0.5 ${T.userName}`}>ANIMO CMS 管理者</p>
+            <p className={`text-[9px] truncate leading-none ${T.userSub}`}>Club Animo · 管理アカウント</p>
           </div>
           <form action={logout}>
             <button type="submit" className={`p-1.5 transition-colors rounded-lg hover:bg-[#d4785a10] hover:text-[#d4785a] ${T.userSub}`} title="ログアウト">

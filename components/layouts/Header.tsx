@@ -10,7 +10,6 @@ import { Magnetic } from '@/components/motion/Magnetic';
 const NAV_ITEMS = [
   { label: 'System', href: '/system' },
   { label: 'Cast', href: '/cast' },
-  { label: 'Shift', href: '/shift' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Access', href: '/access' },
 ];
@@ -84,25 +83,26 @@ export const Header = () => {
         <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <span
-              className="font-serif luxury-tracking-super transition-colors duration-500 font-normal text-[#171717] text-lg"
+              className="font-heading-en font-bold luxury-tracking-super transition-colors duration-500 text-[#171717] text-lg"
             >
               CLUB Animo
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center space-x-10">
             {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-gold',
-                  pathname === item.href ? 'text-gold' : 'text-[#171717]'
-                )}
-              >
-                {item.label}
-              </Link>
+              <Magnetic key={item.label}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "text-sm font-ui font-bold uppercase tracking-widest transition-colors hover:text-gold",
+                    pathname === item.href ? "text-gold" : "text-[#171717]"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              </Magnetic>
             ))}
 
             {/* Recruit Dropdown (Desktop) */}
@@ -114,7 +114,7 @@ export const Header = () => {
             >
               <button
                 className={cn(
-                  'text-xs font-serif luxury-tracking uppercase transition-colors hover:text-gold flex items-center gap-1',
+                  'text-xs font-ui font-bold luxury-tracking uppercase transition-colors hover:text-gold flex items-center gap-1',
                   isRecruitActive ? 'text-gold' : 'text-[#171717]'
                 )}
                 onClick={() => setIsRecruitOpen(!isRecruitOpen)}
@@ -133,7 +133,7 @@ export const Header = () => {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          'block px-5 py-3 text-xs font-serif luxury-tracking text-[#171717] hover:bg-gold/10 hover:text-gold transition-colors border-b border-gold/10 last:border-b-0',
+                          'block px-5 py-3 text-xs font-ui luxury-tracking text-[#171717] hover:bg-gold/10 hover:text-gold transition-colors border-b border-gold/10 last:border-b-0',
                           pathname === item.href && 'text-gold bg-gold/5'
                         )}
                       >
@@ -147,7 +147,7 @@ export const Header = () => {
             <Magnetic strength={0.2} className="ml-4">
               <Link
                 href="/recruit/cast"
-                className="block px-6 py-2 border border-gold bg-gold text-[#171717] font-bold text-xs font-serif luxury-tracking uppercase transition-all duration-500 hover:bg-transparent hover:text-gold"
+                className="block px-6 py-2 border border-gold bg-gold text-[#171717] font-bold text-xs font-ui luxury-tracking uppercase transition-all duration-500 hover:bg-transparent hover:text-gold"
               >
                 Cast Recruit
               </Link>
@@ -169,7 +169,7 @@ export const Header = () => {
       {isMobileMenuOpen && (
           <div className="fixed inset-0 z-[60] bg-white flex flex-col">
             <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
-              <span className="font-serif luxury-tracking-super text-lg text-[#171717]">
+              <span className="font-heading-en font-bold luxury-tracking-super text-lg text-[#171717]">
                 CLUB Animo
               </span>
               <button
@@ -186,7 +186,7 @@ export const Header = () => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-sm font-serif luxury-tracking uppercase text-[#171717] border-b border-gray-100 pb-4"
+                  className="text-sm font-ui font-bold luxury-tracking uppercase text-[#171717] border-b border-gray-100 pb-4"
                 >
                   {item.label}
                 </Link>
@@ -195,7 +195,7 @@ export const Header = () => {
               {/* Recruit (Mobile Accordion) */}
               <div className="border-b border-gray-100 pb-4">
                 <button
-                  className="text-sm font-serif luxury-tracking uppercase text-[#171717] w-full flex items-center justify-between"
+                  className="text-sm font-ui font-bold luxury-tracking uppercase text-[#171717] w-full flex items-center justify-between"
                   onClick={() => setIsMobileRecruitOpen(!isMobileRecruitOpen)}
                 >
                   Recruit
@@ -212,7 +212,7 @@ export const Header = () => {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                              'block text-sm font-serif luxury-tracking text-gray-500 hover:text-gold transition-colors',
+                              'block text-sm font-ui luxury-tracking text-gray-500 hover:text-gold transition-colors',
                               pathname === item.href && 'text-gold'
                             )}
                           >
@@ -226,13 +226,13 @@ export const Header = () => {
 
                 <Link
                   href="/recruit/cast"
-                  className="w-full text-center py-4 border border-gold bg-gold text-[#171717] font-bold text-xs font-serif luxury-tracking uppercase"
+                  className="w-full text-center py-4 border border-gold bg-gold text-[#171717] font-bold text-xs font-ui luxury-tracking uppercase"
                 >
                   Cast Recruit
                 </Link>
                 <Link
                   href="/recruit/staff"
-                  className="w-full text-center py-4 border border-[#171717] text-[#171717] text-xs font-serif luxury-tracking uppercase"
+                  className="w-full text-center py-4 border border-[#171717] text-[#171717] text-xs font-ui luxury-tracking uppercase"
                 >
                   Staff Recruit
                 </Link>
