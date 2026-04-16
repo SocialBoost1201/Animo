@@ -29,7 +29,7 @@ export function ReservationForm({
   const [isPending, startTransition] = useTransition()
   const [showForm, setShowForm] = useState(false)
 
-  const inputClass = 'h-[39px] w-full rounded-[10px] border border-white/8 bg-[#131720] px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden'
+  const inputClass = 'h-[48px] w-full rounded-[12px] bg-black/40 border-none px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -61,7 +61,7 @@ export function ReservationForm({
   }
 
   return (
-    <div className="rounded-[18px] border border-white/8 bg-[#131720] p-4">
+    <div className="rounded-[18px] bg-[#10141d] p-4">
       <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">02 — 通常来店予定</p>
 
       {isSubmissionClosed ? (
@@ -73,7 +73,7 @@ export function ReservationForm({
       {reservations.length > 0 ? (
         <div className="mb-4 space-y-3">
           {reservations.map(r => (
-            <div key={r.id} className="rounded-[16px] border border-white/8 bg-[#181d27] p-4">
+            <div key={r.id} className="rounded-[16px] bg-[#131720] p-4">
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[13px] text-[#6b7280]">
                   <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.08)] text-[11px] font-bold">{reservations.findIndex((item) => item.id === r.id) + 1}</span>
@@ -96,8 +96,8 @@ export function ReservationForm({
                         key={status}
                         className={`rounded-[8px] px-2 py-2 text-center text-[11px] font-bold ${
                           (status === 'approved' && r.approval_status === 'approved')
-                            ? 'border border-[rgba(51,179,107,0.27)] bg-[rgba(51,179,107,0.12)] text-[#33b36b]'
-                            : 'border border-white/8 bg-[#131720] text-[#6b7280]'
+                            ? 'bg-[rgba(51,179,107,0.12)] text-[#33b36b]'
+                            : 'bg-black/20 text-[rgba(247,244,237,0.3)]'
                         }`}
                       >
                         {status === 'approved' ? '確定' : status === 'pending' ? '来るかも' : '連絡中'}
@@ -115,9 +115,9 @@ export function ReservationForm({
       )}
 
       {showForm && !isSubmissionClosed ? (
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-[16px] border border-white/8 bg-[#181d27] p-4">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-[16px] bg-[#131720] p-4">
           <div>
-            <label className="mb-1 block text-[11px] text-[#6b7280]">時間 *</label>
+            <label className="mb-1 block text-[11px] text-[rgba(247,244,237,0.7)]">時間 *</label>
             <input name="visit_time" type="time" required className={inputClass} />
           </div>
           <div>
@@ -138,7 +138,7 @@ export function ReservationForm({
           </div>
           <input type="hidden" name="reservation_type" value="reservation" />
           <div>
-            <label className="mb-1 block text-[11px] text-[#6b7280]">メモ（任意）</label>
+            <label className="mb-1 block text-[11px] text-[rgba(247,244,237,0.7)]">メモ（任意）</label>
             <input name="note" type="text" placeholder="テーブル、備考など" className={inputClass} />
           </div>
           <div className="flex gap-2 pt-1">
@@ -152,7 +152,7 @@ export function ReservationForm({
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="rounded-[12px] border border-white/8 px-4 py-3 text-[13px] text-[#6b7280]"
+              className="rounded-[12px] bg-white/5 hover:bg-white/10 px-4 py-3 text-[13px] text-[#f7f4ed] transition-colors"
             >
               キャンセル
             </button>
@@ -162,7 +162,7 @@ export function ReservationForm({
         <button
           disabled={isSubmissionClosed}
           onClick={() => setShowForm(true)}
-          className="flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] border border-dashed border-white/14 text-[13px] text-[#6b7280] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] bg-[rgba(255,255,255,0.03)] text-[13px] text-[#f7f4ed]/70 hover:bg-[rgba(255,255,255,0.06)] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Plus size={14} />
           来店予定を追加

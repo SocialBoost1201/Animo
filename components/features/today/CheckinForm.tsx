@@ -55,7 +55,7 @@ export function CheckinForm({
   )
 
   const inputClass =
-    'h-[42px] w-full rounded-[12px] border border-white/8 bg-[#131720] px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden'
+    'h-[48px] w-full rounded-[12px] border-none bg-black/40 px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
   const isLocked = isSubmissionClosed || approvalStatus === 'approved'
 
@@ -89,7 +89,7 @@ export function CheckinForm({
     setIsSubmitting(true)
     const fd = new FormData(e.currentTarget)
     fd.set('status', status)
-    fd.set('has_change', 'false')
+    fd.set('has_change', status === 'douhan' && !!fd.get('change_note') ? 'true' : 'false')
     fd.set('is_absent', status === 'absent' ? 'true' : 'false')
 
     const result = await submitCheckin(fd)
@@ -144,22 +144,22 @@ export function CheckinForm({
 
   // ── Card style helpers ──
   function cardClass(s: Status): string {
-    const base = 'flex-1 rounded-[14px] border-[1.5px] px-3 py-4 text-center transition-all duration-200'
+    const base = 'flex-1 rounded-[14px] px-3 py-4 text-center transition-all duration-200 cursor-pointer focus:outline-none'
     if (status !== s) {
-      return `${base} border-white/8 bg-[rgba(255,255,255,0.03)] text-[#6b7280]`
+      return `${base} bg-[#131720] text-[rgba(247,244,237,0.4)] hover:bg-[#181d27]`
     }
     if (s === 'work') {
-      return `${base} border-[#c9a76a]/60 bg-[rgba(201,167,106,0.12)] text-[#c9a76a] shadow-[0_0_16px_rgba(201,167,106,0.15)]`
+      return `${base} bg-[rgba(201,167,106,0.15)] ring-1 ring-[#c9a76a]/60 text-[#c9a76a]`
     }
     if (s === 'douhan') {
-      return `${base} border-[#dfbd69]/70 bg-[rgba(223,189,105,0.15)] text-[#dfbd69] shadow-[0_0_20px_rgba(223,189,105,0.2)]`
+      return `${base} bg-[rgba(223,189,105,0.2)] ring-1 ring-[#dfbd69]/80 text-[#dfbd69]`
     }
     // absent
-    return `${base} border-[rgba(224,106,106,0.4)] bg-[rgba(224,106,106,0.12)] text-[#e06a6a] shadow-[0_0_16px_rgba(224,106,106,0.15)]`
+    return `${base} bg-[rgba(224,106,106,0.15)] ring-1 ring-[#e06a6a]/60 text-[#e06a6a]`
   }
 
   return (
-    <div className="rounded-[18px] border border-white/8 bg-[#131720] px-[18px] py-[18px]">
+    <div className="rounded-[18px] bg-[#10141d] px-[18px] py-[18px]">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">
@@ -246,7 +246,7 @@ export function CheckinForm({
 
         {/* ── 同伴フォーム（必須）── */}
         {status === 'douhan' && (
-          <div className="rounded-[14px] border border-[#dfbd69]/20 bg-[rgba(223,189,105,0.06)] p-4 space-y-3">
+          <div className="rounded-[14px] ring-1 ring-[#dfbd69]/20 bg-[rgba(223,189,105,0.06)] p-4 space-y-4">
             <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#dfbd69]/70 mb-1">
               同伴情報（必須）
             </p>
@@ -291,12 +291,23 @@ export function CheckinForm({
                 className={inputClass}
               />
             </div>
+            <div className="pt-2 border-t border-[#dfbd69]/10">
+              <label className="mb-1 block text-[11px] text-[rgba(247,244,237,0.7)]">変更内容（任意）</label>
+              <input
+                name="change_note"
+                type="text"
+                placeholder="22:00→23:00"
+                defaultValue={existing?.change_note ?? ''}
+                disabled={isLocked}
+                className={inputClass}
+              />
+            </div>
             <div>
-              <label className="mb-1 block text-[11px] text-[#6b7280]">メモ（任意）</label>
+              <label className="mb-1 block text-[11px] text-[rgba(247,244,237,0.7)]">メモ（任意）</label>
               <input
                 name="douhan_note"
                 type="text"
-                placeholder="テーブル、備考など"
+                placeholder="待ち合わせ場所や補足があれば入力してください"
                 defaultValue={existingDouhan?.note ?? ''}
                 disabled={isLocked}
                 className={inputClass}
@@ -308,15 +319,25 @@ export function CheckinForm({
         {/* ── メモ（予定通りのみ）── */}
         {status === 'work' && (
           <div>
-            <label className="mb-1 block text-[11px] text-[#6b7280]">メモ（任意）</label>
+            <label className="mb-1 block text-[11px] text-[rgba(247,244,237,0.7)]">メモ（任意）</label>
             <input
               name="memo"
               type="text"
-              defaultValue={existing?.memo ?? ''}
-              placeholder="遅刻・早退など"
+              defaultValue={existing?.memo && existing.memo !== '同伴あり' ? existing.memo : ''}
+              placeholder="補足があれば入力してください"
               disabled={isLocked}
               className={inputClass}
             />
+          </div>
+        )}
+
+        {/* ── 休み（警告） ── */}
+        {status === 'absent' && !isLocked && (
+          <div className="rounded-[14px] bg-[rgba(224,106,106,0.1)] p-4">
+            <p className="text-[13px] font-bold text-[#e06a6a] leading-relaxed">
+              当日欠勤は罰金の対象となります。<br />
+              やむを得ない場合を除き、十分ご注意ください。
+            </p>
           </div>
         )}
 
