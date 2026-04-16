@@ -86,6 +86,7 @@ export function ReservationForm({
                 <div className="grid grid-cols-[1fr_auto] items-center gap-3">
                   <div className="text-[13px] text-[#f7f4ed]">{r.guest_name}様</div>
                   <div className="text-[13px] font-medium text-[#f7f4ed]">{r.visit_time.substring(0, 5)}</div>
+                </div>
                 <div className="grid grid-cols-[80px_1fr] gap-3">
                   <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#f7f4ed]">{r.guest_count ?? 1}名</div>
                 </div>
