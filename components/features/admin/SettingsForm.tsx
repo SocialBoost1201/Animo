@@ -46,22 +46,22 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 
         <div className="mb-14 relative z-10">
-          <h2 className={`text-3xl font-serif tracking-tight mb-3 ${F.heading}`}>Architecture & Atmosphere</h2>
-          <p className="text-[11px] font-bold tracking-[4px] text-[#5a5650] uppercase italic">System-wide parameters and visual behavior</p>
+          <h2 className={`text-3xl font-serif tracking-tight mb-3 ${F.heading}`}>サイト設定</h2>
+          <p className="text-[11px] font-bold tracking-[4px] text-[#5a5650] uppercase italic">サイト全体の雰囲気とビジュアル演出を管理します</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-16 relative z-10 flex-1 flex flex-col">
-          {/* Section: Emotional Branding */}
+          {/* Section: 本日のムード */}
           <div className="space-y-8">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-[1px] w-12 bg-gold/40" />
-              <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">Emotional Layer</span>
+              <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">本日のムード</span>
             </div>
-            
+
             <div className="group">
-              <label htmlFor="today_mood" className={F.label}>Today&apos;s Mood / Luxury Headline</label>
+              <label htmlFor="today_mood" className={F.label}>トップページ見出しメッセージ</label>
               <p className={`text-[12px] mb-6 text-[#8a8478] leading-relaxed max-w-2xl`}>
-                This message defines the current atmosphere of the establishment and appears prominently on the front stage.
+                フロントページの最上部に表示されるメッセージです。店舗の今日の雰囲気やキャッチコピーを入力してください。
               </p>
               <input
                 id="today_mood"
@@ -71,20 +71,20 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
                 className={`${F.input} h-14 text-base`}
                 placeholder="本日も皆様のご来店を心よりお待ち申し上げております。"
               />
-              <p className="mt-3 text-[10px] text-[#5a5650] tracking-widest uppercase italic opacity-0 group-focus-within:opacity-100 transition-opacity">Real-time update applies to public visitors</p>
+              <p className="mt-3 text-[10px] text-[#5a5650] tracking-widest italic opacity-0 group-focus-within:opacity-100 transition-opacity">保存するとフロントページに即時反映されます</p>
             </div>
           </div>
 
-          {/* Section: Visual Transitions */}
+          {/* Section: ビジュアル演出 */}
           <div className="space-y-8 pt-10 border-t border-[#ffffff08]">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-[1px] w-12 bg-gold/40" />
-              <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">Visual Dynamics</span>
+              <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">ビジュアル演出</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
               <div className="flex flex-col h-full">
-                <label htmlFor="hero_transition_mode" className={F.label}>Transition Architecture</label>
+                <label htmlFor="hero_transition_mode" className={F.label}>ヒーロー画像のトランジション</label>
                 <div className="relative flex-1 min-h-[56px]">
                   <select
                     id="hero_transition_mode"
@@ -92,25 +92,25 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
                     defaultValue={initialData?.hero_transition_mode || 'ripple'}
                     className={`${F.input} h-full pr-12 appearance-none text-base`}
                   >
-                    <option value="ripple">Ripple (Shader cross-fade) ★ Premium Choice</option>
-                    <option value="fade">Minimalist Fade (Standard)</option>
-                    <option value="slide">Horizontal Motion (Classic)</option>
-                    <option value="zoom">Immersive Scale (Depth)</option>
-                    <option value="burn">Luminous Exposure (Artistic)</option>
+                    <option value="ripple">リップル（シェーダークロスフェード）★ おすすめ</option>
+                    <option value="fade">シンプルフェード（標準）</option>
+                    <option value="slide">横スライド（クラシック）</option>
+                    <option value="zoom">ズームイン（奥行き感）</option>
+                    <option value="burn">露光フェード（アーティスティック）</option>
                   </select>
                   <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gold/80">
                     <Check size={18} />
                   </div>
                 </div>
                 <p className={`${F.noteText} mt-5 leading-relaxed text-xs`}>
-                  Shader-based transitions utilize WebGL for high-performance visual fidelity. Motion-based modes fall back to hardware-accelerated CSS animations.
+                  「リップル」はWebGLシェーダーを使用した高品質なエフェクトです。その他のモードはCSSアニメーションで動作します。
                 </p>
               </div>
 
               <div className="bg-white/[0.03] border border-white/10 p-8 rounded-[12px] flex flex-col justify-center min-h-[160px]">
-                <p className="text-[11px] font-bold tracking-[3px] text-gold uppercase mb-3">Pro Tip</p>
+                <p className="text-[11px] font-bold tracking-[3px] text-gold uppercase mb-3">ヒント</p>
                 <p className="text-[13px] text-[#8a8478] leading-relaxed italic">
-                  &ldquo;Ripple&rdquo; leverages custom fragment shaders to create a water-like cross-fade effect, highly recommended for the Animo luxury brand identity.
+                  「リップル」はカスタムシェーダーによる水面のようなクロスフェード効果で、Animoのブランドイメージに最もマッチしたプレミアムな演出です。
                 </p>
               </div>
             </div>
@@ -130,7 +130,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
                   <Check size={18} className="text-black" />
                 )}
                 <span className="text-black text-[12px] font-bold tracking-[4px] uppercase font-sans">
-                  {isPending ? 'SYNCHRONIZING...' : 'COMMIT SETTINGS'}
+                  {isPending ? '保存中...' : '設定を保存する'}
                 </span>
               </div>
             </button>
