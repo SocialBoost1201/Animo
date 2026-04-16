@@ -159,7 +159,7 @@ export function CheckinForm({
   }
 
   return (
-    <div className="rounded-[18px] bg-[#10141d] px-[18px] py-[18px]">
+    <div className="rounded-[18px] bg-[#10141d] px-[18px] py-[18px] card-premium-skin">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">
