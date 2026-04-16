@@ -69,150 +69,151 @@ function SortableCastRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-black/94 border rounded-[18px] p-4 md:p-0 transition-all duration-300 font-sans ${
-        isDragging ? 'shadow-2xl scale-[1.02] border-yellow-400 bg-black/90 ring-4 ring-yellow-400/10' : 'shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-lg'
-      } ${isSelected ? 'border-yellow-400 bg-yellow-400/10' : 'border-[#ffffff10] hover:border-[#ffffff20]'}`}
+      className={`group relative bg-black/94 border rounded-[22px] p-5 md:p-0 transition-all duration-300 font-sans ${
+        isDragging ? 'shadow-2xl scale-[1.03] border-gold bg-black/90 ring-8 ring-gold/10' : 'shadow-[0_8px_20px_-4px_rgba(0,0,0,0.5)] hover:shadow-2xl'
+      } ${isSelected ? 'border-gold bg-gold/5' : 'border-[#ffffff10] hover:border-[#ffffff20]'}`}
     >
       {/* Mobile Top Controls */}
-      <div className="flex justify-between items-start md:hidden mb-4">
-        <label className="flex items-center gap-3 cursor-pointer">
+      <div className="flex justify-between items-start md:hidden mb-6">
+        <label className="flex items-center gap-4 cursor-pointer">
           <input
             type="checkbox"
             checked={isSelected}
             onChange={() => onToggleSelect(cast.id)}
-            className="w-5 h-5 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 cursor-pointer transition-all"
+            className="w-6 h-6 rounded border-gray-300 text-gold focus:ring-gold focus:ring-offset-0 cursor-pointer transition-all"
           />
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg text-[#8a8478] hover:text-[#f4f1ea] hover:bg-white/5 transition-colors"
+            className="cursor-grab active:cursor-grabbing p-2 rounded-xl text-[#8a8478] hover:text-[#f4f1ea] hover:bg-white/5 transition-colors"
           >
-            <GripVertical size={20} />
+            <GripVertical size={24} />
           </div>
         </label>
         
-        <div className="flex justify-end items-center gap-2">
+        <div className="flex justify-end items-center gap-3">
           <Link
             href={`/admin/human-resources/${cast.id}`}
-            className="p-2 text-[#8a8478] hover:text-[#f4f1ea] transition-all duration-200 rounded-lg hover:bg-white/5"
+            className="p-3 text-[#8a8478] hover:text-gold transition-all duration-200 rounded-xl hover:bg-white/5"
           >
-            <Edit2 size={16} />
+            <Edit2 size={20} />
           </Link>
           <DeleteCastButton castId={cast.id} castName={cast.stage_name || cast.name || '名前なし'} />
         </div>
       </div>
 
       {/* Main Grid Content */}
-      <div className="flex flex-col md:grid md:grid-cols-[auto_60px_2.5fr_1fr_1.5fr_1fr_1.5fr_auto] md:items-center gap-4 md:gap-6 md:px-6 md:py-4">
+      <div className="flex flex-col md:grid md:grid-cols-[auto_80px_3fr_1.2fr_1.8fr_1.2fr_1.8fr_auto] md:items-center gap-6 md:gap-8 md:px-10 md:py-8">
         
         {/* Desktop Controls */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <label className="cursor-pointer">
             <input
               type="checkbox"
               checked={isSelected}
               onChange={() => onToggleSelect(cast.id)}
-              className="w-4 h-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 cursor-pointer transition-all"
+              className="w-5 h-5 rounded border-[#ffffff15] bg-white/5 text-gold focus:ring-gold focus:ring-offset-0 cursor-pointer transition-all"
             />
           </label>
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg text-[#5a5650] hover:text-[#f4f1ea] hover:bg-white/5 transition-colors opacity-0 group-hover:opacity-100"
+            className="cursor-grab active:cursor-grabbing p-2 rounded-xl text-[#5a5650] hover:text-gold hover:bg-white/5 transition-colors opacity-0 group-hover:opacity-100"
           >
-            <GripVertical size={16} />
+            <GripVertical size={20} />
           </div>
         </div>
 
         {/* Profile Image & Name (Mobile combined, Desktop separated) */}
-        <div className="flex items-center gap-4 md:contents">
+        <div className="flex items-center gap-6 md:contents">
           {/* Image */}
-          <div className="w-14 h-14 md:w-12 md:h-12 rounded-full overflow-hidden bg-[#121111] border border-[#ffffff10] shrink-0 shadow-inner">
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden bg-[#121111] border border-[#ffffff10] shrink-0 shadow-2xl relative group-hover:border-gold/30 transition-all duration-500">
             {cast.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={cast.image_url} alt={cast.stage_name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <img src={cast.image_url} alt={cast.stage_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-115" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#5a5650] text-lg md:text-sm font-serif">
+              <div className="w-full h-full flex items-center justify-center text-[#5a5650] text-2xl md:text-xl font-serif">
                 {(cast.stage_name || cast.name || '?')[0]}
               </div>
             )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           </div>
 
           {/* Name & Hobby */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <p className="font-bold text-[#f4f1ea] text-lg md:text-sm truncate tracking-tight">{cast.stage_name || cast.name}</p>
+            <div className="flex items-center gap-3 mb-1.5 font-sans">
+              <p className="font-bold text-[#f4f1ea] text-xl md:text-[18px] truncate tracking-tight group-hover:text-gold transition-colors">{cast.stage_name || cast.name}</p>
               {/* Mobile Age Pill */}
-              <span className="md:hidden text-xs font-bold bg-white/5 text-[#8a8478] px-2 py-0.5 rounded-full">
+              <span className="md:hidden text-xs font-bold bg-white/5 text-[#8a8478] px-2.5 py-1 rounded-full border border-white/5">
                 {cast.age ? `${cast.age}歳` : '年齢非公開'}
               </span>
             </div>
-            {cast.hobby && <p className="text-xs text-[#8a8478] truncate mt-1 md:mt-0">{cast.hobby}</p>}
+            {cast.hobby && <p className="text-[13px] text-[#8a8478] truncate mt-1 md:mt-0 font-sans opacity-80">{cast.hobby}</p>}
           </div>
         </div>
 
         {/* Age (Desktop) */}
-        <div className="hidden md:block text-sm font-medium text-[#c7c0b2]">
+        <div className="hidden md:block text-[15px] font-bold text-[#c7c0b2] font-sans">
           {cast.age ? `${cast.age}歳` : <span className="text-[#5a5650]">-</span>}
         </div>
 
         {/* Score & Level (Premium UI) */}
-        <div className="flex md:flex-col items-center md:items-start justify-between md:justify-center mt-4 md:mt-0 pt-4 md:pt-0 border-t border-white/5 md:border-0">
-          <span className="md:hidden text-xs font-bold text-[#5a5650]">SCORE</span>
-          <div className="flex flex-col md:gap-0.5 items-end md:items-start">
-            <span className="font-serif font-bold text-lg md:text-sm text-[#f4f1ea] flex items-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5 text-yellow-500 hidden md:block" />
-              {cast.score.toLocaleString()} <span className="text-xs text-[#5a5650] tracking-wider">pt</span>
+        <div className="flex md:flex-col items-center md:items-start justify-between md:justify-center mt-6 md:mt-0 pt-6 md:pt-0 border-t border-white/5 md:border-0">
+          <span className="md:hidden text-xs font-bold text-[#5a5650] tracking-widest">SCORE</span>
+          <div className="flex flex-col md:gap-1.5 items-end md:items-start">
+            <span className="font-serif font-bold text-xl md:text-[18px] text-[#f4f1ea] flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-gold hidden md:block" />
+              {cast.score.toLocaleString()} <span className="text-[11px] text-[#5a5650] tracking-wider uppercase font-sans font-black">pt</span>
             </span>
-            <span className="text-xs font-bold text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit border border-yellow-500/20">
-              <Star className="w-2.5 h-2.5 fill-current" /> Lv.{cast.level}
+            <span className="text-[11px] font-black text-gold bg-gold/10 px-2 py-1 rounded-md flex items-center gap-1.5 w-fit border border-gold/20 shadow-sm">
+              <Star className="w-3 h-3 fill-current" /> LEVEL {cast.level}
             </span>
           </div>
         </div>
 
         {/* Tags */}
-        <div className="flex md:block items-center justify-between mt-3 md:mt-0">
-           <span className="md:hidden text-xs font-bold text-[#5a5650]">TAGS</span>
+        <div className="flex md:block items-center justify-between mt-4 md:mt-0">
+           <span className="md:hidden text-xs font-bold text-[#5a5650] tracking-widest">TAGS</span>
           {cast.quiz_tags && cast.quiz_tags.length > 0 ? (
-            <div className="flex items-center gap-1.5 text-[#c7c0b2] bg-white/5 px-2.5 py-1 md:px-0 md:bg-transparent rounded-lg">
-              <Sparkles size={14} className="text-[#5a5650]" />
-              <span className="text-xs font-bold">{cast.quiz_tags.length} <span className="font-normal text-[#5a5650] hidden lg:inline">設定済み</span></span>
+            <div className="flex items-center gap-2 text-[#c7c0b2] bg-white/5 px-3 py-1.5 md:px-0 md:bg-transparent rounded-xl">
+              <Sparkles size={16} className="text-gold/60" />
+              <span className="text-[13px] font-bold font-sans">{cast.quiz_tags.length} <span className="font-medium text-[#5a5650] hidden lg:inline ml-1">項目設定済み</span></span>
             </div>
           ) : (
-            <span className="text-xs font-medium text-[#5a5650] flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#ffffff20]" /> 未設定
+            <span className="text-[13px] font-bold text-[#5a5650] flex items-center gap-2 font-sans">
+              <div className="w-2 h-2 rounded-full bg-[#ffffff10]" /> 未設定
             </span>
           )}
         </div>
 
         {/* Status */}
-        <div className="flex md:block items-center justify-between mt-3 md:mt-0">
-           <span className="md:hidden text-xs font-bold text-[#5a5650]">STATUS</span>
+        <div className="flex md:block items-center justify-between mt-4 md:mt-0">
+           <span className="md:hidden text-xs font-bold text-[#5a5650] tracking-widest">STATUS</span>
           <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 md:px-2 md:py-0.5 rounded-lg md:rounded text-xs font-bold uppercase tracking-wider transition-colors ${
+            className={`inline-flex items-center gap-2 px-4 py-1.5 md:px-3 md:py-1 rounded-full text-[11px] font-black uppercase tracking-[1px] transition-all shadow-sm ${
               cast.is_active ?? cast.status === 'public'
-                ? 'bg-green-500/10 text-green-500 border border-green-500/20 md:border-0'
-                : 'bg-white/5 text-[#8a8478] border border-white/10 md:border-0'
+                ? 'bg-green-500/10 text-green-500 border border-green-500/20'
+                : 'bg-white/5 text-[#5a5650] border border-white/10'
             }`}
           >
             {cast.is_active ?? cast.status === 'public' ? (
-              <><Eye size={12} className="md:w-2.5 md:h-2.5" /> <span className="mt-[1px]">公開</span></>
+              <><Eye size={14} /> <span className="mt-[1px]">PUBLIC</span></>
             ) : (
-              <><EyeOff size={12} className="md:w-2.5 md:h-2.5" /> <span className="mt-[1px]">非公開</span></>
+              <><EyeOff size={14} /> <span className="mt-[1px]">PRIVATE</span></>
             )}
           </span>
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex justify-end items-center gap-1">
+        <div className="hidden md:flex justify-end items-center gap-2">
           <Link
             href={`/admin/human-resources/${cast.id}`}
-            className="p-2 text-[#8a8478] hover:text-[#f4f1ea] transition-all duration-200 rounded-lg hover:bg-white/5"
+            className="p-2.5 text-[#5a5650] hover:text-gold transition-all duration-300 rounded-xl hover:bg-white/5 group/btn"
             title="編集"
           >
-             <Edit2 size={16} />
+             <Edit2 size={18} className="transition-transform group-hover/btn:scale-110" />
           </Link>
-          <div className="text-white/10 mx-1">|</div>
+          <div className="text-white/5 mx-2">|</div>
           <DeleteCastButton castId={cast.id} castName={cast.stage_name || cast.name || '名前なし'} />
         </div>
 

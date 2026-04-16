@@ -123,27 +123,27 @@ function AdminLayoutInner({
   };
 
   const renderSidebarContent = () => (
-    <div className={`flex flex-col h-full font-inter border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
+    <div className={`flex flex-col h-full font-sans border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
       {/* Branding */}
-      <div className="h-[72px] px-5 flex items-center gap-3 shrink-0">
-        <Link prefetch={false} href="/admin/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-3">
-          <div className="w-[36px] h-[36px] flex items-center justify-center rounded-[10px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 shadow-lg transition-transform hover:scale-105">
-            <LayoutDashboard size={17} className="text-[#0b0b0d]" />
+      <div className="h-[88px] px-6 flex items-center gap-4 shrink-0">
+        <Link prefetch={false} href="/admin/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-4">
+          <div className="w-[42px] h-[42px] flex items-center justify-center rounded-[12px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 shadow-xl transition-transform hover:scale-105">
+            <LayoutDashboard size={20} className="text-[#0b0b0d]" />
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className={`text-[9px] font-bold tracking-[2.2px] leading-none uppercase ${T.sectionLabel}`}>CLUB ANIMO</span>
-            <span className="text-[13px] font-bold bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent tracking-[1.3px] leading-none">ANIMO CMS</span>
+            <span className={`text-[10px] font-bold tracking-[2.8px] leading-none uppercase ${T.sectionLabel}`}>CLUB ANIMO</span>
+            <span className="text-[15px] font-bold bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent tracking-[1.5px] leading-none">ANIMO CMS</span>
           </div>
         </Link>
         <button
           onClick={() => setMobileOpen(false)}
           className={`md:hidden ml-auto p-1 transition-colors ${T.mobileMenuBtn}`}
         >
-          <X size={17} />
+          <X size={20} />
         </button>
       </div>
 
-      <div className={`mx-4 h-px ${T.divider}`} />
+      <div className={`mx-6 h-px ${T.divider}`} />
 
       {/* Navigation */}
       <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
@@ -262,7 +262,7 @@ function AdminLayoutInner({
   return (
     <div className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
       {/* Desktop Sidebar */}
-      <aside className="w-[220px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
+      <aside className="w-[260px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
         {renderSidebarContent()}
       </aside>
 
@@ -274,7 +274,7 @@ function AdminLayoutInner({
         />
       )}
       <aside
-        className={`fixed top-0 left-0 h-full w-[220px] z-50 md:hidden transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -292,12 +292,12 @@ function AdminLayoutInner({
           >
             <Menu size={20} />
           </button>
-          <Link prefetch={false} href="/admin/dashboard" className="font-inter tracking-widest text-sm font-bold">
+          <Link prefetch={false} href="/admin/dashboard" className="font-sans tracking-widest text-sm font-bold">
             <span className="bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] bg-clip-text text-transparent uppercase">ANIMO</span>
           </Link>
         </header>
 
-        <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
+        <div className="p-6 md:p-10 lg:p-14 max-w-[1920px] mx-auto">
           {children}
         </div>
       </main>

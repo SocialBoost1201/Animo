@@ -110,49 +110,49 @@ export async function DashboardKPIs() {
   ] as const;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-[13.8px] font-sans">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8 font-sans">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
           <Link
             key={card.id}
             href={card.href}
-            className={`group relative flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] hover:border-[#dfbd6940] transition-all duration-300 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,0,0,0.5)] h-[150px] min-w-0 ${card.width}`}
+            className={`group relative flex flex-col bg-black/94 rounded-[18px] overflow-hidden border border-[#ffffff10] hover:border-[#dfbd6940] transition-all duration-300 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,0,0,0.6)] h-[180px] min-w-0 ${card.width}`}
           >
-            {/* Design Token: Top Highlight Bar (New Design: Card 1 has linear gold bar) */}
+            {/* Design Token: Top Highlight Bar */}
             {card.topBar && (
-              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0" />
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 z-10" />
             )}
 
-            <div className="p-[20.6px] flex flex-col flex-1 min-w-0">
+            <div className="p-8 flex flex-col flex-1 min-w-0">
               {/* Header: Label + Icon */}
-              <div className="flex items-start justify-between mb-2">
-                <span className="text-[11px] text-[#8a8478] tracking-[0.06px] font-bold truncate pr-1">
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[12px] text-[#8a8478] tracking-[0.1px] font-bold uppercase truncate pr-1">
                   {card.label}
                 </span>
-                <div className={`w-[26px] h-[26px] flex items-center justify-center rounded-[7px] shrink-0 transition-colors ${card.iconBg}`}>
-                  <Icon size={13} className={card.iconColor} strokeWidth={2.5} />
+                <div className={`w-[32px] h-[32px] flex items-center justify-center rounded-[9px] shrink-0 transition-colors ${card.iconBg}`}>
+                  <Icon size={16} className={card.iconColor} strokeWidth={2.5} />
                 </div>
               </div>
 
               {/* Body: Value */}
-              <div className="flex items-baseline gap-1 mb-2">
-                <p className="text-[30px] font-bold text-[#f4f1ea] leading-none tracking-[-0.2px] group-hover:text-white transition-colors">
+              <div className="flex items-baseline gap-1 mb-3">
+                <p className="text-[40px] font-bold text-[#f4f1ea] leading-none tracking-[-0.5px] group-hover:text-white transition-colors">
                   {card.value}
                 </p>
-                {/* unit is hidden in mockup value area, but we can keep it subtle or remove to match mockup 100% */}
+                <span className="text-xs text-[#5a5650] font-bold">{card.unit}</span>
               </div>
 
               {/* Footer: Subtitle / Status */}
-              <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-[1.4] line-clamp-1 mb-2 font-medium" title={card.sub}>
+              <p className="text-[11px] text-[#8a8478] tracking-[0.05px] leading-[1.4] line-clamp-1 mb-3 font-medium opacity-80" title={card.sub}>
                 {card.sub}
               </p>
 
               {/* Badge: Conditional */}
-              <div className="h-4 flex items-center">
+              <div className="mt-auto h-5 flex items-center">
                 {card.badge && (
-                  <div className={`inline-flex items-center px-[7px] py-[2px] rounded-full ${card.badge.bg}`}>
-                    <span className={`text-[10px] font-semibold tracking-[0.12px] whitespace-nowrap leading-none ${card.badge.textColor}`}>
+                  <div className={`inline-flex items-center px-[10px] py-[3px] rounded-full ${card.badge.bg}`}>
+                    <span className={`text-[10px] font-bold tracking-[0.2px] whitespace-nowrap leading-none ${card.badge.textColor}`}>
                       {card.badge.label}
                     </span>
                   </div>
@@ -162,7 +162,7 @@ export async function DashboardKPIs() {
 
             {/* Critical Alert Bar (Design Token) */}
             {card.alert && (
-              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#fb3a3a] shadow-[0_-2px_10px_rgba(251,58,58,0.4)]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-[#fb3a3a] shadow-[0_-2px_15px_rgba(251,58,58,0.5)]" />
             )}
           </Link>
         );

@@ -102,7 +102,7 @@ export async function getCastById(id: string) {
   const supabase = await createClient()
   const firstAttempt = await supabase
     .from('casts')
-    .select('*, cast_images(id, image_url, image_type, is_primary, sort_order), cast_private_info(real_name, date_of_birth, phone, email)')
+    .select('*, cast_images(id, image_url, image_type, is_primary, sort_order), cast_private_info(real_name, date_of_birth, phone, email, line_id, line_user_id)')
     .eq('id', id)
     .single()
 
@@ -167,6 +167,8 @@ export async function createCast(formData: FormData) {
   const sns_x = formData.get('sns_x') as string || null
   const sns_instagram = formData.get('sns_instagram') as string || null
   const sns_tiktok = formData.get('sns_tiktok') as string || null
+  const line_id = (formData.get('line_id') as string)?.trim() || null
+  const line_user_id = (formData.get('line_user_id') as string)?.trim() || null
 
   const basePayload = {
     name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
@@ -219,6 +221,8 @@ export async function createCast(formData: FormData) {
       date_of_birth,
       phone,
       email,
+      ...(line_id !== null && { line_id }),
+      ...(line_user_id !== null && { line_user_id }),
     }, { onConflict: 'cast_id' })
   }
 
@@ -312,12 +316,16 @@ export async function updateCast(id: string, formData: FormData) {
   revalidateAll(slug)
 
   // cast_private_info を更新（upsertで存在しなければ作成）
+  const updateLineId = (formData.get('line_id') as string)?.trim() || null
+  const updateLineUserId = (formData.get('line_user_id') as string)?.trim() || null
   await supabase.from('cast_private_info').upsert({
     cast_id: id,
     real_name,
     date_of_birth,
     phone,
     email,
+    ...(updateLineId !== null && { line_id: updateLineId }),
+    ...(updateLineUserId !== null && { line_user_id: updateLineUserId }),
   }, { onConflict: 'cast_id' })
 
   return { success: true }

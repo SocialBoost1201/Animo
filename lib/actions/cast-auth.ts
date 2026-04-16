@@ -69,6 +69,7 @@ export async function castRegister(formData: FormData) {
   const phone = (formData.get('phone') as string)?.trim();
   const legacyRealName = (formData.get('realName') as string)?.trim();
   const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
+  const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
   const normalizedEmail = email?.trim().toLowerCase();
   const normalizedPhone = phone?.replace(/\D/g, '');
@@ -278,6 +279,14 @@ export async function castRegister(formData: FormData) {
         error: 'アカウント作成後のキャスト紐付けに失敗しました。担当者にお問い合わせください。',
         code: 'CAST_LINK_FAILED',
       };
+    }
+
+    // LINE ID が入力された場合は cast_private_info に保存
+    if (lineId) {
+      await serviceRoleClient
+        .from('cast_private_info')
+        .update({ line_id: lineId })
+        .eq('cast_id', castRecord.id);
     }
 
     revalidatePath('/cast/register');

@@ -41,16 +41,16 @@ export async function DashboardTodayShifts() {
   const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border-[1.5px] border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
+    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 h-[72px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
-            <Users size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+      <div className="flex items-center justify-between px-10 h-[88px] border-b border-[#ffffff0f] shrink-0">
+        <div className="flex items-center gap-5">
+          <div className="w-[42px] h-[42px] flex items-center justify-center bg-[#dfbd691a] rounded-[10px] shrink-0">
+            <Users size={20} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤キャスト</p>
-            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">
+          <div className="flex flex-col gap-1">
+            <p className="text-[17px] font-bold text-[#f4f1ea] tracking-[-0.1px] leading-tight">本日の出勤キャスト</p>
+            <p className="text-[12px] text-[#8a8478] tracking-[0.08px] leading-tight opacity-70">
               確定 {confirmedCount}名
               {lateCount > 0 && ` / 遅刻 ${lateCount}名`}
               {trialCount > 0 && ` / 体験 ${trialCount}名`}
@@ -59,29 +59,30 @@ export async function DashboardTodayShifts() {
         </div>
         <Link
           href="/admin/today"
-          className="flex items-center gap-1 px-3 h-[30px] rounded-[8px] bg-[#ffffff0a] border-[1.5px] border-[#dfbd6940] text-[11px] font-bold text-[#8a8478] hover:text-[#f4f1ea] transition-all"
+          className="flex items-center gap-2 px-5 h-[40px] rounded-[10px] bg-white/[0.04] border border-[#dfbd6940] text-[12px] font-bold text-[#dfbd69] hover:bg-[#dfbd6910] transition-all"
         >
-          <span>詳細</span>
-          <ChevronRight size={12} className="-mt-px" />
+          <span>詳細を表示</span>
+          <ChevronRight size={14} />
         </Link>
       </div>
 
       {/* Table */}
       <div className="flex-1 overflow-x-auto custom-scrollbar">
-        <div className="min-w-[700px]">
+        <div className="min-w-[900px]">
           {/* Table Header Row */}
-          <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6">
-            <div className="w-[200px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">キャスト名</div>
-            <div className="w-[120px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">出勤時間</div>
-            <div className="w-[110px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">ステータス</div>
-            <div className="flex-1 text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">タグ / 備考</div>
+          <div className="flex items-center h-[56px] border-t border-b border-[#ffffff0a] px-10 bg-white/[0.01]">
+            <div className="w-[280px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase">CAST NAME</div>
+            <div className="w-[160px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">SHIFT TIME</div>
+            <div className="w-[140px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase text-center">STATUS</div>
+            <div className="flex-1 text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">MEMO / TAGS</div>
           </div>
 
           {/* Table Body */}
           <div className="divide-y divide-[#ffffff0a]">
             {casts.length === 0 ? (
-              <div className="h-40 flex items-center justify-center italic">
-                <p className="text-[12px] text-[#5a5650]">出勤登録がありません</p>
+              <div className="h-60 flex flex-col items-center justify-center italic gap-4">
+                <Users size={32} className="text-[#1c1d22]" />
+                <p className="text-[14px] text-[#5a5650]">本日の出勤登録はありません</p>
               </div>
             ) : (
               casts.map((cast) => {
@@ -89,10 +90,10 @@ export async function DashboardTodayShifts() {
                 return (
                   <div
                     key={cast.castId}
-                    className="flex items-center min-h-[52px] hover:bg-[#ffffff05] transition-colors px-6"
+                    className="flex items-center min-h-[72px] hover:bg-white/[0.02] transition-colors px-10"
                   >
-                    <div className="w-[200px] flex items-center gap-3 shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-[#1c1d22] border-[0.56px] border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative shadow-inner">
+                    <div className="w-[280px] flex items-center gap-4 shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-[#1c1d22] border border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xl">
                         {cast.avatarUrl ? (
                            <img 
                              src={cast.avatarUrl} 
@@ -101,42 +102,43 @@ export async function DashboardTodayShifts() {
                              referrerPolicy="no-referrer"
                            />
                         ) : (
-                          <span className="text-[10px] font-bold text-[#5a5650]">{cast.initial}</span>
+                          <span className="text-[11px] font-bold text-[#5a5650]">{cast.initial}</span>
                         )}
+                        <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-full" />
                       </div>
-                      <span className="text-[12px] font-bold text-[#f4f1ea] truncate">{cast.castName}</span>
+                      <span className="text-[14px] font-bold text-[#f4f1ea] tracking-tight">{cast.castName}</span>
                     </div>
                     
                     {/* Time */}
-                    <div className="w-[120px] px-4">
-                      <div className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#dfbd69] font-sans">
+                    <div className="w-[160px] px-6">
+                      <div className="inline-flex items-center gap-2 text-[14px] font-bold text-gold font-sans bg-gold/5 px-3 py-1.5 rounded-[6px] border border-gold/10">
                         <span>{cast.startTime}</span>
-                        <span className="text-[#5a5650] font-normal">—</span>
-                        <span className="text-[#8a8478] font-normal">{cast.endTime || 'Last'}</span>
+                        <span className="text-[#5a5650] font-normal opacity-50">—</span>
+                        <span className="text-[#8a8478] font-medium">{cast.endTime || 'LAST'}</span>
                       </div>
                     </div>
 
                     {/* Status Badge */}
-                    <div className="w-[110px] flex justify-center">
-                      <div className={`flex items-center gap-1.5 px-2.5 py-1 ${cfg.bg} rounded-[20px] border-[0.56px] ${cfg.border} min-w-[76px] justify-center`}>
-                        <div className={`w-[5px] h-[5px] rounded-full ${cfg.dot}`} />
-                        <span className={`text-[10px] font-semibold tracking-[0.12px] ${cfg.textColor}`}>{cfg.label}</span>
+                    <div className="w-[140px] flex justify-center">
+                      <div className={`flex items-center gap-2 px-4 py-1.5 ${cfg.bg} rounded-full border ${cfg.border} min-w-[90px] justify-center shadow-lg shadow-black/20`}>
+                        <div className={`w-[6px] h-[6px] rounded-full ${cfg.dot}`} />
+                        <span className={`text-[10px] font-bold tracking-[0.5px] uppercase ${cfg.textColor}`}>{cfg.label}</span>
                       </div>
                     </div>
 
                     {/* Tags */}
-                    <div className="flex-1 px-4 flex flex-wrap gap-1.5">
+                    <div className="flex-1 px-6 flex flex-wrap gap-2">
                       {cast.tags.length > 0 ? (
                         cast.tags.map((tag, i) => (
                           <span
                              key={i}
-                             className="px-1.5 py-px bg-[#ffffff05] border border-[#ffffff0a] rounded-[4px] text-[9px] font-medium text-[#8a8478] tracking-[0.06px]"
+                             className="px-2.5 py-1 bg-white/[0.03] border border-white/5 rounded-[6px] text-[10px] font-semibold text-[#8a8478] tracking-[0.2px] hover:text-[#dfbd69] transition-colors"
                           >
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="text-[10px] text-[#5a5650]">—</span>
+                        <span className="text-[11px] text-[#5a5650] tracking-widest opacity-40">—</span>
                       )}
                     </div>
                   </div>
