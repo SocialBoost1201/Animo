@@ -586,17 +586,18 @@ export async function submitCheckin(formData: FormData) {
     return { error: 'この本日の確認はすでに承認済みです。修正が必要な場合は店長に連絡してください。' }
   }
 
-  const hasChange = formData.get('has_change') === 'true'
-  const isAbsent = formData.get('is_absent') === 'true'
-  const changeNote = (formData.get('change_note') as string) || null
+  const status = (formData.get('status') as string) || 'work'
+  const isAbsent = status === 'absent'
+  const hasChange = false
   const memo = (formData.get('memo') as string) || null
+
   const { error } = await supabase.from('daily_checkins').upsert({
     cast_id: cast.id,
     checkin_date: today,
     has_change: hasChange,
-    change_note: changeNote,
+    change_note: null,
     is_absent: isAbsent,
-    memo,
+    memo: status === 'douhan' ? '同伴あり' : (memo ?? null),
     submitted_at: new Date().toISOString(),
     approval_status: 'pending',
     approved_at: null,
@@ -604,6 +605,43 @@ export async function submitCheckin(formData: FormData) {
   }, { onConflict: 'cast_id,checkin_date' })
 
   if (error) return { error: error.message }
+
+  // ── 同伴の場合: daily_reservations に upsert ──
+  if (status === 'douhan') {
+    const douhanVisitTime = (formData.get('douhan_visit_time') as string) || null
+    const douhanGuestName = (formData.get('douhan_guest_name') as string) || null
+    const douhanGuestCountRaw = formData.get('douhan_guest_count') as string
+    const douhanGuestCount =
+      douhanGuestCountRaw && douhanGuestCountRaw.trim() !== ''
+        ? Number.parseInt(douhanGuestCountRaw, 10)
+        : null
+    const douhanNote = (formData.get('douhan_note') as string) || null
+
+    if (douhanVisitTime && douhanGuestName) {
+      // 既存の同伴予定を削除してから挿入（1組のみ保証）
+      await supabase
+        .from('daily_reservations')
+        .delete()
+        .eq('cast_id', cast.id)
+        .eq('reservation_date', today)
+        .eq('reservation_type', 'douhan')
+
+      const { error: douhanError } = await supabase.from('daily_reservations').insert({
+        cast_id: cast.id,
+        reservation_date: today,
+        visit_time: douhanVisitTime,
+        guest_name: douhanGuestName,
+        guest_count: douhanGuestCount,
+        reservation_type: 'douhan',
+        note: douhanNote,
+        approval_status: 'pending',
+        approved_at: null,
+        approved_by: null,
+      })
+      if (douhanError) return { error: douhanError.message }
+    }
+  }
+
   const castName = cast.stage_name || cast.name || '不明'
   const lineResult = await sendLineGroupMessage(
     buildCheckinLineMessage({
@@ -611,8 +649,8 @@ export async function submitCheckin(formData: FormData) {
       today,
       isAbsent,
       hasChange,
-      changeNote,
-      memo,
+      changeNote: null,
+      memo: status === 'douhan' ? '同伴あり' : (memo ?? null),
     })
   )
 
@@ -626,6 +664,7 @@ export async function submitCheckin(formData: FormData) {
   }
 
   revalidatePath('/cast/dashboard')
+  revalidatePath('/cast/today')
   revalidatePath('/admin/today')
   if (!lineResult.ok) {
     return {

@@ -62,7 +62,7 @@ export function ReservationForm({
 
   return (
     <div className="rounded-[18px] border border-white/8 bg-[#131720] p-4">
-      <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">03 — 来店予定</p>
+      <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">02 — 通常来店予定</p>
 
       {isSubmissionClosed ? (
         <p className="mb-4 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-600">
@@ -136,14 +136,7 @@ export function ReservationForm({
               className={inputClass}
             />
           </div>
-          <div>
-            <label className="mb-1 block text-[11px] text-[#6b7280]">種別 *</label>
-            <select name="reservation_type" required className={inputClass}>
-              <option value="">選択してください</option>
-              <option value="douhan">同伴</option>
-              <option value="reservation">来店予定</option>
-            </select>
-          </div>
+          <input type="hidden" name="reservation_type" value="reservation" />
           <div>
             <label className="mb-1 block text-[11px] text-[#6b7280]">メモ（任意）</label>
             <input name="note" type="text" placeholder="テーブル、備考など" className={inputClass} />
