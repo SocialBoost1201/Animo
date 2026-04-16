@@ -279,7 +279,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
       <div className={`${F.card} p-6 md:p-12 relative overflow-hidden`}>
         {/* Subtle accent line at the top */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
 
         <div className="mb-12">
           <h2 className={`text-3xl font-serif tracking-tighter mb-2 ${F.heading}`}>
@@ -303,9 +303,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* 必須項目 */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-[1px] flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-white/5" />
               <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">Private Identity</span>
-              <div className="h-[1px] flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-white/5" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -443,9 +443,9 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* 任意項目 */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-[1px] flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-white/5" />
               <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">Public Profile</span>
-              <div className="h-[1px] flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-white/5" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">

@@ -210,7 +210,7 @@ export default function FirstTimeGuidePage() {
                   <h3 className="text-sm font-serif text-foreground mb-2 luxury-tracking">
                     {item.label}
                   </h3>
-                  <p className="text-sm text-gray-500 font-serif leading-[2] luxury-tracking">
+                  <p className="text-sm text-gray-500 font-serif leading-loose luxury-tracking">
                     {item.value}
                   </p>
                 </div>

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
-  Bell, Plus, Trash2, Send, Power, ChevronDown, ChevronUp,
-  Clock, Calendar, RefreshCw, Loader2, X, Check, Users, User,
+  Bell, Plus, Trash2, Send, ChevronDown, ChevronUp,
+  Clock, RefreshCw, Loader2, X, Check, Users, User,
 } from 'lucide-react'
 import {
   type LineNotification,
@@ -67,6 +68,7 @@ export function LineNotificationManager({
   linkedCasts?: LinkedCast[]
 }) {
   const { F, isDark } = useAdminTheme()
+  const router = useRouter()
   const [notifications, setNotifications] = useState(initialNotifications)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -75,6 +77,11 @@ export function LineNotificationManager({
   const [isPending, startTransition] = useTransition()
   const [testingId, setTestingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // ── Props同期 ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    setNotifications(initialNotifications)
+  }, [initialNotifications])
 
   // ── フォームリセット ──────────────────────────────────────────────────────
   const resetForm = () => {
@@ -111,48 +118,23 @@ export function LineNotificationManager({
         ? await updateLineNotification(editingId, form)
         : await createLineNotification(form)
 
-      if (result.error) {
-        showToast(result.error, 'error')
+      if (result.error || !result.data) {
+        showToast(result.error || '保存に失敗しました', 'error')
         return
       }
 
-      showToast(editingId ? '通知を更新しました' : '通知を追加しました', 'success')
-
-      // ローカル state を即時反映（楽観的更新）
+      // 一覧を即時更新
       if (editingId) {
         setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === editingId
-              ? {
-                  ...n,
-                  ...form,
-                  schedule_days: form.schedule_days ?? null,
-                  schedule_dates: form.schedule_dates ?? null,
-                  schedule_once_at: form.schedule_once_at || null,
-                  target_id: form.target_id || null,
-                }
-              : n
-          )
+          prev.map((n) => (n.id === editingId ? result.data! : n))
         )
       } else {
-        // 仮IDで追加（revalidateで上書きされる）
-        setNotifications((prev) => [
-          {
-            id: crypto.randomUUID(),
-            ...form,
-            schedule_days: form.schedule_days ?? null,
-            schedule_dates: form.schedule_dates ?? null,
-            schedule_once_at: form.schedule_once_at || null,
-            target_id: form.target_id || null,
-            is_enabled: true,
-            last_sent_at: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          ...prev,
-        ])
+        setNotifications((prev) => [result.data!, ...prev])
       }
+
+      showToast(editingId ? '通知を更新しました' : '通知を追加しました', 'success')
       resetForm()
+      router.refresh()
     })
   }
 
@@ -188,6 +170,7 @@ export function LineNotificationManager({
       if (result.error) { showToast(result.error, 'error'); return }
       setNotifications((prev) => prev.filter((n) => n.id !== id))
       showToast('通知を削除しました', 'success')
+      router.refresh()
     })
   }
 
@@ -477,7 +460,7 @@ function NotificationForm({
   const inactiveDayClass = isDark ? 'border-white/10 text-[#5a5650] hover:border-white/20' : 'border-[#0000001a] text-[#b0a898] hover:border-[#00000030]'
 
   return (
-    <div className={`border ${borderColor} rounded-[18px] p-8 space-y-8 ${isDark ? 'bg-gold/[0.04]' : 'bg-[#926f340a]'}`}>
+    <div className={`border ${borderColor} rounded-[18px] p-8 space-y-8 ${isDark ? 'bg-gold/4' : 'bg-[#926f340a]'}`}>
       <div className="flex items-center justify-between">
         <h4 className={`text-xs font-bold tracking-widest uppercase ${isDark ? 'text-gold' : 'text-[#926f34]'}`}>
           {editingId ? '通知を編集' : '新規通知を追加'}

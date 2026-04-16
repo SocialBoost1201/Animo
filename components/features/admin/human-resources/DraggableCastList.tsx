@@ -136,7 +136,7 @@ function SortableCastRow({
                 {(cast.stage_name || cast.name || '?')[0]}
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
           </div>
 
           {/* Name & Hobby */}
@@ -197,9 +197,9 @@ function SortableCastRow({
             }`}
           >
             {cast.is_active ?? cast.status === 'public' ? (
-              <><Eye size={14} /> <span className="mt-[1px]">PUBLIC</span></>
+              <><Eye size={14} /> <span className="mt-px">PUBLIC</span></>
             ) : (
-              <><EyeOff size={14} /> <span className="mt-[1px]">PRIVATE</span></>
+              <><EyeOff size={14} /> <span className="mt-px">PRIVATE</span></>
             )}
           </span>
         </div>

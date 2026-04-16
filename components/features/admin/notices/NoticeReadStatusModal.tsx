@@ -42,7 +42,7 @@ export function NoticeReadStatusModal({
   const unreadCasts = statuses.filter((status) => !status.is_read);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-500"
@@ -53,7 +53,7 @@ export function NoticeReadStatusModal({
       <div className="relative w-full sm:max-w-xl bg-black border-t sm:border border-white/10 sm:rounded-sm overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[80vh] animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-500">
         
         {/* Header */}
-        <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02] flex items-start justify-between shrink-0">
+        <div className="px-8 py-6 border-b border-white/5 bg-white/2 flex items-start justify-between shrink-0">
           <div>
             <span className="text-[10px] font-bold tracking-[3px] text-gold uppercase mb-2 block">ADMIN NOTICE</span>
             <h3 className="text-xl font-serif font-bold text-[#f4f1ea] tracking-tight">
@@ -93,7 +93,7 @@ export function NoticeReadStatusModal({
                 </div>
                 
                 {unreadCasts.length === 0 ? (
-                  <div className="p-10 text-center bg-white/[0.02] rounded-sm border border-white/5 shadow-inner">
+                  <div className="p-10 text-center bg-white/2 rounded-sm border border-white/5 shadow-inner">
                     <p className="text-xs text-[#8a8478] font-medium tracking-wide">
                       すべてのキャストが既読です
                     </p>
@@ -101,7 +101,7 @@ export function NoticeReadStatusModal({
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {unreadCasts.map(c => (
-                      <div key={c.cast_id} className="flex items-center gap-3 p-3 bg-white/[0.03] rounded-sm border border-white/5 group hover:border-red-500/30 transition-all">
+                      <div key={c.cast_id} className="flex items-center gap-3 p-3 bg-white/3 rounded-sm border border-white/5 group hover:border-red-500/30 transition-all">
                         <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10 shadow-lg group-hover:scale-105 transition-transform">
                           {c.image_url ? (
                             <img src={c.image_url} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
@@ -128,13 +128,13 @@ export function NoticeReadStatusModal({
                 </div>
                 
                 {readCasts.length === 0 ? (
-                  <div className="p-10 text-center bg-white/[0.02] rounded-sm border border-white/5 shadow-inner">
+                  <div className="p-10 text-center bg-white/2 rounded-sm border border-white/5 shadow-inner">
                     <p className="text-xs text-[#5a5650] italic"> まだ誰も読んでいません </p>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
                     {readCasts.map(c => (
-                      <div key={c.cast_id} className="flex items-center justify-between p-4 bg-white/[0.02] rounded-sm border border-white/5 transition-all hover:bg-white/[0.05] hover:border-gold/20 group">
+                      <div key={c.cast_id} className="flex items-center justify-between p-4 bg-white/2 rounded-sm border border-white/5 transition-all hover:bg-white/5 hover:border-gold/20 group">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-black overflow-hidden shrink-0 border border-white/10 shadow-lg group-hover:border-gold/30 transition-all">
                             {c.image_url ? (

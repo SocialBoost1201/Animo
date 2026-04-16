@@ -108,7 +108,7 @@ export function HelpRequestList({
         </div>
 
         {isCreating && (
-          <form onSubmit={handleCreate} className="bg-white/[0.02] p-6 rounded-2xl border border-white/5 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+          <form onSubmit={handleCreate} className="bg-white/2 p-6 rounded-2xl border border-white/5 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-[#8a8478] tracking-widest uppercase flex items-center gap-2">
@@ -150,13 +150,13 @@ export function HelpRequestList({
         {/* 募集一覧 */}
         <div className="space-y-4">
           {requests.length === 0 ? (
-            <div className="bg-white/[0.01] border border-dashed border-white/5 rounded-2xl py-12 text-center space-y-2">
+            <div className="bg-white/1 border border-dashed border-white/5 rounded-2xl py-12 text-center space-y-2">
               <p className="text-[#8a8478] text-sm italic">現在、発行済みの募集はありません。</p>
             </div>
           ) : (
             <div className="grid gap-4">
               {requests.map(req => (
-                <div key={req.id} className={`p-6 rounded-2xl border transition-all duration-300 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group ${req.is_active ? 'border-gold/30 bg-gold/[0.03] shadow-lg shadow-gold/5' : 'border-white/5 bg-white/[0.01] grayscale opacity-70'}`}>
+                <div key={req.id} className={`p-6 rounded-2xl border transition-all duration-300 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between group ${req.is_active ? 'border-gold/30 bg-gold/3 shadow-lg shadow-gold/5' : 'border-white/5 bg-white/1 grayscale opacity-70'}`}>
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-4">
                       <span className="font-bold text-xl text-[#f4f1ea] tracking-tight">
@@ -214,7 +214,7 @@ export function HelpRequestList({
         <div className="space-y-4">
           {responses.length === 0 ? (
              <div className="bg-black/94 border border-white/10 rounded-2xl py-16 text-center space-y-4 shadow-2xl">
-               <div className="w-16 h-16 bg-white/[0.02] rounded-full flex items-center justify-center mx-auto border border-white/5">
+               <div className="w-16 h-16 bg-white/2 rounded-full flex items-center justify-center mx-auto border border-white/5">
                  <AlertCircle size={32} className="text-[#3a3630]" />
                </div>
                <p className="text-[#8a8478] text-sm italic">条件に一致する応募はありません</p>
@@ -225,7 +225,7 @@ export function HelpRequestList({
                 <div className="flex-1 w-full flex flex-col md:flex-row gap-8 items-center">
                   {/* キャスト情報 */}
                   <div className="flex items-center gap-4 min-w-[200px]">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center font-bold text-xl text-[#f4f1ea] shrink-0 group-hover:border-gold/30 transition-colors">
+                    <div className="w-14 h-14 rounded-full bg-linear-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center font-bold text-xl text-[#f4f1ea] shrink-0 group-hover:border-gold/30 transition-colors">
                       {res.cast.stage_name.charAt(0)}
                     </div>
                     <div className="space-y-1">
@@ -237,7 +237,7 @@ export function HelpRequestList({
                   </div>
 
                   {/* 応募内容 */}
-                  <div className="flex-1 w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl flex flex-col justify-center gap-3">
+                  <div className="flex-1 w-full bg-white/2 border border-white/5 p-5 rounded-2xl flex flex-col justify-center gap-3">
                     <div className="flex items-center gap-3">
                       <span className="text-[10px] font-black tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded uppercase border border-gold/20">募集対象日</span>
                       <span className="text-md font-bold text-[#f4f1ea]">{format(new Date(res.shift_request.target_date), 'M月d日 (E)', { locale: ja })}</span>

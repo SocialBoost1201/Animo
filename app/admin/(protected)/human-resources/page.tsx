@@ -68,7 +68,7 @@ export default async function HumanResourcesPage({
                 >
                   <ChevronLeft size={18} />
                 </Link>
-                <span className="text-[13px] font-bold text-[#c7c0b2] min-w-[100px] text-center tracking-wider">{dFormat}</span>
+                <span className="text-[13px] font-bold text-[#c7c0b2] min-w-section-mobile text-center tracking-wider">{dFormat}</span>
                 <Link
                   href={`/admin/human-resources?tab=casts&month=${nextMonthStr}${q ? `&q=${q}` : ''}`}
                   className="p-2 text-[#8a8478] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
@@ -81,8 +81,7 @@ export default async function HumanResourcesPage({
               </div>
               <Link
                 href="/admin/human-resources/new"
-                className="flex items-center gap-2.5 px-6 py-3 rounded-[12px] text-[13px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-xl shadow-gold/20 whitespace-nowrap"
-                style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
+                className="flex items-center gap-2.5 px-6 py-3 rounded-[12px] text-[13px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-xl shadow-gold/20 whitespace-nowrap bg-linear-to-r from-gold to-[#926f34]"
               >
                 <Plus size={18} strokeWidth={3} />
                 キャスト登録
@@ -110,7 +109,7 @@ export default async function HumanResourcesPage({
             {mappedCasts.length}
           </span>
           {tab === 'casts' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
           )}
         </Link>
         <Link
@@ -129,7 +128,7 @@ export default async function HumanResourcesPage({
             {staffsData.length}
           </span>
           {tab === 'staffs' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[3px] rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]" />
           )}
         </Link>
       </div>

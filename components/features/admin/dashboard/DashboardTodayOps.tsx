@@ -78,7 +78,7 @@ export async function DashboardTodayOps() {
         </div>
 
         {/* Right: MANAGEMENT MEMO */}
-        <div className="flex-1 p-10 flex flex-col min-w-0 bg-white/[0.01]">
+        <div className="flex-1 p-10 flex flex-col min-w-0 bg-white/1">
           <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">MANAGEMENT MEMO</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (

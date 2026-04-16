@@ -167,7 +167,7 @@ export const Header = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-[60] bg-white flex flex-col">
+          <div className="fixed inset-0 z-60 bg-white flex flex-col">
             <div className="p-6 flex justify-between items-center border-b border-gray-100/50">
               <span className="font-heading-en font-bold luxury-tracking-super text-lg text-[#171717]">
                 CLUB Animo

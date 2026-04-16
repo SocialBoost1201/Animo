@@ -17,7 +17,7 @@ export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses:
 
   return (
     <div className="bg-black/94 rounded-[18px] border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] overflow-hidden font-sans">
-      <div className="p-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center sm:items-start flex-col sm:flex-row gap-4">
+      <div className="p-6 border-b border-white/5 bg-white/2 flex justify-between items-center sm:items-start flex-col sm:flex-row gap-4">
         <div>
           <h2 className="font-bold text-[#f4f1ea] flex items-center gap-2 tracking-tight">
             <AlertCircle className="w-4 h-4 text-gold" />
@@ -45,7 +45,7 @@ export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses:
           </div>
         ) : (
           unsubmitted.map(s => (
-            <div key={s.cast.id} className="flex justify-between items-center p-4 px-6 hover:bg-white/[0.02] transition-colors group">
+            <div key={s.cast.id} className="flex justify-between items-center p-4 px-6 hover:bg-white/2 transition-colors group">
               <span className="font-bold text-[#f4f1ea] group-hover:text-white transition-colors tracking-tight">{s.cast.stage_name}</span>
               
               {!s.hasAuthIndex && (

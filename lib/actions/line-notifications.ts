@@ -107,7 +107,7 @@ export async function getLineNotificationLogs(
 
 export async function createLineNotification(
   input: CreateLineNotificationInput
-): Promise<{ error?: string }> {
+): Promise<{ data?: LineNotification; error?: string }> {
   const supabase = createServiceClient()
 
   const payload = {
@@ -123,11 +123,16 @@ export async function createLineNotification(
     is_enabled: true,
   }
 
-  const { error } = await supabase.from('line_notifications').insert(payload)
+  const { data, error } = await supabase
+    .from('line_notifications')
+    .insert(payload)
+    .select()
+    .single()
+
   if (error) return { error: error.message }
 
   revalidatePath('/admin/settings')
-  return {}
+  return { data: data as LineNotification }
 }
 
 // ── 更新 ────────────────────────────────────────────────────────────────────
@@ -135,7 +140,7 @@ export async function createLineNotification(
 export async function updateLineNotification(
   id: string,
   input: Partial<CreateLineNotificationInput>
-): Promise<{ error?: string }> {
+): Promise<{ data?: LineNotification; error?: string }> {
   const supabase = createServiceClient()
 
   const payload: Record<string, unknown> = {}
@@ -149,15 +154,17 @@ export async function updateLineNotification(
   if (input.schedule_dates !== undefined)  payload.schedule_dates = input.schedule_dates ?? null
   if (input.schedule_once_at !== undefined) payload.schedule_once_at = input.schedule_once_at ?? null
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('line_notifications')
     .update(payload)
     .eq('id', id)
+    .select()
+    .single()
 
   if (error) return { error: error.message }
 
   revalidatePath('/admin/settings')
-  return {}
+  return { data: data as LineNotification }
 }
 
 // ── オン/オフ切り替え ────────────────────────────────────────────────────────

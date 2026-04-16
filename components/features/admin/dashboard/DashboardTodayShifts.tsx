@@ -59,7 +59,7 @@ export async function DashboardTodayShifts() {
         </div>
         <Link
           href="/admin/today"
-          className="flex items-center gap-2 px-5 h-[40px] rounded-[10px] bg-white/[0.04] border border-[#dfbd6940] text-[12px] font-bold text-[#dfbd69] hover:bg-[#dfbd6910] transition-all"
+          className="flex items-center gap-2 px-5 h-[40px] rounded-[10px] bg-white/4 border border-gold/40 text-[12px] font-bold text-[#dfbd69] hover:bg-[#dfbd6910] transition-all"
         >
           <span>詳細を表示</span>
           <ChevronRight size={14} />
@@ -70,9 +70,9 @@ export async function DashboardTodayShifts() {
       <div className="flex-1 overflow-x-auto custom-scrollbar">
         <div className="min-w-[900px]">
           {/* Table Header Row */}
-          <div className="flex items-center h-[56px] border-t border-b border-[#ffffff0a] px-10 bg-white/[0.01]">
+          <div className="flex items-center h-[56px] border-t border-b border-[#ffffff0a] px-10 bg-white/1">
             <div className="w-[280px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase">CAST NAME</div>
-            <div className="w-[160px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">SHIFT TIME</div>
+            <div className="w-section text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">SHIFT TIME</div>
             <div className="w-[140px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase text-center">STATUS</div>
             <div className="flex-1 text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">MEMO / TAGS</div>
           </div>
@@ -90,7 +90,7 @@ export async function DashboardTodayShifts() {
                 return (
                   <div
                     key={cast.castId}
-                    className="flex items-center min-h-[72px] hover:bg-white/[0.02] transition-colors px-10"
+                    className="flex items-center min-h-[72px] hover:bg-white/2 transition-colors px-10"
                   >
                     <div className="w-[280px] flex items-center gap-4 shrink-0">
                       <div className="w-10 h-10 rounded-full bg-[#1c1d22] border border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xl">
@@ -110,7 +110,7 @@ export async function DashboardTodayShifts() {
                     </div>
                     
                     {/* Time */}
-                    <div className="w-[160px] px-6">
+                    <div className="w-section px-6">
                       <div className="inline-flex items-center gap-2 text-[14px] font-bold text-gold font-sans bg-gold/5 px-3 py-1.5 rounded-[6px] border border-gold/10">
                         <span>{cast.startTime}</span>
                         <span className="text-[#5a5650] font-normal opacity-50">—</span>
@@ -132,7 +132,7 @@ export async function DashboardTodayShifts() {
                         cast.tags.map((tag, i) => (
                           <span
                              key={i}
-                             className="px-2.5 py-1 bg-white/[0.03] border border-white/5 rounded-[6px] text-[10px] font-semibold text-[#8a8478] tracking-[0.2px] hover:text-[#dfbd69] transition-colors"
+                             className="px-2.5 py-1 bg-white/3 border border-white/5 rounded-[6px] text-[10px] font-semibold text-[#8a8478] tracking-[0.2px] hover:text-[#dfbd69] transition-colors"
                           >
                             {tag}
                           </span>

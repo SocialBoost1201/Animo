@@ -12,7 +12,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 p-2 bg-white/[0.03] border-b border-white/5">
+    <div className="flex flex-wrap items-center gap-1 p-2 bg-white/3 border-b border-white/5">
       <button
         onClick={(e) => { e.preventDefault(); editor.chain().focus().toggleBold().run(); }}
         disabled={!editor.can().chain().focus().toggleBold().run()}
