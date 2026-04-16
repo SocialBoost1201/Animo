@@ -128,8 +128,9 @@ function SortableCastRow({
         <div className="flex items-center gap-6 md:contents">
           {/* Image */}
           <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden bg-[#121111] border border-[#ffffff10] shrink-0 shadow-2xl relative group-hover:border-gold/30 transition-all duration-500">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cast.image_url} alt={cast.stage_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-115" />
+            {cast.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cast.image_url} alt={cast.stage_name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-115" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#5a5650] text-2xl md:text-xl font-serif">
                 {(cast.stage_name || cast.name || '?')[0]}
