@@ -74,7 +74,7 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
 
             return (
               <div key={sub.id} className="bg-black/95 rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col group transition-all hover:border-gold/30">
-                <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+                <div className="p-5 border-b border-white/5 bg-white/2">
                   <div className="flex justify-between items-start mb-2">
                     <Link href={`/admin/human-resources`} className="font-serif text-lg font-bold text-[#f4f1ea] hover:text-gold transition-colors tracking-tight">
                       {sub.casts?.stage_name}
@@ -98,7 +98,7 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
                   </div>
                 </div>
 
-                <div className="p-5 flex-1 bg-white/[0.01]">
+                <div className="p-5 flex-1 bg-white/1">
                   <div className="space-y-2.5">
                     {dates.map((dateStr) => {
                       const d = new Date(dateStr);

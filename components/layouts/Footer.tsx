@@ -76,7 +76,7 @@ export const Footer = () => {
             </h3>
             <ul className="space-y-4 text-gray-400 text-sm">
               <li className="flex items-start">
-                <MapPin className="w-5 h-5 mr-3 mt-1 flex-shrink-0 text-gold" />
+                <MapPin className="w-5 h-5 mr-3 mt-1 shrink-0 text-gold" />
                 <span>
                   〒231-0012<br />
                   神奈川県横浜市中区相生町３丁目５３<br />
@@ -84,7 +84,7 @@ export const Footer = () => {
                 </span>
               </li>
               <li className="flex items-center mt-4">
-                <Phone className="w-5 h-5 mr-3 flex-shrink-0 text-gold" />
+                <Phone className="w-5 h-5 mr-3 shrink-0 text-gold" />
                 <a href="tel:045-263-6961" className="hover:text-white transition-colors">
                   045-263-6961
                 </a>

@@ -69,7 +69,7 @@ export function StaffTable({
               <th className="px-8 py-5 text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase whitespace-nowrap text-right">操作</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.03]">
+          <tbody className="divide-y divide-white/3">
             {profiles.length > 0 ? (
               profiles.map((profile) => {
                 const isOwner = profile.role === 'owner'
@@ -78,7 +78,7 @@ export function StaffTable({
                 const isRemoving = removing === profile.id
 
                 return (
-                  <tr key={profile.id} className="hover:bg-white/[0.02] transition-colors group">
+                  <tr key={profile.id} className="hover:bg-white/2 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="font-bold text-[#f4f1ea] leading-none mb-1.5 flex items-center gap-2">
                         {profile.display_name || '名前未設定'}

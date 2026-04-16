@@ -82,14 +82,14 @@ export function InviteStaffButton() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-xl transition-opacity animate-in fade-in duration-500" 
             onClick={handleClose} 
           />
           <div className="relative bg-black/95 border border-white/10 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-4 duration-300">
             {/* Header */}
-            <div className="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-white/[0.01]">
+            <div className="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-white/1">
               <div className="space-y-1">
                 <h2 className="text-xl font-bold tracking-tight text-[#f4f1ea]">スタッフ招待</h2>
                 <p className="text-[10px] font-black tracking-[2px] text-[#5a5650] uppercase">System Invitation</p>
@@ -147,11 +147,11 @@ export function InviteStaffButton() {
                         key={option.value}
                         className={`group relative flex items-start gap-4 px-5 py-4 border rounded-2xl cursor-pointer transition-all duration-300 ${
                           role === option.value
-                            ? 'border-gold/50 bg-gold/[0.04] shadow-lg shadow-gold/5'
-                            : 'border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                            ? 'border-gold/50 bg-gold/4 shadow-lg shadow-gold/5'
+                            : 'border-white/5 bg-white/2 hover:border-white/20 hover:bg-white/4'
                         }`}
                       >
-                        <div className={`mt-1 flex-shrink-0 w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        <div className={`mt-1 shrink-0 w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                           role === option.value ? 'border-gold bg-gold shadow-[0_0_10px_rgba(223,189,105,0.4)]' : 'border-[#3a3630] bg-transparent'
                         }`}>
                           {role === option.value && <div className="w-1.5 h-1.5 rounded-full bg-black" />}
@@ -173,7 +173,7 @@ export function InviteStaffButton() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 p-4 bg-white/[0.02] rounded-xl border border-white/5 border-dashed">
+                <div className="flex items-center gap-2 p-4 bg-white/2 rounded-xl border border-white/5 border-dashed">
                   <Loader2 size={12} className="text-[#3a3630]" />
                   <p className="text-[9px] text-[#5a5650] leading-none font-bold uppercase tracking-wider">
                     Invitation link expires in 24 hours

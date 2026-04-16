@@ -156,9 +156,9 @@ export default async function HomePage() {
           <div className="container mx-auto text-center relative z-10">
             <FadeIn>
               <div className="inline-flex items-center justify-center space-x-3 mb-4">
-                <div className="h-[1px] w-8 bg-gold"></div>
+                <div className="h-px w-8 bg-gold"></div>
                 <span className="text-xs font-serif text-gold luxury-tracking uppercase tracking-widest">Today&apos;s Mood</span>
-                <div className="h-[1px] w-8 bg-gold"></div>
+                <div className="h-px w-8 bg-gold"></div>
               </div>
               <p className="text-sm md:text-base font-serif tracking-widest leading-loose text-white/90 max-w-2xl mx-auto">
                 {settings.today_mood}

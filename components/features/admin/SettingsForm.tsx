@@ -43,7 +43,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
       <div className={`${F.card} p-10 md:p-14 h-full relative overflow-hidden flex flex-col`}>
         {/* Subtle accent decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 blur-[120px] -mr-48 -mt-48 rounded-full" />
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
 
         <div className="mb-14 relative z-10">
           <h2 className={`text-3xl font-serif tracking-tight mb-3 ${F.heading}`}>サイト設定</h2>
@@ -54,7 +54,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
           {/* Section: 本日のムード */}
           <div className="space-y-8">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-[1px] w-12 bg-gold/40" />
+              <div className="h-px w-12 bg-gold/40" />
               <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">本日のムード</span>
             </div>
 
@@ -78,7 +78,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
           {/* Section: ビジュアル演出 */}
           <div className="space-y-8 pt-10 border-t border-[#ffffff08]">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-[1px] w-12 bg-gold/40" />
+              <div className="h-px w-12 bg-gold/40" />
               <span className="text-[11px] font-bold tracking-[5px] text-[#5a5650] uppercase">ビジュアル演出</span>
             </div>
 
@@ -107,7 +107,7 @@ export function SettingsForm({ initialData }: { initialData?: SettingsData | nul
                 </p>
               </div>
 
-              <div className="bg-white/[0.03] border border-white/10 p-8 rounded-[12px] flex flex-col justify-center min-h-[160px]">
+              <div className="bg-white/3 border border-white/10 p-8 rounded-[12px] flex flex-col justify-center min-h-section">
                 <p className="text-[11px] font-bold tracking-[3px] text-gold uppercase mb-3">ヒント</p>
                 <p className="text-[13px] text-[#8a8478] leading-relaxed italic">
                   「リップル」はカスタムシェーダーによる水面のようなクロスフェード効果で、Animoのブランドイメージに最もマッチしたプレミアムな演出です。

@@ -24,7 +24,7 @@ export default function DesignPage() {
     {
       href:     '/admin/settings',
       icon:     Palette,
-      title:    'サイト設定',
+      title:    '設定',
       sub:      '店舗名・基本情報・SNSリンク・カラー設定など基本設定を管理します',
       badge:    null,
       iconBg:   'bg-[#a882d814]',

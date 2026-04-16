@@ -66,7 +66,7 @@ function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?
 // ── Section row ─────────────────────────────────────────────────────────────
 function Row({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`flex items-center h-[36px] gap-3 px-3 hover:bg-white/[0.03] rounded-sm transition-colors ${className}`}>
+    <div className={`flex items-center h-[36px] gap-3 px-3 hover:bg-white/3 rounded-sm transition-colors ${className}`}>
       {children}
     </div>
   )
@@ -177,7 +177,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-sm border border-white/10">
+          <div className="flex items-center gap-3 px-5 py-2.5 bg-white/3 rounded-sm border border-white/10">
             <Calendar size={14} className="text-gold" />
             <span className="text-xs font-bold text-[#c7c0b2] tracking-[0.2em] uppercase">{dateLabel}</span>
           </div>
@@ -214,7 +214,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         {/* ── Left: Ops Table ─────────────────────────────────────────── */}
         <div className="flex flex-col bg-black/94 rounded-[18px] border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] backdrop-blur-md overflow-hidden min-h-[520px]">
           {/* Tabs */}
-          <div className="flex items-center gap-1 px-6 pt-6 pb-0 border-b border-white/5 bg-white/[0.01]">
+          <div className="flex items-center gap-1 px-6 pt-6 pb-0 border-b border-white/5 bg-white/1">
             {TABS.map((tab) => {
               const count = tab.id === 'unconfirmed' ? data.unconfirmedCasts.length : undefined
               return (
@@ -223,8 +223,8 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative px-6 py-4 text-[11px] font-bold tracking-[2px] uppercase transition-all ${
                     activeTab === tab.id
-                      ? 'text-[#f4f1ea] bg-white/[0.03]'
-                      : 'text-[#5a5650] hover:text-[#8a8478] hover:bg-white/[0.01]'
+                      ? 'text-[#f4f1ea] bg-white/3'
+                      : 'text-[#5a5650] hover:text-[#8a8478] hover:bg-white/1'
                   }`}
                 >
                   {tab.label}
@@ -252,7 +252,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
 
           {/* Alerts */}
           <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden">
-            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/1">
               <div className="w-[32px] h-[32px] flex items-center justify-center bg-red-500/10 rounded-sm">
                 <AlertTriangle size={16} className="text-red-400" strokeWidth={2} />
               </div>
@@ -282,7 +282,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
 
           {/* Memo */}
           <div className="flex flex-col bg-black/94 rounded-sm border border-white/10 shadow-2xl backdrop-blur-md overflow-hidden flex-1">
-            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+            <div className="flex items-center gap-3 px-6 h-[64px] border-b border-white/5 bg-white/1">
               <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
                 <StickyNote size={16} className="text-gold" strokeWidth={2} />
               </div>
@@ -294,7 +294,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
                 { type: 'EVENT', content: ops.eventMemo,  color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
                 { type: 'STAFF', content: ops.urgentMemo, color: 'text-orange-400 border-orange-500/20 bg-orange-500/5' },
               ] as const).map((m) => (
-                <div key={m.type} className={`rounded-sm border p-4 transition-all hover:bg-white/[0.02] ${m.color}`}>
+                <div key={m.type} className={`rounded-sm border p-4 transition-all hover:bg-white/2 ${m.color}`}>
                   <p className={`text-[9px] font-bold tracking-[2px] uppercase mb-2 opacity-80 ${m.color.split(' ')[0]}`}>{m.type}</p>
                   <div className="text-[11px] text-[#cbc3b3] leading-relaxed italic font-sans">
                     {m.content ?? <span className="opacity-40 italic">Not set</span>}
@@ -306,9 +306,9 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         </div>
       </div>
 
-      {/* ── LINE Share ───────────────────────────────────────────────────── */}
+       {/* ── LINE Share ───────────────────────────────────────────────────── */}
       <div className="flex flex-col bg-black/94 rounded-sm border border-gold/30 shadow-2xl backdrop-blur-md overflow-hidden">
-        <div className="flex items-center justify-between px-6 h-[64px] border-b border-white/5 bg-white/[0.01]">
+        <div className="flex items-center justify-between px-6 h-[64px] border-b border-white/5 bg-white/1">
           <div className="flex items-center gap-3">
             <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
               <Copy size={16} className="text-gold" strokeWidth={2} />
@@ -327,7 +327,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             {copied ? 'COPIED' : 'COPY TEXT'}
           </button>
         </div>
-        <div className="p-6 bg-white/[0.01]">
+        <div className="p-6 bg-white/1">
           <pre className="text-[12px] text-[#cbc3b3] leading-relaxed whitespace-pre-wrap font-mono bg-black/40 p-5 rounded-sm border border-white/5 scrollbar-thin">
             {lineText || 'Generating content...'}
           </pre>
@@ -675,7 +675,7 @@ function VisitTab({ data }: { data: TodayDashboardData }) {
             <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-16 text-right">Type</span>
           </div>
           {data.reservations.map(r => (
-            <div key={r.id} className="flex items-center h-[40px] px-3 hover:bg-white/[0.03] rounded-sm transition-colors border-b border-white/[0.02] last:border-0 group">
+            <div key={r.id} className="flex items-center h-[40px] px-3 hover:bg-white/3 rounded-sm transition-colors border-b border-white/2 last:border-0 group">
               <span className="text-[12px] font-bold text-gold w-14 shrink-0 transition-all group-hover:tracking-wider">
                 {r.visit_time.substring(0, 5)}
               </span>
@@ -797,7 +797,7 @@ function UnconfirmedTab({
           <p className="text-[10px] font-bold tracking-[2px] text-gold uppercase px-3 pb-1 border-b border-gold/10">PENDING CONFIRMATIONS</p>
           <div className="space-y-3">
             {data.pendingCheckins.map(checkin => (
-              <div key={checkin.id} className="rounded-sm border border-gold/20 bg-gold/[0.02] p-5 backdrop-blur-sm transition-all hover:bg-gold/[0.04]">
+              <div key={checkin.id} className="rounded-sm border border-gold/20 bg-gold/2 p-5 backdrop-blur-sm transition-all hover:bg-gold/4">
                 <div className="flex items-start gap-4">
                   <Badge color="orange">PENDING</Badge>
                   <div className="min-w-0 flex-1">
@@ -839,7 +839,7 @@ function UnconfirmedTab({
           <p className="text-[10px] font-bold tracking-[2px] text-blue-400 uppercase px-3 pb-1 border-b border-blue-500/10">PENDING RESERVATIONS</p>
           <div className="space-y-3">
             {data.pendingReservations.map(reservation => (
-              <div key={reservation.id} className="rounded-sm border border-blue-500/20 bg-blue-500/[0.02] p-5 backdrop-blur-sm transition-all hover:bg-blue-500/[0.04]">
+              <div key={reservation.id} className="rounded-sm border border-blue-500/20 bg-blue-500/2 p-5 backdrop-blur-sm transition-all hover:bg-blue-500/4">
                 <div className="flex items-start gap-4">
                   <Badge color="blue">{reservation.reservation_type === 'douhan' ? 'DOUHAN' : 'VISIT'}</Badge>
                   <div className="min-w-0 flex-1">
