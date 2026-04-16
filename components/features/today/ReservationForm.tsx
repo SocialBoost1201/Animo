@@ -13,7 +13,6 @@ type Reservation = {
   guest_count?: number | null
   reservation_type: string
   note?: string
-  approval_status?: 'pending' | 'approved' | 'rejected'
 }
 
 export function ReservationForm({
@@ -87,23 +86,8 @@ export function ReservationForm({
                 <div className="grid grid-cols-[1fr_auto] items-center gap-3">
                   <div className="text-[13px] text-[#f7f4ed]">{r.guest_name}様</div>
                   <div className="text-[13px] font-medium text-[#f7f4ed]">{r.visit_time.substring(0, 5)}</div>
-                </div>
                 <div className="grid grid-cols-[80px_1fr] gap-3">
                   <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#f7f4ed]">{r.guest_count ?? 1}名</div>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {['approved', 'pending', 'rejected'].map((status) => (
-                      <div
-                        key={status}
-                        className={`rounded-[8px] px-2 py-2 text-center text-[11px] font-bold ${
-                          (status === 'approved' && r.approval_status === 'approved')
-                            ? 'bg-[rgba(51,179,107,0.12)] text-[#33b36b]'
-                            : 'bg-black/20 text-[rgba(247,244,237,0.3)]'
-                        }`}
-                      >
-                        {status === 'approved' ? '確定' : status === 'pending' ? '来るかも' : '連絡中'}
-                      </div>
-                    ))}
-                  </div>
                 </div>
                 {r.note ? <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#a9afbc]">{r.note}</div> : null}
               </div>

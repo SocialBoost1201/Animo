@@ -602,9 +602,6 @@ export async function submitCheckin(formData: FormData) {
       is_absent: isAbsent,
       memo: memo,
       submitted_at: new Date().toISOString(),
-      approval_status: 'pending',
-      approved_at: null,
-      approved_by: null,
     }, { onConflict: 'cast_id,checkin_date' })
 
     if (error) return { error: error.message }
@@ -637,9 +634,6 @@ export async function submitCheckin(formData: FormData) {
           guest_count: douhanGuestCount,
           reservation_type: 'douhan',
           note: douhanNote,
-          approval_status: 'pending',
-          approved_at: null,
-          approved_by: null,
         })
         if (douhanError) return { error: douhanError.message }
       }
@@ -728,9 +722,6 @@ export async function addReservation(formData: FormData) {
       guest_count: guestCount,
       reservation_type: reservationType,
       note,
-      approval_status: 'pending',
-      approved_at: null,
-      approved_by: null,
     })
 
     if (error) return { error: error.message }

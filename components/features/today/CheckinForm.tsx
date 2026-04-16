@@ -144,18 +144,18 @@ export function CheckinForm({
 
   // ── Card style helpers ──
   function cardClass(s: Status): string {
-    const base = 'flex-1 rounded-[14px] px-3 py-4 text-center transition-all duration-200 cursor-pointer focus:outline-none'
+    const base = 'flex-1 rounded-[14px] px-3 py-4 text-center transition-all duration-200 cursor-pointer outline-none focus:outline-none ring-0 focus:ring-0 appearance-none'
     if (status !== s) {
-      return `${base} bg-[#131720] text-[rgba(247,244,237,0.4)] hover:bg-[#181d27]`
+      return `${base} border border-[#2a2d36] bg-[#1a1d24] text-[rgba(247,244,237,0.4)] hover:bg-[#1f222a]`
     }
     if (s === 'work') {
-      return `${base} bg-[rgba(201,167,106,0.15)] ring-1 ring-[#c9a76a]/60 text-[#c9a76a]`
+      return `${base} border border-[#c9a76a] bg-[rgba(201,167,106,0.15)] text-[#c9a76a] shadow-[0_0_12px_rgba(201,167,106,0.15)]`
     }
     if (s === 'douhan') {
-      return `${base} bg-[rgba(223,189,105,0.2)] ring-1 ring-[#dfbd69]/80 text-[#dfbd69]`
+      return `${base} border border-[#dfbd69] bg-[rgba(223,189,105,0.2)] text-[#dfbd69] shadow-[0_0_16px_rgba(223,189,105,0.2)]`
     }
     // absent
-    return `${base} bg-[rgba(224,106,106,0.15)] ring-1 ring-[#e06a6a]/60 text-[#e06a6a]`
+    return `${base} border border-[#e06a6a] bg-[rgba(224,106,106,0.15)] text-[#e06a6a] shadow-[0_0_12px_rgba(224,106,106,0.15)]`
   }
 
   return (
@@ -323,7 +323,7 @@ export function CheckinForm({
             <input
               name="memo"
               type="text"
-              defaultValue={existing?.memo && existing.memo !== '同伴あり' ? existing.memo : ''}
+              defaultValue={existing?.memo && !existing.memo.includes('同伴') ? existing.memo : ''}
               placeholder="補足があれば入力してください"
               disabled={isLocked}
               className={inputClass}

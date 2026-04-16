@@ -21,7 +21,6 @@ type CastDashboardReservationRow = {
   guest_count?: number | null;
   reservation_type: 'douhan' | 'reservation';
   note?: string | null;
-  approval_status?: 'pending' | 'approved' | 'rejected';
 };
 
 export default async function CastTodayPage() {
@@ -61,7 +60,6 @@ export default async function CastTodayPage() {
       guest_count: r.guest_count ?? null,
       reservation_type: r.reservation_type,
       note: r.note ?? undefined,
-      approval_status: r.approval_status,
     }));
 
   const existingDouhan = douhanReservationRaw
