@@ -11,7 +11,8 @@ import {
   CastMobileShell,
   CastMobileSectionTitle,
 } from '@/components/features/cast/CastMobileShell';
-import { getJstDateString } from '@/lib/date-utils';
+import { getJstDateString, formatShiftTime } from '@/lib/date-utils';
+import { isMasterAccount } from '@/lib/config/master';
 
 type CastDashboardReservationRow = {
   id: string;
@@ -30,6 +31,10 @@ export default async function CastTodayPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
+  // auth user の email を取得（master 判定に使用）
+  const { data: { user } } = await supabase.auth.getUser();
+  const isMaster = isMasterAccount(user?.email);
+
   const [{ data: todayShift }, todayCheckin, todayReservations] = await Promise.all([
     supabase.from('cast_schedules').select('*').eq('cast_id', cast.id).eq('work_date', today).maybeSingle(),
     getCastTodayCheckin(),
@@ -37,6 +42,11 @@ export default async function CastTodayPage() {
   ]);
 
   const submissionState = await getTodaySubmissionState();
+
+  // マスターアカウントは締切後でも編集可能
+  const isSubmissionClosed = submissionState.isClosed && !isMaster;
+  // マスターが締切後にアクセスしている場合にバナーを出す
+  const isMasterOverride = isMaster && submissionState.isClosed;
 
   const allReservations = (todayReservations || []) as CastDashboardReservationRow[];
 
@@ -79,7 +89,7 @@ export default async function CastTodayPage() {
           <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">Today&apos;s Schedule</div>
           <div className="mt-3 text-base font-bold text-[#f7f4ed]">
             {todayShift
-              ? `${todayShift.start_time?.slice(0, 5) ?? '未定'} 〜 ${todayShift.end_time?.slice(0, 5) ?? '未定'}`
+              ? formatShiftTime(todayShift.start_time, todayShift.end_time)
               : '本日の出勤予定はありません'}
           </div>
         </CastMobileCard>
@@ -89,8 +99,9 @@ export default async function CastTodayPage() {
           <CheckinForm
             existing={todayCheckin}
             existingDouhan={existingDouhan}
-            isSubmissionClosed={submissionState.isClosed}
+            isSubmissionClosed={isSubmissionClosed}
             deadlineLabel={submissionState.deadlineLabel}
+            isMasterOverride={isMasterOverride}
           />
         </div>
 
@@ -98,7 +109,7 @@ export default async function CastTodayPage() {
         <div className="[&_input]:bg-[#10141d] [&_input]:text-[#f7f4ed] [&_select]:bg-[#10141d] [&_select]:text-[#f7f4ed] [&_textarea]:bg-[#10141d] [&_textarea]:text-[#f7f4ed]">
           <ReservationForm
             reservations={normalReservations}
-            isSubmissionClosed={submissionState.isClosed}
+            isSubmissionClosed={isSubmissionClosed}
             deadlineLabel={submissionState.deadlineLabel}
           />
         </div>

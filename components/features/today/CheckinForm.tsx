@@ -37,11 +37,13 @@ export function CheckinForm({
   existingDouhan,
   isSubmissionClosed,
   deadlineLabel,
+  isMasterOverride = false,
 }: {
   existing: ExistingCheckin
   existingDouhan?: ExistingDouhanReservation
   isSubmissionClosed: boolean
   deadlineLabel: string
+  isMasterOverride?: boolean
 }) {
   const [status, setStatus] = useState<Status>(() =>
     deriveInitialStatus(existing, existingDouhan ?? null)
@@ -177,6 +179,18 @@ export function CheckinForm({
           {statusLabel}
         </span>
       </div>
+
+      {/* Master override banner */}
+      {isMasterOverride && (
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-[#dfbd69]/30 bg-[rgba(223,189,105,0.08)] px-3 py-2">
+          <span className="shrink-0 rounded-full bg-[#dfbd69] px-2 py-0.5 text-[9px] font-bold tracking-widest text-[#0b0d12] uppercase">
+            MASTER
+          </span>
+          <p className="text-[11px] font-bold text-[#dfbd69]">
+            管理者オーバーライド中 — テストモード（締切後も編集可）
+          </p>
+        </div>
+      )}
 
       {/* Status banners */}
       {isSubmissionClosed ? (

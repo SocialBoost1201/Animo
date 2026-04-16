@@ -7,6 +7,7 @@ import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
 import { StaffSlave } from './staffs'
 import { getAnalyticsSummary } from './analytics'
+import { isMasterAccount } from '@/lib/config/master'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -565,7 +566,7 @@ export async function submitCheckin(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  if (isTodaySubmissionClosed() && !isMasterAccount(user.email)) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
@@ -688,7 +689,7 @@ export async function addReservation(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  if (isTodaySubmissionClosed() && !isMasterAccount(user.email)) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
@@ -763,7 +764,8 @@ export async function addReservation(formData: FormData) {
 
 export async function deleteReservation(id: string) {
   const supabase = await createClient()
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  const { data: { user } } = await supabase.auth.getUser()
+  if (isTodaySubmissionClosed() && !isMasterAccount(user?.email)) return { error: getSubmissionClosedError() }
 
   const { data: reservation } = await supabase
     .from('daily_reservations')
