@@ -270,104 +270,70 @@ body {
 }
 
 /* ============================================================
-   .card-premium-skin — Figma準拠 共通立体演出スキン
+   .card-premium-skin — Figma準拠 共通立体演出スキン v2
    ============================================================
-   使い方: 既存カードの root 要素に class="... card-premium-skin" を追加するだけ。
-   width / height / padding / gap / text 配置は一切変更しない。
-   立体感は Gold Layer の右下オフセットで表現する。
+   @layer skin : Tailwind の @layer utilities より後に配置され、
+   bg-[*] などのユーティリティクラスより確実に背景色を上書きする。
+   width / height / padding / margin / gap は一切変更しない。
    ============================================================ */
 
-/* ── Layer 0: Base Black Foundation (root 自身) ── */
-.card-premium-skin {
-  position: relative;
-  isolation: isolate; /* スタッキングコンテキストを確立し、子要素のz-indexを隔離 */
+@layer skin {
+  .card-premium-skin {
+    position: relative;
 
-  /* Base shadow */
-  box-shadow: 2px 4px 10px 0 rgba(0, 0, 0, 0.50);
+    /* Front Dark Gloss Surface — 鏡面グラデーション */
+    background:
+      linear-gradient(
+        1deg,
+        #282727  7.95%,
+        #191717 27.54%,
+        #191717 79.40%,
+        #393939 118.24%,
+        #191717 127.80%
+      );
 
-  /* Layer 4: Front Dark Gloss Surface — root 背景を鏡面グラデに変更 */
-  background:
-    linear-gradient(
-      1deg,
-      #282727 7.95%,
-      #191717 27.54%,
-      #191717 79.4%,
-      #393939 118.24%,
-      #191717 127.8%
-    ) !important;
-}
+    /* Gold Layer オフセット:
+       Layer 1 — 6px/6px ハードオフセット（金の厚み・底板）
+       Layer 2 — 4px/4px 中間奥行き
+       Layer 3 — 3px/3px 前面アクセント
+       Layer 4 — 拡散環境光
+       Layer 5 — 基層の落ち影 */
+    box-shadow:
+      6px  6px  0px  0px #C9A236,
+      4px  4px  0px  0px rgba(228, 170,  0, 0.95),
+      3px  3px  0px  0px rgba(238, 181,  2, 0.75),
+      0px  0px 18px  0px rgba(201, 162, 54, 0.28),
+      2px  5px 12px  0px rgba(0,   0,   0,  0.60);
 
-/* ── Layer 1: Gold Back Layer — 右下に 4px / 4px オフセット ── */
-.card-premium-skin::before {
-  content: '';
-  position: absolute;
-  /* カードと同じ境界から右下にずらす */
-  inset: 0;
-  translate: 4px 4px;
-  /* border-radius は CSS inherit で親の計算済み値を使う */
-  border-radius: inherit;
-  z-index: -2; /* root の後ろ */
-  pointer-events: none;
-
-  background:
-    radial-gradient(50% 50% at 50% 50%, rgba(253, 224, 91, 0.20) 0%, rgba(251, 222, 91, 0.20) 100%),
-    linear-gradient(
-      89deg,
-      #E8AA00 1.17%,
-      #FBD84B 18.26%,
-      #E7AB00 56.27%,
-      #FBD94D 77.43%,
-      #EEB502 90.99%
-    );
-}
-
-/* ── Layer 2: Gold Accent Layer — 右下に 2px / 2px オフセット ── */
-.card-premium-skin::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  translate: 2px 2px;
-  border-radius: inherit;
-  z-index: -1; /* Gold Back より前、Front Surface より後ろ */
-  pointer-events: none;
-
-  background:
-    radial-gradient(50% 50% at 50% 50%, rgba(253, 224, 91, 0.10) 0%, rgba(251, 222, 91, 0.10) 100%),
-    linear-gradient(
-      89deg,
-      rgba(232, 170, 0, 0.70)   1.17%,
-      rgba(251, 216, 75, 0.70) 18.26%,
-      rgba(231, 171, 0, 0.70)  56.27%,
-      rgba(251, 217, 77, 0.70) 77.43%,
-      rgba(238, 181, 2, 0.70)  90.99%
-    );
-  box-shadow: 1px 1px 20px 0 rgba(236, 203, 71, 0.30);
-}
-
-/* ── content を常に最前面に維持 ── */
-.card-premium-skin > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ── hover: Gold Back Layer を少し強調 ── */
-@media (hover: hover) {
-  .card-premium-skin:hover::before {
-    opacity: 1.0;
-    translate: 5px 5px;
-    transition: translate 200ms ease, opacity 200ms ease;
+    transition: box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                translate   220ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .card-premium-skin::before {
-    transition: translate 200ms ease, opacity 200ms ease;
+
+  .card-premium-skin > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (hover: hover) {
+    .card-premium-skin:hover {
+      box-shadow:
+        8px  8px  0px  0px #D4AF37,
+        5px  5px  0px  0px rgba(251, 216, 75, 0.98),
+        4px  4px  0px  0px rgba(238, 181,  2, 0.80),
+        0px  0px 24px  0px rgba(212, 175, 55, 0.35),
+        2px  5px 14px  0px rgba(0,   0,   0,  0.65);
+      transition: box-shadow 160ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  .card-premium-skin:active {
+    box-shadow:
+      2px  2px  0px  0px #C9A236,
+      1px  1px  0px  0px rgba(228, 170,  0, 0.85),
+      0px  0px 14px  0px rgba(201, 162, 54, 0.20),
+      1px  3px  8px  0px rgba(0,   0,   0,  0.50);
+    translate: 3px 3px;
+    transition: box-shadow  80ms cubic-bezier(0.4, 0, 0.2, 1),
+                translate    80ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
-
-/* ── active: 軽い押し込み感 ── */
-.card-premium-skin:active {
-  translate: 1px 1px;
-  transition: translate 80ms ease;
-}
-.card-premium-skin {
-  transition: translate 200ms ease, box-shadow 200ms ease;
-}
-
