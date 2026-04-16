@@ -71,7 +71,7 @@ export default function DesignPage() {
           <p className="text-[12px] font-semibold text-[#c7c0b2] mb-1">デザインシステムについて</p>
           <p className="text-[11px] text-[#8a8478] leading-relaxed">
             ヒーロー・ギャラリーは画像とテキストの追加・並び替え・削除に対応しています。
-            カラーや基本情報などの詳細設定はサイト設定ページから変更できます。
+            カラーや基本情報などの詳細設定は設定ページから変更できます。
           </p>
         </div>
       </div>
