@@ -34,7 +34,11 @@ export default async function SettingsPage() {
             <h2 className="text-[14px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">LINE 自動通知設定</h2>
             <p className="text-[11px] text-[#8a8478] mt-1">LINE公式アカウントからの自動通知スケジュールを管理します</p>
           </div>
-          <LineNotificationManager initialNotifications={lineNotifications} linkedCasts={linkedCasts} />
+          <LineNotificationManager
+            key={lineNotifications.map((n) => n.id).join(',')}
+            initialNotifications={lineNotifications}
+            linkedCasts={linkedCasts}
+          />
         </section>
       </div>
     </div>
