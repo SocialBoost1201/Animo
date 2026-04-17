@@ -60,7 +60,8 @@ export function ReservationForm({
   }
 
   return (
-    <div className="rounded-[18px] bg-[#10141d] p-4 card-premium-skin">
+    <div className="rounded-[18px] card-premium-skin">
+      <div className="card-premium-skin__surface rounded-[18px] overflow-hidden p-4">
       <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">02 — 通常来店予定</p>
 
       {isSubmissionClosed ? (
@@ -153,6 +154,7 @@ export function ReservationForm({
           来店予定を追加
         </button>
       )}
+      </div>
     </div>
   )
 }

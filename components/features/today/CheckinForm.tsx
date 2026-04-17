@@ -159,7 +159,8 @@ export function CheckinForm({
   }
 
   return (
-    <div className="rounded-[18px] bg-[#10141d] px-[18px] py-[18px] card-premium-skin">
+    <div className="rounded-[18px] card-premium-skin">
+      <div className="card-premium-skin__surface rounded-[18px] overflow-hidden px-[18px] py-[18px]">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">
@@ -354,6 +355,7 @@ export function CheckinForm({
               : '確認を送信する'}
         </button>
       </form>
+      </div>
     </div>
   )
 }
