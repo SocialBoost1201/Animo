@@ -380,7 +380,7 @@ export async function getCurrentCast() {
   // auth_user_id でキャスト情報を取得
   const { data: cast } = await supabase
     .from('casts')
-    .select('*')
+    .select('*, cast_private_info(real_name)')
     .eq('auth_user_id', user.id)
     .single();
 

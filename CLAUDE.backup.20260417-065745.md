@@ -9,11 +9,9 @@ Next.js 16 (App Router) application using pnpm, React 19, Tailwind v4, and AI SD
 - Supabase RLS must be enabled on all tables.
 - All user input must be sanitized before sending to AI APIs.
 - Three.js components must never run on SSR.
-- Existing UI layout, spacing, typography, and animations must not be changed unless explicitly requested.
 
 ## Project-Specific Implementation Rules
-- Use pnpm for all commands. npm is forbidden.
-- Only modify files directly related to the task. Do not expand the scope.
+- Use pnpm for all commands (npm is forbidden).
 - Three.js components must use dynamic import with ssr: false and Suspense.
 - AI streaming must use streamText from ai with @ai-sdk/openai or @ai-sdk/google.
 - Cloudflare Turnstile is required for all public forms.

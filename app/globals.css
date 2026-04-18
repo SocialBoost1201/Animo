@@ -298,8 +298,8 @@ body {
 
 /* ── bezel thickness variables ── */
 .card-premium-skin {
-  --bright-gold-bezel: 4px;
-  --dark-gold-bezel: 8px;
+  --bright-gold-bezel: 6px;
+  --dark-gold-bezel: 14px;
 }
 
 /* ── Root: positioning wrapper ── */
@@ -313,9 +313,8 @@ body {
 /*
   ============================================================
   Layer 1+2 Combined: ::after
-  Figma Layer 1 = Foundation (#393939, 678×457, box-shadow)
-  Figma Layer 2 = Dark Gold  (678×457, same size, 50% gold over foundation)
-  → 同サイズなので1つの要素で再現: #393939ベース + 半透明ゴールドを重ねて合成
+  Foundation (#1a1600 より暗く) + Dark Gold (50%透過) を合成
+  暗いベースに半透明ゴールドを重ねることで、深みある琥珀色になる
   ============================================================ */
 .card-premium-skin::after {
   content: '';
@@ -325,32 +324,32 @@ body {
   z-index: -2;
   pointer-events: none;
 
-  /* 上から: 10%放射状ゴールド → 50%線形ゴールド → #393939ベース */
   background:
     radial-gradient(
       50% 50% at 50% 50%,
-      rgba(250, 224, 77, 0.10) 0%,
-      rgba(249, 223, 81, 0.10) 100%
+      rgba(250, 200, 30, 0.15) 0%,
+      transparent              70%
     ),
     linear-gradient(
-      89deg,
-      rgba(230, 179, 0, 0.50)  1.17%,
-      rgba(245, 214, 74, 0.50) 18.26%,
-      rgba(245, 214, 74, 0.50) 54.88%,
-      rgba(237, 184, 3, 0.50)  90.99%,
-      rgba(230, 179, 0, 0.50)  98.83%
+      135deg,
+      rgba(200, 140, 0, 0.80)  0%,
+      rgba(230, 175, 0, 0.65) 30%,
+      rgba(180, 110, 0, 0.80) 60%,
+      rgba(220, 160, 0, 0.70) 100%
     ),
-    #393939;
+    #1a1600;
 
-  /* Foundation shadow: 浮遊感 */
-  box-shadow: 2px 3px 15px 0 rgba(0, 0, 0, 1);
+  /* 浮遊感: 下側に深い影 */
+  box-shadow:
+    0 6px 24px 0   rgba(0, 0, 0, 0.90),
+    0 2px  8px 0   rgba(0, 0, 0, 0.60),
+    0 0   40px -8px rgba(200, 140, 0, 0.20);
 }
 
 /*
   ============================================================
   Layer 3: ::before = Bright Gold
-  Figma Layer 3 = 明るいメタリック金 (670×449, 不透明, inset shadow)
-  → Foundation+DarkGold より4px小さい = 内側リング
+  明るいメタリック金 — 不透明、鮮やかなゴールド光沢
   ============================================================ */
 .card-premium-skin::before {
   content: '';
@@ -361,28 +360,35 @@ body {
   pointer-events: none;
 
   background:
+    /* 上部ハイライト: 光の当たる感 */
     radial-gradient(
-      50% 50% at 50% 50%,
-      rgba(250, 224, 77, 0.40) 0%,
-      rgba(249, 223, 81, 0.40) 100%
+      ellipse 80% 40% at 50% 0%,
+      rgba(255, 240, 120, 0.70) 0%,
+      transparent               60%
     ),
+    /* メタリック線形グラデーション */
     linear-gradient(
       89deg,
-      #E6B300  1.17%,
-      #F5D64A 18.26%,
-      #E6B300 56.27%,
-      #F5D64A 77.43%,
-      #EDB803 90.99%
+      #C88800  0%,
+      #F5D648 20%,
+      #FFEA70 38%,
+      #F0C820 55%,
+      #FFE060 72%,
+      #D4A000 88%,
+      #B87C00 100%
     );
 
-  box-shadow: 0 -10px 19px -4px #EBB802 inset;
+  /* 内側グロー: 金の発光感 */
+  box-shadow:
+    0  0  12px  2px rgba(255, 215,  0, 0.55) inset,
+    0 -8px 16px -2px rgba(255, 200,  0, 0.80) inset,
+    0  4px  8px -2px rgba(100,  60,  0, 0.40) inset;
 }
 
 /*
   ============================================================
   Layer 4: __surface = Front Dark Gloss Surface
-  Figma Layer 4 = 黒鏡面 (663×443, linear-gradient 1deg)
-  Colors: #000, #1C1C1C, #000, #383838, #191717
+  黒鏡面 — 中央が微かに明るく縁が締まる、プレミアムな質感
   ============================================================ */
 .card-premium-skin__surface {
   position: relative;
@@ -390,13 +396,19 @@ body {
   border-radius: inherit;
 
   background:
+    /* 中央の微光: 鏡面反射 */
+    radial-gradient(
+      ellipse 70% 50% at 50% 30%,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent               100%
+    ),
+    /* 縦グラデ: 上が少し明るく、下が締まる */
     linear-gradient(
-      1deg,
-      #000     7.95%,
-      #1C1C1C 27.54%,
-      #000    79.40%,
-      #383838 104.18%,
-      #191717 127.80%
+      175deg,
+      #1a1a1a  0%,
+      #0a0a0a 35%,
+      #000000 65%,
+      #111111 100%
     );
 }
 
