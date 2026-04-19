@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import {
   type TodayDashboardData,
+  type TodayShiftChange,
   addDispatch, deleteDispatch,
   addTrial, deleteTrial,
   addShiftChange, deleteShiftChange,
@@ -177,7 +178,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
     startTransition(async () => {
       const result = await action()
       setBusy(key, false)
-      if ('error' in result && result.error) {
+      if (!result.success) {
         rollback()
         toast.error(result.error)
       }
@@ -635,7 +636,7 @@ function CastTab({
                   const result = await addDispatch(fd) as ActionResult<typeof tempDispatch>
                   setBusy('add-dispatch', false)
 
-                  if ('error' in result && result.error) {
+                  if (!result.success) {
                     setDashboardData((current) => ({
                       ...current,
                       dispatches: current.dispatches.filter((entry) => entry.id !== tempId),
@@ -728,7 +729,7 @@ function CastTab({
                   const result = await addTrial(fd) as ActionResult<typeof tempTrial>
                   setBusy('add-trial', false)
 
-                  if ('error' in result && result.error) {
+                  if (!result.success) {
                     setDashboardData((current) => ({
                       ...current,
                       trials: current.trials.filter((entry) => entry.id !== tempId),
@@ -808,13 +809,13 @@ function CastTab({
                 const tempId = createTempId()
                 const castId = String(fd.get('cast_id') || '')
                 const cast = casts.find((entry) => entry.id === castId)
-                const tempChange = {
+                const tempChange: TodayShiftChange = {
                   id: tempId,
                   cast_id: castId,
                   stage_name: cast?.stage_name || '不明',
-                  original_time: (String(fd.get('original_time') || '') || null) as string | null,
-                  new_time: (String(fd.get('new_time') || '') || null) as string | null,
-                  note: (String(fd.get('note') || '') || null) as string | null,
+                  original_time: String(fd.get('original_time') || '') || undefined,
+                  new_time: String(fd.get('new_time') || '') || undefined,
+                  note: String(fd.get('note') || '') || undefined,
                 }
                 fd.set('change_date', data.date)
                 setShowChange(false)
@@ -834,7 +835,7 @@ function CastTab({
                   }>
                   setBusy('add-change', false)
 
-                  if ('error' in result && result.error) {
+                  if (!result.success) {
                     setDashboardData((current) => ({
                       ...current,
                       shiftChanges: current.shiftChanges.filter((entry) => entry.id !== tempId),
@@ -1034,7 +1035,7 @@ function StaffTab({
                 }>
                 setBusy('add-staff', false)
 
-                if ('error' in result && result.error) {
+                if (!result.success) {
                   setDashboardData((current) => ({
                     ...current,
                     staffAttendances: current.staffAttendances.filter((entry) => entry.id !== tempId),

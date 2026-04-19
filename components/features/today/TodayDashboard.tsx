@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import {
   type TodayDashboardData,
+  type TodayShiftChange,
   addDispatch,
   deleteDispatch,
   addTrial,
@@ -124,7 +125,7 @@ export function TodayDashboard({ data, casts }: Props) {
     startTransition(async () => {
       const result = await action()
       setBusy(key, false)
-      if ('error' in result && result.error) {
+      if (!result.success) {
         rollback()
         toast.error(result.error)
       }
@@ -149,7 +150,7 @@ export function TodayDashboard({ data, casts }: Props) {
       const result = await addDispatch(formData) as ActionResult<typeof tempDispatch>
       setBusy('add-dispatch', false)
 
-      if ('error' in result && result.error) {
+      if (!result.success) {
         setDashboardData((current) => ({
           ...current,
           dispatches: current.dispatches.filter((dispatch) => dispatch.id !== tempId),
@@ -187,7 +188,7 @@ export function TodayDashboard({ data, casts }: Props) {
       const result = await addTrial(formData) as ActionResult<typeof tempTrial>
       setBusy('add-trial', false)
 
-      if ('error' in result && result.error) {
+      if (!result.success) {
         setDashboardData((current) => ({
           ...current,
           trials: current.trials.filter((trial) => trial.id !== tempId),
@@ -226,7 +227,7 @@ export function TodayDashboard({ data, casts }: Props) {
       const result = await addStaffAttendance(formData) as ActionResult<typeof tempAttendance>
       setBusy('add-staff', false)
 
-      if ('error' in result && result.error) {
+      if (!result.success) {
         setDashboardData((current) => ({
           ...current,
           staffAttendances: current.staffAttendances.filter((attendance) => attendance.id !== tempId),
@@ -250,13 +251,13 @@ export function TodayDashboard({ data, casts }: Props) {
     const castId = String(formData.get('cast_id') || '')
     const cast = casts.find((entry) => entry.id === castId)
     const tempId = createTempId()
-    const tempChange = {
+    const tempChange: TodayShiftChange = {
       id: tempId,
       cast_id: castId,
       stage_name: cast?.stage_name || '不明',
-      original_time: (String(formData.get('original_time') || '') || null) as string | null,
-      new_time: (String(formData.get('new_time') || '') || null) as string | null,
-      note: (String(formData.get('note') || '') || null) as string | null,
+      original_time: String(formData.get('original_time') || '') || undefined,
+      new_time: String(formData.get('new_time') || '') || undefined,
+      note: String(formData.get('note') || '') || undefined,
     }
 
     formData.set('change_date', dashboardData.date)
@@ -277,7 +278,7 @@ export function TodayDashboard({ data, casts }: Props) {
       }>
       setBusy('add-change', false)
 
-      if ('error' in result && result.error) {
+      if (!result.success) {
         setDashboardData((current) => ({
           ...current,
           shiftChanges: current.shiftChanges.filter((change) => change.id !== tempId),

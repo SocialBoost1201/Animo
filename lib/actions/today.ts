@@ -489,17 +489,17 @@ export async function addDispatch(formData: FormData) {
     })
     .select('id, name, start_time')
     .single()
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, data }
+  return { success: true as const, data }
 }
 
 export async function deleteDispatch(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('daily_dispatches').delete().eq('id', id)
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function addTrial(formData: FormData) {
@@ -514,17 +514,17 @@ export async function addTrial(formData: FormData) {
     })
     .select('id, name, start_time')
     .single()
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, data }
+  return { success: true as const, data }
 }
 
 export async function deleteTrial(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('daily_trials').delete().eq('id', id)
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function addShiftChange(formData: FormData) {
@@ -540,17 +540,17 @@ export async function addShiftChange(formData: FormData) {
     })
     .select('id, cast_id, original_time, new_time, note')
     .single()
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, data }
+  return { success: true as const, data }
 }
 
 export async function deleteShiftChange(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('shift_changes').delete().eq('id', id)
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function addStaffAttendance(formData: FormData) {
@@ -565,17 +565,17 @@ export async function addStaffAttendance(formData: FormData) {
     })
     .select('id, display_name, start_time')
     .single()
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, data }
+  return { success: true as const, data }
 }
 
 export async function deleteStaffAttendance(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('daily_staff_attendances').delete().eq('id', id)
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 // ==========================================
@@ -623,7 +623,7 @@ export async function submitCheckin(formData: FormData) {
     approved_by: null,
   }, { onConflict: 'cast_id,checkin_date' })
 
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   const castName = cast.stage_name || cast.name || '不明'
   const lineResult = await sendLineGroupMessage(
     buildCheckinLineMessage({
@@ -706,7 +706,7 @@ export async function addReservation(formData: FormData) {
     approved_by: null,
   })
 
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   const castName = cast.stage_name || cast.name || '不明'
   const lineResult = await sendLineGroupMessage(
     buildReservationLineMessage({
@@ -759,7 +759,7 @@ export async function deleteReservation(id: string) {
   await supabase.from('daily_reservations').delete().eq('id', id)
   revalidatePath('/cast/dashboard')
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const }
 }
 
 export async function getCastTodayReservations() {
@@ -823,10 +823,10 @@ export async function approveCheckin(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function rejectCheckin(id: string) {
@@ -840,10 +840,10 @@ export async function rejectCheckin(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function approveReservation(id: string) {
@@ -861,10 +861,10 @@ export async function approveReservation(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function rejectReservation(id: string) {
@@ -879,10 +879,10 @@ export async function rejectReservation(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true, id }
+  return { success: true as const, id }
 }
 
 export async function getTodaySubmissionState(date: Date = new Date()) {

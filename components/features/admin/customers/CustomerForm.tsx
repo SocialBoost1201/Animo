@@ -3,7 +3,7 @@
 import { useTransition, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Save, Loader2, ArrowLeft, User, Phone, Mail, Star, FileText, Hash } from 'lucide-react';
+import { Save, Loader2, ArrowLeft, User, Phone, Mail, Star, FileText, Hash, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { createCustomer, updateCustomerFull } from '@/lib/actions/customers';
 
@@ -23,7 +23,7 @@ const RANK_OPTIONS = [
   { value: 'vip',    label: 'VIP',  cls: 'border-[#dfbd6940] text-[#dfbd69]' },
 ];
 
-function FieldLabel({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+function FieldLabel({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
     <div className="flex items-center gap-2 mb-2">
       <Icon size={12} className="text-[#5a5650]" />
