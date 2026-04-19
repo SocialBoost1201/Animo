@@ -9,6 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '横浜キャバクラガイド・関内との違い｜CLUB Animo',
   description: '横浜駅周辺と関内・馬車道エリアのキャバクラの違いを解説。ビジネス街で上質な夜遊びを楽しむためのガイド。落ち着いた高級店「CLUB Animo」の魅力をご紹介します。',
+  alternates: {
+    canonical: '/area/yokohama-cabaret-guide',
+  },
 };
 
 const YOKOHAMA_CABARET_DIFF = [

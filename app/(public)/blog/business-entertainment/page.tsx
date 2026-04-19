@@ -11,6 +11,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '接待で使える関内ラウンジ・キャバクラの選び方｜CLUB Animo',
   description: '大事な取引先や接待で失敗しないための関内の高級ラウンジ・優良キャバクラの選び方を徹底解説。法人利用や領収書発行から、個室VIPのある店舗の予約までご案内します。',
+  alternates: {
+    canonical: '/blog/business-entertainment',
+  },
   openGraph: {
     title: '接待で使える関内ラウンジ・キャバクラの選び方｜CLUB Animo',
     description: '大事な取引先や接待で失敗しないための関内の高級ラウンジ・優良キャバクラの選び方。',

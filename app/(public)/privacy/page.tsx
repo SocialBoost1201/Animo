@@ -4,6 +4,9 @@ import { FadeIn } from '@/components/motion/FadeIn';
 export const metadata = {
   title: 'Privacy Policy | Club Animo',
   description: 'Club Animoのプライバシーポリシー（個人情報保護方針）について。',
+  alternates: {
+    canonical: '/privacy',
+  },
 };
 
 export default function PrivacyPolicyPage() {

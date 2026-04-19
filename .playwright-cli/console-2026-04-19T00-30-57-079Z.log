@@ -1,0 +1,59 @@
+[    2796ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    2852ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    3014ms] Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/growth-agent" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} ...>
+          <SegmentViewNode type="page" pagePath="(growth-ag...">
+            <SegmentTrieNode>
+            <GrowthAgentPage>
+              <GrowthAgentWorkspace initialSnapshot={{business:{...}, ...}} activeView="dashboard">
+                <div className="space-y-6">
+                  <section>
+                  <section>
+                  <section>
+                  <div className="grid gap-6...">
+                    <div className="space-y-6">
+                      <Card>
+                      <div className="grid gap-6...">
+                        <OperationalDigestCard>
+                        <PushNotificationCard>
+                          <div className="rounded-[2...">
+                            <div>
+                            <div className="mt-5 flex ...">
+                              <span className="rounded-fu...">
++                               default
+-                               unknown
+                              ...
+                    ...
+          ...
+        ...
+
+    at throwOnHydrationMismatch (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:3348:56)
+    at completeWork (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:7032:36)
+    at runWithFiberInDEV (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:965:74)
+    at completeUnitOfWork (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:9627:23)
+    at performUnitOfWork (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:9564:28)
+    at workLoopConcurrentByScheduler (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:9558:58)
+    at renderRootConcurrent (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:9541:71)
+    at performWorkOnRoot (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:9068:150)
+    at performWorkOnRootViaSchedulerTask (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_react-dom_2b4d8736._.js:10230:9)
+    at MessagePort.performWorkUntilDeadline (http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_compiled_95ffa781._.js:2647:64)
+[  322438ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  323440ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  324442ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  325443ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  326445ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  331448ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=dVX8wjXR6URMaoASt6pSt' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878

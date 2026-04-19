@@ -115,20 +115,6 @@ body {
   box-shadow: var(--shadow-aura);
 }
 
-/* Hero Opening Animation */
-@keyframes clip-hero-anim {
-  from { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); }
-  to   { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
-}
-@keyframes hero-bg-scale {
-  from { transform: scale(1.25); }
-  to   { transform: scale(1.1); }
-}
-@keyframes hero-fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* Sheen Button Effect */
 @keyframes sheen {
   0% { transform: translateX(-100%) skewX(-15deg); }

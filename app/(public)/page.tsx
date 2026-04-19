@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroVideoRotatorV2 } from '@/components/features/hero/HeroVideoRotatorV2';
+import { HeroVideoRotator } from '@/components/features/hero/HeroVideoRotator';
 import { HeroMedia } from '@/components/features/hero/types';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { GsapRevealTitle } from '@/components/motion/GsapRevealTitle';
@@ -15,6 +15,13 @@ import { getSiteSettings } from '@/lib/actions/contents';
 import { Magnetic } from '@/components/motion/Magnetic';
 import { LocalBusinessSchema } from '@/components/seo/LocalBusinessSchema';
 import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
 
 // Heavy sections optimization
 const PriceSimulator = nextDynamic(() => import('@/components/features/system/PriceSimulator').then(m => m.PriceSimulator));
@@ -139,7 +146,7 @@ export default async function HomePage() {
         { name: 'HOME', item: 'https://club-animo.jp/' }
       ]} />
       {/* 1. Hero */}
-      <HeroVideoRotatorV2
+      <HeroVideoRotator
         media={heroMediaData}
         transitionMode={(settings?.hero_transition_mode || 'ripple') as import('@/components/features/hero/types').HeroTransitionMode}
         durationMs={5000}

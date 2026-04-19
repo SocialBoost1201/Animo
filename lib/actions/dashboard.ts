@@ -461,3 +461,30 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     activeCastCount: totalCasts,
   };
 }
+
+// ─────────────────────────────────────────────
+// 日次営業メモ upsert
+// ─────────────────────────────────────────────
+export async function upsertDailyMemo(
+  memoType: 'vip' | 'event' | 'urgent',
+  content: string,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createServiceClient();
+  const today = getJstDateString();
+
+  const { error } = await supabase
+    .from('daily_operation_memos')
+    .upsert(
+      { operation_date: today, memo_type: memoType, content: content.trim() },
+      { onConflict: 'operation_date,memo_type' },
+    );
+
+  if (error) {
+    console.error('upsertDailyMemo error:', error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+

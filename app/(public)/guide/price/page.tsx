@@ -10,6 +10,9 @@ import { SystemPriceGrid } from '@/components/features/system/SystemPriceGrid';
 export const metadata: Metadata = {
   title: 'キャバクラ料金ガイド・相場｜関内キャバクラ CLUB Animo',
   description: '関内のキャバクラ「CLUB Animo」の料金ガイド。関内・馬車道エリアのキャバクラ料金相場との比較や、明朗会計のシステムについて分かりやすく解説します。',
+  alternates: {
+    canonical: '/guide/price',
+  },
 };
 
 const PRICE_FAQS = [

@@ -6,10 +6,11 @@ import { ArrowLeft, User } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { PostTracker } from '@/components/features/cast/PostTracker';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string; postId: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string; postId: string }> }): Promise<Metadata> {
   const { slug, postId } = await params;
   const supabase = await createClient();
   
@@ -30,7 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
+    alternates: {
+      canonical: `/cast/${slug}/posts/${postId}`,
+    },
     openGraph: {
+      url: `https://club-animo.jp/cast/${slug}/posts/${postId}`,
       title: `${castName}の日記 | Club Animo`,
       description,
       images: [post.image_url],

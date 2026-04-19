@@ -9,6 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '関内キャバクラ徹底比較・CLUB Animoの強み｜関内キャバクラ',
   description: '横浜・関内エリアのキャバクラ選びに迷っている方へ。関内のキャバクラ相場、接客レベル、雰囲気の違いを徹底比較。落ち着いた高級店「CLUB Animo」の強みを解説します。',
+  alternates: {
+    canonical: '/area/kannai-compare',
+  },
   openGraph: {
     title: '関内キャバクラ徹底比較・CLUB Animoの強み｜関内キャバクラ',
     description: '関内エリアのキャバクラ相場、接客レベル、雰囲気の違いを徹底比較。',

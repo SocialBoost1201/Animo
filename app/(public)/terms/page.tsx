@@ -4,6 +4,9 @@ import { FadeIn } from '@/components/motion/FadeIn';
 export const metadata = {
   title: 'Terms of Service | Club Animo',
   description: 'Club Animoの利用規約について。',
+  alternates: {
+    canonical: '/terms',
+  },
 };
 
 export default function TermsPage() {

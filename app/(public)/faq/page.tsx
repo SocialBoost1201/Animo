@@ -8,6 +8,9 @@ import { FAQ_CATEGORIES } from '@/lib/data/faq';
 export const metadata = {
   title: 'FAQ | Club Animo',
   description: 'Club Animoのご利用に関するよくある質問。初めての方でも安心してご利用いただけます。',
+  alternates: {
+    canonical: '/faq',
+  },
 };
 
 export default function FAQPage() {
