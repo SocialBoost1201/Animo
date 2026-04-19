@@ -5,8 +5,8 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getMyShiftSubmission } from '@/lib/actions/cast-shifts';
-import { getTargetWeekMonday } from '@/lib/shift-utils';
-import { getMyConfirmedSchedules } from '@/lib/actions/cast-change-requests';
+import { getTargetWeekMonday, formatDate } from '@/lib/shift-utils';
+import { getMySchedulesForWeek } from '@/lib/actions/cast-change-requests';
 import { getCastTodayCheckin, getCastTodayReservations } from '@/lib/actions/today';
 import { getCastNotices } from '@/lib/actions/cast-notices';
 import { createClient } from '@/lib/supabase/server';
@@ -18,10 +18,9 @@ import {
 } from '@/components/features/cast/CastMobileShell';
 import { getJstDateString } from '@/lib/date-utils';
 
-function getWeeklySummaryLabel(value: 'work' | 'off' | 'unknown') {
-  if (value === 'work') return { text: '●', color: 'text-[#33b36b]' };
-  if (value === 'off') return { text: 'OFF', color: 'text-[#6b7280]' };
-  return { text: '未', color: 'text-[#e6a23c]' };
+function getWeeklySummaryLabel(value: 'work' | 'off') {
+  if (value === 'work') return { text: '○', color: 'text-[#3b82f6]' };
+  return { text: '×', color: 'text-[#ef4444]' };
 }
 
 function getNoticeTone(importance: 'high' | 'normal') {
@@ -43,10 +42,15 @@ export default async function CastDashboardPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
+  // 翌週月曜（シフト提出ステータス用）
   const nextWeekBaseDate = new Date();
   nextWeekBaseDate.setDate(nextWeekBaseDate.getDate() + 7);
   const nextMondayDate = getTargetWeekMonday(nextWeekBaseDate);
-  const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  const nextMondayStr = formatDate(nextMondayDate);
+
+  // 今週月曜（スケジュール表示用）
+  const thisWeekMondayDate = getTargetWeekMonday(new Date());
+  const thisWeekMondayStr = formatDate(thisWeekMondayDate);
 
   const [
     { data: shiftSubmission },
@@ -58,7 +62,7 @@ export default async function CastDashboardPage() {
     { data: recentPosts },
   ] = await Promise.all([
     getMyShiftSubmission(nextMondayStr),
-    getMyConfirmedSchedules(cast.id, 7),
+    getMySchedulesForWeek(cast.id, thisWeekMondayStr),
     getCastNotices(cast.id),
     getCastTodayCheckin(),
     getCastTodayReservations(),
@@ -87,22 +91,25 @@ export default async function CastDashboardPage() {
   ].filter(Boolean) as string[];
 
   const unreadNotices = notices.filter((notice) => !notice.is_read).slice(0, 3);
+  // 今週7日分（月〜日）
   const summaryDates = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(nextMondayDate);
-    date.setDate(nextMondayDate.getDate() + index);
+    const date = new Date(thisWeekMondayDate);
+    date.setDate(thisWeekMondayDate.getDate() + index);
     return date;
   });
 
+  // work_date -> 'work' のマップ（レコードなし = 休み）
   const scheduleStatusMap = new Map(
     (schedules ?? []).map((schedule) => [
       schedule.work_date,
-      schedule.status === 'confirmed' ? 'work' : 'unknown',
+      'work' as const,
     ])
   );
 
-  const submittedCount = summaryDates.filter((date) =>
-    Boolean(scheduleStatusMap.get(date.toISOString().split('T')[0]))
+  const workCount = summaryDates.filter((date) =>
+    scheduleStatusMap.has(formatDate(date))
   ).length;
+  const offCount = 7 - workCount;
 
   return (
     <CastMobileShell>
@@ -239,28 +246,37 @@ export default async function CastDashboardPage() {
               <CalendarDays className="h-4 w-4 text-[#c9a76a]" />
               今週のスケジュール
             </div>
-            <Link href="/cast/shift" className="flex items-center gap-1 text-xs text-[#8f96a3]">
+            <Link href="/cast/schedule" className="flex items-center gap-1 text-xs text-[#8f96a3]">
               詳細
               <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="mt-4 grid grid-cols-7 gap-1.5">
             {summaryDates.map((date) => {
-              const dateKey = date.toISOString().split('T')[0];
-              const indicator = getWeeklySummaryLabel((scheduleStatusMap.get(dateKey) as 'work' | 'off' | 'unknown') ?? 'unknown');
+              const dateKey = formatDate(date);
+              const status = scheduleStatusMap.has(dateKey) ? 'work' : 'off';
+              const indicator = getWeeklySummaryLabel(status);
+              const isToday = dateKey === today;
 
               return (
-                <div key={dateKey} className="rounded-[10px] border border-transparent px-1 py-2 text-center">
-                  <div className="text-[10px] text-[#6b7280]">{date.toLocaleDateString('ja-JP', { weekday: 'short' }).replace('曜', '')}</div>
-                  <div className={`mt-2 text-[9px] font-bold ${indicator.color}`}>{indicator.text}</div>
+                <div
+                  key={dateKey}
+                  className={`rounded-[10px] border px-1 py-2 text-center ${
+                    isToday ? 'border-[rgba(201,167,106,0.4)] bg-[rgba(201,167,106,0.08)]' : 'border-transparent'
+                  }`}
+                >
+                  <div className={`text-[10px] ${isToday ? 'text-[#c9a76a]' : 'text-[#6b7280]'}`}>
+                    {date.toLocaleDateString('ja-JP', { weekday: 'short' }).replace('曜', '')}
+                  </div>
+                  <div className={`mt-2 text-base font-bold leading-none ${indicator.color}`}>{indicator.text}</div>
                 </div>
               );
             })}
           </div>
           <div className="mt-4 flex items-center justify-between border-t border-white/8 pt-3 text-xs">
             <div className="flex gap-4">
-              <span className="text-[#a9afbc]">出勤: <strong className="text-[#f7f4ed]">{submittedCount}日</strong></span>
-              <span className="text-[#e6a23c]">未提出 {Math.max(7 - submittedCount, 0)}日</span>
+              <span className="text-[#a9afbc]">出勤: <strong className="text-[#3b82f6]">{workCount}日</strong></span>
+              <span className="text-[#a9afbc]">休み: <strong className="text-[#ef4444]">{offCount}日</strong></span>
             </div>
             <span className="font-bold text-[#c9a76a]">
               {todayShift ? `本日 ${todayShift.start_time?.slice(0, 5)}-${todayShift.end_time?.slice(0, 5)}` : '本日 OFF'}

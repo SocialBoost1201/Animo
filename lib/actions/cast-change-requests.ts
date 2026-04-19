@@ -130,3 +130,48 @@ export async function submitShiftChangeRequest(
   revalidatePath('/cast/dashboard');
   return { success: true };
 }
+
+/**
+ * 指定週（月曜日起点 YYYY-MM-DD）の確定スケジュールを取得する
+ * ダッシュボードの今週表示・スケジュール履歴ページで使用
+ */
+export async function getMySchedulesForWeek(castId: string, weekMondayStr: string) {
+  const supabase = await createClient();
+
+  const monday = new Date(weekMondayStr);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const sundayStr = sunday.toISOString().split('T')[0];
+
+  const { data, error } = await supabase
+    .from('cast_schedules')
+    .select('id, work_date, start_time, end_time, status')
+    .eq('cast_id', castId)
+    .gte('work_date', weekMondayStr)
+    .lte('work_date', sundayStr)
+    .order('work_date', { ascending: true });
+
+  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null; status: string }[], error: error.message };
+  return { data: data ?? [], error: null };
+}
+
+/**
+ * 過去N週のスケジュールをまとめて取得する（スケジュール履歴ページ用）
+ * @param castId キャストID
+ * @param fromStr 取得開始日 YYYY-MM-DD（過去方向の境界）
+ * @param toStr   取得終了日 YYYY-MM-DD（今週月曜の前日）
+ */
+export async function getMyPastSchedules(castId: string, fromStr: string, toStr: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('cast_schedules')
+    .select('id, work_date, start_time, end_time, status')
+    .eq('cast_id', castId)
+    .gte('work_date', fromStr)
+    .lte('work_date', toStr)
+    .order('work_date', { ascending: false });
+
+  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null; status: string }[], error: error.message };
+  return { data: data ?? [], error: null };
+}

@@ -11,6 +11,7 @@ type CastMobileShellProps = {
 };
 
 type CastMobileHeaderProps = {
+  leftSlot?: ReactNode;
   rightSlot?: ReactNode;
 };
 
@@ -40,10 +41,11 @@ export function CastMobileShell({ children, showBottomNav = true }: CastMobileSh
   );
 }
 
-export function CastMobileHeader({ rightSlot }: CastMobileHeaderProps) {
+export function CastMobileHeader({ leftSlot, rightSlot }: CastMobileHeaderProps) {
   return (
     <header className="sticky top-0 z-30 border-b border-white/7 bg-[#0b0d12]/95 backdrop-blur">
       <div className="relative flex h-12 items-center justify-center px-4">
+        {leftSlot ? <div className="absolute left-4 top-1/2 -translate-y-1/2">{leftSlot}</div> : null}
         <div className="font-serif text-[16px] font-medium tracking-[0.18em] text-[#f7f4ed]">ANIMO</div>
         {rightSlot ? <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightSlot}</div> : null}
       </div>
