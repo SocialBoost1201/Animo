@@ -145,13 +145,13 @@ export async function getMySchedulesForWeek(castId: string, weekMondayStr: strin
 
   const { data, error } = await supabase
     .from('cast_schedules')
-    .select('id, work_date, start_time, end_time, status')
+    .select('id, work_date, start_time, end_time')
     .eq('cast_id', castId)
     .gte('work_date', weekMondayStr)
     .lte('work_date', sundayStr)
     .order('work_date', { ascending: true });
 
-  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null; status: string }[], error: error.message };
+  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null }[], error: error.message };
   return { data: data ?? [], error: null };
 }
 
@@ -166,12 +166,12 @@ export async function getMyPastSchedules(castId: string, fromStr: string, toStr:
 
   const { data, error } = await supabase
     .from('cast_schedules')
-    .select('id, work_date, start_time, end_time, status')
+    .select('id, work_date, start_time, end_time')
     .eq('cast_id', castId)
     .gte('work_date', fromStr)
     .lte('work_date', toStr)
     .order('work_date', { ascending: false });
 
-  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null; status: string }[], error: error.message };
+  if (error) return { data: [] as { id: string; work_date: string; start_time: string | null; end_time: string | null }[], error: error.message };
   return { data: data ?? [], error: null };
 }

@@ -9,7 +9,6 @@ type Schedule = {
   work_date: string;
   start_time: string | null;
   end_time: string | null;
-  status: string;
 };
 
 type WeekData = {

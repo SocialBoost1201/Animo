@@ -42,11 +42,13 @@ export default async function CastDashboardPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
-  // 翌週月曜（シフト提出ステータス用）
+  // 翌週月曜（シフト提出ステータス・対象期間表示用）
   const nextWeekBaseDate = new Date();
   nextWeekBaseDate.setDate(nextWeekBaseDate.getDate() + 7);
   const nextMondayDate = getTargetWeekMonday(nextWeekBaseDate);
   const nextMondayStr = formatDate(nextMondayDate);
+  const nextSundayDate = new Date(nextMondayDate);
+  nextSundayDate.setDate(nextMondayDate.getDate() + 6);
 
   // 今週月曜（スケジュール表示用）
   const thisWeekMondayDate = getTargetWeekMonday(new Date());
@@ -194,9 +196,9 @@ export default async function CastDashboardPage() {
               <div>
                 <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">対象期間</div>
                 <div className="font-bold text-[#f7f4ed]">
-                  {summaryDates[0].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                  {nextMondayDate.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
                   {' 〜 '}
-                  {summaryDates[6].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                  {nextSundayDate.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
                 </div>
               </div>
               <div className="border-l border-white/8 pl-4">
