@@ -11,7 +11,7 @@ async function getNewsDetail(id: string) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('contents')
-    .select('*')
+    .select('id, title, description, created_at')
     .eq('id', id)
     .eq('type', 'news')
     .eq('is_published', true)

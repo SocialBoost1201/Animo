@@ -11,7 +11,7 @@ async function getEventDetail(id: string) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('contents')
-    .select('*')
+    .select('id, title, description, content_date, created_at')
     .eq('id', id)
     .eq('type', 'event')
     .eq('is_published', true)
