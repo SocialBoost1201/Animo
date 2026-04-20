@@ -29,7 +29,7 @@ export function ReservationForm({
   const [isPending, startTransition] = useTransition()
   const [showForm, setShowForm] = useState(false)
 
-  const inputClass = 'h-[39px] w-full rounded-[10px] border border-white/8 bg-[#131720] px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden'
+  const inputClass = 'h-[39px] w-full rounded-[10px] border border-[#ffffff0a] bg-black/40 px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-none focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -61,7 +61,7 @@ export function ReservationForm({
   }
 
   return (
-    <div className="rounded-[18px] border border-white/8 bg-[#131720] p-4">
+    <div className="rounded-[18px] border border-[#ffffff0a] bg-[#10141d] p-4">
       <p className="mb-4 text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">03 — 来店予定</p>
 
       {isSubmissionClosed ? (
@@ -73,7 +73,7 @@ export function ReservationForm({
       {reservations.length > 0 ? (
         <div className="mb-4 space-y-3">
           {reservations.map(r => (
-            <div key={r.id} className="rounded-[16px] border border-white/8 bg-[#181d27] p-4">
+            <div key={r.id} className="rounded-[16px] border border-[#ffffff0a] bg-[#131720] p-4">
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[13px] text-[#6b7280]">
                   <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.08)] text-[11px] font-bold">{reservations.findIndex((item) => item.id === r.id) + 1}</span>
@@ -115,7 +115,7 @@ export function ReservationForm({
       )}
 
       {showForm && !isSubmissionClosed ? (
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-[16px] border border-white/8 bg-[#181d27] p-4">
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-[16px] border border-[#ffffff0a] bg-[#131720] p-4">
           <div>
             <label className="mb-1 block text-[11px] text-[#6b7280]">時間 *</label>
             <input name="visit_time" type="time" required className={inputClass} />

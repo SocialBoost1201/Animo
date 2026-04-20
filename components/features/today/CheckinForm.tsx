@@ -28,8 +28,8 @@ export function CheckinForm({
   const [submitted, setSubmitted] = useState(!!existing)
   const [approvalStatus, setApprovalStatus] = useState(existing?.approval_status ?? null)
 
-  const choiceClass = 'flex-1 rounded-[14px] border-[1.2px] px-3 py-4 text-center'
-  const inputClass = 'h-[42px] w-full rounded-[12px] border border-white/8 bg-[#131720] px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden'
+  const choiceClass = 'flex-1 rounded-[14px] border-[1.2px] px-3 py-4 text-center transition-all duration-150 active:scale-[0.97] focus-visible:outline-none'
+  const inputClass = 'h-[42px] w-full rounded-[12px] border border-[#ffffff0a] bg-black/40 px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-none focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -75,7 +75,7 @@ export function CheckinForm({
         : '未提出'
 
   return (
-    <div className="rounded-[18px] border border-white/8 bg-[#131720] px-[18px] py-[18px]">
+    <div className="rounded-[18px] border border-[#ffffff0a] bg-[#10141d] px-[18px] py-[18px]">
       <div className="mb-4 flex items-center justify-between gap-3">
         <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#6b7280]">01 — 本日の出勤確認</p>
         <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
@@ -115,7 +115,7 @@ export function CheckinForm({
               setIsAbsent(false)
               setHasChange(false)
             }}
-            className={`${choiceClass} ${!isAbsent && !hasChange ? 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[#a9afbc]' : 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[#6b7280]'}`}
+            className={`${choiceClass} ${!isAbsent && !hasChange ? 'border-white bg-[rgba(255,255,255,0.10)] text-white shadow-[0_0_12px_rgba(255,255,255,0.12)]' : 'border-[#ffffff0a] bg-[rgba(255,255,255,0.03)] text-[#6b7280] hover:border-[#ffffff18] hover:text-[#a9afbc]'}`}
           >
             <div className="text-[14px] font-bold leading-[21px]">予定通り</div>
             <div className="mt-1 text-[10px] text-[#6b7280]">出勤</div>
@@ -126,7 +126,7 @@ export function CheckinForm({
               setIsAbsent(false)
               setHasChange(true)
             }}
-            className={`${choiceClass} ${hasChange ? 'border-[#c9a76a] bg-[rgba(201,167,106,0.15)] text-[#c9a76a]' : 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[#6b7280]'}`}
+            className={`${choiceClass} ${hasChange ? 'border-[#c9a76a] bg-[rgba(201,167,106,0.15)] text-[#c9a76a] shadow-[0_0_12px_rgba(201,167,106,0.12)]' : 'border-[#ffffff0a] bg-[rgba(255,255,255,0.03)] text-[#6b7280] hover:border-[#ffffff18] hover:text-[#a9afbc]'}`}
           >
             <div className="text-[14px] font-bold leading-[21px]">同伴</div>
             <div className="mt-1 text-[10px]">出勤</div>
@@ -137,7 +137,7 @@ export function CheckinForm({
               setIsAbsent(true)
               setHasChange(false)
             }}
-            className={`${choiceClass} ${isAbsent ? 'border-[rgba(224,106,106,0.3)] bg-[rgba(224,106,106,0.12)] text-[#e06a6a]' : 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] text-[#a9afbc]'}`}
+            className={`${choiceClass} ${isAbsent ? 'border-[rgba(224,106,106,0.5)] bg-[rgba(224,106,106,0.12)] text-[#e06a6a] shadow-[0_0_12px_rgba(224,106,106,0.10)]' : 'border-[#ffffff0a] bg-[rgba(255,255,255,0.03)] text-[#6b7280] hover:border-[#ffffff18] hover:text-[#a9afbc]'}`}
           >
             <div className="text-[14px] font-bold leading-[21px]">休み</div>
           </button>
