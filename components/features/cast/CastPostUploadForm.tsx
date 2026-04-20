@@ -85,12 +85,12 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="mb-5 flex w-fit rounded-[12px] border border-white/8 bg-[#181d27] p-1">
+    <div className="w-full">
+      <div className="mb-5 flex w-full rounded-[12px] border border-white/8 bg-[#181d27] p-1">
         <button
           type="button"
           onClick={() => setStep('edit')}
-          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
+          className={`inline-flex h-[35px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[13px] ${
             step === 'edit' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
           }`}
         >
@@ -100,7 +100,7 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
         <button
           type="button"
           onClick={() => setStep('preview')}
-          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
+          className={`inline-flex h-[35px] flex-1 items-center justify-center gap-2 rounded-[9px] px-5 text-[13px] ${
             step === 'preview' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
           }`}
         >
@@ -195,15 +195,15 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
             <Button
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
+              className="h-[58px] w-full rounded-[16px] bg-[#c9a76a] text-[15px] font-bold text-[#0b0d12] transition-all disabled:opacity-50"
             >
               {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
                   投稿中...
-                </>
+                </span>
               ) : (
-                'タイトルと本文を入力してください'
+                '送信する'
               )}
             </Button>
           ) : (
@@ -211,12 +211,14 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
               type="button"
               disabled={!content.trim()}
               onClick={() => setStep('preview')}
-              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
+              className="h-[58px] w-full rounded-[16px] bg-[#c9a76a] text-[15px] font-bold text-[#0b0d12] transition-all disabled:opacity-50"
             >
-              タイトルと本文を入力してください
+              プレビューへ進む
             </Button>
           )}
-          <div className="mt-3 text-center text-[12px] text-[#6b7280]">タイトルと本文を入力すると投稿できます</div>
+          {!content.trim() && (
+            <p className="mt-3 text-center text-[12px] text-[#6b7280]">タイトルまたは本文を入力すると投稿できます</p>
+          )}
         </div>
       </form>
     </div>
