@@ -14,9 +14,8 @@ export default async function CastNewPostPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/posts" label="一覧に戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-6 px-4 pb-28 pt-5">
-        <CastMobileBackLink href="/cast/posts" label="一覧に戻る" />
         <CastMobileSectionTitle eyebrow="NEW POST" title="新規ブログ作成" description="投稿後、スタッフが審査してから公開されます" />
         <CastPostUploadForm castId={cast.id} />
       </main>

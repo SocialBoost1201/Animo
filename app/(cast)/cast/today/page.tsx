@@ -50,9 +50,8 @@ export default async function CastTodayPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ホームへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-5 px-4 pb-28 pt-5">
-        <CastMobileBackLink href="/cast/dashboard" label="ホームへ戻る" />
         <CastMobileSectionTitle
           eyebrow={new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
           title="本日の確認"

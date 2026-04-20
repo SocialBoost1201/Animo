@@ -21,9 +21,8 @@ export default async function CastMonthlyShiftPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-5 px-4 pb-28 pt-6">
-        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
         <div>
           <h1 className="text-[20px] font-bold leading-[30px] text-[#f7f4ed]">スケジュール</h1>
           <p className="mt-1 text-[13px] leading-[19.5px] text-[#6b7280]">今週の確定シフト</p>

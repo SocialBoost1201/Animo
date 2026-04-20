@@ -29,9 +29,8 @@ export default async function CastPostsPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-6 px-4 pb-28 pt-6">
-        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
         <div className="flex items-end justify-between gap-4">
           <div>
             <div className="text-[10px] uppercase tracking-[1px] text-[#6b7280]">DAILY BLOG</div>
