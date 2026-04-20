@@ -4,17 +4,18 @@ import { ChevronLeft, CalendarDays } from 'lucide-react';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getMySchedulesForWeek, getMyPastSchedules } from '@/lib/actions/cast-change-requests';
 import { getTargetWeekMonday, formatDate } from '@/lib/shift-utils';
+import { getJstDateString } from '@/lib/date-utils';
 import {
   CastMobileHeader,
   CastMobileShell,
 } from '@/components/features/cast/CastMobileShell';
 import { WeekScheduleClient } from '@/components/features/cast/WeekScheduleClient';
 
-/** YYYY-MM-DD の月曜から N週前の月曜文字列を生成 */
+/** YYYY-MM-DD の月曜から N週前の月曜文字列を生成（ローカル日付安全） */
 function nWeeksAgoMonday(thisMonday: Date, n: number): string {
   const d = new Date(thisMonday);
   d.setDate(thisMonday.getDate() - n * 7);
-  return d.toISOString().split('T')[0];
+  return formatDate(d);
 }
 
 /** 週ラベル (例: 4/14(月) 〜 4/20(日)) */
@@ -30,7 +31,11 @@ export default async function CastSchedulePage() {
   const cast = await getCurrentCast();
   if (!cast) redirect('/cast/login');
 
-  const thisWeekMondayDate = getTargetWeekMonday(new Date());
+  // JST安全: UTCサーバーでも正しいJST日付起点で週月曜を算出
+  const jstTodayStr = getJstDateString();
+  const [jy, jm, jd] = jstTodayStr.split('-').map(Number);
+  const jstToday = new Date(jy, jm - 1, jd); // ローカルmidnight（タイムゾーンオフセットなし）
+  const thisWeekMondayDate = getTargetWeekMonday(jstToday);
   const thisWeekMondayStr = formatDate(thisWeekMondayDate);
 
   // 4週前の月曜
@@ -74,13 +79,14 @@ export default async function CastSchedulePage() {
         schedules: thisWeekResult.data ?? [],
       };
     }
-    // 過去週: mondayStr〜mondayStr+6 のレコードをフィルタ
-    const monday = new Date(mondayStr);
+    // 過去週: mondayStr〜mondayStr+6 のレコードをフィルタ（ローカル日付安全）
+    const [my, mm, md] = mondayStr.split('-').map(Number);
+    const monday = new Date(my, mm - 1, md);
     const weekSchedules = [];
     for (let d = 0; d < 7; d++) {
       const day = new Date(monday);
       day.setDate(monday.getDate() + d);
-      const dateKey = day.toISOString().split('T')[0];
+      const dateKey = formatDate(day);
       const s = pastMap.get(dateKey);
       if (s) weekSchedules.push(s);
     }

@@ -20,8 +20,14 @@ type WeekData = {
 
 const DAY_LABELS = ['月', '火', '水', '木', '金', '土', '日'];
 
+/** YYYY-MM-DD を UTC解釈せずローカル日付として生成 */
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function buildWeekDates(mondayStr: string): Date[] {
-  const monday = new Date(mondayStr);
+  const monday = parseLocalDate(mondayStr);
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
@@ -30,7 +36,7 @@ function buildWeekDates(mondayStr: string): Date[] {
 }
 
 function weekLabel(mondayStr: string): string {
-  const monday = new Date(mondayStr);
+  const monday = parseLocalDate(mondayStr);
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
   const fmt = (d: Date) => `${d.getMonth() + 1}/${d.getDate()}`;

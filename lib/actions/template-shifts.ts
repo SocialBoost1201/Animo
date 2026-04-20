@@ -28,9 +28,11 @@ export async function getTemplateShiftData(
     return { year, month, casts: [] };
   }
 
-  const casts: { name: string; shifts: Record<string, string> }[] = [];
+  // cast_id をキーに集約（同一キャストが複数週で複数行になるため）
+  const castMap = new Map<string, { name: string; shifts: Record<string, string> }>();
 
   for (const row of (submissionsRaw ?? [])) {
+    const castId = row.cast_id;
     const castData = row.casts as unknown as { stage_name: string } | null;
     const name = castData?.stage_name ?? '不明';
     const shiftsData = row.shifts_data as Record<
@@ -40,20 +42,20 @@ export async function getTemplateShiftData(
 
     if (!shiftsData) continue;
 
-    const shifts: Record<string, string> = {};
+    const existing = castMap.get(castId) ?? { name, shifts: {} };
     for (let d = 1; d <= lastDay; d++) {
       const dateKey = `${year}-${monthStr}-${String(d).padStart(2, '0')}`;
       const entry = shiftsData[dateKey];
       if (entry) {
-        shifts[String(d)] = entry.type === 'work' ? '出勤' : '休み';
+        existing.shifts[String(d)] = entry.type === 'work' ? '出勤' : '休み';
       }
     }
-
-    if (Object.keys(shifts).length > 0) {
-      casts.push({ name, shifts });
-    }
+    castMap.set(castId, existing);
   }
 
+  const casts = Array.from(castMap.values()).filter(
+    (c) => Object.keys(c.shifts).length > 0
+  );
   casts.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
 
   return { year, month, casts };
