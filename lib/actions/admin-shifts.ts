@@ -9,6 +9,8 @@ import { revalidatePath } from 'next/cache';
  */
 export async function getShiftSubmissions(status: string = 'pending') {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   let query = supabase
     .from('shift_submissions')
@@ -36,6 +38,8 @@ export async function getShiftSubmissions(status: string = 'pending') {
  */
 export async function approveShiftSubmission(submissionId: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   // 1. 対象の提出データを取得
   const { data: submission, error: fetchError } = await supabase
@@ -108,6 +112,8 @@ export async function approveShiftSubmission(submissionId: string) {
  */
 export async function rejectShiftSubmission(submissionId: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const { error } = await supabase
     .from('shift_submissions')
@@ -127,6 +133,8 @@ export async function rejectShiftSubmission(submissionId: string) {
  */
 export async function getAllCastShiftStatuses(targetWeekMonday: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   // 1. 全アクティブキャストを取得 (auth_user_idが紐付いているキャストのみ対象とするか、全員とするか)
   // 今回は全アクティブキャストを取得し、authのメールアドレスも取得する
@@ -175,15 +183,17 @@ export async function sendShiftRemindEmail(castId: string, _authUserId: string, 
   if (!process.env.RESEND_API_KEY) return { success: false, error: 'Resend API key missing' };
   
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   // Service Role Keyがなくても、現在ログイン中の管理者は supabase.auth.admin の権限がないと他人のメアドは取れない
-  const { data: { user }, error: authError } = await supabase.auth.admin.getUserById(_authUserId);
+  const { data: { user: targetUser }, error: authError } = await supabase.auth.admin.getUserById(_authUserId);
   
-  if (authError || !user?.email) {
+  if (authError || !targetUser?.email) {
     // 取得できない場合はログのみ
     return { success: false, error: 'User email not found or permission denied. Note: Requires service_role.' };
   }
 
-  const email = user.email;
+  const email = targetUser.email;
   const { Resend } = await import('resend');
   const resend = new Resend(process.env.RESEND_API_KEY);
 

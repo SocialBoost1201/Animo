@@ -37,8 +37,8 @@ export type ShiftRequestResponse = {
 export async function createShiftRequest(targetDate: string, message: string) {
   const supabase = await createClient();
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Unauthorized');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const { data, error } = await supabase
     .from('shift_requests')
@@ -61,6 +61,8 @@ export async function createShiftRequest(targetDate: string, message: string) {
  */
 export async function getShiftRequests(): Promise<ShiftRequest[]> {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   
   const { data, error } = await supabase
     .from('shift_requests')
@@ -80,6 +82,8 @@ export async function getShiftRequests(): Promise<ShiftRequest[]> {
  */
 export async function toggleShiftRequestActive(id: string, isActive: boolean) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const { error } = await supabase
     .from('shift_requests')
@@ -101,6 +105,8 @@ export async function toggleShiftRequestActive(id: string, isActive: boolean) {
  */
 export async function deleteShiftRequest(id: string) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Unauthorized');
   
     const { error } = await supabase
       .from('shift_requests')
@@ -122,6 +128,8 @@ export async function deleteShiftRequest(id: string) {
  */
 export async function getShiftRequestResponses(status?: string): Promise<ShiftRequestResponse[]> {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   
   let query = supabase
     .from('shift_request_responses')
@@ -151,8 +159,8 @@ export async function getShiftRequestResponses(status?: string): Promise<ShiftRe
  */
 export async function approveShiftRequestResponse(responseId: string) {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Unauthorized');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   // 1. 応募データを取得
   const { data: response, error: responseError } = await supabase
@@ -221,6 +229,8 @@ export async function approveShiftRequestResponse(responseId: string) {
  */
 export async function rejectShiftRequestResponse(responseId: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   
   const { error } = await supabase
     .from('shift_request_responses')

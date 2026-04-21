@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   // クロンの認証ハッシュ（セキュリティ）を確認
   const authHeader = request.headers.get('authorization');
   if (
-    process.env.CRON_SECRET &&
+    !process.env.CRON_SECRET ||
     authHeader !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

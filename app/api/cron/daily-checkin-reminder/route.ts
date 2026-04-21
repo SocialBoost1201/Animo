@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   // ── セキュリティ: Vercel が付与する Authorization ヘッダーを検証 ──
   const authHeader = request.headers.get('authorization')
   if (
-    process.env.CRON_SECRET &&
+    !process.env.CRON_SECRET ||
     authHeader !== `Bearer ${process.env.CRON_SECRET}`
   ) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

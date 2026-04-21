@@ -14,6 +14,8 @@ export async function getTemplateShiftData(
   month: number,
 ): Promise<TemplateShiftData> {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const monthStr = String(month).padStart(2, '0');
   const lastDay = new Date(year, month, 0).getDate();

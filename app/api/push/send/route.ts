@@ -1,6 +1,8 @@
 import webpush from 'web-push';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY ?? '';
@@ -21,6 +23,18 @@ function getServiceRoleClient() {
 
 // POST body: { title: string, body: string, url?: string }
 export async function POST(req: Request) {
+  const supabaseServer = await createClient();
+  const { data: { user } } = await supabaseServer.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = await getAppRole(supabaseServer, user.id);
+  if (!isAdminLoginRole(role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
     return NextResponse.json({ error: 'VAPID keys not configured' }, { status: 500 });
   }

@@ -363,8 +363,8 @@ body {
 
 /* ── bezel thickness variables ── */
 .card-premium-skin {
-  --bright-gold-bezel: 6px;
-  --dark-gold-bezel: 14px;
+  --bright-gold-bezel: 3px;
+  --dark-gold-bezel: 7px;
 }
 
 /* ── Root: positioning wrapper ── */

@@ -37,6 +37,8 @@ type MonthlyShiftUpsertRow = {
  */
 export async function getCastMonthlyShifts(castId: string, year: number, month: number) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const endDate = new Date(year, month, 0).toISOString().split('T')[0];
@@ -70,6 +72,8 @@ export async function getCastMonthlyShifts(castId: string, year: number, month: 
  */
 export async function saveMonthlyShifts(castId: string, shiftsData: Record<string, MonthlyShiftDetail>) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const upsertData: MonthlyShiftUpsertRow[] = [];
   const deleteDates: string[] = [];
@@ -126,6 +130,8 @@ export async function saveMonthlyShifts(castId: string, shiftsData: Record<strin
  */
 export async function getAdminMonthlyShifts(year: number, month: number) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const { data: casts, error: castsErr } = await supabase
     .from('casts')

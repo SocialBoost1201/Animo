@@ -11,7 +11,12 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'animo@club-animo.com';
 // GET /api/automation/birthday
 // Vercel Cron Jobs で毎日 09:00 JST に実行
 // ============================================================
-export async function GET() {
+export async function GET(req: Request) {
+  const authHeader = req.headers.get('authorization');
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const supabase = await createClient();
 

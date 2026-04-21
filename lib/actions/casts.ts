@@ -98,6 +98,8 @@ async function syncCastAuthPhone(authUserId: string | null | undefined, phone: s
 
 export async function getCasts(query?: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   let sql = supabase
     .from('casts')
     .select('*, cast_images(image_url, is_primary), cast_scores(total_score, current_level, target_month)')
@@ -118,6 +120,8 @@ export async function getCasts(query?: string) {
 
 export async function getCastById(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const firstAttempt = await supabase
     .from('casts')
     .select('*, cast_images(id, image_url, image_type, is_primary, sort_order), cast_private_info(real_name, date_of_birth, phone, email, line_id, line_user_id)')
@@ -146,6 +150,8 @@ export async function getCastById(id: string) {
 
 export async function createCast(formData: FormData) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
 
   const profileValidation = validateCastProfileInput({
     real_name: String(formData.get('real_name') ?? ''),
@@ -256,6 +262,8 @@ export async function createCast(formData: FormData) {
 
 export async function updateCast(id: string, formData: FormData) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
 
   const profileValidation = validateCastProfileInput({
     real_name: String(formData.get('real_name') ?? ''),
@@ -379,6 +387,8 @@ export async function updateCast(id: string, formData: FormData) {
  */
 export async function deleteCast(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const serviceClient = createServiceClient()
 
   // slug と画像一覧を事前取得

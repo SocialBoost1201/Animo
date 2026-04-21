@@ -1,25 +1,28 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { approveShiftSubmission, rejectShiftSubmission } from '@/lib/actions/admin-shifts';
 import { toast } from 'sonner';
-import { Clock, CalendarDays, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { AdminTabs } from '@/components/ui/AdminTabs';
+import { CalendarDays, Loader2 } from 'lucide-react';
+import { D } from '@/lib/design/attendance-approval';
 
 type Submission = {
   id: string;
   cast_id: string;
   target_week_monday: string;
   status: string;
-  shifts_data: Record<string, { type: string, start?: string, end?: string }>;
+  shifts_data: Record<string, { type: string; start?: string; end?: string }>;
   submitted_at: string;
   casts: { stage_name: string; slug: string };
 };
 
-export function ShiftRequestList({ initialSubmissions, currentStatus }: { initialSubmissions: Submission[], currentStatus: string }) {
-  const router = useRouter();
+export function ShiftRequestList({
+  initialSubmissions,
+  currentStatus,
+}: {
+  initialSubmissions: Submission[];
+  currentStatus: string;
+}) {
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
@@ -27,28 +30,19 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
     setSubmissions(initialSubmissions);
   }, [initialSubmissions]);
 
-  const TABS = [
-    { label: '未承認 (Pending)', value: 'pending' },
-    { label: '承認済 (Approved)', value: 'approved' },
-    { label: 'すべて (All)', value: 'all' },
-  ];
-
   const handleApprove = async (id: string) => {
-    const previousSubmissions = submissions;
+    const prev = submissions;
     setIsProcessing(id);
-    setSubmissions((current) => {
-      if (currentStatus === 'pending') {
-        return current.filter((submission) => submission.id !== id);
-      }
-      return current.map((submission) =>
-        submission.id === id ? { ...submission, status: 'approved' } : submission
-      );
-    });
+    setSubmissions((cur) =>
+      currentStatus === 'pending'
+        ? cur.filter((s) => s.id !== id)
+        : cur.map((s) => (s.id === id ? { ...s, status: 'approved' } : s))
+    );
     const result = await approveShiftSubmission(id);
     if (result.success) {
       toast.success('シフトを承認し、公開設定に反映しました。');
     } else {
-      setSubmissions(previousSubmissions);
+      setSubmissions(prev);
       toast.error(result.error);
     }
     setIsProcessing(null);
@@ -56,120 +50,221 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
 
   const handleReject = async (id: string) => {
     if (!confirm('この提出を却下しますか？')) return;
-    const previousSubmissions = submissions;
+    const prev = submissions;
     setIsProcessing(id);
-    setSubmissions((current) => {
-      if (currentStatus === 'pending') {
-        return current.filter((submission) => submission.id !== id);
-      }
-      return current.map((submission) =>
-        submission.id === id ? { ...submission, status: 'rejected' } : submission
-      );
-    });
+    setSubmissions((cur) =>
+      currentStatus === 'pending'
+        ? cur.filter((s) => s.id !== id)
+        : cur.map((s) => (s.id === id ? { ...s, status: 'rejected' } : s))
+    );
     const result = await rejectShiftSubmission(id);
     if (result.success) {
       toast.success('提出を却下しました。');
     } else {
-      setSubmissions(previousSubmissions);
+      setSubmissions(prev);
       toast.error(result.error);
     }
     setIsProcessing(null);
   };
 
+  if (submissions.length === 0) {
+    return (
+      <div
+        className="p-12 text-center text-white/40"
+        style={{
+          borderRadius: D.radius.card,
+          border: `1.5px solid ${D.border.gold}`,
+          background: D.gradients.cardBg,
+        }}
+      >
+        該当するシフト提出はありません。
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <AdminTabs
-        options={TABS}
-        value={currentStatus}
-        onChange={(val) => router.push(`/admin/shift-requests?status=${val}`)}
-      />
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      {submissions.map((sub) => {
+        const shifts = sub.shifts_data;
+        const dates = Object.keys(shifts).sort();
+        const submittedAt = new Date(sub.submitted_at);
+        const isPending = sub.status === 'pending';
+        const isApproved = sub.status === 'approved';
+        const processing = isProcessing === sub.id;
 
-      {submissions.length === 0 ? (
-        <div className="bg-black/95 rounded-lg border border-white/10 p-12 text-center text-[#5a5650]">
-          該当するシフト提出はありません。
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {submissions.map((sub: Submission) => {
-            const shifts = sub.shifts_data;
-            const dates = Object.keys(shifts).sort();
-            const submittedAt = new Date(sub.submitted_at);
+        const badgeGradient = isPending
+          ? D.gradients.statusPending
+          : isApproved
+          ? D.gradients.statusApproved
+          : null;
+        const badgeLabel = isPending ? 'PENDING' : isApproved ? 'APPROVED' : sub.status.toUpperCase();
 
-            return (
-              <div key={sub.id} className="bg-black/95 rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col group transition-all hover:border-gold/30">
-                <div className="p-5 border-b border-white/5 bg-white/2">
-                  <div className="flex justify-between items-start mb-2">
-                    <Link href={`/admin/human-resources`} className="font-serif text-lg font-bold text-[#f4f1ea] hover:text-gold transition-colors tracking-tight">
-                      {sub.casts?.stage_name}
-                    </Link>
-                    <span className={`text-[10px] font-bold px-3 py-1 rounded-full tracking-wider ${
-                      sub.status === 'approved' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                      sub.status === 'pending' ? 'bg-gold/10 text-gold border border-gold/20' :
-                      'bg-white/5 text-[#8a8478] border border-white/10'
-                    }`}>
-                      {sub.status.toUpperCase()}
-                    </span>
-                  </div>
-                  
-                  <div className="text-[11px] text-[#8a8478] flex items-center gap-2 mt-2 font-medium">
-                    <CalendarDays className="w-3.5 h-3.5 text-[#5a5650]" />
-                    対象週: {sub.target_week_monday.replace(/-/g, '/')}〜
-                  </div>
-                  <div className="text-[11px] text-[#5a5650] flex items-center gap-2 mt-1 italic">
-                    <Clock className="w-3.5 h-3.5" />
-                    送信: {submittedAt.toLocaleDateString('ja-JP')} {submittedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
+        return (
+          <div
+            key={sub.id}
+            className="flex flex-col overflow-hidden"
+            style={{
+              borderRadius: D.radius.card,
+              border: `2px solid ${D.border.gold}`,
+              background: D.gradients.cardBg,
+            }}
+          >
+            {/* ── Header: name + status badge ── */}
+            <div className="px-5 pt-5 pb-4">
+              <div className="flex items-start justify-between gap-3 mb-4">
+                {/* Cast name */}
+                <span
+                  className="text-white leading-tight"
+                  style={{
+                    fontFamily: D.font.mincho,
+                    fontSize: '28px',
+                    fontWeight: 600,
+                    letterSpacing: '1.28px',
+                  }}
+                >
+                  {sub.casts?.stage_name}
+                </span>
 
-                <div className="p-5 flex-1 bg-white/1">
-                  <div className="space-y-2.5">
-                    {dates.map((dateStr) => {
-                      const d = new Date(dateStr);
-                      const dayStr = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
-                      const shift = shifts[dateStr];
-                      const isWork = shift.type === 'work';
-
-                      return (
-                        <div key={dateStr} className="flex justify-between items-center text-xs">
-                          <span className={`${d.getDay() === 0 ? 'text-red-400' : 'text-[#8a8478]'} font-serif font-medium`}>
-                            {d.getMonth()+1}/{d.getDate()} ({dayStr})
-                          </span>
-                          {isWork ? (
-                            <span className="font-bold text-[#f4f1ea] bg-white/5 px-2 py-0.5 rounded-sm">
-                              {shift.start} - {shift.end}
-                            </span>
-                          ) : (
-                            <span className="text-[#5a5650] italic px-2 py-0.5">休み</span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {sub.status === 'pending' && (
-                  <div className="p-4 bg-black/40 border-t border-white/5 flex gap-3">
-                    <button
-                      onClick={() => handleReject(sub.id)}
-                      disabled={isProcessing === sub.id}
-                      className="flex-1 py-2.5 rounded-sm border border-white/10 text-[#8a8478] text-[11px] font-bold hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all disabled:opacity-50"
-                    >
-                      {isProcessing === sub.id ? <Loader2 className="w-4 h-4 animate-spin mx-auto text-white" /> : '却下'}
-                    </button>
-                    <button
-                      onClick={() => handleApprove(sub.id)}
-                      disabled={isProcessing === sub.id}
-                      className="flex-1 py-2.5 rounded-sm bg-gold hover:bg-gold/90 text-black text-[11px] font-bold transition-all shadow-lg shadow-gold/10 active:scale-95 disabled:opacity-50"
-                    >
-                      {isProcessing === sub.id ? <Loader2 className="w-4 h-4 animate-spin mx-auto text-black" /> : '承認して公開'}
-                    </button>
-                  </div>
+                {/* Status badge */}
+                {badgeGradient && (
+                  <span
+                    className="shrink-0 inline-flex items-center justify-center text-white font-bold tracking-wider"
+                    style={{
+                      background: badgeGradient,
+                      borderRadius: D.radius.tab,
+                      border: `1.5px solid ${D.border.lightGold}`,
+                      minWidth: '120px',
+                      height: '42px',
+                      padding: '0 14px',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {badgeLabel}
+                  </span>
                 )}
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {/* Meta: target week + submitted time */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={16} style={{ color: D.border.lightGold, flexShrink: 0 }} />
+                  <span
+                    className="text-white"
+                    style={{
+                      fontFamily: D.font.mincho,
+                      fontSize: '18px',
+                      fontWeight: 400,
+                    }}
+                  >
+                    対象週: {sub.target_week_monday.replace(/-/g, '/')}〜
+                  </span>
+                </div>
+                <div
+                  className="text-white/40 text-[13px]"
+                  style={{ paddingLeft: '24px' }}
+                >
+                  送信:{' '}
+                  {submittedAt.toLocaleDateString('ja-JP')}{' '}
+                  {submittedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            </div>
+
+            {/* ── Shift rows ── */}
+            <div className="flex-1 px-5 pb-2">
+              {dates.map((dateStr) => {
+                const d = new Date(dateStr);
+                const dayLabels = ['日', '月', '火', '水', '木', '金', '土'];
+                const dayStr = dayLabels[d.getDay()];
+                const shift = shifts[dateStr];
+                const isWork = shift.type === 'work';
+                const isSun = d.getDay() === 0;
+
+                return (
+                  <div
+                    key={dateStr}
+                    className="flex items-center justify-between"
+                    style={{
+                      height: '56px',
+                      borderTop: `1px solid ${D.border.gold}`,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: D.font.mincho,
+                        fontSize: '15px',
+                        color: isSun ? '#f87171' : D.text.white,
+                      }}
+                    >
+                      {d.getMonth() + 1}/{d.getDate()} ({dayStr})
+                    </span>
+                    {isWork ? (
+                      <span
+                        className="font-medium text-white text-[15px]"
+                        style={{ fontFamily: D.font.sans }}
+                      >
+                        {shift.start} - {shift.end ?? 'LAST'}
+                      </span>
+                    ) : (
+                      <span className="text-white/30 text-[14px] italic">休み</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ── Action buttons ── */}
+            {isPending && (
+              <div
+                className="flex gap-3 items-center justify-center p-4"
+                style={{ borderTop: `1px solid ${D.border.gold}` }}
+              >
+                {/* 却下 */}
+                <button
+                  onClick={() => handleReject(sub.id)}
+                  disabled={processing}
+                  className="inline-flex items-center justify-center font-bold transition-all active:scale-[0.97] disabled:opacity-50"
+                  style={{
+                    width: '180px',
+                    height: '69px',
+                    borderRadius: D.radius.button,
+                    background: D.gradients.rejectSilver,
+                    color: '#1a1a1a',
+                    fontSize: '15px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {processing ? <Loader2 size={18} className="animate-spin" /> : '却下'}
+                </button>
+
+                {/* 承認して公開 */}
+                <button
+                  onClick={() => handleApprove(sub.id)}
+                  disabled={processing}
+                  className="inline-flex items-center justify-center font-bold transition-all active:scale-[0.97] disabled:opacity-50"
+                  style={{
+                    width: '180px',
+                    height: '69px',
+                    borderRadius: D.radius.button,
+                    background: D.gradients.ctaGold,
+                    color: '#1a1a1a',
+                    fontSize: '15px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {processing ? (
+                    <Loader2 size={18} className="animate-spin text-black" />
+                  ) : (
+                    '承認して公開'
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

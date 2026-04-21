@@ -11,6 +11,11 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'animo@club-animo.com';
 // Webhook 等からの呼び出し用（予約完了後トリガー）
 // ============================================================
 export async function POST(req: Request) {
+  const secret = req.headers.get('x-automation-secret');
+  if (!process.env.AUTOMATION_SECRET || secret !== process.env.AUTOMATION_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { customerName, email, reserveDate, reserveTime } = await req.json();
 
   if (!email || !customerName) {

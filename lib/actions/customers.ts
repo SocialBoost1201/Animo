@@ -11,6 +11,8 @@ export async function linkContactToCustomer(
   lineId: string | null,
 ) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   let customerId = null;
 
   if (phone) {
@@ -51,6 +53,8 @@ export async function linkContactToCustomer(
 
 export async function createCustomer(formData: FormData) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const name  = (formData.get('name')  as string | null)?.trim() || null;
   const phone = (formData.get('phone') as string | null)?.trim() || null;
@@ -75,6 +79,8 @@ export async function createCustomer(formData: FormData) {
 
 export async function updateCustomer(id: string, updates: Record<string, unknown>) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   const { error } = await supabase.from('customers').update(updates).eq('id', id);
 
   if (error) {
@@ -88,6 +94,8 @@ export async function updateCustomer(id: string, updates: Record<string, unknown
 
 export async function updateCustomerFull(id: string, formData: FormData) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
   const name  = (formData.get('name')  as string | null)?.trim() || null;
   const phone = (formData.get('phone') as string | null)?.trim() || null;
@@ -116,6 +124,8 @@ export async function updateCustomerFull(id: string, formData: FormData) {
 
 export async function deleteCustomer(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   const { error } = await supabase.from('customers').delete().eq('id', id);
 
   if (error) {

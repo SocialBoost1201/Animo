@@ -23,6 +23,8 @@ export const getSiteSettings = unstable_cache(
 
 export async function updateSiteSettings(formData: FormData) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   
   const today_mood = formData.get('today_mood') as string
   const vip_availability = formData.get('vip_availability') as string
@@ -46,6 +48,8 @@ export async function updateSiteSettings(formData: FormData) {
 // Contents (News, Events, Gallery)
 export async function getContents(type?: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   let query = supabase.from('contents').select('*').order('created_at', { ascending: false })
   
   if (type) {
@@ -59,6 +63,8 @@ export async function getContents(type?: string) {
 
 export async function createContent(formData: FormData) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   
   const type = formData.get('type') as string
   const title = formData.get('title') as string
@@ -90,6 +96,8 @@ export async function createContent(formData: FormData) {
 
 export async function deleteContent(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const { error } = await supabase.from('contents').delete().eq('id', id)
   
   if (error) return { error: error.message }

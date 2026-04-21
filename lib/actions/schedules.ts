@@ -32,6 +32,8 @@ function getMonthDates(targetMonth = new Date()): string[] {
 
 export async function getWeeklySchedules(targetDate = new Date()) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const dates = getWeekDates(targetDate)
 
   const { data: casts, error: castsError } = await supabase
@@ -53,6 +55,8 @@ export async function getWeeklySchedules(targetDate = new Date()) {
 
 export async function getMonthlySchedules(targetDate = new Date()) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const dates = getMonthDates(targetDate)
 
   const { data: casts, error: castsError } = await supabase
@@ -74,6 +78,8 @@ export async function getMonthlySchedules(targetDate = new Date()) {
 
 export async function saveSchedules(formData: FormData) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
   const updatesData = formData.get('updates') as string
   if (!updatesData) return { success: true }
 

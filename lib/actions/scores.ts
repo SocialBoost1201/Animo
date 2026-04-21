@@ -21,6 +21,8 @@ export async function addCastScore(
   targetMonth?: string
 ) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   const month = targetMonth || format(new Date(), 'yyyy-MM');
 
   try {
@@ -94,6 +96,8 @@ export async function addCastScore(
  */
 export async function getCastScoreAndLogs(castId: string, targetMonth?: string, limit: number = 5) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
   const month = targetMonth || format(new Date(), 'yyyy-MM');
 
   // スコア取得

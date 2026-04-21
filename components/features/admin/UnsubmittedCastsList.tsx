@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { sendShiftRemindEmail } from '@/lib/actions/admin-shifts';
-import { toast } from 'sonner';
-import { Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import React from 'react';
+import { AlertCircle } from 'lucide-react';
+import { D } from '@/lib/design/attendance-approval';
 
 type CastStatus = {
   cast: { id: string; stage_name: string; auth_user_id: string | null };
@@ -12,46 +10,150 @@ type CastStatus = {
   status: string;
 };
 
-export function UnsubmittedCastsList({ statuses, targetWeekMonday }: { statuses: CastStatus[], targetWeekMonday: string }) {
-  const unsubmitted = statuses.filter(s => s.status === 'unsubmitted' || s.status === 'rejected');
+export function UnsubmittedCastsList({
+  statuses,
+  targetWeekMonday,
+}: {
+  statuses: CastStatus[];
+  targetWeekMonday: string;
+}) {
+  const unsubmitted = statuses.filter(
+    (s) => s.status === 'unsubmitted' || s.status === 'rejected'
+  );
+  const total = statuses.length;
+
+  // Build week range string
+  const start = new Date(targetWeekMonday);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(
+      d.getDate()
+    ).padStart(2, '0')}`;
+  const weekRange = `${fmt(start)}-${fmt(end)}`;
 
   return (
-    <div className="bg-black/94 rounded-[18px] border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] overflow-hidden font-sans">
-      <div className="p-6 border-b border-white/5 bg-white/2 flex justify-between items-center sm:items-start flex-col sm:flex-row gap-4">
-        <div>
-          <h2 className="font-bold text-[#f4f1ea] flex items-center gap-2 tracking-tight">
-            <AlertCircle className="w-4 h-4 text-gold" />
+    <div
+      className="overflow-hidden font-inter"
+      style={{
+        borderRadius: D.radius.panel,
+        border: `1.5px solid ${D.border.lightGold}`,
+        background: '#000',
+        minWidth: '320px',
+      }}
+    >
+      {/* ── Header ── */}
+      <div className="px-6 pt-6 pb-5">
+        {/* Title row */}
+        <div className="flex items-center gap-2 mb-4">
+          <AlertCircle
+            size={20}
+            style={{ color: D.border.lightGold, flexShrink: 0 }}
+          />
+          <span
+            className="text-white"
+            style={{
+              fontFamily: D.font.mincho,
+              fontSize: '20px',
+              fontWeight: 600,
+            }}
+          >
             未提出キャスト一覧
-          </h2>
-          <div className="flex flex-col gap-1 mt-2">
-            <p className="text-[11px] text-[#8a8478] font-medium flex items-center gap-1.5">
-              対象週: <span className="text-gold/80">{targetWeekMonday.replace(/-/g, '/')}〜</span>
-            </p>
-            <p className="text-[10px] text-[#5a5650] italic">※毎週木・金曜日に自動で督促メールが送信されます</p>
-          </div>
+          </span>
         </div>
-        <div className="text-[10px] font-bold bg-white/5 text-[#8a8478] px-4 py-1.5 rounded-full border border-white/10 tracking-[1px] uppercase">
-          全 {statuses.length} 名 / 未提出 {unsubmitted.length} 名
+
+        {/* Week info */}
+        <div
+          className="mb-1"
+          style={{
+            fontFamily: D.font.mincho,
+            fontSize: '16px',
+            color: '#fff',
+          }}
+        >
+          対象週:{' '}
+          <span style={{ color: D.border.lightGold }}>{weekRange}</span>
+        </div>
+
+        {/* Auto reminder note */}
+        <div
+          style={{
+            fontFamily: D.font.mincho,
+            fontSize: '14px',
+            color: 'rgba(255,255,255,0.55)',
+            lineHeight: 1.7,
+          }}
+        >
+          毎週
+          <span style={{ color: '#4ade80', fontWeight: 700 }}>木</span>・
+          <span style={{ color: D.border.lightGold, fontWeight: 700 }}>金</span>
+          曜日に自動で督促メールが送信されます
+        </div>
+
+        {/* Summary badge */}
+        <div className="mt-6 flex justify-center">
+          <div
+            className="inline-flex flex-col items-center justify-center text-white font-bold text-center"
+            style={{
+              background: D.gradients.summaryRed,
+              borderRadius: D.radius.summaryBadge,
+              border: `1.5px solid ${D.border.lightGold}`,
+              minWidth: '160px',
+              padding: '18px 28px',
+              lineHeight: 1.35,
+              fontFamily: D.font.sans,
+            }}
+          >
+            <span style={{ fontSize: '22px' }}>未提出 {unsubmitted.length} 名</span>
+            <span style={{ fontSize: '14px', fontWeight: 400, opacity: 0.75 }}>
+              全 {total} 名
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="divide-y divide-white/5">
+      {/* ── Cast list ── */}
+      <div style={{ borderTop: `1px solid ${D.border.gold}` }}>
         {unsubmitted.length === 0 ? (
-          <div className="p-10 text-center text-[#5a5650] text-sm flex flex-col items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20">
-              <CheckCircle2 className="w-6 h-6 text-green-500" />
-            </div>
-            <span className="font-medium">全員提出済みです</span>
+          <div className="p-10 text-center text-white/40 text-sm">
+            全員提出済みです
           </div>
         ) : (
-          unsubmitted.map(s => (
-            <div key={s.cast.id} className="flex justify-between items-center p-4 px-6 hover:bg-white/2 transition-colors group">
-              <span className="font-bold text-[#f4f1ea] group-hover:text-white transition-colors tracking-tight">{s.cast.stage_name}</span>
-              
+          unsubmitted.map((s) => (
+            <div
+              key={s.cast.id}
+              className="flex items-center justify-between px-6"
+              style={{
+                height: '48px',
+                borderTop: `1px solid ${D.border.gold}`,
+              }}
+            >
+              {/* Cast name */}
+              <span
+                className="text-white truncate"
+                style={{
+                  fontFamily: D.font.mincho,
+                  fontSize: '20px',
+                  fontWeight: 400,
+                }}
+              >
+                {s.cast.stage_name}
+              </span>
+
+              {/* NO ACCOUNT chip */}
               {!s.hasAuthIndex && (
-                 <span className="text-[10px] text-[#5a5650] border border-white/10 bg-white/5 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
-                   No Account
-                 </span>
+                <span
+                  className="shrink-0 inline-flex items-center justify-center text-white text-[14px] font-medium tracking-wider"
+                  style={{
+                    background: 'linear-gradient(180deg, #1e1e1e 0%, #111 100%)',
+                    borderRadius: D.radius.pill,
+                    border: `1px solid ${D.border.lightGold}`,
+                    padding: '7px 16px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  NO ACCOUNT
+                </span>
               )}
             </div>
           ))
