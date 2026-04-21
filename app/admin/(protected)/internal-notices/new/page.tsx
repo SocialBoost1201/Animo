@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createNotice } from '@/lib/actions/internal-notices';
 import { toast } from 'sonner';
@@ -38,7 +38,7 @@ export default function NewNoticePage() {
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">New Notice</h1>
+          <h1 className="text-2xl font-serif tracking-widest text-[#171717]">お知らせ作成</h1>
           <p className="text-sm text-gray-500 mt-1">新しいお知らせの作成・配信</p>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function NewNoticePage() {
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl hover:bg-red-50 transition-colors [&:has(input:checked)]:border-red-600 [&:has(input:checked)]:bg-red-50">
                   <input type="radio" name="importance" value="high" className="w-4 h-4 text-red-600 focus:ring-red-600 border-gray-300" />
-                  <span className="text-sm font-medium text-red-700">重要 (優先表示)</span>
+                  <span className="text-sm font-medium text-red-700">重要（優先表示）</span>
                 </label>
               </div>
             </div>

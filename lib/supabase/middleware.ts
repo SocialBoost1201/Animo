@@ -41,6 +41,19 @@ async function getAppRole(
   return profile?.role ?? null
 }
 
+async function isLinkedCastUser(
+  supabase: ReturnType<typeof createServerClient>,
+  userId: string
+) {
+  const { data } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('auth_user_id', userId)
+    .maybeSingle()
+
+  return Boolean(data?.id)
+}
+
 function redirectToSafeDestination(request: NextRequest, role: string | null) {
   const url = request.nextUrl.clone()
   url.pathname = role === 'cast' ? '/cast/dashboard' : '/'
@@ -146,7 +159,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     const role = await getAppRole(supabase, user.id)
-    if (role !== 'cast') {
+    if (role !== 'cast' && !(await isLinkedCastUser(supabase, user.id))) {
       return redirectToSafeDestination(request, role)
     }
 
@@ -163,7 +176,7 @@ export async function updateSession(request: NextRequest) {
   if (isCastPortalPublicPath(pathname) && user) {
     const role = await getAppRole(supabase, user.id)
 
-    if (role !== 'cast') {
+    if (role !== 'cast' && !(await isLinkedCastUser(supabase, user.id))) {
       return supabaseResponse
     }
 

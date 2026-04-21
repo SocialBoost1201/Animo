@@ -6,7 +6,7 @@ import { DeleteCustomerButton } from '@/components/features/admin/customers/Dele
 export const dynamic = 'force-dynamic';
 
 const RANK_CONFIG: Record<string, { label: string; cls: string }> = {
-  vip:     { label: 'VIP',  cls: 'bg-[#dfbd6914] text-[#dfbd69] border border-[#dfbd6920]' },
+  vip:     { label: '重要顧客', cls: 'bg-[#dfbd6914] text-[#dfbd69] border border-[#dfbd6920]' },
   regular: { label: '常連', cls: 'bg-[#72b89414] text-[#72b894] border border-[#72b89420]' },
   normal:  { label: '一般', cls: 'bg-[#1a1c22] text-[#e2ddd4] border border-[#dfbd69]/14' },
 };
@@ -46,7 +46,7 @@ export default async function CustomersPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: '登録顧客数', value: total,    unit: '名', icon: User,       bg: 'bg-[#dfbd691a]', color: 'text-[#dfbd69]' },
-          { label: 'VIP顧客',   value: vipCount, unit: '名', icon: Star,        bg: 'bg-[#72b89414]', color: 'text-[#72b894]' },
+          { label: '重要顧客', value: vipCount, unit: '名', icon: Star,        bg: 'bg-[#72b89414]', color: 'text-[#72b894]' },
           { label: '来店上位',  value: customers?.[0]?.total_visits ?? 0, unit: '回', icon: TrendingUp, bg: 'bg-[#6ab0d414]', color: 'text-[#6ab0d4]' },
         ].map((k) => (
           <div key={k.label} className="bg-[#17181c] rounded-[18px] border border-[#dfbd69]/18 px-5 py-4 flex items-center gap-4 shadow-[0_8px_24px_rgba(0,0,0,0.18)]">

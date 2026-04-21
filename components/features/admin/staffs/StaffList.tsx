@@ -72,7 +72,7 @@ export function StaffList({ initialStaffs }: StaffListProps) {
                     }`}
                   >
                     <div className={`w-1.5 h-1.5 rounded-full ${staff.is_active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-[#c7c0b2]'}`} />
-                    {staff.is_active ? 'ACTIVE' : 'INACTIVE'}
+                    {staff.is_active ? '有効' : '無効'}
                   </span>
                 </td>
                 <td className="px-10 py-8 text-right">

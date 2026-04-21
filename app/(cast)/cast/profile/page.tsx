@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { ShieldCheck, CalendarRange, Trophy } from 'lucide-react';
+import { ShieldCheck, CalendarRange, Trophy, BookOpen, Link2 } from 'lucide-react';
 import { getCurrentCast, castLogout } from '@/lib/actions/cast-auth';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
@@ -58,6 +58,27 @@ export default async function CastProfilePage() {
               <div className="mt-[2px] text-[11px] leading-[16.5px] text-[#6b7280]">{metric.label}</div>
             </CastMobileCard>
           ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 pb-2 pt-2">
+          <Link href="/cast/manual">
+            <CastMobileCard className="flex items-center justify-between rounded-[14px] px-4 py-[14px]">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[rgba(201,167,106,0.15)]">
+                  <BookOpen size={16} className="text-[#c9a76a]" />
+                </div>
+                <span className="text-[13px] font-bold text-[#f7f4ed]">マニュアル</span>
+              </div>
+            </CastMobileCard>
+          </Link>
+          <CastMobileCard className="flex items-center justify-between rounded-[14px] px-4 py-[14px] opacity-40">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[rgba(255,255,255,0.05)]">
+                <Link2 size={16} className="text-[#a9afbc]" />
+              </div>
+              <span className="text-[13px] font-bold text-[#f7f4ed]">LINE連携</span>
+            </div>
+          </CastMobileCard>
         </div>
 
         <CastMobileCard className="overflow-hidden rounded-[16px] divide-y divide-white/8">

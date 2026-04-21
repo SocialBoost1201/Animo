@@ -16,8 +16,8 @@ const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
 };
 
 const TYPE_MAP: Record<string, { label: string; cls: string }> = {
-  cast:  { label: 'Cast 応募',  cls: 'bg-[#a882d814] text-[#a882d8]' },
-  staff: { label: 'Staff 応募', cls: 'bg-[#6ab0d414] text-[#6ab0d4]' },
+  cast:  { label: 'キャスト応募', cls: 'bg-[#a882d814] text-[#a882d8]' },
+  staff: { label: 'スタッフ応募', cls: 'bg-[#6ab0d414] text-[#6ab0d4]' },
 };
 
 export default async function ApplicationsPage({
@@ -53,8 +53,8 @@ export default async function ApplicationsPage({
 
   const tabs = [
     { key: 'all',    label: '全て' },
-    { key: 'cast',   label: 'Cast' },
-    { key: 'staff',  label: 'Staff' },
+    { key: 'cast',   label: 'キャスト' },
+    { key: 'staff',  label: 'スタッフ' },
     { key: 'unread', label: '未読のみ' },
   ];
 

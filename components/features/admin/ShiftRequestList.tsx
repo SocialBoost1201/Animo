@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { approveShiftSubmission, rejectShiftSubmission } from '@/lib/actions/admin-shifts';
 import { toast } from 'sonner';
-import { Clock, CalendarDays, Loader2 } from 'lucide-react';
+import { CalendarDays, Clock, CheckCircle, XCircle, Loader2, User } from 'lucide-react';
 import Link from 'next/link';
-import { AdminTabs } from '@/components/ui/AdminTabs';
 
 type Submission = {
   id: string;
@@ -18,20 +16,15 @@ type Submission = {
   casts: { stage_name: string; slug: string };
 };
 
+const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+
 export function ShiftRequestList({ initialSubmissions, currentStatus }: { initialSubmissions: Submission[], currentStatus: string }) {
-  const router = useRouter();
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
   useEffect(() => {
     setSubmissions(initialSubmissions);
   }, [initialSubmissions]);
-
-  const TABS = [
-    { label: '未承認 (Pending)', value: 'pending' },
-    { label: '承認済 (Approved)', value: 'approved' },
-    { label: 'すべて (All)', value: 'all' },
-  ];
 
   const handleApprove = async (id: string) => {
     const previousSubmissions = submissions;
@@ -77,69 +70,85 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
   };
 
   return (
-    <div className="space-y-6">
-      <AdminTabs
-        options={TABS}
-        value={currentStatus}
-        onChange={(val) => router.push(`/admin/shift-requests?status=${val}`)}
-      />
-
+    <div className="space-y-5">
       {submissions.length === 0 ? (
-        <div className="bg-black/95 rounded-lg border border-white/10 p-12 text-center text-[#5a5650]">
-          該当するシフト提出はありません。
+        <div className="flex flex-col items-center justify-center rounded-[20px] border border-[#d6b56d26] bg-[#08090c] py-16 text-center shadow-[0_18px_48px_rgba(0,0,0,0.36)]">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#d6b56d14] text-[#d6b56d]">
+            <CalendarDays className="h-5 w-5" />
+          </div>
+          <p className="text-[13px] font-bold text-[#6f675a]">該当するシフト提出はありません</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {submissions.map((sub: Submission) => {
             const shifts = sub.shifts_data;
             const dates = Object.keys(shifts).sort();
             const submittedAt = new Date(sub.submitted_at);
+            const workDays = dates.filter(d => shifts[d].type === 'work').length;
+
+            const statusConfig = {
+              approved: { label: '承認済', bg: 'bg-[rgba(51,179,107,0.12)]', text: 'text-[#33b36b]', border: 'border-[rgba(51,179,107,0.2)]' },
+              pending:  { label: '未承認',  bg: 'bg-[rgba(201,167,106,0.12)]', text: 'text-[#c9a76a]', border: 'border-[rgba(201,167,106,0.2)]' },
+              rejected: { label: '却下',   bg: 'bg-[rgba(224,106,106,0.12)]', text: 'text-[#e06a6a]', border: 'border-[rgba(224,106,106,0.2)]' },
+            }[sub.status] ?? { label: sub.status, bg: 'bg-white/5', text: 'text-[#6b7280]', border: 'border-white/10' };
 
             return (
-              <div key={sub.id} className="bg-black/95 rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col group transition-all hover:border-gold/30">
-                <div className="p-5 border-b border-white/5 bg-white/2">
-                  <div className="flex justify-between items-start mb-2">
-                    <Link href={`/admin/human-resources`} className="font-serif text-lg font-bold text-[#f4f1ea] hover:text-gold transition-colors tracking-tight">
-                      {sub.casts?.stage_name}
-                    </Link>
-                    <span className={`text-[10px] font-bold px-3 py-1 rounded-full tracking-wider ${
-                      sub.status === 'approved' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                      sub.status === 'pending' ? 'bg-gold/10 text-gold border border-gold/20' :
-                      'bg-white/5 text-[#8a8478] border border-white/10'
-                    }`}>
-                      {sub.status.toUpperCase()}
+              <div
+                key={sub.id}
+                className="flex flex-col overflow-hidden rounded-[20px] border border-[#d6b56d26] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01)),#08090c] shadow-[0_20px_60px_rgba(0,0,0,0.42)] transition-all hover:border-[#d6b56d66]"
+              >
+                {/* Header */}
+                <div className="border-b border-[#d6b56d1f] bg-[#11131a] px-5 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[rgba(201,167,106,0.1)] text-[#c9a76a]">
+                        <User className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <Link
+                          href="/admin/human-resources"
+                          className="block text-[15px] font-bold text-[#f7f4ed] transition-colors hover:text-[#c9a76a]"
+                        >
+                          {sub.casts?.stage_name}
+                        </Link>
+                        <div className="mt-0.5 flex items-center gap-1 text-[10px] text-[#6b7280]">
+                          <CalendarDays className="h-3 w-3" />
+                          {sub.target_week_monday.replace(/-/g, '/')}〜
+                        </div>
+                      </div>
+                    </div>
+                    <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-wider ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                      {statusConfig.label}
                     </span>
                   </div>
-                  
-                  <div className="text-[11px] text-[#8a8478] flex items-center gap-2 mt-2 font-medium">
-                    <CalendarDays className="w-3.5 h-3.5 text-[#5a5650]" />
-                    対象週: {sub.target_week_monday.replace(/-/g, '/')}〜
-                  </div>
-                  <div className="text-[11px] text-[#5a5650] flex items-center gap-2 mt-1 italic">
-                    <Clock className="w-3.5 h-3.5" />
+                  <div className="mt-3 flex items-center gap-1 text-[10px] text-[#6b7280]">
+                    <Clock className="h-3 w-3" />
                     送信: {submittedAt.toLocaleDateString('ja-JP')} {submittedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="ml-auto font-bold text-[#c9a76a]">出勤 {workDays}日</span>
                   </div>
                 </div>
 
-                <div className="p-5 flex-1 bg-white/1">
-                  <div className="space-y-2.5">
+                {/* Shift Grid */}
+                <div className="flex-1 bg-black/20 px-5 py-4">
+                  <div className="space-y-2">
                     {dates.map((dateStr) => {
                       const d = new Date(dateStr);
-                      const dayStr = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+                      const dayStr = WEEKDAYS[d.getDay()];
                       const shift = shifts[dateStr];
                       const isWork = shift.type === 'work';
+                      const isSun = d.getDay() === 0;
 
                       return (
-                        <div key={dateStr} className="flex justify-between items-center text-xs">
-                          <span className={`${d.getDay() === 0 ? 'text-red-400' : 'text-[#8a8478]'} font-serif font-medium`}>
-                            {d.getMonth()+1}/{d.getDate()} ({dayStr})
+                        <div key={dateStr} className="flex items-center justify-between rounded-[12px] border border-white/5 bg-white/[0.025] px-3 py-2 text-[12px]">
+                          <span className={`w-[72px] font-medium ${isSun ? 'text-[#e06a6a]' : 'text-[#6b7280]'}`}>
+                            {d.getMonth() + 1}/{d.getDate()} ({dayStr})
                           </span>
                           {isWork ? (
-                            <span className="font-bold text-[#f4f1ea] bg-white/5 px-2 py-0.5 rounded-sm">
-                              {shift.start} - {shift.end}
+                            <span className="rounded-[6px] bg-[rgba(201,167,106,0.1)] px-2.5 py-1 font-bold text-[#f7f4ed]">
+                              {shift.start} – {shift.end}
                             </span>
                           ) : (
-                            <span className="text-[#5a5650] italic px-2 py-0.5">休み</span>
+                            <span className="text-[#6b7280]">休み</span>
                           )}
                         </div>
                       );
@@ -147,21 +156,28 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
                   </div>
                 </div>
 
+                {/* Actions */}
                 {sub.status === 'pending' && (
-                  <div className="p-4 bg-black/40 border-t border-white/5 flex gap-3">
+                  <div className="flex gap-3 border-t border-[#d6b56d1f] bg-black/45 px-5 py-4">
                     <button
                       onClick={() => handleReject(sub.id)}
                       disabled={isProcessing === sub.id}
-                      className="flex-1 py-2.5 rounded-sm border border-white/10 text-[#8a8478] text-[11px] font-bold hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all disabled:opacity-50"
+                      className="flex min-h-12 flex-1 items-center justify-center gap-1.5 rounded-[16px] border border-white/10 text-[12px] font-bold text-[#8a8478] transition-all hover:border-[rgba(224,106,106,0.3)] hover:bg-[rgba(224,106,106,0.08)] hover:text-[#e06a6a] disabled:opacity-50"
                     >
-                      {isProcessing === sub.id ? <Loader2 className="w-4 h-4 animate-spin mx-auto text-white" /> : '却下'}
+                      {isProcessing === sub.id
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        : <><XCircle className="h-3.5 w-3.5" /> 却下</>
+                      }
                     </button>
                     <button
                       onClick={() => handleApprove(sub.id)}
                       disabled={isProcessing === sub.id}
-                      className="flex-1 py-2.5 rounded-sm bg-gold hover:bg-gold/90 text-black text-[11px] font-bold transition-all shadow-lg shadow-gold/10 active:scale-95 disabled:opacity-50"
+                      className="flex min-h-12 flex-1 items-center justify-center gap-1.5 rounded-[16px] bg-linear-to-r from-[#f3d27a] to-[#a9782d] text-[12px] font-bold text-[#0b0d12] shadow-lg shadow-gold/10 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
                     >
-                      {isProcessing === sub.id ? <Loader2 className="w-4 h-4 animate-spin mx-auto text-black" /> : '承認して公開'}
+                      {isProcessing === sub.id
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        : <><CheckCircle className="h-3.5 w-3.5" /> 承認して公開</>
+                      }
                     </button>
                   </div>
                 )}

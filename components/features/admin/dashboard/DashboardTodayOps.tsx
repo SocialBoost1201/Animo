@@ -16,14 +16,14 @@ export async function DashboardTodayOps() {
 
   const memos = [
     ops.vipMemo ? {
-      tag: 'VIP',
+      tag: '重要顧客',
       tagBg: 'bg-[#dfbd691a]',
       tagText: 'text-[#dfbd69]',
       cardBorder: 'border-[#dfbd6926]',
       content: ops.vipMemo,
     } : null,
     ops.eventMemo ? {
-      tag: 'EVENT',
+      tag: 'イベント',
       tagBg: 'bg-[#ffffff0a]',
       tagText: 'text-[#8a8478]',
       cardBorder: 'border-[#ffffff0f]',
@@ -53,7 +53,7 @@ export async function DashboardTodayOps() {
         </div>
         <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
           <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
-          <span className="text-[11px] font-bold text-[#72b894] tracking-[1px] uppercase">READY</span>
+          <span className="text-[11px] font-bold text-[#72b894] tracking-[1px] uppercase">準備完了</span>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export async function DashboardTodayOps() {
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#ffffff0f]">
         {/* Left: OVERVIEW */}
         <div className="flex-1 p-10 flex flex-col min-w-0">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">OVERVIEW</p>
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">概要</p>
           <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
             {overviewRows.map((row, i) => (
               <div
@@ -79,7 +79,7 @@ export async function DashboardTodayOps() {
 
         {/* Right: MANAGEMENT MEMO */}
         <div className="flex-1 p-10 flex flex-col min-w-0 bg-white/1">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">MANAGEMENT MEMO</p>
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">管理メモ</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
               <div className="h-40 flex flex-col items-center justify-center gap-3 border border-dashed border-[#ffffff0f] rounded-[18px]">

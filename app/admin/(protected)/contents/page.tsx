@@ -64,7 +64,7 @@ export default async function ContentsPage() {
                         ? 'bg-[#a882d814] text-[#a882d8]'
                         : 'bg-[#6ab0d414] text-[#6ab0d4]'
                     }`}>
-                      {content.type === 'event' ? 'EVENT' : 'NEWS'}
+                      {content.type === 'event' ? 'イベント' : 'ニュース'}
                     </span>
                   </td>
                   <td className="px-5 py-3.5">

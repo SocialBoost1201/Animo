@@ -98,7 +98,7 @@ function AddFormWrapper({ onClose, children }: { onClose: () => void; children: 
         onClick={onClose}
         className="text-[11px] font-bold tracking-widest text-[#5a5650] hover:text-[#f4f1ea] transition-colors uppercase"
       >
-        CANCEL
+        キャンセル
       </button>
     </div>
   )
@@ -251,7 +251,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       {/* ── Page Header ─────────────────────────────────────────────────── */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 py-2">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">Operation Dashboard</h1>
+          <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">本日の営業状況</h1>
           <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日確認承認・来店予定確認・営業状況生成ハブ</p>
         </div>
 
@@ -266,7 +266,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             className="group relative flex items-center gap-2 px-6 py-2.5 bg-gold rounded-sm text-[11px] font-bold text-black tracking-[2px] uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
           >
             <Plus size={14} strokeWidth={3} />
-            Check Reservations
+            予約確認
           </button>
         </div>
       </div>
@@ -277,7 +277,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge color="gold">承認優先</Badge>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">Today Approval Queue</span>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">本日承認待ち</span>
               </div>
               <p className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">
                 承認待ちの当日提出があります。内容確認後に承認し、本日の営業状況へ反映してください。
@@ -374,11 +374,11 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
               <div className="w-[32px] h-[32px] flex items-center justify-center bg-red-500/10 rounded-sm">
                 <AlertTriangle size={16} className="text-red-400" strokeWidth={2} />
               </div>
-              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">Alerts</p>
+              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">アラート</p>
             </div>
             <div className="p-4 space-y-3">
               {alerts.length === 0 ? (
-                <p className="text-[11px] text-[#5a5650] italic text-center py-6 font-sans">No alerts available</p>
+                <p className="text-[11px] text-[#5a5650] italic text-center py-6 font-sans">現在アラートはありません</p>
               ) : alerts.map((a) => (
                 <div
                   key={a.label}
@@ -404,18 +404,18 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
               <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
                 <StickyNote size={16} className="text-gold" strokeWidth={2} />
               </div>
-              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">Operations Memo</p>
+              <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">営業メモ</p>
             </div>
             <div className="p-4 space-y-3">
               {([
-                { type: 'VIP',   content: ops.vipMemo,    color: 'text-gold border-gold/20 bg-gold/5' },
-                { type: 'EVENT', content: ops.eventMemo,  color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
-                { type: 'STAFF', content: ops.urgentMemo, color: 'text-orange-400 border-orange-500/20 bg-orange-500/5' },
+                { type: '重要顧客', content: ops.vipMemo,    color: 'text-gold border-gold/20 bg-gold/5' },
+                { type: 'イベント', content: ops.eventMemo,  color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
+                { type: 'スタッフ', content: ops.urgentMemo, color: 'text-orange-400 border-orange-500/20 bg-orange-500/5' },
               ] as const).map((m) => (
                 <div key={m.type} className={`rounded-sm border p-4 transition-all hover:bg-white/2 ${m.color}`}>
                   <p className={`text-[9px] font-bold tracking-[2px] uppercase mb-2 opacity-80 ${m.color.split(' ')[0]}`}>{m.type}</p>
                   <div className="text-[11px] text-[#cbc3b3] leading-relaxed italic font-sans">
-                    {m.content ?? <span className="opacity-40 italic">Not set</span>}
+                    {m.content ?? <span className="opacity-40 italic">未設定</span>}
                   </div>
                 </div>
               ))}
@@ -431,7 +431,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             <div className="w-[32px] h-[32px] flex items-center justify-center bg-gold/10 rounded-sm">
               <Copy size={16} className="text-gold" strokeWidth={2} />
             </div>
-            <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">LINE Distribution Text</p>
+            <p className="text-[11px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">LINE配信用テキスト</p>
           </div>
           <button
             onClick={handleCopy}
@@ -442,12 +442,12 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             }`}
           >
             {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
-            {copied ? 'COPIED' : 'COPY TEXT'}
+            {copied ? 'コピー済み' : 'コピー'}
           </button>
         </div>
         <div className="p-6 bg-white/1">
           <pre className="text-[12px] text-[#cbc3b3] leading-relaxed whitespace-pre-wrap font-mono bg-black/40 p-5 rounded-sm border border-white/5 scrollbar-thin">
-            {lineText || 'Generating content...'}
+            {lineText || '作成中...'}
           </pre>
         </div>
       </div>
@@ -455,7 +455,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       {/* Pending indicator */}
       {isPending && (
         <div className="fixed bottom-8 right-8 bg-black/94 border border-white/10 text-gold text-[10px] font-bold tracking-[2px] px-6 py-3 rounded-sm shadow-2xl backdrop-blur-md uppercase animate-in fade-in slide-in-from-bottom-4">
-          Processing...
+          処理中...
         </div>
       )}
     </div>
@@ -525,7 +525,7 @@ function AllTab({
           <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">体入</p>
           {data.trials.map(t => (
             <Row key={t.id}>
-              <Badge color="purple">TRIAL</Badge>
+              <Badge color="purple">体入</Badge>
               <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
               <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
             </Row>
@@ -553,7 +553,7 @@ function AllTab({
           <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">当日変更</p>
           {data.shiftChanges.filter(c => c.new_time).map(c => (
             <Row key={c.id}>
-              <Badge color="orange">CHANGE</Badge>
+              <Badge color="orange">変更</Badge>
               <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
               <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
                 {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
@@ -569,7 +569,7 @@ function AllTab({
           <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-2 px-3">当日欠勤</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
-              <Badge color="red">ABSENT</Badge>
+              <Badge color="red">欠勤</Badge>
               <span className="text-[12px] font-bold text-[#d4785a]">{name}</span>
             </Row>
           ))}
@@ -577,7 +577,7 @@ function AllTab({
       )}
 
       {sortedGroups.length === 0 && data.trials.length === 0 && (
-        <p className="text-[12px] text-[#5a5650] italic text-center py-12">No data recorded for today.</p>
+        <p className="text-[12px] text-[#5a5650] italic text-center py-12">本日の記録はまだありません。</p>
       )}
     </div>
   )
@@ -610,13 +610,13 @@ function CastTab({
       {/* Active casts */}
       <div>
         <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
-          <span>ACTIVE CASTS ({activeCasts.length + data.dispatches.length})</span>
+          <span>出勤キャスト ({activeCasts.length + data.dispatches.length})</span>
           <button
             onClick={() => setShowDispatch(!showDispatch)}
             className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
             <Plus size={12} strokeWidth={2.5} />
-            <span className="text-[9px] font-bold tracking-widest uppercase">ADD DISPATCH</span>
+            <span className="text-[9px] font-bold tracking-widest uppercase">派遣を追加</span>
           </button>
         </p>
         {activeCasts.map(s => (
@@ -627,7 +627,7 @@ function CastTab({
         ))}
         {data.dispatches.map(d => (
           <Row key={d.id}>
-            <Badge color="blue">DISPATCH</Badge>
+            <Badge color="blue">派遣</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{d.name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{d.start_time.substring(0, 5)}〜</span>
             <button
@@ -695,9 +695,9 @@ function CastTab({
               }}
               className="space-y-3"
             >
-              <input name="name" type="text" placeholder="Cast Name" required className={inputCls} />
+              <input name="name" type="text" placeholder="キャスト名" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" disabled={isBusy('add-dispatch')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD DISPATCH</button>
+              <button type="submit" disabled={isBusy('add-dispatch')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">派遣を追加</button>
             </form>
           </AddFormWrapper>
         )}
@@ -706,21 +706,21 @@ function CastTab({
       {/* Trials */}
       <div>
         <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
-          <span>TRIALS ({data.trials.length})</span>
+          <span>体入 ({data.trials.length})</span>
           <button
             onClick={() => setShowTrial(!showTrial)}
             className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
             <Plus size={12} strokeWidth={2.5} />
-            <span className="text-[9px] font-bold tracking-widest uppercase">ADD</span>
+            <span className="text-[9px] font-bold tracking-widest uppercase">追加</span>
           </button>
         </p>
         {data.trials.length === 0 && !showTrial && (
-          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">No trials recorded for today.</p>
+          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">本日の体入はありません。</p>
         )}
         {data.trials.map(t => (
           <Row key={t.id}>
-            <Badge color="purple">TRIAL</Badge>
+            <Badge color="purple">体入</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
             <button
@@ -788,9 +788,9 @@ function CastTab({
               }}
               className="space-y-3"
             >
-              <input name="name" type="text" placeholder="Trial Cast Name" required className={inputCls} />
+              <input name="name" type="text" placeholder="体入キャスト名" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" disabled={isBusy('add-trial')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD TRIAL</button>
+              <button type="submit" disabled={isBusy('add-trial')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">体入を追加</button>
             </form>
           </AddFormWrapper>
         )}
@@ -799,21 +799,21 @@ function CastTab({
       {/* Changes */}
       <div>
         <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 flex items-center justify-between font-sans">
-          <span>SHIFT CHANGES</span>
+          <span>シフト変更</span>
           <button
             onClick={() => setShowChange(!showChange)}
             className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
             <Plus size={12} strokeWidth={2.5} />
-            <span className="text-[9px] font-bold tracking-widest uppercase">ADD</span>
+            <span className="text-[9px] font-bold tracking-widest uppercase">追加</span>
           </button>
         </p>
         {data.shiftChanges.filter(c => c.new_time).length === 0 && !showChange && (
-          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">No shift changes today.</p>
+          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">本日のシフト変更はありません。</p>
         )}
         {data.shiftChanges.filter(c => c.new_time).map(c => (
           <Row key={c.id}>
-            <Badge color="orange">CHANGE</Badge>
+            <Badge color="orange">変更</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
               {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
@@ -906,15 +906,15 @@ function CastTab({
               className="space-y-3"
             >
               <select name="cast_id" required className={inputCls}>
-                <option value="">Select Cast</option>
+                <option value="">キャストを選択</option>
                 {casts.map(c => <option key={c.id} value={c.id}>{c.stage_name}</option>)}
               </select>
               <div className="grid grid-cols-2 gap-3">
-                <input name="original_time" type="time" placeholder="From" className={inputCls} />
-                <input name="new_time"      type="time" placeholder="To" className={inputCls} />
+                <input name="original_time" type="time" placeholder="変更前" className={inputCls} />
+                <input name="new_time"      type="time" placeholder="変更後" className={inputCls} />
               </div>
-              <input name="note" type="text" placeholder="Note (e.g. Douhan)" className={inputCls} />
-              <button type="submit" disabled={isBusy('add-change')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD CHANGE</button>
+              <input name="note" type="text" placeholder="メモ（例: 同伴）" className={inputCls} />
+              <button type="submit" disabled={isBusy('add-change')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">変更を追加</button>
             </form>
           </AddFormWrapper>
         )}
@@ -923,10 +923,10 @@ function CastTab({
       {/* Absent */}
       {absentNames.length > 0 && (
         <div>
-          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 font-sans">ABSENT CASTS</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase mb-3 px-3 font-sans">欠勤キャスト</p>
           {[...new Set(absentNames)].map(name => (
             <Row key={name}>
-              <Badge color="red">ABSENT</Badge>
+              <Badge color="red">欠勤</Badge>
               <span className="text-[12px] font-bold text-red-400">{name}</span>
             </Row>
           ))}
@@ -943,15 +943,15 @@ function VisitTab({ data }: { data: TodayDashboardData }) {
   return (
     <div className="space-y-1">
       {data.reservations.length === 0 ? (
-        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans uppercase tracking-widest">No reservations found</p>
+        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans uppercase tracking-widest">本日の予約はありません</p>
       ) : (
         <>
           {/* Table header */}
           <div className="flex items-center h-[32px] px-3 mb-1 border-b border-white/5">
-            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-14">Time</span>
-            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-24">Cast</span>
-            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase flex-1">Guest</span>
-            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-16 text-right">Type</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-14">時間</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-24">キャスト</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase flex-1">お客様</span>
+            <span className="text-[9px] font-bold tracking-[2px] text-[#5a5650] uppercase w-16 text-right">種別</span>
           </div>
           {data.reservations.map(r => (
             <div key={r.id} className="flex items-center h-[40px] px-3 hover:bg-white/3 rounded-sm transition-colors border-b border-white/2 last:border-0 group">
@@ -996,19 +996,19 @@ function StaffTab({
     <div className="space-y-4">
       <div className="flex items-center justify-between px-3">
         <p className="text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">
-          STAFF ATTENDANCE ({data.staffAttendances.length})
+          スタッフ出勤 ({data.staffAttendances.length})
         </p>
         <button
           onClick={() => setShowStaff(!showStaff)}
           className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
         >
           <Plus size={12} strokeWidth={2.5} />
-          <span className="text-[9px] font-bold tracking-widest uppercase">ADD STAFF</span>
+          <span className="text-[9px] font-bold tracking-widest uppercase">スタッフ追加</span>
         </button>
       </div>
 
       {data.staffAttendances.length === 0 && !showStaff && (
-        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans tracking-widest uppercase">No staff recorded</p>
+        <p className="text-[11px] text-[#5a5650] italic text-center py-12 font-sans tracking-widest uppercase">本日のスタッフ出勤はありません</p>
       )}
 
       <div className="space-y-0.5">
@@ -1097,16 +1097,16 @@ function StaffTab({
             className="space-y-3"
           >
             <select name="staff_id" required className={inputCls}>
-              <option value="">Select Staff...</option>
+              <option value="">スタッフを選択...</option>
               {data.allStaffs.map(s => (
-                <option key={s.id} value={s.id}>{s.display_name} ({s.role || 'No Role'})</option>
+                <option key={s.id} value={s.id}>{s.display_name} ({s.role || '役職未設定'})</option>
               ))}
             </select>
             <input name="start_time" type="time" required className={inputCls} />
             <input type="hidden" name="display_name" value="" />
-            <button type="submit" disabled={isBusy('add-staff')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD STAFF</button>
+            <button type="submit" disabled={isBusy('add-staff')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">スタッフを追加</button>
             {data.allStaffs.length === 0 && (
-              <p className="text-[10px] font-bold text-red-500/80 px-1">※ Please register staff in Human Resources.</p>
+              <p className="text-[10px] font-bold text-red-500/80 px-1">※ スタッフ管理でスタッフを登録してください。</p>
             )}
           </form>
         </AddFormWrapper>
@@ -1133,23 +1133,23 @@ function UnconfirmedTab({
     <div className="space-y-6">
       {data.pendingCheckins.length > 0 && (
         <div className="space-y-3">
-          <p className="text-[10px] font-bold tracking-[2px] text-gold uppercase px-3 pb-1 border-b border-gold/10">PENDING CONFIRMATIONS</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-gold uppercase px-3 pb-1 border-b border-gold/10">承認待ちの確認</p>
           <div className="space-y-3">
             {data.pendingCheckins.map(checkin => (
               <div key={checkin.id} className="rounded-sm border border-gold/20 bg-gold/2 p-5 backdrop-blur-sm transition-all hover:bg-gold/4">
                 <div className="flex items-start gap-4">
-                  <Badge color="orange">PENDING</Badge>
+                  <Badge color="orange">承認待ち</Badge>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-bold text-[#f4f1ea] tracking-tight">{checkin.stage_name}</p>
                     <div className="mt-2 grid grid-cols-2 gap-2">
-                      <div className="text-[10px] text-[#8a8478]">欠勤: <span className={checkin.is_absent ? 'text-red-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.is_absent ? 'YES' : 'NO'}</span></div>
-                      <div className="text-[10px] text-[#8a8478]">変更: <span className={checkin.has_change ? 'text-orange-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.has_change ? 'YES' : 'NO'}</span></div>
+                      <div className="text-[10px] text-[#8a8478]">欠勤: <span className={checkin.is_absent ? 'text-red-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.is_absent ? 'あり' : 'なし'}</span></div>
+                      <div className="text-[10px] text-[#8a8478]">変更: <span className={checkin.has_change ? 'text-orange-400 font-bold' : 'text-[#cbc3b3]'}>{checkin.has_change ? 'あり' : 'なし'}</span></div>
                     </div>
                     {checkin.change_note && (
-                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Note: {checkin.change_note}</p>
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">メモ: {checkin.change_note}</p>
                     )}
                     {checkin.memo && (
-                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Memo: {checkin.memo}</p>
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">メモ: {checkin.memo}</p>
                     )}
                   </div>
                 </div>
@@ -1191,7 +1191,7 @@ function UnconfirmedTab({
                     }}
                     className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
                   >
-                    Approve
+                    承認
                   </button>
                   <button
                     disabled={isBusy(`reject-checkin-${checkin.id}`)}
@@ -1213,7 +1213,7 @@ function UnconfirmedTab({
                     }}
                     className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
                   >
-                    Reject
+                    否認
                   </button>
                 </div>
               </div>
@@ -1224,12 +1224,12 @@ function UnconfirmedTab({
 
       {data.pendingReservations.length > 0 && (
         <div className="space-y-3">
-          <p className="text-[10px] font-bold tracking-[2px] text-blue-400 uppercase px-3 pb-1 border-b border-blue-500/10">PENDING RESERVATIONS</p>
+          <p className="text-[10px] font-bold tracking-[2px] text-blue-400 uppercase px-3 pb-1 border-b border-blue-500/10">承認待ち予約</p>
           <div className="space-y-3">
             {data.pendingReservations.map(reservation => (
               <div key={reservation.id} className="rounded-sm border border-blue-500/20 bg-blue-500/2 p-5 backdrop-blur-sm transition-all hover:bg-blue-500/4">
                 <div className="flex items-start gap-4">
-                  <Badge color="blue">{reservation.reservation_type === 'douhan' ? 'DOUHAN' : 'VISIT'}</Badge>
+                  <Badge color="blue">{reservation.reservation_type === 'douhan' ? '同伴' : '来店'}</Badge>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-bold text-[#f4f1ea] tracking-tight">
                       {reservation.visit_time.substring(0, 5)} / {reservation.stage_name}
@@ -1239,7 +1239,7 @@ function UnconfirmedTab({
                       {reservation.guest_count ? <span className="text-[#5a5650] ml-1">({reservation.guest_count} 名)</span> : ''}
                     </p>
                     {reservation.note && (
-                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">Note: {reservation.note}</p>
+                      <p className="mt-2 text-[10px] text-[#8a8478] italic bg-black/20 p-2 rounded-sm border border-white/5">メモ: {reservation.note}</p>
                     )}
                   </div>
                 </div>
@@ -1273,7 +1273,7 @@ function UnconfirmedTab({
                     }}
                     className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
                   >
-                    Approve
+                    承認
                   </button>
                   <button
                     disabled={isBusy(`reject-reservation-${reservation.id}`)}
@@ -1295,7 +1295,7 @@ function UnconfirmedTab({
                     }}
                     className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
                   >
-                    Reject
+                    否認
                   </button>
                 </div>
               </div>
@@ -1309,7 +1309,7 @@ function UnconfirmedTab({
           <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
             <CheckCheck size={20} className="text-emerald-400" />
           </div>
-          <p className="text-[11px] text-emerald-400 font-bold tracking-[3px] uppercase">All Cleared</p>
+          <p className="text-[11px] text-emerald-400 font-bold tracking-[3px] uppercase">すべて確認済み</p>
         </div>
       ) : (
         <>
@@ -1317,7 +1317,7 @@ function UnconfirmedTab({
             <div className="space-y-3 pt-2">
               <p className="text-[10px] font-bold tracking-[2px] text-red-500/80 px-3 flex items-center gap-2 uppercase">
                 <AlertTriangle size={12} />
-                <span>UNSENT CONFIRMATION FORMS</span>
+                <span>未送信の確認フォーム</span>
               </p>
               <div className="space-y-0.5">
                 {data.unconfirmedCasts.map(c => {
@@ -1328,8 +1328,8 @@ function UnconfirmedTab({
                       <span className="text-[12px] font-bold text-red-400/90">{c.stage_name}</span>
                       <span className="ml-auto">
                         {mailSent
-                          ? <Badge color="blue">📧 SENT</Badge>
-                          : <Badge color="red">NOT CONTACTED</Badge>
+                          ? <Badge color="blue">送信済み</Badge>
+                          : <Badge color="red">未連絡</Badge>
                         }
                       </span>
                     </Row>

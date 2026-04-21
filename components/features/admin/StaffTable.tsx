@@ -13,9 +13,9 @@ type Profile = {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  owner: 'Owner',
-  manager: 'Manager',
-  staff: 'Staff',
+  owner: 'オーナー',
+  manager: '管理者',
+  staff: 'スタッフ',
 }
 
 const ROLE_COLORS: Record<string, string> = {
@@ -83,7 +83,7 @@ export function StaffTable({
                       <div className="font-bold text-[#f4f1ea] leading-none mb-1.5 flex items-center gap-2">
                         {profile.display_name || '名前未設定'}
                         {isSelf && (
-                          <span className="px-2 py-0.5 rounded-full bg-gold/10 text-gold text-[8px] font-black tracking-widest uppercase border border-gold/20">Self</span>
+                          <span className="px-2 py-0.5 rounded-full bg-gold/10 text-gold text-[8px] font-black tracking-widest uppercase border border-gold/20">本人</span>
                         )}
                       </div>
                       <div className="text-[10px] text-[#5a5650] font-mono tracking-tighter">
@@ -108,9 +108,9 @@ export function StaffTable({
                             onChange={(e) => handleRoleChange(profile.id, e.target.value)}
                             className="text-[11px] font-bold tracking-wider border border-white/10 rounded-lg px-4 py-2 bg-black/60 text-[#f4f1ea] hover:border-gold/50 focus:outline-none focus:border-gold disabled:opacity-30 disabled:cursor-not-allowed transition-all outline-none appearance-none pr-10 cursor-pointer shadow-lg"
                           >
-                            <option value="owner" className="bg-black text-white">Owner</option>
-                            <option value="manager" className="bg-black text-white">Manager</option>
-                            <option value="staff" className="bg-black text-white">Staff</option>
+                            <option value="owner" className="bg-black text-white">オーナー</option>
+                            <option value="manager" className="bg-black text-white">管理者</option>
+                            <option value="staff" className="bg-black text-white">スタッフ</option>
                           </select>
                           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#5a5650] group-hover/select:text-gold transition-colors">
                             <svg className="w-4 h-4 fill-current opacity-50" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
@@ -120,7 +120,7 @@ export function StaffTable({
                         {isUpdating && (
                           <div className="flex items-center gap-2 text-[10px] text-gold font-bold animate-pulse">
                             <Loader2 className="w-3 h-3 animate-spin" />
-                            <span>Updating</span>
+                            <span>更新中</span>
                           </div>
                         )}
 
@@ -143,7 +143,7 @@ export function StaffTable({
             ) : (
               <tr>
                 <td colSpan={4} className="px-8 py-20 text-center space-y-3">
-                  <div className="text-[#3a3630] font-black text-2xl opacity-10 uppercase tracking-[10px]">Empty</div>
+                  <div className="text-[#3a3630] font-black text-2xl opacity-10 uppercase tracking-[10px]">未登録</div>
                   <p className="text-[#8a8478] text-sm italic font-medium">スタッフアカウントが見つかりません</p>
                 </td>
               </tr>

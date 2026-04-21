@@ -40,7 +40,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
       let result;
       if (isEditing) {
         // Edit action would be here
-        result = { error: 'Not implemented. Please use new.' }
+        result = { error: '編集機能は未実装です。新規登録をご利用ください。' }
       } else {
         result = await createContent(formData)
       }
@@ -73,14 +73,14 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
       <div className="bg-black/95 border border-white/10 shadow-2xl rounded-sm p-8 sm:p-10">
         <h2 className="text-xl font-serif font-bold tracking-tight text-[#f4f1ea] mb-8 pb-6 border-b border-white/5">
-          {isEditing ? 'Edit Content' : 'New Content'}
+          {isEditing ? 'コンテンツ編集' : '新規コンテンツ'}
         </h2>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label htmlFor="contentType" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">Type *</label>
+              <label htmlFor="contentType" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">種別 *</label>
               <div className="relative">
                 <select 
                   id="contentType"
@@ -90,9 +90,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-2.5 text-sm text-[#f4f1ea] focus:outline-none focus:border-gold/50 transition-all appearance-none outline-none"
                 >
-                  <option value="news">ニュース (News)</option>
-                  <option value="event">イベント (Event)</option>
-                  <option value="gallery">ギャラリー (Gallery)</option>
+                  <option value="news">ニュース</option>
+                  <option value="event">イベント</option>
+                  <option value="gallery">ギャラリー</option>
                 </select>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#5a5650]">
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
@@ -102,7 +102,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
             {contentType === 'event' && (
               <div className="space-y-2">
-                <label htmlFor="content_date" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">Event Date</label>
+                <label htmlFor="content_date" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">イベント日</label>
                 <input 
                   id="content_date"
                   name="content_date"
@@ -115,7 +115,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
             
             {contentType === 'gallery' && (
               <div className="space-y-2">
-                <label htmlFor="category" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">Category (Tag)</label>
+                <label htmlFor="category" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">カテゴリ</label>
                 <div className="relative">
                   <select 
                     id="category"
@@ -123,9 +123,9 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
                     defaultValue={initialData?.category || 'floor'}
                     className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-2.5 text-sm text-[#f4f1ea] focus:outline-none focus:border-gold/50 transition-all appearance-none outline-none"
                   >
-                    <option value="floor">メインフロア (Floor)</option>
-                    <option value="curtain">カーテンルーム (Curtain Room)</option>
-                    <option value="chandelier">シャンデリア (Chandelier)</option>
+                    <option value="floor">メインフロア</option>
+                    <option value="curtain">カーテンルーム</option>
+                    <option value="chandelier">シャンデリア</option>
                   </select>
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#5a5650]">
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
@@ -137,7 +137,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
           <div className="space-y-2">
             <label htmlFor="title" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">
-              {contentType === 'gallery' ? 'Caption' : 'Title *'}
+              {contentType === 'gallery' ? 'キャプション' : 'タイトル *'}
             </label>
             <input 
               id="title"
@@ -152,7 +152,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
 
           {contentType !== 'gallery' && (
             <div className="space-y-2">
-              <label htmlFor="description" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">Description / Content</label>
+              <label htmlFor="description" className="block text-[10px] font-bold tracking-[2px] text-[#8a8478] uppercase">本文</label>
               <textarea 
                 id="description"
                 name="description"
@@ -175,7 +175,7 @@ export function ContentForm({ initialData }: { initialData?: ContentData | null 
                   className="w-5 h-5 accent-gold bg-[#1a1a1b] border-white/10 rounded transition-all cursor-pointer"
                 />
               </div>
-              <span className="text-xs font-bold tracking-widest text-[#8a8478] group-hover:text-[#f4f1ea] transition-colors">公開する (Published)</span>
+              <span className="text-xs font-bold tracking-widest text-[#8a8478] group-hover:text-[#f4f1ea] transition-colors">公開する</span>
             </label>
           </div>
 

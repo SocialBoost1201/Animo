@@ -21,7 +21,7 @@ type Customer = {
 const RANK_OPTIONS = [
   { value: 'normal', label: '一般', cls: 'border-[#ffffff20] text-[#8a8478]' },
   { value: 'regular', label: '常連', cls: 'border-[#72b89440] text-[#72b894]' },
-  { value: 'vip',    label: 'VIP',  cls: 'border-[#dfbd6940] text-[#dfbd69]' },
+  { value: 'vip',    label: '重要顧客', cls: 'border-[#dfbd6940] text-[#dfbd69]' },
 ];
 
 type FieldLabelIcon = ComponentType<{
@@ -171,7 +171,7 @@ export function CustomerForm({ initialData }: { initialData?: Customer }) {
             <textarea
               name="note"
               defaultValue={initialData?.note ?? ''}
-              placeholder="VIP対応メモ、好みのキャスト、アレルギーなど"
+              placeholder="重要顧客対応メモ、好みのキャスト、アレルギーなど"
               rows={4}
               className={`${inputCls} resize-none`}
             />

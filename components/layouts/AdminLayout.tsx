@@ -42,12 +42,12 @@ const NAV_ITEMS = [
 ];
 
 const SECTIONS: Record<string, string> = {
-  overview:    'OVERVIEW',
-  operations:  'OPERATIONS',
-  customer:    'CUSTOMER',
-  recruitment: 'RECRUITMENT',
-  content:     'CONTENT',
-  system:      'SYSTEM',
+  overview:    '概要',
+  operations:  '業務',
+  customer:    '顧客',
+  recruitment: '求人',
+  content:     'コンテンツ',
+  system:      'システム',
 };
 
 const BOTTOM_TAB_ITEMS = [

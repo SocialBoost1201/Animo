@@ -10,12 +10,12 @@ type Role = 'manager' | 'staff'
 const ROLE_OPTIONS: { value: Role; label: string; description: string }[] = [
   {
     value: 'manager',
-    label: 'Manager（マネージャー）',
+    label: '管理者',
     description: '全管理機能を利用可能。スタッフ管理・設定を除く。',
   },
   {
     value: 'staff',
-    label: 'Staff（スタッフ）',
+    label: 'スタッフ',
     description: 'キャスト・シフト・予約確認などの基本操作のみ。',
   },
 ]
@@ -92,7 +92,7 @@ export function InviteStaffButton() {
             <div className="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-white/1">
               <div className="space-y-1">
                 <h2 className="text-xl font-bold tracking-tight text-[#f4f1ea]">スタッフ招待</h2>
-                <p className="text-[10px] font-black tracking-[2px] text-[#5a5650] uppercase">System Invitation</p>
+                <p className="text-[10px] font-black tracking-[2px] text-[#5a5650] uppercase">システム招待</p>
               </div>
               <button onClick={handleClose} className="w-10 h-10 rounded-full flex items-center justify-center text-[#5a5650] hover:text-[#f4f1ea] hover:bg-white/5 transition-all">
                 <X size={20} />
@@ -116,7 +116,7 @@ export function InviteStaffButton() {
                   onClick={handleClose}
                   className="mt-4 w-full py-3.5 bg-white/5 border border-white/10 text-sm text-[#f4f1ea] hover:bg-white/10 transition-all rounded-xl font-bold tracking-[2px] uppercase active:scale-95"
                 >
-                  Close
+                  閉じる
                 </button>
               </div>
             ) : (
@@ -125,7 +125,7 @@ export function InviteStaffButton() {
                 {/* メールアドレス入力 */}
                 <div className="space-y-3">
                   <label className="block text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase px-1">
-                    Email Address <span className="text-gold">*</span>
+                    メールアドレス <span className="text-gold">*</span>
                   </label>
                   <input
                     type="email"
@@ -139,7 +139,7 @@ export function InviteStaffButton() {
                 {/* 権限選択 */}
                 <div className="space-y-3">
                   <label className="block text-[10px] font-black tracking-[3px] text-[#8a8478] uppercase px-1">
-                    Access Permission <span className="text-gold">*</span>
+                    利用権限 <span className="text-gold">*</span>
                   </label>
                   <div className="space-y-3">
                     {ROLE_OPTIONS.map((option) => (
@@ -176,7 +176,7 @@ export function InviteStaffButton() {
                 <div className="flex items-center gap-2 p-4 bg-white/2 rounded-xl border border-white/5 border-dashed">
                   <Loader2 size={12} className="text-[#3a3630]" />
                   <p className="text-[9px] text-[#5a5650] leading-none font-bold uppercase tracking-wider">
-                    Invitation link expires in 24 hours
+                    招待リンクの有効期限は24時間です
                   </p>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export function InviteStaffButton() {
                   onClick={handleClose}
                   className="flex-1 py-3.5 border border-white/10 text-xs text-[#8a8478] hover:text-[#f4f1ea] hover:bg-white/5 transition-all rounded-xl font-black tracking-[2px] uppercase active:scale-95"
                 >
-                  Cancel
+                  キャンセル
                 </button>
                 <button
                   onClick={handleInvite}
@@ -197,9 +197,9 @@ export function InviteStaffButton() {
                   className="flex-1 py-3.5 bg-gold hover:bg-[#d4b35a] text-black text-xs font-black tracking-[2px] uppercase flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:grayscale rounded-xl active:scale-95 shadow-lg shadow-gold/20"
                 >
                   {isSending ? (
-                    <><Loader2 size={14} className="animate-spin" /> Sending</>
+                    <><Loader2 size={14} className="animate-spin" /> 送信中</>
                   ) : (
-                    <><Send size={14} /> Send Invitation</>
+                    <><Send size={14} /> 招待を送信</>
                   )}
                 </button>
               </div>

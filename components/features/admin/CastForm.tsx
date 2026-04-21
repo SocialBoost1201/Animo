@@ -273,7 +273,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           <div className="w-8 h-8 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center mr-3 transition-colors group-hover:border-gold/40">
             <ArrowLeft size={14} className="group-hover:text-gold transition-colors" />
           </div>
-          <span className="uppercase font-bold tracking-[3px]">Back to list</span>
+          <span className="uppercase font-bold tracking-[3px]">一覧へ戻る</span>
         </Link>
       </div>
 
@@ -283,10 +283,10 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
         <div className="mb-12">
           <h2 className={`text-3xl font-serif tracking-tighter mb-2 ${F.heading}`}>
-            {isEditing ? 'Edit Profile' : 'New Profile'}
+            {isEditing ? 'プロフィール編集' : '新規プロフィール'}
           </h2>
           <p className="text-[10px] font-bold tracking-[3px] text-[#5a5650] uppercase italic">
-            {isEditing ? 'Updating existing cast data' : 'Creating a new professional profile'}
+            {isEditing ? '既存キャスト情報を更新します' : '新しいキャスト情報を作成します'}
           </p>
         </div>
 
@@ -304,13 +304,13 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px flex-1 bg-white/5" />
-              <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">Private Identity</span>
+              <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">個人情報</span>
               <div className="h-px flex-1 bg-white/5" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <div className="group">
-                <label htmlFor="real_name" className={labelClass}>名前 / Real Name <span className="text-red-500/50">*</span></label>
+                <label htmlFor="real_name" className={labelClass}>名前 <span className="text-red-500/50">*</span></label>
                 <input
                   id="real_name"
                   name="real_name"
@@ -329,11 +329,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 {fieldErrors.real_name ? (
                   <p className="mt-2 text-[10px] font-bold text-red-400 bg-red-400/5 px-2 py-1 rounded-sm inline-block tracking-wider">{fieldErrors.real_name}</p>
                 ) : (
-                  <p className="mt-2 text-[9px] text-[#5a5650] tracking-widest uppercase italic opacity-0 group-focus-within:opacity-100 transition-opacity">Private: only visible to admins</p>
+                  <p className="mt-2 text-[9px] text-[#5a5650] tracking-widest uppercase italic opacity-0 group-focus-within:opacity-100 transition-opacity">管理者のみ確認できます</p>
                 )}
               </div>
               <div className="group">
-                <label htmlFor="name_kana" className={labelClass}>フリガナ / Phonetic <span className="text-red-500/50">*</span></label>
+                <label htmlFor="name_kana" className={labelClass}>フリガナ <span className="text-red-500/50">*</span></label>
                 <input
                   id="name_kana"
                   name="name_kana"
@@ -355,7 +355,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 )}
               </div>
               <div>
-                <label htmlFor="stage_name" className={labelClass}>源氏名 / Stage Name <span className="text-red-500/50">*</span></label>
+                <label htmlFor="stage_name" className={labelClass}>源氏名 <span className="text-red-500/50">*</span></label>
                 <input
                   id="stage_name"
                   name="stage_name"
@@ -372,7 +372,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 )}
               </div>
               <div>
-                <label htmlFor="date_of_birth" className={labelClass}>生年月日 / Date of Birth <span className="text-red-500/50">*</span></label>
+                <label htmlFor="date_of_birth" className={labelClass}>生年月日 <span className="text-red-500/50">*</span></label>
                 <input
                   id="date_of_birth"
                   name="date_of_birth"
@@ -391,7 +391,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 )}
               </div>
               <div>
-                <label htmlFor="phone" className={labelClass}>電話番号 / Tel <span className="text-red-500/50">*</span></label>
+                <label htmlFor="phone" className={labelClass}>電話番号 <span className="text-red-500/50">*</span></label>
                 <input
                   id="phone"
                   name="phone"
@@ -412,7 +412,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 )}
               </div>
               <div>
-                <label htmlFor="email" className={labelClass}>メールアドレス / Email <span className="text-[#5a5650]">(任意)</span></label>
+                <label htmlFor="email" className={labelClass}>メールアドレス <span className="text-[#5a5650]">(任意)</span></label>
                 <input
                   id="email"
                   name="email"
@@ -443,18 +443,18 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px flex-1 bg-white/5" />
-              <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">Public Profile</span>
+              <span className="text-[10px] font-bold tracking-[4px] text-[#5a5650] uppercase">公開プロフィール</span>
               <div className="h-px flex-1 bg-white/5" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <div>
-                <label htmlFor="cast_age" className={labelClass}>年齢 / Age</label>
+                <label htmlFor="cast_age" className={labelClass}>年齢</label>
                 <input id="cast_age" name="age" type="number" min="18" max="99"
                   defaultValue={initialData?.age} className={inputClass} placeholder="22" />
               </div>
               <div>
-                <label htmlFor="cast_height" className={labelClass}>身長 / Height (cm)</label>
+                <label htmlFor="cast_height" className={labelClass}>身長（cm）</label>
                 <input id="cast_height" name="height" type="number" min="130" max="220"
                   defaultValue={initialData?.height} className={inputClass} placeholder="160" />
               </div>
@@ -530,14 +530,14 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
             {/* 趣味 */}
             <div>
-              <label htmlFor="hobby" className={labelClass}>趣味 / Hobby</label>
+              <label htmlFor="hobby" className={labelClass}>趣味</label>
               <input id="hobby" name="hobby" type="text" defaultValue={initialData?.hobby}
                 className={inputClass} placeholder="旅行、カフェ巡り" />
             </div>
 
             {/* AI診断タグ */}
             <div className="space-y-4">
-              <label className={labelClass}>AI診断タグ / Quiz Architecture</label>
+              <label className={labelClass}>AI診断タグ</label>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
                 {QUIZ_TAG_OPTIONS.map((tag) => {
                   const isChecked = selectedTags.includes(tag.value)
@@ -571,14 +571,14 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
 
             {/* コメント */}
             <div>
-              <label htmlFor="comment_input" className={labelClass}>一言コメント / Public Memo</label>
+              <label htmlFor="comment_input" className={labelClass}>一言コメント</label>
               <textarea id="comment_input" name="comment" rows={6} defaultValue={initialData?.comment}
                 className={`${inputClass} font-sans leading-relaxed`} placeholder="お客様へのメッセージやプロフィール文" />
             </div>
 
             {!isEditing && (
               <div className="space-y-4">
-                <label htmlFor="image_file" className={labelClass}>プロフィール画像 / Visual Assets</label>
+                <label htmlFor="image_file" className={labelClass}>プロフィール画像</label>
                 <div className="flex flex-col md:flex-row items-start gap-8">
                   <div className="w-48 h-64 bg-white/5 border border-white/10 rounded-sm overflow-hidden relative group">
                     {(imagePreview || primaryImage?.image_url) ? (
@@ -592,11 +592,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     ) : (
                       <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 opacity-40">
                         <Users size={32} className="text-[#5a5650]" />
-                        <span className="text-[8px] font-bold tracking-[2px] uppercase">No Image</span>
+                        <span className="text-[8px] font-bold tracking-[2px] uppercase">画像なし</span>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                      <p className="text-[8px] font-bold tracking-[2px] text-white uppercase text-center leading-relaxed">Visual will be optimized for premium display</p>
+                      <p className="text-[8px] font-bold tracking-[2px] text-white uppercase text-center leading-relaxed">表示用に画像を最適化します</p>
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col justify-center h-64">
@@ -611,11 +611,11 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     <div className="mt-4 space-y-1">
                       <p className={`${F.noteText} flex items-center gap-2`}>
                         <CheckCheck size={10} className="text-gold" />
-                        <span>Recommended: High resolution portraits</span>
+                        <span>推奨: 高解像度のポートレート画像</span>
                       </p>
                       <p className={`${F.noteText} flex items-center gap-2`}>
                         <CheckCheck size={10} className="text-gold" />
-                        <span>Formats: JPEG, PNG, WEBP (Auto-optimized)</span>
+                        <span>形式: JPEG、PNG、WEBP（自動最適化）</span>
                       </p>
                     </div>
                   </div>
@@ -627,8 +627,8 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
           {/* 在籍フラグ */}
           <div className={`border-t ${F.divider} pt-10 flex items-center justify-between`}>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">Visibility Status</p>
-              <p className={F.noteText}>Control whether this cast is visible on the public platform</p>
+              <p className="text-[10px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">公開ステータス</p>
+              <p className={F.noteText}>公開サイトに表示するかを設定します</p>
             </div>
             <label htmlFor="is_active" className="relative inline-flex items-center cursor-pointer group">
               <input
@@ -641,7 +641,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               />
               <div className="w-14 h-7 bg-white/5 border border-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-[#5a5650] after:border-white/10 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold/20 peer-checked:after:bg-gold"></div>
               <span className="ml-3 text-xs font-bold tracking-widest text-[#8a8478] peer-checked:text-gold uppercase transition-colors">
-                {initialData ? (initialData.is_active ?? true ? 'Active' : 'Inactive') : 'Active'}
+                {initialData ? (initialData.is_active ?? true ? '有効' : '無効') : '有効'}
               </span>
             </label>
           </div>
@@ -654,7 +654,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
             >
               <div className="absolute inset-0 w-full h-full bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               <span className="relative z-10 text-black text-xs font-bold tracking-[4px] uppercase">
-                {isPending ? 'PROCESSING...' : (isEditing ? 'COMMIT CHANGES' : 'CREATE PROFILE')}
+                {isPending ? '処理中...' : (isEditing ? '変更を保存' : 'プロフィール作成')}
               </span>
             </button>
           </div>

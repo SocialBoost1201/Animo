@@ -110,8 +110,8 @@ type Props = {
 
 export function DashboardMemoCardClient({ vipMemo, eventMemo, urgentMemo }: Props) {
   const [memos, setMemos] = useState<MemoItem[]>([
-    { type: 'vip',    label: 'VIP',    content: vipMemo },
-    { type: 'event',  label: 'EVENT',  content: eventMemo },
+    { type: 'vip',    label: '重要顧客', content: vipMemo },
+    { type: 'event',  label: 'イベント', content: eventMemo },
     { type: 'urgent', label: '要対応', content: urgentMemo },
   ]);
 
