@@ -1,23 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { approveShiftChangeRequest, rejectShiftChangeRequest, ShiftChangeRequestWithCast } from '@/lib/actions/admin-change-requests';
 import { toast } from 'sonner';
 import { Check, X, Loader2, CalendarDays, Edit2, Ban } from 'lucide-react';
 
 export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequestWithCast[] }) {
-  const router = useRouter();
+  const [requestItems, setRequestItems] = useState(requests);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
+  useEffect(() => {
+    setRequestItems(requests);
+  }, [requests]);
+
   const handleApprove = async (id: string, stageName: string, dateStr: string) => {
+    const previousRequests = requestItems;
     setIsProcessing(id);
+    setRequestItems((current) => current.filter((request) => request.id !== id));
     const { success, error } = await approveShiftChangeRequest(id);
     
     if (success) {
       toast.success(`${stageName} の ${dateStr} の変更申請を承認しました`);
-      router.refresh();
     } else {
+      setRequestItems(previousRequests);
       toast.error(`承認に失敗しました: ${error}`);
     }
     
@@ -27,20 +32,22 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
   const handleReject = async (id: string, stageName: string, dateStr: string) => {
     if (!window.confirm(`${stageName} の ${dateStr} の変更申請を却下しますか？`)) return;
     
+    const previousRequests = requestItems;
     setIsProcessing(id);
+    setRequestItems((current) => current.filter((request) => request.id !== id));
     const { success, error } = await rejectShiftChangeRequest(id);
     
     if (success) {
       toast.success(`${stageName} の変更申請を却下しました`);
-      router.refresh();
     } else {
+      setRequestItems(previousRequests);
       toast.error(`却下に失敗しました: ${error}`);
     }
     
     setIsProcessing(null);
   };
 
-  if (!requests || requests.length === 0) {
+  if (!requestItems || requestItems.length === 0) {
     return (
       <div className="bg-black/95 rounded-2xl border border-white/10 p-8 text-center shadow-sm">
         <p className="text-[#8a8478] font-bold">承認待ちの変更申請はありません</p>
@@ -50,7 +57,7 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
 
   return (
     <div className="space-y-4">
-      {requests.map((req) => {
+      {requestItems.map((req) => {
         const isActioning = isProcessing === req.id;
         const submitDate = new Date(req.created_at).toLocaleString('ja-JP', {
           month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'

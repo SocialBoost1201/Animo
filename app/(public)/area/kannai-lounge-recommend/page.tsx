@@ -8,6 +8,9 @@ import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 export const metadata: Metadata = {
   title: '関内ラウンジおすすめ・人気の高級店｜CLUB Animo',
   description: '関内・馬車道エリアで人気の高級ラウンジ・優良キャバクラを探している方へおすすめ。接待や大切な会食後に利用されるワンランク上の店舗選びのポイントをご紹介。',
+  alternates: {
+    canonical: '/area/kannai-lounge-recommend',
+  },
 };
 
 const RECOMMENDED_POINTS = [

@@ -52,26 +52,26 @@ export default async function HumanResourcesPage({
   return (
     <div className="space-y-10 font-sans">
       {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 py-4 border-b border-[#ffffff08] mb-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 rounded-[22px] border border-[#dfbd69]/22 bg-linear-to-br from-[#181510] via-[#131313] to-[#101010] px-6 py-5 shadow-[0_18px_45px_rgba(0,0,0,0.32)] mb-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-[22px] font-bold text-[#f4f1ea] tracking-tight">キャスト・スタッフ管理</h1>
-          <p className="text-[13px] text-[#8a8478] tracking-[0.1px] opacity-70">キャストとスタッフの登録・編集・並べ替えを一元管理できます</p>
+          <p className="text-[13px] text-[#c7c0b2] tracking-[0.1px]">キャストとスタッフの登録・編集・並べ替えを一元管理できます</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
           {tab === 'casts' && (
             <>
-              <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[12px] border border-[#ffffff0f] px-1 py-1 shadow-lg">
+              <div className="flex items-center gap-1 bg-[#1c1d22] rounded-[12px] border border-[#dfbd69]/22 px-1 py-1 shadow-[0_10px_28px_rgba(0,0,0,0.25)]">
                 <Link
                   href={`/admin/human-resources?tab=casts&month=${prevMonthStr}${q ? `&q=${q}` : ''}`}
-                  className="p-2 text-[#8a8478] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
+                  className="p-2 text-[#c7c0b2] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
                 >
                   <ChevronLeft size={18} />
                 </Link>
-                <span className="text-[13px] font-bold text-[#c7c0b2] min-w-section-mobile text-center tracking-wider">{dFormat}</span>
+                <span className="text-[13px] font-bold text-[#f4f1ea] min-w-section-mobile text-center tracking-wider">{dFormat}</span>
                 <Link
                   href={`/admin/human-resources?tab=casts&month=${nextMonthStr}${q ? `&q=${q}` : ''}`}
-                  className="p-2 text-[#8a8478] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
+                  className="p-2 text-[#c7c0b2] hover:text-gold transition-colors rounded-[8px] hover:bg-[#ffffff08]"
                 >
                   <ChevronRight size={18} />
                 </Link>
@@ -92,19 +92,19 @@ export default async function HumanResourcesPage({
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-[#ffffff08]">
+      <div className="flex items-center gap-2 rounded-[18px] border border-[#dfbd69]/18 bg-[#151515] px-2 py-1.5">
         <Link
           href="/admin/human-resources?tab=casts"
           className={`flex items-center gap-3 px-6 py-4 text-[13px] font-bold transition-all relative ${
             tab === 'casts'
-              ? 'text-[#f4f1ea] bg-[#ffffff05]'
-              : 'text-[#5a5650] hover:text-[#8a8478]'
+              ? 'text-[#f4f1ea] bg-[#ffffff08] rounded-[14px]'
+              : 'text-[#b7af9f] hover:text-[#f4f1ea]'
           }`}
         >
           <Users size={16} className={tab === 'casts' ? 'text-gold' : ''} />
           キャスト
           <span className={`ml-1 text-[10px] font-black px-2 py-0.5 rounded-full ${
-            tab === 'casts' ? 'bg-gold/20 text-gold' : 'bg-[#ffffff08] text-[#5a5650]'
+            tab === 'casts' ? 'bg-gold/20 text-gold border border-[#dfbd69]/20' : 'bg-[#ffffff08] text-[#c7c0b2] border border-[#ffffff10]'
           }`}>
             {mappedCasts.length}
           </span>
@@ -116,14 +116,14 @@ export default async function HumanResourcesPage({
           href="/admin/human-resources?tab=staffs"
           className={`flex items-center gap-3 px-6 py-4 text-[13px] font-bold transition-all relative ${
             tab === 'staffs'
-              ? 'text-[#f4f1ea] bg-[#ffffff05]'
-              : 'text-[#5a5650] hover:text-[#8a8478]'
+              ? 'text-[#f4f1ea] bg-[#ffffff08] rounded-[14px]'
+              : 'text-[#b7af9f] hover:text-[#f4f1ea]'
           }`}
         >
           <UserCheck size={16} className={tab === 'staffs' ? 'text-gold' : ''} />
           スタッフ
           <span className={`ml-1 text-[10px] font-black px-2 py-0.5 rounded-full ${
-            tab === 'staffs' ? 'bg-gold/20 text-gold' : 'bg-[#ffffff08] text-[#5a5650]'
+            tab === 'staffs' ? 'bg-gold/20 text-gold border border-[#dfbd69]/20' : 'bg-[#ffffff08] text-[#c7c0b2] border border-[#ffffff10]'
           }`}>
             {staffsData.length}
           </span>

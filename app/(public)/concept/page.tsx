@@ -9,6 +9,9 @@ import { CalendarHeart } from 'lucide-react';
 export const metadata = {
   title: 'Concept | Club Animo',
   description: '関内の大人の社交場 Club Animo。象徴的な大シャンデリアが輝く上質な空間で、極上の時間をお過ごしください。',
+  alternates: {
+    canonical: '/concept',
+  },
 };
 
 export default function ConceptPage() {

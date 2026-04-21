@@ -10,6 +10,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'アクセス案内｜関内キャバクラ CLUB Animo',
   description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」へのアクセス方法・店舗情報。関内駅から徒歩5分の洗練された大人の社交場でお待ちしております。',
+  alternates: {
+    canonical: '/access',
+  },
 };
 
 export default function AccessPage() {
@@ -192,4 +195,3 @@ export default function AccessPage() {
     </div>
   );
 }
-

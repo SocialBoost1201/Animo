@@ -11,6 +11,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '関内の夜遊びスポット特集｜大人が通う名店たち',
   description: '関内・馬車道エリアでおすすめの夜遊びスポットを特集。美味しいディナーから、二軒目に最適なバーや高級キャバクラ、会員制ラウンジまでご紹介します。',
+  alternates: {
+    canonical: '/blog/kannai-nightspots',
+  },
   openGraph: {
     title: '関内の夜遊びスポット特集｜大人が通う名店たち',
     description: '関内・馬車道エリアでおすすめの夜遊びスポットを特集。',

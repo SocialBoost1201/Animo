@@ -9,6 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '馬車道ラウンジの特徴とキャバクラとの違い｜CLUB Animo',
   description: '横浜・馬車道エリアの会員制ラウンジや高級クラブの特徴を解説。キャバクラとのシステムの違いや、ゆったりとした時間が流れる馬車道の大人の夜遊びをご案内します。',
+  alternates: {
+    canonical: '/about/bashamichi-lounge',
+  },
 };
 
 const BASHAMICHI_FEATURES = [

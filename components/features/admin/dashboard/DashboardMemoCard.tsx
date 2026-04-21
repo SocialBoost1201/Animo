@@ -1,25 +1,8 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
-import { StickyNote } from 'lucide-react';
-
-type MemoItem = {
-  type: 'VIP' | 'EVENT' | 'STAFF';
-  content: string | null;
-};
+import { DashboardMemoCardClient } from './DashboardMemoCardClient';
 
 export async function DashboardMemoCard() {
   const ops = await getDashboardTodayOps();
-
-  const memos: MemoItem[] = [
-    { type: 'VIP', content: ops.vipMemo },
-    { type: 'EVENT', content: ops.eventMemo },
-    { type: 'STAFF', content: ops.urgentMemo },
-  ];
-
-  const TYPE_STYLES: Record<MemoItem['type'], string> = {
-    VIP:   'text-[#dfbd69] border-[#dfbd6930] bg-[#dfbd6908]',
-    EVENT: 'text-[#72b894] border-[#72b89430] bg-[#72b89408]',
-    STAFF: 'text-[#c8884d] border-[#c8884d30] bg-[#c8884d08]',
-  };
 
   return (
     <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">

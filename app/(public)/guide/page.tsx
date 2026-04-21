@@ -9,6 +9,9 @@ import { CalendarHeart, Phone, MapPin, CreditCard, HelpCircle, Footprints } from
 export const metadata = {
   title: '初めての方へ | Club Animo',
   description: '初めてClub Animoをご利用の方へ。ご来店の流れ・料金目安・アクセス方法をご案内します。関内の高級クラブ「Club Animo」',
+  alternates: {
+    canonical: '/guide',
+  },
 };
 
 const STEPS = [

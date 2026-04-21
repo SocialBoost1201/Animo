@@ -82,9 +82,8 @@ export default async function CastProfilePage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-[19px] px-4 pb-28 pt-6">
-        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
 
         <CastMobileCard className="rounded-[16px] px-6 py-6 text-center">
           <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-[1.8px] border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)]">

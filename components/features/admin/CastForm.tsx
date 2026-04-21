@@ -168,7 +168,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
     formData.set('stage_name', validation.values.stageName)
     formData.set('date_of_birth', validation.values.dateOfBirth)
     formData.set('phone', validation.values.phone)
-    formData.set('email', validation.values.email)
+    formData.set('email', validation.values.email ?? '')
     formData.set('line_id', lineId)
     formData.set('line_user_id', lineUserId)
 
@@ -412,7 +412,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                 )}
               </div>
               <div>
-                <label htmlFor="email" className={labelClass}>メールアドレス / Email <span className="text-red-500/50">*</span></label>
+                <label htmlFor="email" className={labelClass}>メールアドレス / Email <span className="text-[#5a5650]">(任意)</span></label>
                 <input
                   id="email"
                   name="email"
@@ -423,7 +423,6 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                     clearFieldError('email')
                   }}
                   onBlur={() => validateSingleField('email')}
-                  required
                   className={inputClass}
                   placeholder="cast@example.com"
                   autoComplete="email"
@@ -492,17 +491,24 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
               </div>
               <div>
                 <label htmlFor="line_id" className={labelClass}>
-                  LINE ID（表示名・@ユーザー名）
+                  LINE ID（表示名・@ユーザー名）<span className="text-red-500/50"> *</span>
                 </label>
                 <input
                   id="line_id"
                   type="text"
                   value={lineId}
-                  onChange={(e) => setLineId(e.target.value)}
+                  onChange={(e) => {
+                    setLineId(e.target.value)
+                    clearFieldError('line_id')
+                  }}
+                  required
                   className={inputClass}
                   placeholder="@your-line-id"
                 />
-                <p className={`${F.noteText} mt-1`}>キャスト自身が知っている LINE の表示 ID</p>
+                <p className={`${F.noteText} mt-1`}>キャスト自身が知っている LINE の表示 ID。ログインには使用しません。</p>
+                {fieldErrors.line_id && (
+                  <p className="mt-2 text-[10px] font-bold text-red-400 bg-red-400/5 px-2 py-1 rounded-sm inline-block tracking-wider">{fieldErrors.line_id}</p>
+                )}
               </div>
               <div>
                 <label htmlFor="line_user_id" className={labelClass}>

@@ -142,13 +142,13 @@ export const PriceSimulator = () => {
           </p>
 
           <div className="flex flex-col md:flex-row justify-center gap-6">
-            <Button asChild size="lg" className="btn-sheen px-12 h-14 w-full md:w-auto">
+            <Button asChild size="lg" className="btn-sheen px-12 h-14 w-full md:w-52">
               <a href="tel:045-263-6961">
                 <Phone className="mr-2 w-5 h-5" />
                 お電話はこちら
               </a>
             </Button>
-            <Button asChild variant="outline" size="lg" className="px-12 h-14 w-full md:w-auto bg-transparent border-white/30 hover:bg-white/10 hover:text-gold">
+            <Button asChild variant="outline" size="lg" className="btn-silver-sheen px-12 h-14 w-full md:w-52">
               <Link href="/shift">
                 <Users className="mr-2 w-5 h-5" />
                 本日の出勤を見る

@@ -4,6 +4,9 @@ import { FadeIn } from '@/components/motion/FadeIn';
 export const metadata = {
   title: 'Recruit Policy | Club Animo',
   description: 'Club Animoの求人応募に関する個人情報等の取り扱い方針について。',
+  alternates: {
+    canonical: '/recruit-policy',
+  },
 };
 
 export default function RecruitPolicyPage() {

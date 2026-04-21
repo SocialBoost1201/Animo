@@ -85,26 +85,26 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="mb-5 flex w-fit rounded-[12px] border border-white/8 bg-[#181d27] p-1">
+    <div className="w-full">
+      <div className="mb-6 flex w-full rounded-[14px] border border-[#c9a76a]/20 bg-[#0b0d12] p-1">
         <button
           type="button"
           onClick={() => setStep('edit')}
-          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
-            step === 'edit' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
+          className={`inline-flex h-[40px] flex-1 items-center justify-center gap-2 rounded-[10px] px-5 text-[14px] transition-all ${
+            step === 'edit' ? 'bg-[#c9a76a]/10 font-bold text-[#c9a76a]' : 'text-[#6b7280] hover:text-[#a9afbc]'
           }`}
         >
-          <Camera className="h-[13px] w-[13px]" />
+          <Camera className="h-[14px] w-[14px]" />
           編集
         </button>
         <button
           type="button"
           onClick={() => setStep('preview')}
-          className={`inline-flex h-[35px] items-center gap-2 rounded-[9px] px-5 text-[13px] ${
-            step === 'preview' ? 'bg-[#131720] font-bold text-[#f7f4ed] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'text-[#6b7280]'
+          className={`inline-flex h-[40px] flex-1 items-center justify-center gap-2 rounded-[10px] px-5 text-[14px] transition-all ${
+            step === 'preview' ? 'bg-[#c9a76a]/10 font-bold text-[#c9a76a]' : 'text-[#6b7280] hover:text-[#a9afbc]'
           }`}
         >
-          <ImageIcon className="h-[13px] w-[13px]" />
+          <ImageIcon className="h-[14px] w-[14px]" />
           プレビュー
         </button>
       </div>
@@ -112,8 +112,8 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {step === 'edit' ? (
           <>
-            <div>
-              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">タイトル</label>
+            <div className="space-y-1">
+              <label className="block text-[12px] font-bold tracking-[0.05em] text-[#c9a76a]">タイトル</label>
               <input
                 value={content.split('\n')[0] ?? ''}
                 onChange={(e) => {
@@ -121,13 +121,13 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
                   setContent(rest ? `${e.target.value}\n${rest}` : e.target.value);
                 }}
                 placeholder="ブログのタイトル..."
-                className="h-[49px] w-full rounded-[12px] border border-white/8 bg-[#181d27] px-[14px] text-[16px] font-medium text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden"
+                className="h-[54px] w-full rounded-[14px] border border-white/10 bg-[#0b0d12] px-[16px] text-[16px] font-medium text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.3)] focus:border-[#c9a76a]/50 focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a]/50"
                 maxLength={60}
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">本文</label>
+            <div className="space-y-1">
+              <label className="block text-[12px] font-bold tracking-[0.05em] text-[#c9a76a]">本文</label>
               <textarea
                 value={content.split('\n').slice(1).join('\n')}
                 onChange={(e) => {
@@ -135,26 +135,26 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
                   setContent(title ? `${title}\n${e.target.value}` : e.target.value);
                 }}
                 placeholder="今日あったこと、お客様へのメッセージ..."
-                className="min-h-[270px] w-full resize-none rounded-[12px] border border-white/8 bg-[#181d27] px-[14px] py-3 text-[14px] leading-[24.5px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.5)] focus:outline-hidden"
+                className="min-h-[280px] w-full resize-none rounded-[14px] border border-white/10 bg-[#0b0d12] p-[16px] text-[15px] leading-[1.8] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.3)] focus:border-[#c9a76a]/50 focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a]/50"
                 maxLength={500}
               />
-              <div className="mt-2 text-right text-[11px] text-[#6b7280]">{content.length} 文字</div>
+              <div className="text-right text-[12px] font-medium text-[#6b7280]">{content.length} / 500</div>
             </div>
 
-            <div>
-              <label className="mb-2 block text-[11px] font-medium tracking-[0.05em] text-[#6b7280]">画像（任意）</label>
+            <div className="space-y-1">
+              <label className="block text-[12px] font-bold tracking-[0.05em] text-[#c9a76a]">画像（任意）</label>
               <div
-                className="flex h-[126px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[14px] border border-dashed border-white/14"
+                className="flex h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-white/10 bg-[#0b0d12] hover:border-[#c9a76a]/40 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                 {previewUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={previewUrl} alt="Preview" className="h-full w-full rounded-[14px] object-cover" />
+                  <img src={previewUrl} alt="Preview" className="h-full w-full rounded-[12px] object-cover" />
                 ) : (
                   <>
-                    <ImageIcon className="h-6 w-6 text-[#6b7280]" />
-                    <div className="text-[13px] font-medium text-[#a9afbc]">画像を追加</div>
-                    <div className="text-[11px] text-[#6b7280]">JPG / PNG / WebP</div>
+                    <ImageIcon className="h-7 w-7 text-[#c9a76a]/70" />
+                    <div className="text-[14px] font-bold text-[#f7f4ed]">画像を追加</div>
+                    <div className="text-[12px] text-[#6b7280]">JPG / PNG / WebP</div>
                   </>
                 )}
               </div>
@@ -170,40 +170,40 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
             </div>
           </>
         ) : (
-          <div className="flex min-h-[192px] flex-col items-center justify-center gap-3 rounded-[12px] py-12">
+          <div className="flex min-h-[192px] flex-col items-center justify-center gap-4 rounded-[16px] py-8">
             {content.trim() ? (
-              <div className="w-full rounded-[16px] border border-white/8 bg-[#131720] p-4">
-                <h2 className="text-[18px] font-bold text-[#f7f4ed]">{content.split('\n')[0]}</h2>
-                <p className="mt-3 whitespace-pre-wrap text-[14px] leading-[24px] text-[#a9afbc]">{content.split('\n').slice(1).join('\n')}</p>
+              <div className="w-full rounded-[16px] border border-[#c9a76a]/20 bg-[#0b0d12] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                <h2 className="text-[20px] font-bold text-[#c9a76a]">{content.split('\n')[0]}</h2>
+                <p className="mt-4 whitespace-pre-wrap text-[15px] leading-[1.8] text-[#f7f4ed]">{content.split('\n').slice(1).join('\n')}</p>
                 {previewUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={previewUrl} alt="Preview" className="mt-4 w-full rounded-[12px] object-cover" />
+                  <img src={previewUrl} alt="Preview" className="mt-5 w-full rounded-[12px] object-cover" />
                 ) : null}
               </div>
             ) : (
-              <>
-                <ImageIcon className="h-8 w-8 text-[#6b7280]" />
-                <div className="text-[14px] text-[#a9afbc]">プレビューを表示するには</div>
-                <div className="text-[13px] text-[#6b7280]">タイトルまたは本文を入力してください</div>
-              </>
+              <div className="flex flex-col items-center justify-center text-center">
+                <ImageIcon className="mb-3 h-10 w-10 text-[#6b7280]/50" />
+                <div className="text-[15px] font-bold text-[#a9afbc]">プレビューを表示するには</div>
+                <div className="mt-1 text-[13px] text-[#6b7280]">タイトルまたは本文を入力してください</div>
+              </div>
             )}
           </div>
         )}
 
-        <div className="border-t border-white/8 pt-4">
+        <div className="mt-8 rounded-[18px] border border-[#c9a76a] bg-[rgba(201,167,106,0.04)] p-5 shadow-[0_0_20px_rgba(201,167,106,0.15)]">
           {step === 'preview' ? (
             <Button
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
+              className="h-[60px] w-full rounded-[14px] bg-[#c9a76a] text-[16px] font-bold tracking-[0.05em] text-[#0b0d12] transition-all hover:bg-[#d8b87b] disabled:opacity-50"
             >
               {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
                   投稿中...
-                </>
+                </span>
               ) : (
-                'タイトルと本文を入力してください'
+                'ブログを送信します'
               )}
             </Button>
           ) : (
@@ -211,12 +211,14 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
               type="button"
               disabled={!content.trim()}
               onClick={() => setStep('preview')}
-              className="h-[58px] w-full rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] hover:bg-[rgba(255,255,255,0.08)] disabled:opacity-50"
+              className="h-[60px] w-full rounded-[14px] bg-[#c9a76a] text-[16px] font-bold tracking-[0.05em] text-[#0b0d12] transition-all hover:bg-[#d8b87b] disabled:opacity-50"
             >
-              タイトルと本文を入力してください
+              プレビューへ進む
             </Button>
           )}
-          <div className="mt-3 text-center text-[12px] text-[#6b7280]">タイトルと本文を入力すると投稿できます</div>
+          {!content.trim() && (
+            <p className="mt-4 text-center text-[12px] font-medium text-[#c9a76a]/70">タイトルまたは本文を入力すると送信できます</p>
+          )}
         </div>
       </form>
     </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useTransition, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
   Calendar, Plus, AlertTriangle, StickyNote,
@@ -9,6 +8,7 @@ import {
 } from 'lucide-react'
 import {
   type TodayDashboardData,
+  type TodayShiftChange,
   addDispatch, deleteDispatch,
   addTrial, deleteTrial,
   addShiftChange, deleteShiftChange,
@@ -32,6 +32,10 @@ type Props = {
   dateLabel: string
 }
 
+type ActionResult<T = void> =
+  | { success: true; data?: T; id?: string }
+  | { success?: false; error: string }
+
 type Tab = 'all' | 'cast' | 'visit' | 'staff' | 'unconfirmed'
 
 const TABS: { id: Tab; label: string }[] = [
@@ -45,6 +49,18 @@ const TABS: { id: Tab; label: string }[] = [
 // ── Inline input style ──────────────────────────────────────────────────────
 const inputCls =
   'w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-[12px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-gold/40 transition-all outline-none'
+
+function createTempId() {
+  return `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function sortByStartTime<T extends { start_time: string }>(items: T[]) {
+  return [...items].sort((a, b) => a.start_time.localeCompare(b.start_time))
+}
+
+function sortReservationsByVisitTime<T extends { visit_time: string }>(items: T[]) {
+  return [...items].sort((a, b) => a.visit_time.localeCompare(b.visit_time))
+}
 
 // ── Tiny Badge ──────────────────────────────────────────────────────────────
 function Badge({ children, color = 'gold' }: { children: React.ReactNode; color?: 'gold' | 'red' | 'blue' | 'green' | 'orange' | 'purple' }) {
@@ -90,11 +106,12 @@ function AddFormWrapper({ onClose, children }: { onClose: () => void; children: 
 
 // ─────────────────────────────────────────────────────────────────────────────
 export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
-  const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [dashboardData, setDashboardData] = useState(data)
   const [activeTab, setActiveTab]   = useState<Tab>('all')
   const [copied, setCopied]         = useState(false)
   const [lineText, setLineText]     = useState('')
+  const [pendingKeys, setPendingKeys] = useState<string[]>([])
 
   // ── Forms visibility ────────────────────────────────────────────────────
   const [showDispatch, setShowDispatch] = useState(false)
@@ -103,20 +120,25 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   const [showStaff,    setShowStaff]    = useState(false)
 
   // ── Derived data ─────────────────────────────────────────────────────────
-  const activeCasts    = data.shifts.filter(s => !data.absentCastIds.includes(s.cast_id))
-  const confirmedCount = activeCasts.length + data.dispatches.length
-  const douhanCount    = data.reservations.filter(r => r.reservation_type === 'douhan').length
+  useEffect(() => {
+    setDashboardData(data)
+  }, [data])
+
+  const activeCasts    = dashboardData.shifts.filter(s => !dashboardData.absentCastIds.includes(s.cast_id))
+  const confirmedCount = activeCasts.length + dashboardData.dispatches.length
+  const douhanCount    = dashboardData.reservations.filter(r => r.reservation_type === 'douhan').length
+  const pendingApprovalCount = dashboardData.pendingCheckins.length + dashboardData.pendingReservations.length
+  const unansweredCount = dashboardData.unconfirmedCasts.length
   const absentNames    = [
-    ...data.shifts.filter(s => data.absentCastIds.includes(s.cast_id)).map(s => s.stage_name),
-    ...data.shiftChanges.filter(c => !c.new_time).map(c => c.stage_name),
+    ...dashboardData.shifts.filter(s => dashboardData.absentCastIds.includes(s.cast_id)).map(s => s.stage_name),
+    ...dashboardData.shiftChanges.filter(c => !c.new_time).map(c => c.stage_name),
   ]
 
   const alerts: { label: string; detail: string; level: 'danger' | 'warn' }[] = []
   if (kpi.shiftMissingCount > 0)
     alerts.push({ label: 'シフト未提出', detail: `${kpi.shiftMissingCount}名が今週未提出`, level: 'warn' })
-  if (kpi.unconfirmedCount > 0)
-    alerts.push({ label: '来店予定未確定', detail: `${kpi.unconfirmedCount}名が確認待ち`, level: 'danger' })
-  const pendingApprovalCount = data.pendingCheckins.length + data.pendingReservations.length
+  if (dashboardData.unconfirmedCasts.length > 0)
+    alerts.push({ label: '来店予定未確定', detail: `${dashboardData.unconfirmedCasts.length}名が確認待ち`, level: 'danger' })
   if (pendingApprovalCount > 0)
     alerts.push({ label: '承認待ち', detail: `${pendingApprovalCount}件の当日提出が承認待ち`, level: 'warn' })
   if (kpi.unreadApplications > 0)
@@ -124,10 +146,18 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
 
   // ── LINE text generation ─────────────────────────────────────────────────
   const refreshLineText = useCallback(() => {
-    generateLineText(data).then(setLineText)
-  }, [data])
+    generateLineText(dashboardData).then(setLineText)
+  }, [dashboardData])
 
   useEffect(() => { refreshLineText() }, [refreshLineText])
+
+  const setBusy = (key: string, busy: boolean) => {
+    setPendingKeys((current) =>
+      busy ? (current.includes(key) ? current : [...current, key]) : current.filter((entry) => entry !== key)
+    )
+  }
+
+  const isBusy = (key: string) => pendingKeys.includes(key)
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleCopy = async () => {
@@ -138,31 +168,80 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleAction = (action: () => Promise<{ error?: string } | { success: boolean }>) => {
+  const handleAction = async <T,>(
+    key: string,
+    optimisticUpdate: () => void,
+    rollback: () => void,
+    action: () => Promise<ActionResult<T>>
+  ) => {
+    optimisticUpdate()
+    setBusy(key, true)
     startTransition(async () => {
       const result = await action()
-      if (result && 'error' in result && result.error) toast.error(result.error)
-      else router.refresh()
+      setBusy(key, false)
+      if (!result.success) {
+        rollback()
+        toast.error(result.error)
+      }
     })
   }
 
   // ── KPI cards ─────────────────────────────────────────────────────────────
   const kpiCards = [
     { label: '確定出勤',   value: confirmedCount,               unit: '名' },
-    { label: '未確認',     value: data.unconfirmedCasts.length, unit: '名' },
-    { label: '来店予定',   value: data.reservations.length,     unit: '件' },
+    { label: '未確認',     value: dashboardData.unconfirmedCasts.length, unit: '名' },
+    { label: '来店予定',   value: dashboardData.reservations.length,     unit: '件' },
     { label: '同伴',       value: douhanCount,                  unit: '件' },
-    { label: '体入',       value: data.trials.length,           unit: '名' },
+    { label: '体入',       value: dashboardData.trials.length,           unit: '名' },
   ]
 
   // ── Tab content ───────────────────────────────────────────────────────────
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'all':    return <AllTab data={data} activeCasts={activeCasts} absentNames={absentNames} />
-      case 'cast':   return <CastTab data={data} activeCasts={activeCasts} absentNames={absentNames} handleAction={handleAction} casts={casts} showDispatch={showDispatch} setShowDispatch={setShowDispatch} showTrial={showTrial} setShowTrial={setShowTrial} showChange={showChange} setShowChange={setShowChange} />
-      case 'visit':  return <VisitTab data={data} />
-      case 'staff':  return <StaffTab data={data} handleAction={handleAction} showStaff={showStaff} setShowStaff={setShowStaff} />
-      case 'unconfirmed': return <UnconfirmedTab data={data} handleAction={handleAction} />
+      case 'all':
+        return <AllTab data={dashboardData} activeCasts={activeCasts} absentNames={absentNames} />
+      case 'cast':
+        return (
+          <CastTab
+            data={dashboardData}
+            activeCasts={activeCasts}
+            absentNames={absentNames}
+            handleAction={handleAction}
+            isBusy={isBusy}
+            setDashboardData={setDashboardData}
+            casts={casts}
+            showDispatch={showDispatch}
+            setShowDispatch={setShowDispatch}
+            showTrial={showTrial}
+            setShowTrial={setShowTrial}
+            showChange={showChange}
+            setShowChange={setShowChange}
+            setBusy={setBusy}
+          />
+        )
+      case 'visit':
+        return <VisitTab data={dashboardData} />
+      case 'staff':
+        return (
+          <StaffTab
+            data={dashboardData}
+            handleAction={handleAction}
+            isBusy={isBusy}
+            setDashboardData={setDashboardData}
+            showStaff={showStaff}
+            setShowStaff={setShowStaff}
+            setBusy={setBusy}
+          />
+        )
+      case 'unconfirmed':
+        return (
+          <UnconfirmedTab
+            data={dashboardData}
+            handleAction={handleAction}
+            setDashboardData={setDashboardData}
+            isBusy={isBusy}
+          />
+        )
     }
   }
 
@@ -173,7 +252,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 py-2">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">Operation Dashboard</h1>
-          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日オペレーション・一元管理</p>
+          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日確認承認・来店予定確認・営業状況生成ハブ</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
@@ -191,6 +270,45 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </button>
         </div>
       </div>
+
+      {pendingApprovalCount > 0 && (
+        <div className="flex flex-col gap-4 rounded-[18px] border border-[rgba(201,167,106,0.24)] bg-[linear-gradient(135deg,rgba(201,167,106,0.12),rgba(17,19,24,0.96))] px-6 py-5 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge color="gold">承認優先</Badge>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">Today Approval Queue</span>
+              </div>
+              <p className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">
+                承認待ちの当日提出があります。内容確認後に承認し、本日の営業状況へ反映してください。
+              </p>
+              <p className="text-[12px] leading-relaxed text-[#c7c0b2]">
+                承認待ち {pendingApprovalCount}件
+                {unansweredCount > 0 ? ` / 未回答 ${unansweredCount}名` : ''}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('unconfirmed')}
+              className="inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3 text-[11px] font-bold tracking-[0.2em] text-black uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
+            >
+              承認する
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <div className="min-w-[120px] rounded-sm border border-white/10 bg-black/20 px-4 py-3">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#8a8478] uppercase">承認待ち件数</p>
+              <p className="mt-1 text-2xl font-bold text-[#f4f1ea]">{pendingApprovalCount}</p>
+            </div>
+            <div className="min-w-[120px] rounded-sm border border-white/10 bg-black/20 px-4 py-3">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#8a8478] uppercase">未回答件数</p>
+              <p className="mt-1 text-2xl font-bold text-[#f4f1ea]">{unansweredCount}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── KPI Bar ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -216,7 +334,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           {/* Tabs */}
           <div className="flex items-center gap-1 px-6 pt-6 pb-0 border-b border-white/5 bg-white/1">
             {TABS.map((tab) => {
-              const count = tab.id === 'unconfirmed' ? data.unconfirmedCasts.length : undefined
+              const count = tab.id === 'unconfirmed' ? dashboardData.unconfirmedCasts.length : undefined
               return (
                 <button
                   key={tab.id}
@@ -469,13 +587,15 @@ function AllTab({
 // Tab: キャスト
 // ─────────────────────────────────────────────────────────────────────────────
 function CastTab({
-  data, activeCasts, absentNames, handleAction, casts,
-  showDispatch, setShowDispatch, showTrial, setShowTrial, showChange, setShowChange,
+  data, activeCasts, absentNames, handleAction, isBusy, setDashboardData, casts,
+  showDispatch, setShowDispatch, showTrial, setShowTrial, showChange, setShowChange, setBusy,
 }: {
   data: TodayDashboardData
   activeCasts: TodayDashboardData['shifts']
   absentNames: string[]
-  handleAction: (fn: () => Promise<{ error?: string } | { success: boolean }>) => void
+  handleAction: <T,>(key: string, optimisticUpdate: () => void, rollback: () => void, action: () => Promise<ActionResult<T>>) => void
+  isBusy: (key: string) => boolean
+  setDashboardData: React.Dispatch<React.SetStateAction<TodayDashboardData>>
   casts: Cast[]
   showDispatch: boolean
   setShowDispatch: (v: boolean) => void
@@ -483,9 +603,8 @@ function CastTab({
   setShowTrial: (v: boolean) => void
   showChange: boolean
   setShowChange: (v: boolean) => void
+  setBusy: (key: string, busy: boolean) => void
 }) {
-  const router = useRouter()
-
   return (
     <div className="space-y-6">
       {/* Active casts */}
@@ -512,7 +631,23 @@ function CastTab({
             <span className="text-[12px] font-bold text-[#cbc3b3]">{d.name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{d.start_time.substring(0, 5)}〜</span>
             <button
-              onClick={() => handleAction(() => deleteDispatch(d.id))}
+              disabled={isBusy(`dispatch-${d.id}`)}
+              onClick={() => {
+                const previousDispatches = data.dispatches
+                handleAction(
+                  `dispatch-${d.id}`,
+                  () => {
+                    setDashboardData((current) => ({
+                      ...current,
+                      dispatches: current.dispatches.filter((entry) => entry.id !== d.id),
+                    }))
+                  },
+                  () => {
+                    setDashboardData((current) => ({ ...current, dispatches: previousDispatches }))
+                  },
+                  () => deleteDispatch(d.id)
+                )
+              }}
               className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
               <Trash2 size={12} />
@@ -523,16 +658,46 @@ function CastTab({
           <AddFormWrapper onClose={() => setShowDispatch(false)}>
             <form
               action={async (fd) => {
+                const tempId = createTempId()
+                const tempDispatch = {
+                  id: tempId,
+                  name: String(fd.get('name') || '').trim(),
+                  start_time: String(fd.get('start_time') || ''),
+                }
                 fd.set('dispatch_date', data.date)
-                await addDispatch(fd)
                 setShowDispatch(false)
-                router.refresh()
+                setDashboardData((current) => ({
+                  ...current,
+                  dispatches: sortByStartTime([...current.dispatches, tempDispatch]),
+                }))
+                setBusy('add-dispatch', true)
+
+                void (async () => {
+                  const result = await addDispatch(fd) as ActionResult<typeof tempDispatch>
+                  setBusy('add-dispatch', false)
+
+                  if (!result.success) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      dispatches: current.dispatches.filter((entry) => entry.id !== tempId),
+                    }))
+                    toast.error(result.error)
+                    return
+                  }
+
+                  if (result.data) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      dispatches: sortByStartTime(current.dispatches.map((entry) => (entry.id === tempId ? result.data! : entry))),
+                    }))
+                  }
+                })()
               }}
               className="space-y-3"
             >
               <input name="name" type="text" placeholder="Cast Name" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD DISPATCH</button>
+              <button type="submit" disabled={isBusy('add-dispatch')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD DISPATCH</button>
             </form>
           </AddFormWrapper>
         )}
@@ -559,7 +724,23 @@ function CastTab({
             <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
             <button
-              onClick={() => handleAction(() => deleteTrial(t.id))}
+              disabled={isBusy(`trial-${t.id}`)}
+              onClick={() => {
+                const previousTrials = data.trials
+                handleAction(
+                  `trial-${t.id}`,
+                  () => {
+                    setDashboardData((current) => ({
+                      ...current,
+                      trials: current.trials.filter((entry) => entry.id !== t.id),
+                    }))
+                  },
+                  () => {
+                    setDashboardData((current) => ({ ...current, trials: previousTrials }))
+                  },
+                  () => deleteTrial(t.id)
+                )
+              }}
               className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
               <Trash2 size={12} />
@@ -570,16 +751,46 @@ function CastTab({
           <AddFormWrapper onClose={() => setShowTrial(false)}>
             <form
               action={async (fd) => {
+                const tempId = createTempId()
+                const tempTrial = {
+                  id: tempId,
+                  name: String(fd.get('name') || '').trim(),
+                  start_time: String(fd.get('start_time') || ''),
+                }
                 fd.set('trial_date', data.date)
-                await addTrial(fd)
                 setShowTrial(false)
-                router.refresh()
+                setDashboardData((current) => ({
+                  ...current,
+                  trials: sortByStartTime([...current.trials, tempTrial]),
+                }))
+                setBusy('add-trial', true)
+
+                void (async () => {
+                  const result = await addTrial(fd) as ActionResult<typeof tempTrial>
+                  setBusy('add-trial', false)
+
+                  if (!result.success) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      trials: current.trials.filter((entry) => entry.id !== tempId),
+                    }))
+                    toast.error(result.error)
+                    return
+                  }
+
+                  if (result.data) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      trials: sortByStartTime(current.trials.map((entry) => (entry.id === tempId ? result.data! : entry))),
+                    }))
+                  }
+                })()
               }}
               className="space-y-3"
             >
               <input name="name" type="text" placeholder="Trial Cast Name" required className={inputCls} />
               <input name="start_time" type="time" required className={inputCls} />
-              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD TRIAL</button>
+              <button type="submit" disabled={isBusy('add-trial')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD TRIAL</button>
             </form>
           </AddFormWrapper>
         )}
@@ -608,7 +819,23 @@ function CastTab({
               {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
             </span>
             <button
-              onClick={() => handleAction(() => deleteShiftChange(c.id))}
+              disabled={isBusy(`change-${c.id}`)}
+              onClick={() => {
+                const previousChanges = data.shiftChanges
+                handleAction(
+                  `change-${c.id}`,
+                  () => {
+                    setDashboardData((current) => ({
+                      ...current,
+                      shiftChanges: current.shiftChanges.filter((entry) => entry.id !== c.id),
+                    }))
+                  },
+                  () => {
+                    setDashboardData((current) => ({ ...current, shiftChanges: previousChanges }))
+                  },
+                  () => deleteShiftChange(c.id)
+                )
+              }}
               className="ml-2 text-[#5a5650] hover:text-red-400 transition-colors"
             >
               <Trash2 size={12} />
@@ -619,10 +846,62 @@ function CastTab({
           <AddFormWrapper onClose={() => setShowChange(false)}>
             <form
               action={async (fd) => {
+                const tempId = createTempId()
+                const castId = String(fd.get('cast_id') || '')
+                const cast = casts.find((entry) => entry.id === castId)
+                const tempChange: TodayShiftChange = {
+                  id: tempId,
+                  cast_id: castId,
+                  stage_name: cast?.stage_name || '不明',
+                  original_time: String(fd.get('original_time') || '') || undefined,
+                  new_time: String(fd.get('new_time') || '') || undefined,
+                  note: String(fd.get('note') || '') || undefined,
+                }
                 fd.set('change_date', data.date)
-                await addShiftChange(fd)
                 setShowChange(false)
-                router.refresh()
+                setDashboardData((current) => ({
+                  ...current,
+                  shiftChanges: [...current.shiftChanges, tempChange],
+                }))
+                setBusy('add-change', true)
+
+                void (async () => {
+                  const result = await addShiftChange(fd) as ActionResult<{
+                    id: string
+                    cast_id: string
+                    original_time?: string | null
+                    new_time?: string | null
+                    note?: string | null
+                  }>
+                  setBusy('add-change', false)
+
+                  if (!result.success) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      shiftChanges: current.shiftChanges.filter((entry) => entry.id !== tempId),
+                    }))
+                    toast.error(result.error)
+                    return
+                  }
+
+                  if (result.data) {
+                    setDashboardData((current) => ({
+                      ...current,
+                      shiftChanges: current.shiftChanges.map((entry) =>
+                        entry.id === tempId
+                          ? {
+                              ...entry,
+                              id: result.data!.id,
+                              cast_id: result.data!.cast_id,
+                              original_time: result.data!.original_time ?? undefined,
+                              new_time: result.data!.new_time ?? undefined,
+                              note: result.data!.note ?? undefined,
+                            }
+                          : entry
+                      ),
+                    }))
+                  }
+                })()
               }}
               className="space-y-3"
             >
@@ -635,7 +914,7 @@ function CastTab({
                 <input name="new_time"      type="time" placeholder="To" className={inputCls} />
               </div>
               <input name="note" type="text" placeholder="Note (e.g. Douhan)" className={inputCls} />
-              <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD CHANGE</button>
+              <button type="submit" disabled={isBusy('add-change')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD CHANGE</button>
             </form>
           </AddFormWrapper>
         )}
@@ -703,15 +982,16 @@ function VisitTab({ data }: { data: TodayDashboardData }) {
 // Tab: スタッフ
 // ─────────────────────────────────────────────────────────────────────────────
 function StaffTab({
-  data, handleAction, showStaff, setShowStaff,
+  data, handleAction, isBusy, setDashboardData, showStaff, setShowStaff, setBusy,
 }: {
   data: TodayDashboardData
-  handleAction: (fn: () => Promise<{ error?: string } | { success: boolean }>) => void
+  handleAction: <T,>(key: string, optimisticUpdate: () => void, rollback: () => void, action: () => Promise<ActionResult<T>>) => void
+  isBusy: (key: string) => boolean
+  setDashboardData: React.Dispatch<React.SetStateAction<TodayDashboardData>>
   showStaff: boolean
   setShowStaff: (v: boolean) => void
+  setBusy: (key: string, busy: boolean) => void
 }) {
-  const router = useRouter()
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between px-3">
@@ -738,7 +1018,23 @@ function StaffTab({
             <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
             <button
-              onClick={() => handleAction(() => deleteStaffAttendance(s.id))}
+              disabled={isBusy(`staff-${s.id}`)}
+              onClick={() => {
+                const previousAttendances = data.staffAttendances
+                handleAction(
+                  `staff-${s.id}`,
+                  () => {
+                    setDashboardData((current) => ({
+                      ...current,
+                      staffAttendances: current.staffAttendances.filter((entry) => entry.id !== s.id),
+                    }))
+                  },
+                  () => {
+                    setDashboardData((current) => ({ ...current, staffAttendances: previousAttendances }))
+                  },
+                  () => deleteStaffAttendance(s.id)
+                )
+              }}
               className="ml-3 text-[#5a5650] hover:text-red-400 transition-colors"
             >
               <Trash2 size={12} />
@@ -751,13 +1047,52 @@ function StaffTab({
         <AddFormWrapper onClose={() => setShowStaff(false)}>
           <form
             action={async (fd) => {
+              const tempId = createTempId()
               const sid = fd.get('staff_id') as string
               const s = data.allStaffs.find(x => x.id === sid)
-              if (s) fd.set('display_name', s.display_name)
+              const displayName = s?.display_name ?? ''
+              fd.set('display_name', displayName)
               fd.set('staff_date', data.date)
-              await addStaffAttendance(fd)
               setShowStaff(false)
-              router.refresh()
+              setDashboardData((current) => ({
+                ...current,
+                staffAttendances: sortByStartTime([
+                  ...current.staffAttendances,
+                  {
+                    id: tempId,
+                    display_name: displayName,
+                    start_time: String(fd.get('start_time') || ''),
+                  },
+                ]),
+              }))
+              setBusy('add-staff', true)
+
+              void (async () => {
+                const result = await addStaffAttendance(fd) as ActionResult<{
+                  id: string
+                  display_name: string
+                  start_time: string
+                }>
+                setBusy('add-staff', false)
+
+                if (!result.success) {
+                  setDashboardData((current) => ({
+                    ...current,
+                    staffAttendances: current.staffAttendances.filter((entry) => entry.id !== tempId),
+                  }))
+                  toast.error(result.error)
+                  return
+                }
+
+                if (result.data) {
+                  setDashboardData((current) => ({
+                    ...current,
+                    staffAttendances: sortByStartTime(
+                      current.staffAttendances.map((entry) => (entry.id === tempId ? result.data! : entry))
+                    ),
+                  }))
+                }
+              })()
             }}
             className="space-y-3"
           >
@@ -769,7 +1104,7 @@ function StaffTab({
             </select>
             <input name="start_time" type="time" required className={inputCls} />
             <input type="hidden" name="display_name" value="" />
-            <button type="submit" className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all">ADD STAFF</button>
+            <button type="submit" disabled={isBusy('add-staff')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD STAFF</button>
             {data.allStaffs.length === 0 && (
               <p className="text-[10px] font-bold text-red-500/80 px-1">※ Please register staff in Human Resources.</p>
             )}
@@ -786,9 +1121,13 @@ function StaffTab({
 function UnconfirmedTab({
   data,
   handleAction,
+  setDashboardData,
+  isBusy,
 }: {
   data: TodayDashboardData
-  handleAction: (fn: () => Promise<{ error?: string } | { success: boolean }>) => void
+  handleAction: <T,>(key: string, optimisticUpdate: () => void, rollback: () => void, action: () => Promise<ActionResult<T>>) => void
+  setDashboardData: React.Dispatch<React.SetStateAction<TodayDashboardData>>
+  isBusy: (key: string) => boolean
 }) {
   return (
     <div className="space-y-6">
@@ -816,13 +1155,62 @@ function UnconfirmedTab({
                 </div>
                 <div className="mt-5 flex gap-2">
                   <button
-                    onClick={() => handleAction(() => approveCheckin(checkin.id))}
+                    disabled={isBusy(`approve-checkin-${checkin.id}`)}
+                    onClick={() => {
+                      const previousPending = data.pendingCheckins
+                      const previousCheckins = data.checkins
+                      const previousAbsentIds = data.absentCastIds
+                      const previousUnconfirmed = data.unconfirmedCasts
+                      handleAction(
+                        `approve-checkin-${checkin.id}`,
+                        () => {
+                          setDashboardData((current) => {
+                            const approvedCheckin = { ...checkin, approval_status: 'approved' as const }
+                            return {
+                              ...current,
+                              pendingCheckins: current.pendingCheckins.filter((entry) => entry.id !== checkin.id),
+                              checkins: [...current.checkins.filter((entry) => entry.id !== checkin.id), approvedCheckin],
+                              absentCastIds: checkin.is_absent
+                                ? [...new Set([...current.absentCastIds, checkin.cast_id])]
+                                : current.absentCastIds.filter((entry) => entry !== checkin.cast_id),
+                              unconfirmedCasts: current.unconfirmedCasts.filter((entry) => entry.cast_id !== checkin.cast_id),
+                            }
+                          })
+                        },
+                        () => {
+                          setDashboardData((current) => ({
+                            ...current,
+                            pendingCheckins: previousPending,
+                            checkins: previousCheckins,
+                            absentCastIds: previousAbsentIds,
+                            unconfirmedCasts: previousUnconfirmed,
+                          }))
+                        },
+                        () => approveCheckin(checkin.id)
+                      )
+                    }}
                     className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() => handleAction(() => rejectCheckin(checkin.id))}
+                    disabled={isBusy(`reject-checkin-${checkin.id}`)}
+                    onClick={() => {
+                      const previousPending = data.pendingCheckins
+                      handleAction(
+                        `reject-checkin-${checkin.id}`,
+                        () => {
+                          setDashboardData((current) => ({
+                            ...current,
+                            pendingCheckins: current.pendingCheckins.filter((entry) => entry.id !== checkin.id),
+                          }))
+                        },
+                        () => {
+                          setDashboardData((current) => ({ ...current, pendingCheckins: previousPending }))
+                        },
+                        () => rejectCheckin(checkin.id)
+                      )
+                    }}
                     className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
                   >
                     Reject
@@ -857,13 +1245,54 @@ function UnconfirmedTab({
                 </div>
                 <div className="mt-5 flex gap-2">
                   <button
-                    onClick={() => handleAction(() => approveReservation(reservation.id))}
+                    disabled={isBusy(`approve-reservation-${reservation.id}`)}
+                    onClick={() => {
+                      const previousPending = data.pendingReservations
+                      const previousReservations = data.reservations
+                      handleAction(
+                        `approve-reservation-${reservation.id}`,
+                        () => {
+                          setDashboardData((current) => ({
+                            ...current,
+                            pendingReservations: current.pendingReservations.filter((entry) => entry.id !== reservation.id),
+                            reservations: sortReservationsByVisitTime([
+                              ...current.reservations,
+                              { ...reservation, approval_status: 'approved' as const },
+                            ]),
+                          }))
+                        },
+                        () => {
+                          setDashboardData((current) => ({
+                            ...current,
+                            pendingReservations: previousPending,
+                            reservations: previousReservations,
+                          }))
+                        },
+                        () => approveReservation(reservation.id)
+                      )
+                    }}
                     className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() => handleAction(() => rejectReservation(reservation.id))}
+                    disabled={isBusy(`reject-reservation-${reservation.id}`)}
+                    onClick={() => {
+                      const previousPending = data.pendingReservations
+                      handleAction(
+                        `reject-reservation-${reservation.id}`,
+                        () => {
+                          setDashboardData((current) => ({
+                            ...current,
+                            pendingReservations: current.pendingReservations.filter((entry) => entry.id !== reservation.id),
+                          }))
+                        },
+                        () => {
+                          setDashboardData((current) => ({ ...current, pendingReservations: previousPending }))
+                        },
+                        () => rejectReservation(reservation.id)
+                      )
+                    }}
                     className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
                   >
                     Reject

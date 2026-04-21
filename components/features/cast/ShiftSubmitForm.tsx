@@ -100,9 +100,8 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-5 px-4 pb-28 pt-6">
-      <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
       <div>
         <div className="text-[10px] uppercase tracking-[1px] text-[#6b7280]">WEEKLY SHIFT</div>
         <h1 className="mt-1 text-[22px] font-bold leading-[33px] text-[#f7f4ed]">翌週シフト提出</h1>
@@ -140,19 +139,27 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                           <button
                             type="button"
                             onClick={() => handleTypeChange(dateStr, 'work')}
-                            className={`h-[37px] flex-1 rounded-[10px] text-[13px] leading-[19.5px] ${isWork ? 'bg-[rgba(255,255,255,0.08)] text-[#a9afbc]' : 'bg-[rgba(255,255,255,0.04)] text-[#a9afbc]'}`}
+                            className={`h-[37px] flex-1 rounded-[10px] border text-[13px] font-bold leading-[19.5px] transition-all duration-150 active:scale-[0.97] focus-visible:outline-none ${
+                              isWork
+                                ? 'border-[rgba(201,167,106,0.5)] bg-[rgba(201,167,106,0.15)] text-[#c9a76a]'
+                                : 'border-[#ffffff0a] bg-[rgba(255,255,255,0.03)] text-[#6b7280]'
+                            }`}
                           >
                             出勤
                           </button>
                           <button
                             type="button"
                             onClick={() => handleTypeChange(dateStr, 'off')}
-                            className={`h-[37px] flex-1 rounded-[10px] text-[13px] leading-[19.5px] ${!isWork ? 'bg-[rgba(255,255,255,0.08)] text-[#6b7280]' : 'bg-[rgba(255,255,255,0.04)] text-[#6b7280]'}`}
+                            className={`h-[37px] flex-1 rounded-[10px] border text-[13px] font-bold leading-[19.5px] transition-all duration-150 active:scale-[0.97] focus-visible:outline-none ${
+                              !isWork
+                                ? 'border-[rgba(224,106,106,0.5)] bg-[rgba(224,106,106,0.12)] text-[#e06a6a]'
+                                : 'border-[#ffffff0a] bg-[rgba(255,255,255,0.03)] text-[#6b7280]'
+                            }`}
                           >
                             休み
                           </button>
                         </div>
-                        <span className="h-[6px] w-[6px] rounded-full bg-[rgba(255,255,255,0.15)]" />
+                        <span className={`h-[6px] w-[6px] rounded-full ${isWork ? 'bg-[#c9a76a]' : 'bg-[rgba(224,106,106,0.4)]'}`} />
                       </div>
                   </div>
               );
@@ -160,21 +167,21 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
       </div>
       )}
 
-      <div className="rounded-[14px] border border-white/8 bg-[#181d27] px-4 py-4">
+      <div className="rounded-[14px] border border-[#ffffff0a] bg-[#131720] px-4 py-4">
         <div className="flex items-center justify-between text-[13px]">
           <span className="text-[#a9afbc]">入力済み: <strong className="text-[#f7f4ed]">{workCount} / 6日</strong></span>
-          <span className="font-bold text-[#e6a23c]">出勤 {workCount}日 (4日以上必要)</span>
+          <span className="font-bold text-[#c9a76a]">出勤 {workCount}日</span>
         </div>
         <div className="mt-3 h-[3px] rounded-full bg-[rgba(255,255,255,0.06)]">
-          <div className="h-[3px] rounded-full bg-[#c9a76a]" style={{ width: `${Math.min((workCount / 4) * 100, 100)}%` }} />
+          <div className="h-[3px] rounded-full bg-[#c9a76a] transition-all duration-300" style={{ width: `${(workCount / 6) * 100}%` }} />
         </div>
       </div>
 
       <div className="pt-1">
-          <button 
+          <button
               onClick={handleSubmit}
-              disabled={isSubmitting || workCount < 4}
-              className="flex h-[58px] w-full items-center justify-center rounded-[16px] bg-[rgba(255,255,255,0.05)] text-[15px] font-bold text-[#6b7280] transition-all disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isSubmitting}
+              className="flex h-[58px] w-full items-center justify-center rounded-[16px] bg-[#c9a76a] text-[15px] font-bold text-[#0b0d12] transition-all disabled:cursor-not-allowed disabled:opacity-50"
           >
               {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -182,7 +189,6 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                   'シフトを提出する'
               )}
           </button>
-          <p className="mt-3 text-center text-[12px] text-[#6b7280]">出勤日を 4 日以上選択してください</p>
       </div>
       </main>
     </CastMobileShell>

@@ -35,18 +35,18 @@ export function SearchBar({ placeholder = '検索...' }: { placeholder?: string 
 
   return (
     <div className="relative flex items-center w-full max-w-sm">
-      <Search size={16} className="absolute left-3 text-[#5a5650]" />
+      <Search size={16} className="absolute left-3 text-[#b7af9f]" />
       <input
         type="text"
         placeholder={placeholder}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="w-full pl-9 pr-8 py-2 text-sm border border-[#ffffff0f] rounded-[10px] focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 bg-[#1c1d22] text-[#f4f1ea] transition-all placeholder:text-[#5a5650]"
+        className="w-full pl-9 pr-8 py-2.5 text-sm border border-[#dfbd69]/22 rounded-[12px] focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/30 bg-[#1c1d22] text-[#f4f1ea] transition-all placeholder:text-[#978d7d] shadow-[0_8px_22px_rgba(0,0,0,0.18)]"
       />
       {text && (
         <button
           onClick={() => setText('')}
-          className="absolute right-2 text-[#5a5650] hover:text-[#8a8478] transition-colors p-1"
+          className="absolute right-2 text-[#b7af9f] hover:text-[#f4f1ea] transition-colors p-1"
         >
           <X size={14} />
         </button>

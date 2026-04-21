@@ -1,5 +1,6 @@
 'use server'
 
+import { normalizeCastPhone } from '@/lib/cast-auth-utils'
 import { createServiceClient } from '@/lib/supabase/service'
 
 export type CastAccountStatus = 'unregistered' | 'registered' | 'linked' | 'needs_review'
@@ -8,28 +9,24 @@ export type CastAccountSnapshot = {
   status: CastAccountStatus
   statusLabel: string
   statusMessage: string
-  email: string | null
+  phone: string | null
   authUserId: string | null
   registeredAt: string | null
   lastLoginAt: string | null
 }
 
-function normalizeEmail(value: string | null | undefined) {
-  return value?.trim().toLowerCase() ?? null
-}
-
 export async function getCastAccountSnapshot(params: {
   authUserId: string | null
-  privateEmail?: string | null
+  privatePhone?: string | null
 }): Promise<CastAccountSnapshot> {
-  const { authUserId, privateEmail } = params
+  const { authUserId, privatePhone } = params
 
   if (!authUserId) {
     return {
       status: 'unregistered',
       statusLabel: '未登録',
       statusMessage: 'このキャストはまだアカウント登録されていません',
-      email: null,
+      phone: null,
       authUserId: null,
       registeredAt: null,
       lastLoginAt: null,
@@ -46,37 +43,39 @@ export async function getCastAccountSnapshot(params: {
         status: 'needs_review',
         statusLabel: '要確認',
         statusMessage: 'アカウント情報に不整合の可能性があります。登録状態を確認してください',
-        email: null,
+        phone: null,
         authUserId,
         registeredAt: null,
         lastLoginAt: null,
       }
     }
 
-    const email = authUser.email ?? null
-    const hasEmailMismatch =
-      !!normalizeEmail(privateEmail) &&
-      !!normalizeEmail(email) &&
-      normalizeEmail(privateEmail) !== normalizeEmail(email)
+    const phone = authUser.phone ?? null
+    const normalizedPrivatePhone = normalizeCastPhone(privatePhone ?? '')
+    const normalizedAuthPhone = normalizeCastPhone(phone ?? '')
+    const hasPhoneMismatch =
+      !!normalizedPrivatePhone &&
+      !!normalizedAuthPhone &&
+      normalizedPrivatePhone !== normalizedAuthPhone
 
-    if (hasEmailMismatch) {
+    if (hasPhoneMismatch) {
       return {
         status: 'needs_review',
         statusLabel: '要確認',
         statusMessage: 'アカウント情報に不整合の可能性があります。登録状態を確認してください',
-        email,
+        phone,
         authUserId,
         registeredAt: authUser.created_at ?? null,
         lastLoginAt: authUser.last_sign_in_at ?? null,
       }
     }
 
-    if (!email) {
+    if (!phone) {
       return {
         status: 'registered',
         statusLabel: '登録済み',
         statusMessage: 'このキャストにはアカウントが紐づいています',
-        email: null,
+        phone: null,
         authUserId,
         registeredAt: authUser.created_at ?? null,
         lastLoginAt: authUser.last_sign_in_at ?? null,
@@ -87,7 +86,7 @@ export async function getCastAccountSnapshot(params: {
       status: 'linked',
       statusLabel: '紐づき済み',
       statusMessage: 'このキャストにはアカウントが紐づいています',
-      email,
+      phone,
       authUserId,
       registeredAt: authUser.created_at ?? null,
       lastLoginAt: authUser.last_sign_in_at ?? null,
@@ -97,7 +96,7 @@ export async function getCastAccountSnapshot(params: {
       status: 'needs_review',
       statusLabel: '要確認',
       statusMessage: 'アカウント情報に不整合の可能性があります。登録状態を確認してください',
-      email: null,
+      phone: null,
       authUserId,
       registeredAt: null,
       lastLoginAt: null,

@@ -115,20 +115,6 @@ body {
   box-shadow: var(--shadow-aura);
 }
 
-/* Hero Opening Animation */
-@keyframes clip-hero-anim {
-  from { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); }
-  to   { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
-}
-@keyframes hero-bg-scale {
-  from { transform: scale(1.25); }
-  to   { transform: scale(1.1); }
-}
-@keyframes hero-fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* Sheen Button Effect */
 @keyframes sheen {
   0% { transform: translateX(-100%) skewX(-15deg); }
@@ -151,6 +137,85 @@ body {
   transform: translateX(-100%) skewX(-15deg);
   animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
   pointer-events: none;
+}
+
+/* Silver Sheen Button Effect — 銀グラデーション+影アニメーション */
+@keyframes silver-shadow-sweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+}
+
+.btn-silver-sheen {
+  position: relative;
+  overflow: hidden;
+  /* 銀グラデーション背景 */
+  background: linear-gradient(
+    135deg,
+    #8a8a8a 0%,
+    #c8c8c8 18%,
+    #f0f0f0 35%,
+    #d0d0d0 50%,
+    #a0a0a0 65%,
+    #c4c4c4 80%,
+    #888888 100%
+  ) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(200, 200, 200, 0.4) !important;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.btn-silver-sheen:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 黒い影ストリーク（掃け影） */
+.btn-silver-sheen::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 40%;
+  height: 120%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.18) 30%,
+    rgba(0, 0, 0, 0.32) 50%,
+    rgba(0, 0, 0, 0.18) 70%,
+    transparent 100%
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  animation: silver-shadow-sweep 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 白い光ハイライト（副次エフェクト） */
+.btn-silver-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) 1.75s infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .pb-safe {

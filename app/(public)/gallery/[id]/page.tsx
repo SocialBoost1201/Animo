@@ -7,9 +7,26 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { getPublicContents } from '@/lib/actions/public/data';
+import { Metadata } from 'next';
 
 interface Props {
   params: { id: string };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const allItems = await getPublicContents('gallery');
+  const item = allItems.find((galleryItem: { id: string; title?: string; description?: string }) => galleryItem.id === params.id);
+
+  return {
+    title: item?.title ? `${item.title}｜ギャラリー` : 'ギャラリー',
+    description: item?.description || 'CLUB Animo のギャラリー詳細ページです。',
+    alternates: {
+      canonical: `/gallery/${params.id}`,
+    },
+    openGraph: {
+      url: `https://club-animo.jp/gallery/${params.id}`,
+    },
+  };
 }
 
 export default async function GalleryDetailPage({ params }: Props) {

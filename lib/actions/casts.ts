@@ -1,5 +1,6 @@
 'use server'
 
+import { toE164JpPhone } from '@/lib/cast-auth-utils'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { validateCastProfileInput } from '@/lib/validators/cast-profile'
@@ -76,6 +77,23 @@ async function updateCastWithSnsFallback(
   })
 
   return supabase.from('casts').update(basePayload).eq('id', id)
+}
+
+async function syncCastAuthPhone(authUserId: string | null | undefined, phone: string) {
+  if (!authUserId) return
+
+  const authPhone = toE164JpPhone(phone)
+  if (!authPhone) return
+
+  const serviceClient = createServiceClient()
+  const { error } = await serviceClient.auth.admin.updateUserById(authUserId, {
+    phone: authPhone,
+    phone_confirm: false,
+  })
+
+  if (error) {
+    console.error('[casts] auth phone sync error:', authUserId, error.message)
+  }
 }
 
 export async function getCasts(query?: string) {
@@ -169,6 +187,13 @@ export async function createCast(formData: FormData) {
   const sns_tiktok = formData.get('sns_tiktok') as string || null
   const line_id = (formData.get('line_id') as string)?.trim() || null
   const line_user_id = (formData.get('line_user_id') as string)?.trim() || null
+
+  if (!line_id) {
+    return {
+      error: '入力内容を確認してください。',
+      fieldErrors: { line_id: 'LINE IDを入力してください。' },
+    }
+  }
 
   const basePayload = {
     name: stage_name, stage_name, name_kana, slug, age, height, hobby, comment, is_active, display_order, quiz_tags,
@@ -265,6 +290,15 @@ export async function updateCast(id: string, formData: FormData) {
   const display_order = parseInt(formData.get('display_order') as string || '0')
   const quiz_tags = formData.getAll('quiz_tags') as string[]
   const image_file = formData.get('image_file') as File | null
+  const updateLineId = (formData.get('line_id') as string)?.trim() || null
+  const updateLineUserId = (formData.get('line_user_id') as string)?.trim() || null
+
+  if (!updateLineId) {
+    return {
+      error: '入力内容を確認してください。',
+      fieldErrors: { line_id: 'LINE IDを入力してください。' },
+    }
+  }
 
   const updateData: Record<string, unknown> = {
     name: stage_name, stage_name, name_kana, age, height, hobby, comment, is_active, display_order, quiz_tags,
@@ -283,6 +317,12 @@ export async function updateCast(id: string, formData: FormData) {
   const { error } = await updateCastWithSnsFallback(supabase, id, updateData, snsUpdateData)
 
   if (error) return { error: error.message }
+
+  const { data: currentCast } = await supabase
+    .from('casts')
+    .select('auth_user_id')
+    .eq('id', id)
+    .maybeSingle()
 
   // 画像アップロード・更新処理
   if (image_file && image_file.size > 0) {
@@ -316,8 +356,6 @@ export async function updateCast(id: string, formData: FormData) {
   revalidateAll(slug)
 
   // cast_private_info を更新（upsertで存在しなければ作成）
-  const updateLineId = (formData.get('line_id') as string)?.trim() || null
-  const updateLineUserId = (formData.get('line_user_id') as string)?.trim() || null
   await supabase.from('cast_private_info').upsert({
     cast_id: id,
     real_name,
@@ -327,6 +365,8 @@ export async function updateCast(id: string, formData: FormData) {
     ...(updateLineId !== null && { line_id: updateLineId }),
     ...(updateLineUserId !== null && { line_user_id: updateLineUserId }),
   }, { onConflict: 'cast_id' })
+
+  await syncCastAuthPhone(currentCast?.auth_user_id, phone)
 
   return { success: true }
 }

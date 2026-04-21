@@ -11,6 +11,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'キャバクラ初心者ガイド｜初めての来店マナーと遊び方',
   description: '初めてキャバクラに行く方へ。入店からの流れ、料金体系、キャストとの会話のコツ、スマートな遊び方を丁寧に解説します。関内・馬車道でのナイトライフのスタートに。',
+  alternates: {
+    canonical: '/blog/cabaret-beginner',
+  },
   openGraph: {
     title: 'キャバクラ初心者ガイド｜初めての来店マナーと遊び方',
     description: '初めてキャバクラに行く方へ。入店からの流れ、料金体系、キャストとの会話のコツ、スマートな遊び方。',

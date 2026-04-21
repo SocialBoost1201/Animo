@@ -47,7 +47,18 @@ export async function getPublicCasts() {
     const { data, error } = await supabase
       .from('casts')
       .select(`
-        *,
+        id,
+        slug,
+        name,
+        stage_name,
+        age,
+        height,
+        comment,
+        image_url,
+        quiz_tags,
+        is_today,
+        created_at,
+        updated_at,
         cast_images(image_url, image_type, is_primary, sort_order),
         cast_posts(created_at)
       `)
@@ -122,9 +133,22 @@ export async function getPublicCastBySlug(slug: string) {
     const { data: cast, error } = await supabase
       .from('casts')
       .select(`
-        *,
+        id,
+        slug,
+        name,
+        stage_name,
+        age,
+        height,
+        hobby,
+        comment,
+        image_url,
+        sns_instagram,
+        sns_x,
+        sns_tiktok,
+        quiz_tags,
+        created_at,
+        updated_at,
         cast_images(image_url, image_type, is_primary, sort_order),
-        cast_private_info(real_name, date_of_birth),
         cast_tag_relations(cast_tags(id, name, slug))
       `)
       .eq('slug', slug)
@@ -135,7 +159,7 @@ export async function getPublicCastBySlug(slug: string) {
 
     const { data: schedules } = await supabase
       .from('cast_schedules')
-      .select('*')
+      .select('id, cast_id, work_date, start_time, end_time')
       .eq('cast_id', cast.id)
       .gte('work_date', today)
       .lte('work_date', end)
@@ -158,7 +182,11 @@ export async function getPublicShifts() {
     const { data, error } = await supabase
       .from('cast_schedules')
       .select(`
-        *,
+        id,
+        cast_id,
+        work_date,
+        start_time,
+        end_time,
         casts(id, slug, stage_name, age, hobby,
           cast_images(image_url, is_primary))
       `)
@@ -183,7 +211,11 @@ export async function getTodayShifts() {
     const { data, error } = await supabase
       .from('cast_schedules')
       .select(`
-        *,
+        id,
+        cast_id,
+        work_date,
+        start_time,
+        end_time,
         casts(id, slug, stage_name, age,
           cast_images(image_url, is_primary))
       `)
@@ -203,7 +235,7 @@ export async function getPublicNews(limit?: number) {
     const supabase = createServiceClient()
     let query = supabase
       .from('news')
-      .select('*')
+      .select('id, title, description, image_url, published_at, created_at, updated_at')
       .eq('is_published', true)
       .order('published_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
@@ -224,7 +256,7 @@ export async function getPublicContents(type: string, limit?: number) {
     const supabase = createServiceClient()
     let query = supabase
       .from('contents')
-      .select('*')
+      .select('id, type, title, description, image_url, content_date, created_at')
       .eq('type', type)
       .eq('is_published', true)
       .order('content_date', { ascending: false, nullsFirst: false })
@@ -245,7 +277,7 @@ export async function getPublicHeroMedia() {
     const supabase = createServiceClient()
     const { data, error } = await supabase
       .from('hero_media')
-      .select('*')
+      .select('id, title, subtitle, image_url, video_url, media_type, alt_text, sort_order, created_at, updated_at')
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
       .order('created_at', { ascending: false })
@@ -263,7 +295,7 @@ export async function getPublicGallery() {
     const supabase = createServiceClient()
     const { data, error } = await supabase
       .from('gallery_assets')
-      .select('*')
+      .select('id, title, description, image_url, category, sort_order, created_at, updated_at')
       .eq('is_published', true)
       .order('sort_order', { ascending: true })
     if (error) { console.error('getPublicGallery:', error); return [] }

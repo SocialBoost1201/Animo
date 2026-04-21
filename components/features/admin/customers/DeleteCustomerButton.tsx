@@ -38,7 +38,7 @@ export function DeleteCustomerButton({ customerId, customerName }: DeleteCustome
       className={`p-1.5 rounded-md transition-colors ${
         isPending
           ? 'text-gray-400 cursor-not-allowed'
-          : 'text-[#8a8478] hover:text-[#f87171] hover:bg-[#ff00001a]'
+          : 'text-[#c7c0b2] hover:text-[#f87171] hover:bg-[#ff00001a]'
       }`}
       title="削除"
       aria-label="顧客データを削除"

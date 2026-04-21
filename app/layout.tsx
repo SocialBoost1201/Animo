@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: '%s | CLUB Animo 関内キャバクラ',
   },
   alternates: {
-    canonical: './',
+    canonical: '/',
     languages: {
       'ja': '/',
       'en': '/en',

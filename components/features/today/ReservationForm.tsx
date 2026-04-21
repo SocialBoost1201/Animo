@@ -15,6 +15,14 @@ type Reservation = {
   note?: string
 }
 
+const CERTAINTY_OPTIONS = [
+  { value: 'confirmed', label: '確定',   activeClass: 'border-[rgba(51,179,107,0.35)] bg-[rgba(51,179,107,0.15)] text-[#33b36b]' },
+  { value: 'maybe',     label: '来るかも', activeClass: 'border-[rgba(230,162,60,0.35)]  bg-[rgba(230,162,60,0.15)]  text-[#e6a23c]' },
+  { value: 'contacting',label: '連絡中',  activeClass: 'border-[rgba(130,130,220,0.35)] bg-[rgba(130,130,220,0.15)] text-[#9090e0]' },
+] as const
+
+type CertaintyValue = typeof CERTAINTY_OPTIONS[number]['value']
+
 export function ReservationForm({
   reservations,
   isSubmissionClosed,
@@ -27,12 +35,14 @@ export function ReservationForm({
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [showForm, setShowForm] = useState(false)
+  const [selectedCertainty, setSelectedCertainty] = useState<CertaintyValue>('maybe')
 
   const inputClass = 'h-[48px] w-full rounded-[12px] bg-black/40 border-none px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
+    fd.set('visit_certainty', selectedCertainty)
     startTransition(async () => {
       const result = await addReservation(fd)
       if (result.error) {
@@ -43,6 +53,7 @@ export function ReservationForm({
           toast.error(result.warning)
         }
         setShowForm(false)
+        setSelectedCertainty('maybe')
         router.refresh()
       }
     })
@@ -91,10 +102,9 @@ export function ReservationForm({
                 <div className="grid grid-cols-[80px_1fr] gap-3">
                   <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#f7f4ed]">{r.guest_count ?? 1}名</div>
                 </div>
-                {r.note ? <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#a9afbc]">{r.note}</div> : null}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
         <p className="mb-4 text-[13px] text-[#a9afbc]">来店予定がある方は入力してください</p>
@@ -158,3 +168,4 @@ export function ReservationForm({
     </div>
   )
 }
+
