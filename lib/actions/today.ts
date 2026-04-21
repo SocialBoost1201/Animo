@@ -114,6 +114,7 @@ export type TodayReservation = {
   reservation_type: 'douhan' | 'reservation'
   note?: string
   approval_status: ApprovalStatus
+  visit_certainty: 'confirmed' | 'maybe' | 'contacting'
 }
 
 export type TodayCheckin = {
@@ -213,7 +214,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // 来店予定
   const { data: reservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, visit_certainty, casts(stage_name)')
     .eq('reservation_date', today)
     .eq('approval_status', 'approved')
     .order('visit_time')
@@ -230,12 +231,13 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       reservation_type: r.reservation_type,
       note: r.note,
       approval_status: r.approval_status,
+      visit_certainty: (r.visit_certainty as 'confirmed' | 'maybe' | 'contacting') ?? 'maybe',
     }
   })
 
   const { data: pendingReservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, visit_certainty, casts(stage_name)')
     .eq('reservation_date', today)
     .eq('approval_status', 'pending')
     .order('visit_time')
@@ -252,6 +254,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       reservation_type: r.reservation_type,
       note: r.note,
       approval_status: r.approval_status,
+      visit_certainty: (r.visit_certainty as 'confirmed' | 'maybe' | 'contacting') ?? 'maybe',
     }
   })
 
@@ -692,6 +695,7 @@ export async function addReservation(formData: FormData) {
   const guestName = formData.get('guest_name') as string
   const reservationType = formData.get('reservation_type') as string
   const note = (formData.get('note') as string) || null
+  const visitCertainty = (formData.get('visit_certainty') as 'confirmed' | 'maybe' | 'contacting') || 'maybe'
 
   const { error } = await supabase.from('daily_reservations').insert({
     cast_id: cast.id,
@@ -701,6 +705,7 @@ export async function addReservation(formData: FormData) {
     guest_count: guestCount,
     reservation_type: reservationType,
     note,
+    visit_certainty: visitCertainty,
     approval_status: 'pending',
     approved_at: null,
     approved_by: null,
