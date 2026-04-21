@@ -1,25 +1,27 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdminLogin } from '@/lib/auth/admin';
+import { getAdminNotificationSummary } from '@/lib/actions/admin-notifications';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const auth = await requireAdminLogin();
 
-  if (error || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const [pendingPosts, pendingShifts] = await Promise.all([
-    supabase.from('cast_posts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+  const [pendingPosts, pendingShifts, notifications] = await Promise.all([
+    auth.supabase.from('cast_posts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    auth.supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    getAdminNotificationSummary(),
   ]);
 
   return NextResponse.json(
     {
       pendingPostsCount: pendingPosts.count || 0,
       pendingShiftsCount: pendingShifts.count || 0,
+      pendingNotificationsCount: notifications.total,
     },
     {
       status: 200,
@@ -29,4 +31,3 @@ export async function GET() {
     }
   );
 }
-

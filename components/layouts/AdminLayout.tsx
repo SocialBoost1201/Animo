@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { href: '/admin/shift-requests',     icon: ClipboardList,   label: '出勤調整',       section: 'operations', badge: 'shifts' },
   { href: '/admin/monthly-shifts',     icon: Calendar,        label: 'シフト管理',     section: 'operations' },
   { href: '/admin/template-shifts',    icon: Printer,         label: 'シフト印刷表',   section: 'operations' },
-  { href: '/admin/internal-notices',   icon: Bell,            label: '通知',           section: 'operations' },
+  { href: '/admin/internal-notices',   icon: Bell,            label: '通知',           section: 'operations', badge: 'notifications' },
 
   // ── CUSTOMER ──────────────────────────────────────────────────────────────
   { href: '/admin/customers',          icon: BookOpen,        label: '顧客データ',     section: 'customer' },
@@ -58,11 +58,14 @@ const BOTTOM_TAB_ITEMS = [
   { href: '/admin/applications',    icon: Briefcase,       label: '応募' },
 ];
 
+const STAFF_NAV_HREFS = new Set(['/admin/dashboard']);
+
 type AdminLayoutProps = {
   children: React.ReactNode;
   pendingPostsCount?: number;
   pendingShiftsCount?: number;
   pendingApplicationsCount?: number;
+  pendingNotificationsCount?: number;
   role?: string;
 };
 
@@ -80,6 +83,7 @@ function AdminLayoutInner({
   pendingPostsCount    = 0,
   pendingShiftsCount   = 0,
   pendingApplicationsCount = 0,
+  pendingNotificationsCount = 0,
   role = 'staff',
 }: AdminLayoutProps) {
   const pathname = usePathname();
@@ -89,6 +93,7 @@ function AdminLayoutInner({
     pendingPostsCount,
     pendingShiftsCount,
     pendingApplicationsCount,
+    pendingNotificationsCount,
   });
 
   useEffect(() => {
@@ -100,12 +105,14 @@ function AdminLayoutInner({
         const data = (await res.json()) as {
           pendingPostsCount?: number;
           pendingShiftsCount?: number;
+          pendingNotificationsCount?: number;
         };
         if (cancelled) return;
         setPendingCounts((prev) => ({
           ...prev,
           pendingPostsCount: data.pendingPostsCount ?? prev.pendingPostsCount,
           pendingShiftsCount: data.pendingShiftsCount ?? prev.pendingShiftsCount,
+          pendingNotificationsCount: data.pendingNotificationsCount ?? prev.pendingNotificationsCount,
         }));
       } catch {
         // ignore
@@ -120,6 +127,7 @@ function AdminLayoutInner({
   const getBadgeCount = (badge?: string) => {
     if (badge === 'posts') return pendingCounts.pendingPostsCount;
     if (badge === 'shifts') return pendingCounts.pendingShiftsCount;
+    if (badge === 'notifications') return pendingCounts.pendingNotificationsCount;
     if (badge === 'applications') return pendingCounts.pendingApplicationsCount;
     return 0;
   };
@@ -148,10 +156,11 @@ function AdminLayoutInner({
       <div className={`mx-6 h-px ${T.divider}`} />
 
       {/* Navigation */}
-      <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
+	      <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
         {Object.keys(SECTIONS).map((section) => {
           const items = NAV_ITEMS.filter((i) => {
             if (i.section !== section) return false;
+            if (role === 'staff' && !STAFF_NAV_HREFS.has(i.href)) return false;
             const itemRoles = (i as { roles?: string[] }).roles;
             if (itemRoles && !itemRoles.includes(role)) return false;
             return true;
@@ -304,10 +313,10 @@ function AdminLayoutInner({
         </div>
       </main>
 
-      {/* Mobile Bottom Tab */}
+	      {/* Mobile Bottom Tab */}
       <nav className={`fixed bottom-0 left-0 right-0 z-30 md:hidden border-t pb-safe font-inter ${T.mobileTab}`}>
         <div className="flex items-center">
-          {BOTTOM_TAB_ITEMS.map((item) => {
+          {BOTTOM_TAB_ITEMS.filter((item) => role !== 'staff' || STAFF_NAV_HREFS.has(item.href)).map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (

@@ -11,6 +11,7 @@ import { DashboardAlertCard }      from '@/components/features/admin/dashboard/D
 import { DashboardReservations }   from '@/components/features/admin/dashboard/DashboardReservations';
 import { DashboardMemoCard }       from '@/components/features/admin/dashboard/DashboardMemoCard';
 import { getJstDateLabel } from '@/lib/date-utils';
+import { getAdminNotificationSummary } from '@/lib/actions/admin-notifications';
 
 function Skeleton({ className = 'h-32' }: { className?: string }) {
   return <div className={`w-full animate-pulse rounded-[18px] bg-[#1c1d22] ${className}`} />;
@@ -18,6 +19,7 @@ function Skeleton({ className = 'h-32' }: { className?: string }) {
 
 export default async function DashboardPage() {
   const dateLabel = getJstDateLabel();
+  const notifications = await getAdminNotificationSummary();
 
   return (
     <div className="space-y-10 font-sans">
@@ -45,7 +47,11 @@ export default async function DashboardPage() {
               title="通知一覧"
             >
               <Bell size={18} className="text-[#c7c0b2] group-hover:text-[#dfbd69] transition-colors" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#dfbd69] shadow-[0_0_10px_rgba(223,189,105,0.8)] border border-black" />
+              {notifications.total > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#dfbd69] px-1 text-[10px] font-bold leading-none text-[#0b0b0d] shadow-[0_0_10px_rgba(223,189,105,0.8)] border border-black">
+                  {notifications.total > 99 ? '99+' : notifications.total}
+                </span>
+              )}
             </Link>
 
             <Link

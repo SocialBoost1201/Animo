@@ -32,6 +32,12 @@ export default function CastLoginPage() {
         return;
       }
 
+      if ('skippedSms' in result && result.skippedSms) {
+        toast.success(result.message ?? '既存のセッションでログインしました。');
+        router.push('/cast/dashboard');
+        return;
+      }
+
       toast.success(result.message ?? 'SMS認証コードを送信しました。');
       router.push(`/cast/verify?phone=${encodeURIComponent(phone)}`);
     } finally {

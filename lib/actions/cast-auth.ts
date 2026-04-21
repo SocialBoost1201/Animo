@@ -13,6 +13,19 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
+async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
+  const { data, error } = await serviceRoleClient
+    .from('cast_private_info')
+    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, auth_user_id, last_sms_verified_at)')
+    .eq('phone', normalizedPhone)
+    .limit(5);
+
+  return {
+    data: (data ?? []) as CastIdentityCandidate[],
+    error,
+  };
+}
+
 type CastIdentityCandidate = {
   cast_id: string;
   real_name: string | null;
@@ -24,10 +37,12 @@ type CastIdentityCandidate = {
     id: string;
     stage_name: string | null;
     auth_user_id: string | null;
+    last_sms_verified_at: string | null;
   } | {
     id: string;
     stage_name: string | null;
     auth_user_id: string | null;
+    last_sms_verified_at: string | null;
   }[] | null;
 };
 
@@ -38,6 +53,7 @@ function getCastRecord(candidate: CastIdentityCandidate) {
         id: raw.id,
         stage_name: raw.stage_name ?? '',
         auth_user_id: raw.auth_user_id,
+        last_sms_verified_at: raw.last_sms_verified_at,
       }
     : null;
 }
@@ -58,18 +74,7 @@ async function clearCastReauthCookie() {
   cookieStore.delete(CAST_REAUTH_COOKIE_NAME);
 }
 
-async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
-  const { data, error } = await serviceRoleClient
-    .from('cast_private_info')
-    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, auth_user_id)')
-    .eq('phone', normalizedPhone)
-    .limit(5);
 
-  return {
-    data: (data ?? []) as CastIdentityCandidate[],
-    error,
-  };
-}
 
 /**
  * キャストログイン用 SMS 送信
@@ -109,6 +114,30 @@ export async function castSendLoginOtp(formData: FormData) {
   }
 
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user && user.id === castRecord.auth_user_id) {
+    const cookieStore = await cookies();
+    const reauthCookie = cookieStore.get(CAST_REAUTH_COOKIE_NAME)?.value;
+    const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now();
+
+    const lastVerifiedRaw = castRecord.last_sms_verified_at;
+    const daysSince = lastVerifiedRaw
+      ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
+      : Infinity;
+
+    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS;
+
+    if (isValidSession) {
+      return {
+        success: true,
+        message: '既存のセッションでログインしました。',
+        normalizedPhone,
+        skippedSms: true,
+      };
+    }
+  }
+
   const { error } = await supabase.auth.signInWithOtp({
     phone: authPhone,
     options: {

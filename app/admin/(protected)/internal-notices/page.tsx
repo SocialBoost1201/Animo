@@ -1,13 +1,17 @@
 import { getAdminNotices } from '@/lib/actions/internal-notices';
+import { getAdminNotificationSummary } from '@/lib/actions/admin-notifications';
 import Link from 'next/link';
-import { Plus, Bell, Users, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Bell, Users, Clock, AlertCircle, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { NoticeDeleteButton } from '@/components/features/admin/notices/NoticeDeleteButton';
 import { NoticeReadStatusModal } from '@/components/features/admin/notices/NoticeReadStatusModal';
 
 export default async function InternalNoticesPage() {
-  const notices = await getAdminNotices();
+  const [notices, notifications] = await Promise.all([
+    getAdminNotices(),
+    getAdminNotificationSummary(),
+  ]);
 
   return (
     <div className="space-y-6 font-inter">
@@ -15,7 +19,7 @@ export default async function InternalNoticesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-2">
         <div className="flex flex-col gap-0.5">
           <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">通知</h1>
-          <p className="text-[11px] text-[#8a8478]">キャスト向けお知らせ・既読状況の管理</p>
+          <p className="text-[11px] text-[#8a8478]">管理側の確認事項と、キャスト向けお知らせを確認できます</p>
         </div>
         <Link
           href="/admin/internal-notices/new"
@@ -27,7 +31,66 @@ export default async function InternalNoticesPage() {
         </Link>
       </div>
 
-      {/* ── Notice List ── */}
+      {/* ── Admin Notifications ── */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[14px] font-semibold text-[#f4f1ea]">管理側の確認が必要な通知</h2>
+            <p className="mt-1 text-[11px] text-[#8a8478]">
+              キャストからの提出・変更・承認待ちをまとめて表示します。
+            </p>
+          </div>
+          {notifications.total > 0 && (
+            <span className="rounded-full bg-[#dfbd6914] px-3 py-1 text-[11px] font-bold text-[#dfbd69] border border-[#dfbd6920]">
+              未対応 {notifications.total}件
+            </span>
+          )}
+        </div>
+
+        <div className="bg-[#17181c] rounded-[18px] border border-[#ffffff0f] overflow-hidden">
+          {notifications.total === 0 ? (
+            <div className="py-12 flex flex-col items-center gap-3">
+              <div className="w-12 h-12 bg-[#1c1d22] rounded-full flex items-center justify-center">
+                <CheckCircle2 size={20} className="text-[#72b894]" />
+              </div>
+              <p className="text-[13px] font-medium text-[#c7c0b2]">管理側の未対応通知はありません</p>
+              <p className="text-[11px] text-[#5a5650]">キャストから提出や変更申請があると、ここに表示されます。</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-[#ffffff08]">
+              {notifications.items.filter((item) => item.count > 0).map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className="flex items-center gap-4 p-5 transition-colors hover:bg-[#ffffff03]"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#dfbd6914] text-[#dfbd69]">
+                    <Bell size={16} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold text-[#f4f1ea]">{item.label}</p>
+                    <p className="mt-1 text-[11px] text-[#8a8478]">{item.description}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full bg-[#dfbd69] px-2.5 py-1 text-[11px] font-bold text-[#0b0b0d]">
+                      {item.count}件
+                    </span>
+                    <ChevronRight size={16} className="text-[#5a5650]" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── Sent Notices ── */}
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-[14px] font-semibold text-[#f4f1ea]">送信済みのお知らせ</h2>
+          <p className="mt-1 text-[11px] text-[#8a8478]">管理側からキャスト全員へ配信したお知らせと既読状況です。</p>
+        </div>
+
       <div className="bg-[#17181c] rounded-[18px] border border-[#ffffff0f] overflow-hidden">
         {notices.length === 0 ? (
           <div className="py-16 flex flex-col items-center gap-3">
@@ -35,7 +98,7 @@ export default async function InternalNoticesPage() {
               <Bell size={20} className="text-[#5a5650]" />
             </div>
             <p className="text-[13px] font-medium text-[#8a8478]">お知らせがありません</p>
-            <p className="text-[11px] text-[#5a5650]">キャストへの連絡事項を作成して配信しましょう。</p>
+            <p className="text-[11px] text-[#5a5650]">キャスト全員へ配信したお知らせはここに表示されます。</p>
           </div>
         ) : (
           <div className="divide-y divide-[#ffffff08]">
@@ -91,6 +154,7 @@ export default async function InternalNoticesPage() {
           </div>
         )}
       </div>
+      </section>
     </div>
   );
 }

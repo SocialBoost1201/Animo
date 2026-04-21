@@ -33,44 +33,65 @@ export default async function ShiftRequestsPage({
   }
 
   const mainTabs = [
-    { id: 'new',    label: '新規提出' },
-    { id: 'change', label: '変更申請', hasBadge: changeRequests?.some((r) => r.status === 'pending') },
-    { id: 'help',   label: '店舗からの募集' },
+    { id: 'new', label: '新規提出', tone: 'from-[#f3d27a] to-[#a9782d]' },
+    { id: 'change', label: '変更申請', tone: 'from-[#60a5fa] to-[#1d4ed8]', hasBadge: changeRequests?.some((r) => r.status === 'pending') },
+    { id: 'help', label: '店舗からの募集', tone: 'from-[#c084fc] to-[#7c3aed]' },
   ];
 
   const subStatuses = [
-    { label: '未承認', value: 'pending' },
-    { label: '承認済', value: 'approved' },
-    { label: 'すべて', value: 'all' },
+    { label: '未承認', value: 'pending', active: 'bg-orange-500/18 text-orange-300 border-orange-400/30' },
+    { label: '承認済', value: 'approved', active: 'bg-green-500/18 text-green-300 border-green-400/30' },
+    { label: 'すべて', value: 'all', active: 'bg-white/10 text-[#d8d2c5] border-white/15' },
   ];
 
   return (
     <div className="space-y-6 font-inter">
       {/* ── Page Header ── */}
-      <div className="py-2">
-        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">出勤調整</h1>
-        <p className="text-[11px] text-[#8a8478] mt-0.5">週次提出と変更申請の承認ハブ</p>
+      <div className="rounded-[24px] border border-[#d6b56d33] bg-[radial-gradient(circle_at_top_left,rgba(214,181,109,0.16),transparent_34%),#08090c] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#d6b56d]">Shift Control</span>
+          <h1 className="text-[22px] font-semibold tracking-[-0.03em] text-[#f4f1ea]">出勤調整＆承認</h1>
+          <p className="max-w-2xl text-[12px] leading-6 text-[#8a8478]">
+            週次提出・変更申請・店舗募集の承認状況を確認し、既存の承認フローへ接続します。
+          </p>
+        </div>
       </div>
 
       {/* ── Main Tabs ── */}
-      <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[12px]">
-        {mainTabs.map((t) => (
-          <Link
-            key={t.id}
-            href={`/admin/shift-requests?tab=${t.id}&status=${status}`}
-            className={`flex items-center gap-2 px-5 py-2 text-[12px] font-semibold rounded-[9px] transition-all whitespace-nowrap ${
-              tab === t.id
-                ? 'text-[#0b0b0d] shadow-md'
-                : 'text-[#8a8478] hover:text-[#c7c0b2]'
-            }`}
-            style={tab === t.id ? { background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' } : {}}
-          >
-            {t.label}
-            {t.hasBadge && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4785a]" />
-            )}
-          </Link>
-        ))}
+      <div className="rounded-[24px] border border-[#d6b56d26] bg-[#0b0d12] p-3">
+        <div className="grid gap-2 md:grid-cols-3">
+          {mainTabs.map((t) => (
+            <Link
+              key={t.id}
+              href={`/admin/shift-requests?tab=${t.id}&status=${status}`}
+              className={`flex min-h-12 items-center justify-center gap-2 rounded-[20px] border px-5 py-3 text-[12px] font-bold transition-all whitespace-nowrap ${
+                tab === t.id
+                  ? `border-transparent bg-linear-to-r ${t.tone} text-[#08090c] shadow-[0_14px_34px_rgba(0,0,0,0.32)]`
+                  : 'border-white/8 bg-white/[0.03] text-[#8a8478] hover:border-[#d6b56d33] hover:text-[#f4f1ea]'
+              }`}
+            >
+              {t.label}
+              {t.hasBadge && (
+                <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+              )}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {subStatuses.map((opt) => (
+            <Link
+              key={opt.value}
+              href={`/admin/shift-requests?tab=${tab}&status=${opt.value}`}
+              className={`rounded-[20px] border px-4 py-2 text-[11px] font-bold transition-all ${
+                status === opt.value
+                  ? opt.active
+                  : 'border-white/8 bg-black/35 text-[#5a5650] hover:text-[#a9a294]'
+              }`}
+            >
+              {opt.label}
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-col xl:flex-row gap-6 items-start">
@@ -80,40 +101,10 @@ export default async function ShiftRequestsPage({
             <ShiftRequestList initialSubmissions={submissions || []} currentStatus={status} />
           ) : tab === 'change' ? (
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[10px]">
-                {subStatuses.map((opt) => (
-                  <Link
-                    key={opt.value}
-                    href={`/admin/shift-requests?tab=change&status=${opt.value}`}
-                    className={`px-4 py-1.5 text-[11px] font-semibold rounded-[8px] transition-all ${
-                      status === opt.value
-                        ? 'bg-[#ffffff12] text-[#f4f1ea]'
-                        : 'text-[#5a5650] hover:text-[#8a8478]'
-                    }`}
-                  >
-                    {opt.label}
-                  </Link>
-                ))}
-              </div>
               <ShiftChangeRequestList requests={changeRequests || []} />
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-1 bg-[#1c1d22] border border-[#ffffff0f] p-1 rounded-[10px]">
-                {subStatuses.map((opt) => (
-                  <Link
-                    key={opt.value}
-                    href={`/admin/shift-requests?tab=help&status=${opt.value}`}
-                    className={`px-4 py-1.5 text-[11px] font-semibold rounded-[8px] transition-all ${
-                      status === opt.value
-                        ? 'bg-[#ffffff12] text-[#f4f1ea]'
-                        : 'text-[#5a5650] hover:text-[#8a8478]'
-                    }`}
-                  >
-                    {opt.label}
-                  </Link>
-                ))}
-              </div>
               <HelpRequestList requests={helpRequests} responses={helpResponses} currentStatus={status} />
             </div>
           )}

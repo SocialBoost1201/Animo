@@ -1,12 +1,13 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 import {
   CAST_REAUTH_WINDOW_DAYS,
+  CAST_REAUTH_COOKIE_NAME,
   isCastPortalPublicPath,
   isCastPortalProtectedPath,
 } from '@/lib/cast-auth-utils'
 
-const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin', 'staff'])
 const ADMIN_PUBLIC_PATHS = new Set([
   '/admin/login',
   '/admin/register',
@@ -17,28 +18,19 @@ const ADMIN_PUBLIC_PATHS = new Set([
   '/admin/m/forgot-password',
   '/admin/m/reset-password',
 ])
+const STAFF_ADMIN_PATHS = new Set(['/admin', '/admin/dashboard'])
 
-async function getAppRole(
+async function getLinkedCastData(
   supabase: ReturnType<typeof createServerClient>,
   userId: string
 ) {
-  const { data: userRole } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', userId)
+  const { data } = await supabase
+    .from('casts')
+    .select('id, last_sms_verified_at')
+    .eq('auth_user_id', userId)
     .maybeSingle()
 
-  if (userRole?.role) {
-    return userRole.role
-  }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .maybeSingle()
-
-  return profile?.role ?? null
+  return data
 }
 
 function redirectToSafeDestination(request: NextRequest, role: string | null) {
@@ -122,8 +114,14 @@ export async function updateSession(request: NextRequest) {
 
     const role = await getAppRole(supabase, user.id)
 
-    if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
+    if (!isAdminLoginRole(role)) {
       return redirectToSafeDestination(request, role)
+    }
+
+    if (role === 'staff' && !STAFF_ADMIN_PATHS.has(pathname)) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/dashboard'
+      return NextResponse.redirect(url)
     }
   }
 
@@ -131,7 +129,7 @@ export async function updateSession(request: NextRequest) {
   if (ADMIN_PUBLIC_PATHS.has(pathname) && user) {
     const role = await getAppRole(supabase, user.id)
 
-    if (!role || !ALLOWED_ADMIN_ROLES.has(role)) {
+    if (!isAdminLoginRole(role)) {
       return supabaseResponse
     }
 
@@ -146,34 +144,45 @@ export async function updateSession(request: NextRequest) {
     }
 
     const role = await getAppRole(supabase, user.id)
-    if (role !== 'cast') {
+    const castData = await getLinkedCastData(supabase, user.id)
+
+    if (role !== 'cast' && !castData) {
       return redirectToSafeDestination(request, role)
     }
 
-    const lastVerifiedRaw = user.user_metadata?.last_sms_verified_at
+    const lastVerifiedRaw = castData?.last_sms_verified_at
     const daysSince = lastVerifiedRaw
       ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
       : Infinity
 
-    if (!Number.isFinite(daysSince) || daysSince >= CAST_REAUTH_WINDOW_DAYS) {
+    const reauthCookie = request.cookies.get(CAST_REAUTH_COOKIE_NAME)?.value
+    const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now()
+    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS
+
+    if (!isValidSession) {
       return createCastAuthRedirect(request, 'verify', true)
     }
   }
 
   if (isCastPortalPublicPath(pathname) && user) {
     const role = await getAppRole(supabase, user.id)
+    const castData = await getLinkedCastData(supabase, user.id)
 
-    if (role !== 'cast') {
+    if (role !== 'cast' && !castData) {
       return supabaseResponse
     }
 
-    const lastVerifiedRaw = user.user_metadata?.last_sms_verified_at
+    const lastVerifiedRaw = castData?.last_sms_verified_at
     const daysSince = lastVerifiedRaw
       ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
       : Infinity
 
+    const reauthCookie = request.cookies.get(CAST_REAUTH_COOKIE_NAME)?.value
+    const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now()
+    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS
+
     const isVerifyPath = pathname === '/cast/verify' || pathname === '/cast/m/verify'
-    if (daysSince < CAST_REAUTH_WINDOW_DAYS) {
+    if (isValidSession) {
       const url = request.nextUrl.clone()
       url.pathname = '/cast/dashboard'
       url.searchParams.delete('reauth')
