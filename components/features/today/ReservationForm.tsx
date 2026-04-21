@@ -103,8 +103,8 @@ export function ReservationForm({
                   <div className="rounded-[10px] bg-[#131720] px-3 py-2 text-[13px] text-[#f7f4ed]">{r.guest_count ?? 1}名</div>
                 </div>
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       ) : (
         <p className="mb-4 text-[13px] text-[#a9afbc]">来店予定がある方は入力してください</p>
@@ -168,4 +168,3 @@ export function ReservationForm({
     </div>
   )
 }
-

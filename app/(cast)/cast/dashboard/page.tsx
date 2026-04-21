@@ -320,15 +320,11 @@ export default async function CastDashboardPage() {
                 <ChevronRight className="h-3.5 w-3.5" />
               </div>
             </div>
-            <Link href="/cast/schedule" className="flex items-center gap-1 text-xs text-[#8f96a3]">
-              詳細
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          <div className="mt-4 grid grid-cols-7 gap-1.5">
-            {summaryDates.map((date) => {
-              const dateKey = date.toISOString().split('T')[0];
-              const indicator = getWeeklySummaryLabel((scheduleStatusMap.get(dateKey) as 'work' | 'off' | 'unknown') ?? 'unknown');
+            <div className="mt-4 grid grid-cols-7 gap-1.5">
+              {summaryDates.map((date) => {
+                const dateKey = formatDate(date);
+                const isToday = dateKey === today;
+                const indicator = getWeeklySummaryLabel(scheduleStatusMap.has(dateKey) ? 'work' : 'off');
 
                 return (
                   <div
@@ -348,8 +344,8 @@ export default async function CastDashboardPage() {
             <span className="font-bold text-[#c9a76a]">
               {todayShift ? `本日 ${todayShift.start_time?.slice(0, 5) ?? '未定'}-${todayShift.end_time?.slice(0, 5) ?? '未定'}` : '本日 OFF'}
             </span>
-          </div>
-        </CastMobileCard>
+          </CastMobileCard>
+        </Link>
 
         <CastMobileCard className="overflow-hidden bg-[#181d27]">
           <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">

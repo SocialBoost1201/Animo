@@ -11,18 +11,20 @@ type RoleRow = {
 }
 
 type RoleLookupClient = {
-  from(table: 'user_roles' | 'profiles'): {
-    select(columns: string): {
-      eq(column: string, value: string): {
-        maybeSingle(): Promise<{ data: RoleRow | null }>
-      }
+  from(table: string): unknown
+}
+
+type RoleLookupQuery = {
+  select(columns: string): {
+    eq(column: string, value: string): {
+      maybeSingle(): PromiseLike<{ data: RoleRow | null }>
     }
   }
 }
 
 export async function getAppRole(client: RoleLookupClient, userId: string) {
-  const { data: userRole } = await client
-    .from('user_roles')
+  const userRolesQuery = client.from('user_roles') as RoleLookupQuery
+  const { data: userRole } = await userRolesQuery
     .select('role')
     .eq('user_id', userId)
     .maybeSingle()
@@ -31,8 +33,8 @@ export async function getAppRole(client: RoleLookupClient, userId: string) {
     return userRole.role
   }
 
-  const { data: profile } = await client
-    .from('profiles')
+  const profilesQuery = client.from('profiles') as RoleLookupQuery
+  const { data: profile } = await profilesQuery
     .select('role')
     .eq('id', userId)
     .maybeSingle()
