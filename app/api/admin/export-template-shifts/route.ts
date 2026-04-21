@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
 import XlsxPopulate from 'xlsx-populate';
-import { TemplateShiftData } from '@/lib/actions/template-shifts';
+import { type TemplateShiftData } from '@/lib/template-shift-utils';
 import { createClient } from '@/lib/supabase/server';
 
 const ALLOWED_ADMIN_ROLES = new Set(['owner', 'manager', 'admin']);
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     // 3. キャストデータの書き出し
     const startRow = 3; 
     
-    data.casts.forEach((cast, index) => {
+    data.casts.forEach((cast: { name: string; shifts: Record<string, string> }, index: number) => {
       const rowNum = startRow + index;
       
       // -- 前半 (1〜15日) の処理 --

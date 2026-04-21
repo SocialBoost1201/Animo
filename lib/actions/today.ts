@@ -114,6 +114,7 @@ export type TodayReservation = {
   reservation_type: 'douhan' | 'reservation'
   note?: string
   approval_status: ApprovalStatus
+  visit_certainty: 'confirmed' | 'maybe' | 'contacting'
 }
 
 export type TodayCheckin = {
@@ -213,7 +214,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // 来店予定
   const { data: reservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, visit_certainty, casts(stage_name)')
     .eq('reservation_date', today)
     .eq('approval_status', 'approved')
     .order('visit_time')
@@ -230,12 +231,13 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       reservation_type: r.reservation_type,
       note: r.note,
       approval_status: r.approval_status,
+      visit_certainty: (r.visit_certainty as 'confirmed' | 'maybe' | 'contacting') ?? 'maybe',
     }
   })
 
   const { data: pendingReservationsRaw } = await supabase
     .from('daily_reservations')
-    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, casts(stage_name)')
+    .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, approval_status, visit_certainty, casts(stage_name)')
     .eq('reservation_date', today)
     .eq('approval_status', 'pending')
     .order('visit_time')
@@ -252,6 +254,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
       reservation_type: r.reservation_type,
       note: r.note,
       approval_status: r.approval_status,
+      visit_certainty: (r.visit_certainty as 'confirmed' | 'maybe' | 'contacting') ?? 'maybe',
     }
   })
 
@@ -479,83 +482,103 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
 
 export async function addDispatch(formData: FormData) {
   const supabase = await createClient()
-  const { error } = await supabase.from('daily_dispatches').insert({
-    dispatch_date: formData.get('dispatch_date') as string,
-    name: formData.get('name') as string,
-    start_time: formData.get('start_time') as string,
-    note: (formData.get('note') as string) || null,
-  })
-  if (error) return { error: error.message }
+  const { data, error } = await supabase
+    .from('daily_dispatches')
+    .insert({
+      dispatch_date: formData.get('dispatch_date') as string,
+      name: formData.get('name') as string,
+      start_time: formData.get('start_time') as string,
+      note: (formData.get('note') as string) || null,
+    })
+    .select('id, name, start_time')
+    .single()
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, data }
 }
 
 export async function deleteDispatch(id: string) {
   const supabase = await createClient()
-  await supabase.from('daily_dispatches').delete().eq('id', id)
+  const { error } = await supabase.from('daily_dispatches').delete().eq('id', id)
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function addTrial(formData: FormData) {
   const supabase = await createClient()
-  const { error } = await supabase.from('daily_trials').insert({
-    trial_date: formData.get('trial_date') as string,
-    name: formData.get('name') as string,
-    start_time: formData.get('start_time') as string,
-    note: (formData.get('note') as string) || null,
-  })
-  if (error) return { error: error.message }
+  const { data, error } = await supabase
+    .from('daily_trials')
+    .insert({
+      trial_date: formData.get('trial_date') as string,
+      name: formData.get('name') as string,
+      start_time: formData.get('start_time') as string,
+      note: (formData.get('note') as string) || null,
+    })
+    .select('id, name, start_time')
+    .single()
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, data }
 }
 
 export async function deleteTrial(id: string) {
   const supabase = await createClient()
-  await supabase.from('daily_trials').delete().eq('id', id)
+  const { error } = await supabase.from('daily_trials').delete().eq('id', id)
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function addShiftChange(formData: FormData) {
   const supabase = await createClient()
-  const { error } = await supabase.from('shift_changes').insert({
-    cast_id: formData.get('cast_id') as string,
-    change_date: formData.get('change_date') as string,
-    original_time: (formData.get('original_time') as string) || null,
-    new_time: (formData.get('new_time') as string) || null,
-    note: (formData.get('note') as string) || null,
-  })
-  if (error) return { error: error.message }
+  const { data, error } = await supabase
+    .from('shift_changes')
+    .insert({
+      cast_id: formData.get('cast_id') as string,
+      change_date: formData.get('change_date') as string,
+      original_time: (formData.get('original_time') as string) || null,
+      new_time: (formData.get('new_time') as string) || null,
+      note: (formData.get('note') as string) || null,
+    })
+    .select('id, cast_id, original_time, new_time, note')
+    .single()
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, data }
 }
 
 export async function deleteShiftChange(id: string) {
   const supabase = await createClient()
-  await supabase.from('shift_changes').delete().eq('id', id)
+  const { error } = await supabase.from('shift_changes').delete().eq('id', id)
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function addStaffAttendance(formData: FormData) {
   const supabase = await createClient()
-  const { error } = await supabase.from('daily_staff_attendances').insert({
-    staff_date: formData.get('staff_date') as string,
-    display_name: formData.get('display_name') as string,
-    start_time: formData.get('start_time') as string,
-    staff_id: (formData.get('staff_id') as string) || null,
-  })
-  if (error) return { error: error.message }
+  const { data, error } = await supabase
+    .from('daily_staff_attendances')
+    .insert({
+      staff_date: formData.get('staff_date') as string,
+      display_name: formData.get('display_name') as string,
+      start_time: formData.get('start_time') as string,
+      staff_id: (formData.get('staff_id') as string) || null,
+    })
+    .select('id, display_name, start_time')
+    .single()
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, data }
 }
 
 export async function deleteStaffAttendance(id: string) {
   const supabase = await createClient()
-  await supabase.from('daily_staff_attendances').delete().eq('id', id)
+  const { error } = await supabase.from('daily_staff_attendances').delete().eq('id', id)
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 // ==========================================
@@ -603,7 +626,7 @@ export async function submitCheckin(formData: FormData) {
     approved_by: null,
   }, { onConflict: 'cast_id,checkin_date' })
 
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   const castName = cast.stage_name || cast.name || '不明'
   const lineResult = await sendLineGroupMessage(
     buildCheckinLineMessage({
@@ -672,6 +695,7 @@ export async function addReservation(formData: FormData) {
   const guestName = formData.get('guest_name') as string
   const reservationType = formData.get('reservation_type') as string
   const note = (formData.get('note') as string) || null
+  const visitCertainty = (formData.get('visit_certainty') as 'confirmed' | 'maybe' | 'contacting') || 'maybe'
 
   const { error } = await supabase.from('daily_reservations').insert({
     cast_id: cast.id,
@@ -681,12 +705,13 @@ export async function addReservation(formData: FormData) {
     guest_count: guestCount,
     reservation_type: reservationType,
     note,
+    visit_certainty: visitCertainty,
     approval_status: 'pending',
     approved_at: null,
     approved_by: null,
   })
 
-  if (error) return { error: error.message }
+  if (error) return { success: false as const, error: error.message }
   const castName = cast.stage_name || cast.name || '不明'
   const lineResult = await sendLineGroupMessage(
     buildReservationLineMessage({
@@ -739,7 +764,7 @@ export async function deleteReservation(id: string) {
   await supabase.from('daily_reservations').delete().eq('id', id)
   revalidatePath('/cast/dashboard')
   revalidatePath('/admin/today')
-  return { success: true }
+  return { success: true as const }
 }
 
 export async function getCastTodayReservations() {
@@ -803,10 +828,10 @@ export async function approveCheckin(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function rejectCheckin(id: string) {
@@ -820,10 +845,10 @@ export async function rejectCheckin(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function approveReservation(id: string) {
@@ -841,10 +866,10 @@ export async function approveReservation(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function rejectReservation(id: string) {
@@ -859,10 +884,10 @@ export async function rejectReservation(id: string) {
     })
     .eq('id', id)
 
-  if (error) return { error: error.message, success: false }
+  if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
-  return { success: true }
+  return { success: true as const, id }
 }
 
 export async function getTodaySubmissionState(date: Date = new Date()) {

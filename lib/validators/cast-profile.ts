@@ -4,6 +4,7 @@ export type CastProfileField =
   | 'stage_name'
   | 'date_of_birth'
   | 'phone'
+  | 'line_id'
   | 'email';
 
 export type CastProfileFieldErrors = Partial<Record<CastProfileField, string>>;
@@ -23,7 +24,7 @@ export type CastProfileNormalized = {
   stageName: string;
   dateOfBirth: string;
   phone: string;
-  email: string;
+  email: string | null;
 };
 
 function normalizeWhitespace(value: string) {
@@ -83,7 +84,7 @@ export function validateCastProfileInput(input: CastProfileInput): {
     stageName: normalizeWhitespace(input.stage_name),
     dateOfBirth: normalizeWhitespace(input.date_of_birth),
     phone: normalizePhone(input.phone),
-    email: normalizeWhitespace(input.email).toLowerCase(),
+    email: normalizeWhitespace(input.email).toLowerCase() || null,
   };
 
   const fieldErrors: CastProfileFieldErrors = {};
@@ -120,11 +121,9 @@ export function validateCastProfileInput(input: CastProfileInput): {
     fieldErrors.phone = '電話番号の形式が正しくありません。';
   }
 
-  if (!values.email) {
-    fieldErrors.email = 'メールアドレスを入力してください。';
-  } else if (values.email.length > 254) {
+  if (values.email && values.email.length > 254) {
     fieldErrors.email = 'メールアドレスが長すぎます。';
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+  } else if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
     fieldErrors.email = 'メールアドレスの形式が正しくありません。';
   }
 

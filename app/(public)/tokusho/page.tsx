@@ -4,6 +4,9 @@ import { FadeIn } from '@/components/motion/FadeIn';
 export const metadata = {
   title: '運営会社 | Club Animo',
   description: 'Club Animoの運営会社情報および特定商取引法に基づく表示。',
+  alternates: {
+    canonical: '/tokusho',
+  },
 };
 
 const COMPANY_INFO = [

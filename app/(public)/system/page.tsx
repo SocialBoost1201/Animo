@@ -13,6 +13,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '料金システム・相場｜関内キャバクラ CLUB Animo',
   description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」の料金システム。関内キャバクラの相場や、初めての方でも安心な明朗会計についてご案内します。',
+  alternates: {
+    canonical: '/system',
+  },
 };
 
 export default function SystemPage() {

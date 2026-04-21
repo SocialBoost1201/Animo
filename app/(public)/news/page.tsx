@@ -4,6 +4,13 @@ import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
 import { getPublicContents } from '@/lib/actions/public/data';
 import { ArrowRight } from 'lucide-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/news',
+  },
+};
 
 export default async function NewsPage() {
   const newsItems = await getPublicContents('news');

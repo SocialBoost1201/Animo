@@ -8,6 +8,9 @@ import { BreadcrumbSchema } from '@/components/seo/BreadcrumbSchema';
 export const metadata: Metadata = {
   title: '関内夜遊びガイド・おすすめナイトスポット｜CLUB Animo',
   description: '横浜・関内エリアの夜遊びガイド。大人が楽しめるナイトスポットから、接待やデートの二次会で使える高級キャバクラ、おすすめのバー・ラウンジまでご紹介します。',
+  alternates: {
+    canonical: '/area/kannai-nightlife',
+  },
   openGraph: {
     title: '関内夜遊びガイド・おすすめナイトスポット｜CLUB Animo',
     description: '横浜・関内エリアの夜遊びガイド。接待やデートの二次会で使える高級キャバクラ、おすすめのバーをご紹介します。',

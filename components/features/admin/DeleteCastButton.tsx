@@ -17,7 +17,7 @@ export function DeleteCastButton({ castId, castName }: { castId: string, castNam
   return (
     <button
       type="button"
-      className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded hover:bg-red-50 disabled:opacity-50"
+      className="p-2 text-[#b7af9f] hover:text-red-400 transition-colors rounded-lg hover:bg-red-500/10 disabled:opacity-50"
       onClick={handleDelete}
       disabled={isPending}
     >

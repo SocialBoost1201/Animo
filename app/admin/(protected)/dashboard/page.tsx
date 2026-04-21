@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Calendar, Bell, Plus } from 'lucide-react';
+import { DashboardSearchBar } from '@/components/features/admin/dashboard/DashboardSearchBar';
 
 import { DashboardKPIs }          from '@/components/features/admin/dashboard/DashboardKPIs';
 import { DashboardTodayOps }       from '@/components/features/admin/dashboard/DashboardTodayOps';
@@ -33,23 +34,19 @@ export default async function DashboardPage() {
             <span className="text-[12px] font-bold text-[#c7c0b2] tracking-[4px] uppercase">{dateLabel}</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-3 px-4 py-2.5 bg-[#ffffff0a] rounded-[12px] border border-[#ffffff0f] w-64 transition-all focus-within:w-80 focus-within:border-[#dfbd6950] focus-within:bg-black/40">
-            <svg width="14" height="14" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-              <circle cx="5" cy="5" r="4" stroke="#dfbd69" strokeOpacity="0.7" strokeWidth="1.2" />
-              <path d="M8 9l2 2" stroke="#dfbd69" strokeOpacity="0.7" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              placeholder="キャスト・スタッフを検索..."
-              className="bg-transparent border-none outline-none text-[13px] text-[#c7c0b2] placeholder-[#c7c0b250] w-full"
-            />
+          <div className="hidden sm:block">
+            <DashboardSearchBar />
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-3 bg-[#ffffff0a] rounded-[12px] border border-[#ffffff0f] hover:bg-[#ffffff15] hover:border-gold/30 transition-all relative group">
-              <Bell size={18} className="text-[#c7c0b2] group-hover:text-gold transition-colors" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-gold shadow-[0_0_10px_rgba(223,189,105,0.8)] border border-black" />
-            </button>
+            <Link
+              href="/admin/internal-notices"
+              className="p-3 bg-[#ffffff0a] rounded-[12px] border border-[#ffffff0f] hover:bg-[#ffffff15] hover:border-[#dfbd6930] transition-all relative group"
+              title="通知一覧"
+            >
+              <Bell size={18} className="text-[#c7c0b2] group-hover:text-[#dfbd69] transition-colors" />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#dfbd69] shadow-[0_0_10px_rgba(223,189,105,0.8)] border border-black" />
+            </Link>
 
             <Link
               href="/admin/today"

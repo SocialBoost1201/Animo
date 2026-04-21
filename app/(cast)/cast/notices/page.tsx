@@ -23,9 +23,8 @@ export default async function CastNoticesPage() {
 
   return (
     <CastMobileShell showBottomNav={false}>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-5 px-4 pb-10 pt-6">
-        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
         <div className="flex items-end justify-between gap-4">
           <div>
             <h1 className="text-[20px] font-bold leading-[30px] text-[#f7f4ed]">お知らせ</h1>

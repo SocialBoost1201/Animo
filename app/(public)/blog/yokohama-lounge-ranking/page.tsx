@@ -11,6 +11,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '横浜・関内の高級ラウンジおすすめランキングと選び方｜CLUB Animo',
   description: '横浜・関内エリアで人気の高級ラウンジ・優良キャバクラを探している方へ。接客、内装、客層の良さで選ぶ、本当に上質なナイトスポットのおすすめランキング基準と選び方。',
+  alternates: {
+    canonical: '/blog/yokohama-lounge-ranking',
+  },
   openGraph: {
     title: '横浜・関内の高級ラウンジおすすめランキングと選び方｜CLUB Animo',
     description: '接客、内装、客層の良さで選ぶ、本当に上質なナイトスポットのおすすめランキング基準。',

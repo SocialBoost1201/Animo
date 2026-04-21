@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveShiftSubmission, rejectShiftSubmission } from '@/lib/actions/admin-shifts';
 import { toast } from 'sonner';
@@ -20,7 +20,12 @@ type Submission = {
 
 export function ShiftRequestList({ initialSubmissions, currentStatus }: { initialSubmissions: Submission[], currentStatus: string }) {
   const router = useRouter();
+  const [submissions, setSubmissions] = useState(initialSubmissions);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSubmissions(initialSubmissions);
+  }, [initialSubmissions]);
 
   const TABS = [
     { label: '未承認 (Pending)', value: 'pending' },
@@ -29,12 +34,21 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
   ];
 
   const handleApprove = async (id: string) => {
+    const previousSubmissions = submissions;
     setIsProcessing(id);
+    setSubmissions((current) => {
+      if (currentStatus === 'pending') {
+        return current.filter((submission) => submission.id !== id);
+      }
+      return current.map((submission) =>
+        submission.id === id ? { ...submission, status: 'approved' } : submission
+      );
+    });
     const result = await approveShiftSubmission(id);
     if (result.success) {
       toast.success('シフトを承認し、公開設定に反映しました。');
-      router.refresh();
     } else {
+      setSubmissions(previousSubmissions);
       toast.error(result.error);
     }
     setIsProcessing(null);
@@ -42,12 +56,21 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
 
   const handleReject = async (id: string) => {
     if (!confirm('この提出を却下しますか？')) return;
+    const previousSubmissions = submissions;
     setIsProcessing(id);
+    setSubmissions((current) => {
+      if (currentStatus === 'pending') {
+        return current.filter((submission) => submission.id !== id);
+      }
+      return current.map((submission) =>
+        submission.id === id ? { ...submission, status: 'rejected' } : submission
+      );
+    });
     const result = await rejectShiftSubmission(id);
     if (result.success) {
       toast.success('提出を却下しました。');
-      router.refresh();
     } else {
+      setSubmissions(previousSubmissions);
       toast.error(result.error);
     }
     setIsProcessing(null);
@@ -61,13 +84,13 @@ export function ShiftRequestList({ initialSubmissions, currentStatus }: { initia
         onChange={(val) => router.push(`/admin/shift-requests?status=${val}`)}
       />
 
-      {initialSubmissions.length === 0 ? (
+      {submissions.length === 0 ? (
         <div className="bg-black/95 rounded-lg border border-white/10 p-12 text-center text-[#5a5650]">
           該当するシフト提出はありません。
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {initialSubmissions.map((sub: Submission) => {
+          {submissions.map((sub: Submission) => {
             const shifts = sub.shifts_data;
             const dates = Object.keys(shifts).sort();
             const submittedAt = new Date(sub.submitted_at);

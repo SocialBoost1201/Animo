@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { PenLine, Plus } from 'lucide-react';
+import { PenLine } from 'lucide-react';
 import { getCurrentCast, getMyCastPosts } from '@/lib/actions/cast-auth';
 import {
   CastMobileBackLink,
@@ -29,21 +29,11 @@ export default async function CastPostsPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader />
+      <CastMobileHeader leftSlot={<CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />} />
       <main className="mx-auto flex w-full max-w-[422px] flex-col gap-6 px-4 pb-28 pt-6">
-        <CastMobileBackLink href="/cast/dashboard" label="ダッシュボードへ戻る" />
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <div className="text-[10px] uppercase tracking-[1px] text-[#6b7280]">DAILY BLOG</div>
-            <h1 className="mt-1 text-[22px] font-bold leading-[33px] text-[#f7f4ed]">ブログ</h1>
-          </div>
-          <Link
-            href="/cast/post"
-            className="inline-flex items-center gap-2 rounded-[12px] bg-[#c9a76a] px-4 py-[10px] text-[13px] font-bold leading-[19.5px] text-[#0b0d12]"
-          >
-            <Plus className="h-[14px] w-[14px]" />
-            今日を書く
-          </Link>
+        <div>
+          <div className="text-[10px] uppercase tracking-[1px] text-[#6b7280]">DAILY BLOG</div>
+          <h1 className="mt-1 text-[22px] font-bold leading-[33px] text-[#f7f4ed]">ブログ</h1>
         </div>
 
         <Link href="/cast/post">

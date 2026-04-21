@@ -49,7 +49,7 @@ export default async function ShiftRequestsPage({
       {/* ── Page Header ── */}
       <div className="py-2">
         <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">出勤調整</h1>
-        <p className="text-[11px] text-[#8a8478] mt-0.5">シフト提出・変更申請・当日調整の管理</p>
+        <p className="text-[11px] text-[#8a8478] mt-0.5">週次提出と変更申請の承認ハブ</p>
       </div>
 
       {/* ── Main Tabs ── */}

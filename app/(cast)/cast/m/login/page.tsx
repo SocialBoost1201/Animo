@@ -1,41 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { castLogin } from '@/lib/actions/cast-auth';
+import { useRouter } from 'next/navigation';
+import { castSendLoginOtp } from '@/lib/actions/cast-auth';
 import { toast } from 'sonner';
 
-function EyeIcon({ open }: { open: boolean }) {
-  return open ? (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  ) : (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-}
-
 export default function CastLoginMobilePage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('reauth') === '1') {
+      toast.info('14日以上アクセスがなかったため、SMS認証をお願いします。');
+    }
+  }, []);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setIsLoading(true);
-    const formData = new FormData(e.currentTarget);
 
     try {
-      const result = await castLogin(formData);
-      if (result && !result.success) {
+      const formData = new FormData();
+      formData.set('phone', phone);
+      const result = await castSendLoginOtp(formData);
+
+      if (!result.success) {
         toast.error(result.error);
+        return;
       }
-    } catch {
-      // redirect throws in Next.js Server Actions
+
+      toast.success(result.message ?? 'SMS認証コードを送信しました。');
+      router.push(`/cast/m/verify?phone=${encodeURIComponent(phone)}`);
     } finally {
       setIsLoading(false);
     }
@@ -76,50 +74,32 @@ export default function CastLoginMobilePage() {
                 color: 'transparent',
               }}
             >
-              Welcome to Animo Dashboard
+              SMS Login
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
-                ログインID
+                電話番号
               </label>
               <input
-                name="email"
-                type="email"
+                name="phone"
+                type="tel"
                 required
-                autoComplete="email"
+                autoComplete="tel"
+                inputMode="tel"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
                 className="w-full rounded-[10px] px-4 py-3 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
-                placeholder="IDを入力してください"
+                placeholder="090-1234-5678"
                 style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
             </div>
 
-            <div>
-              <label className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
-                ログインパスワード
-              </label>
-              <div className="relative">
-                <input
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  autoComplete="current-password"
-                  className="w-full rounded-[10px] px-4 py-3 pr-12 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
-                  placeholder="パスワードを入力してください"
-                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
-                  aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                >
-                  <EyeIcon open={showPassword} />
-                </button>
-              </div>
-            </div>
+            <p className="text-xs leading-relaxed" style={{ color: '#9f9fa9' }}>
+              初回ログイン時と、14日以上アクセスがなかった場合にSMS認証が必要です。
+            </p>
 
             <button
               type="submit"
@@ -130,14 +110,11 @@ export default function CastLoginMobilePage() {
                 color: '#18181b',
               }}
             >
-              {isLoading ? '認証中...' : 'ログイン'}
+              {isLoading ? '送信中...' : 'SMSを送信'}
             </button>
           </form>
 
           <div className="mt-7 text-center space-y-3">
-            <Link href="/cast/m/forgot-password" className="block text-sm hover:underline" style={{ color: '#9f9fa9' }}>
-              パスワードを忘れた方はこちら
-            </Link>
             <p className="text-sm" style={{ color: '#9f9fa9' }}>
               アカウントをお持ちでない方は{' '}
               <Link href="/cast/m/register" className="font-medium hover:underline" style={{ color: '#dfbd69' }}>

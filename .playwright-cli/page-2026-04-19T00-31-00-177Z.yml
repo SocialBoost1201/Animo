@@ -1,0 +1,334 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e7]:
+          - img [ref=e9]
+          - generic [ref=e12]:
+            - paragraph [ref=e13]: AI Growth Agent
+            - heading "Operations Dashboard" [level=1] [ref=e14]
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: Control mode
+          - paragraph [ref=e18]: Owner-reviewed publishing across SEO, MEO, and GEO workflows.
+        - navigation [ref=e19]:
+          - link "Inbox" [ref=e20] [cursor=pointer]:
+            - /url: /growth-agent
+            - img [ref=e21]
+            - generic [ref=e26]: Inbox
+          - link "Stores" [ref=e27] [cursor=pointer]:
+            - /url: /growth-agent/stores
+            - img [ref=e28]
+            - generic [ref=e32]: Stores
+          - link "History" [ref=e33] [cursor=pointer]:
+            - /url: /growth-agent/history
+            - img [ref=e34]
+            - generic [ref=e38]: History
+          - link "Alerts" [ref=e39] [cursor=pointer]:
+            - /url: /growth-agent/notifications
+            - img [ref=e40]
+            - generic [ref=e45]: Alerts
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - img [ref=e49]
+            - text: UI stance
+          - paragraph [ref=e51]: Dense dashboard layout on desktop, same workflow depth preserved on mobile.
+      - generic [ref=e52]:
+        - banner [ref=e53]:
+          - generic [ref=e56]:
+            - paragraph [ref=e57]: Growth operations
+            - heading "Dashboard workspace" [level=1] [ref=e58]
+        - main [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - generic [ref=e65]:
+                    - img [ref=e66]
+                    - text: Approval gate enabled
+                  - generic [ref=e69]:
+                    - heading "North Star Local Growth" [level=2] [ref=e70]
+                    - paragraph [ref=e71]: Monitoring and approval dashboard for store search operations. Same workflow depth is available on smartphone and desktop.
+                - generic [ref=e72]:
+                  - generic [ref=e73]:
+                    - generic [ref=e74]:
+                      - paragraph [ref=e75]: Pending
+                      - img [ref=e76]
+                    - paragraph [ref=e79]: "4"
+                    - paragraph [ref=e80]: Needs decision
+                  - generic [ref=e81]:
+                    - generic [ref=e82]:
+                      - paragraph [ref=e83]: Issues
+                      - img [ref=e84]
+                    - paragraph [ref=e86]: "1"
+                    - paragraph [ref=e87]: Retryable
+                  - generic [ref=e88]:
+                    - generic [ref=e89]:
+                      - paragraph [ref=e90]: Alerts
+                      - img [ref=e91]
+                    - paragraph [ref=e95]: "2"
+                    - paragraph [ref=e96]: Unread
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - generic [ref=e99]:
+                    - generic [ref=e100]: Business
+                    - img [ref=e102]
+                  - paragraph [ref=e106]: North Star Local Growth
+                  - paragraph [ref=e107]: 2 stores connected
+                - generic [ref=e108]:
+                  - generic [ref=e109]:
+                    - generic [ref=e110]: Active store
+                    - img [ref=e112]
+                  - paragraph [ref=e116]: Kannai Lounge Lumiere
+                  - paragraph [ref=e117]: Yokohama · Luxury lounge
+                - generic [ref=e118]:
+                  - generic [ref=e119]:
+                    - generic [ref=e120]: Plan
+                    - img [ref=e122]
+                  - paragraph [ref=e125]: Owner Control
+                  - paragraph [ref=e126]: Owner-only control
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - img [ref=e131]
+                  - generic [ref=e134]: Metric
+                - paragraph [ref=e135]: Search visibility
+                - paragraph [ref=e136]: 71/100
+                - paragraph [ref=e137]: Kannai Lounge Lumiere · Last 14 days
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - img [ref=e141]
+                  - generic [ref=e145]: Metric
+                - paragraph [ref=e146]: Map discovery
+                - paragraph [ref=e147]: 66/100
+                - paragraph [ref=e148]: GBP profile impressions and actions
+              - generic [ref=e149]:
+                - generic [ref=e150]:
+                  - img [ref=e152]
+                  - generic [ref=e155]: Metric
+                - paragraph [ref=e156]: AI readiness
+                - paragraph [ref=e157]: 58/100
+                - paragraph [ref=e158]: FAQ and answer coverage for generative search
+              - generic [ref=e159]:
+                - generic [ref=e160]:
+                  - img [ref=e162]
+                  - generic [ref=e166]: Metric
+                - paragraph [ref=e167]: Approval SLA
+                - paragraph [ref=e168]: 4.3h
+                - paragraph [ref=e169]: Average time from recommendation to approval
+            - generic [ref=e171]:
+              - generic [ref=e172]:
+                - paragraph [ref=e173]: Workspace / Stores
+                - heading "Multi-store safe by default" [level=3] [ref=e174]
+              - generic [ref=e175]:
+                - button "Kannai Lounge Lumiere Yokohama · Luxury lounge" [ref=e176]:
+                  - paragraph [ref=e177]: Kannai Lounge Lumiere
+                  - paragraph [ref=e178]: Yokohama · Luxury lounge
+                - button "Bashamichi Club Sol Yokohama · Club" [ref=e179]:
+                  - paragraph [ref=e180]: Bashamichi Club Sol
+                  - paragraph [ref=e181]: Yokohama · Club
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - generic [ref=e184]:
+                  - generic [ref=e186]:
+                    - generic [ref=e187]:
+                      - paragraph [ref=e188]: Agent Inbox
+                      - generic [ref=e189]: Ranked actions for Kannai Lounge Lumiere
+                      - paragraph [ref=e190]: Search, filter, and approve without switching tools. Mobile and desktop expose the same decision depth.
+                    - generic [ref=e191]:
+                      - generic [ref=e192]:
+                        - img [ref=e193]
+                        - textbox [ref=e196]:
+                          - /placeholder: Search recommendations
+                      - generic [ref=e197]:
+                        - img [ref=e198]
+                        - text: 3 visible
+                  - generic [ref=e200]:
+                    - button "Approval needed GBP Priority 95 Reply to 2 unanswered high-intent reviews Two recent reviews mention premium seating and first-visit uncertainty. A faster reply should improve map trust and conversion intent. about 1 hour ago Google review backlog + local pack dip +12% map action lift expected" [ref=e201]:
+                      - generic [ref=e202]:
+                        - generic [ref=e203]:
+                          - generic [ref=e204]:
+                            - generic [ref=e205]: Approval needed
+                            - generic [ref=e206]: GBP
+                            - generic [ref=e207]: Priority 95
+                          - generic [ref=e208]:
+                            - heading "Reply to 2 unanswered high-intent reviews" [level=4] [ref=e209]
+                            - paragraph [ref=e210]: Two recent reviews mention premium seating and first-visit uncertainty. A faster reply should improve map trust and conversion intent.
+                        - generic [ref=e211]:
+                          - img [ref=e212]
+                          - text: about 1 hour ago
+                      - generic [ref=e215]:
+                        - generic [ref=e216]: Google review backlog + local pack dip
+                        - generic [ref=e217]: +12% map action lift expected
+                    - button "Approval needed CMS Priority 91 Publish GEO-friendly FAQ about private room usage AI search visibility is weak on questions around private rooms, price expectations, and first reservation flow. about 3 hours ago GEO answer gap + rising long-tail demand +18 AI answer readiness score" [ref=e218]:
+                      - generic [ref=e219]:
+                        - generic [ref=e220]:
+                          - generic [ref=e221]:
+                            - generic [ref=e222]: Approval needed
+                            - generic [ref=e223]: CMS
+                            - generic [ref=e224]: Priority 91
+                          - generic [ref=e225]:
+                            - heading "Publish GEO-friendly FAQ about private room usage" [level=4] [ref=e226]
+                            - paragraph [ref=e227]: AI search visibility is weak on questions around private rooms, price expectations, and first reservation flow.
+                        - generic [ref=e228]:
+                          - img [ref=e229]
+                          - text: about 3 hours ago
+                      - generic [ref=e232]:
+                        - generic [ref=e233]: GEO answer gap + rising long-tail demand
+                        - generic [ref=e234]: +18 AI answer readiness score
+                    - button "Approval needed GBP Priority 67 Prepare GBP post for weekend private party demand Search volume for weekend private party and premium group seating is rising. A short GBP post can capture map impressions quickly. about 7 hours ago Weekend intent spike + competitor post freshness +5% impression freshness boost" [ref=e235]:
+                      - generic [ref=e236]:
+                        - generic [ref=e237]:
+                          - generic [ref=e238]:
+                            - generic [ref=e239]: Approval needed
+                            - generic [ref=e240]: GBP
+                            - generic [ref=e241]: Priority 67
+                          - generic [ref=e242]:
+                            - heading "Prepare GBP post for weekend private party demand" [level=4] [ref=e243]
+                            - paragraph [ref=e244]: Search volume for weekend private party and premium group seating is rising. A short GBP post can capture map impressions quickly.
+                        - generic [ref=e245]:
+                          - img [ref=e246]
+                          - text: about 7 hours ago
+                      - generic [ref=e249]:
+                        - generic [ref=e250]: Weekend intent spike + competitor post freshness
+                        - generic [ref=e251]: +5% impression freshness boost
+                - generic [ref=e252]:
+                  - generic [ref=e253]:
+                    - generic [ref=e254]:
+                      - paragraph [ref=e255]: Ops digest
+                      - generic [ref=e256]: Dashboard-first operator summary
+                    - generic [ref=e257]:
+                      - generic [ref=e258]:
+                        - generic [ref=e259]:
+                          - img [ref=e260]
+                          - text: Approval queue
+                        - paragraph [ref=e263]: 4 items are waiting for an owner decision before any publish can happen.
+                      - generic [ref=e264]:
+                        - generic [ref=e265]:
+                          - img [ref=e266]
+                          - text: Notification load
+                        - paragraph [ref=e270]: 2 alerts still need review across in-app and push surfaces.
+                      - generic [ref=e271]:
+                        - generic [ref=e272]:
+                          - img [ref=e273]
+                          - text: Execution watch
+                        - paragraph [ref=e275]: 1 execution issue is waiting for retry or reconnection.
+                  - generic [ref=e276]:
+                    - generic [ref=e277]:
+                      - generic [ref=e278]:
+                        - generic [ref=e279]:
+                          - img [ref=e280]
+                          - text: Push Ready
+                        - generic [ref=e282]:
+                          - heading "Mobile and desktop operators can receive approval prompts" [level=3] [ref=e283]
+                          - paragraph [ref=e284]: The MVP reuses the existing web-push pipeline so owners can jump directly into a recommendation from a browser notification.
+                      - generic [ref=e285]:
+                        - button "Enable browser push" [ref=e286]:
+                          - img
+                          - text: Enable browser push
+                        - button "Send preview alert" [ref=e287]:
+                          - img
+                          - text: Send preview alert
+                    - generic [ref=e288]:
+                      - generic [ref=e289]: "Permission: default"
+                      - generic [ref=e290]:
+                        - img [ref=e291]
+                        - text: "Requires configured `NEXT_PUBLIC_VAPID_PUBLIC_KEY`"
+              - generic [ref=e293]:
+                - generic [ref=e294]:
+                  - generic [ref=e296]:
+                    - generic [ref=e297]:
+                      - generic [ref=e298]: Approval needed
+                      - generic [ref=e299]: GBP
+                      - generic [ref=e300]: Kannai Lounge Lumiere
+                    - generic [ref=e301]:
+                      - generic [ref=e302]: Reply to 2 unanswered high-intent reviews
+                      - paragraph [ref=e303]: Two recent reviews mention premium seating and first-visit uncertainty. A faster reply should improve map trust and conversion intent.
+                    - generic [ref=e304]:
+                      - generic [ref=e305]:
+                        - generic [ref=e306]:
+                          - img [ref=e307]
+                          - text: Reason
+                        - paragraph [ref=e310]: Review reply rate fell to 41% this week while a nearby competitor responded within 6 hours on average.
+                      - generic [ref=e311]:
+                        - generic [ref=e312]:
+                          - img [ref=e313]
+                          - text: Expected impact
+                        - paragraph [ref=e317]: +12% map action lift expected
+                  - generic [ref=e318]:
+                    - generic [ref=e319]:
+                      - generic [ref=e320]:
+                        - img [ref=e321]
+                        - text: Diff preview
+                      - generic [ref=e324]:
+                        - generic [ref=e325]:
+                          - paragraph [ref=e326]: Before · Review reply draft
+                          - paragraph [ref=e327]: No reply exists for this review.
+                        - generic [ref=e328]:
+                          - paragraph [ref=e329]: After · Review reply draft
+                          - textbox [ref=e330]: ご来店ありがとうございました。初めてのお客様にも安心してお過ごしいただけるよう、次回はお席や楽しみ方もより丁寧にご案内いたします。ぜひまたゆっくりお越しください。
+                    - generic [ref=e331]:
+                      - generic [ref=e332]: Keep the tone warm and premium.
+                      - generic [ref=e333]: Address first-time visitor concern directly.
+                      - generic [ref=e334]: No publication happens until approval.
+                    - generic [ref=e336]:
+                      - generic [ref=e337]:
+                        - paragraph [ref=e338]: Owner actions
+                        - paragraph [ref=e339]: Approval is required before any publish. Edited drafts are published instead of the original suggestion.
+                      - generic [ref=e340]:
+                        - button "Reject" [ref=e341]:
+                          - img
+                          - text: Reject
+                        - button "Edit then approve" [ref=e342]:
+                          - img
+                          - text: Edit then approve
+                        - button "Approve" [ref=e343]:
+                          - img
+                          - text: Approve
+                    - generic [ref=e344]:
+                      - generic [ref=e345]:
+                        - img [ref=e346]
+                        - text: Approval history
+                      - generic [ref=e351]: No approval action has been taken yet.
+                - generic [ref=e352]:
+                  - generic [ref=e353]:
+                    - paragraph [ref=e354]: Connections / publishing trust
+                    - generic [ref=e355]: Kannai Lounge Lumiere
+                  - generic [ref=e356]:
+                    - generic [ref=e357]:
+                      - generic [ref=e358]:
+                        - generic [ref=e359]:
+                          - generic [ref=e360]:
+                            - img [ref=e361]
+                            - paragraph [ref=e365]: Google Business Profile
+                          - paragraph [ref=e366]: Reviews, posts, and profile fields are syncing normally.
+                        - generic [ref=e367]: connected
+                      - paragraph [ref=e368]: Last sync about 1 hour ago
+                    - generic [ref=e369]:
+                      - generic [ref=e370]:
+                        - generic [ref=e371]:
+                          - generic [ref=e372]:
+                            - img [ref=e373]
+                            - paragraph [ref=e377]: Marketing CMS
+                          - paragraph [ref=e378]: FAQ and store description updates can be published after approval.
+                        - generic [ref=e379]: connected
+                      - paragraph [ref=e380]: Last sync about 1 hour ago
+                    - generic [ref=e381]:
+                      - generic [ref=e382]:
+                        - generic [ref=e383]:
+                          - generic [ref=e384]:
+                            - img [ref=e385]
+                            - paragraph [ref=e389]: Search Rank Monitor
+                          - paragraph [ref=e390]: Tracking local pack and organic visibility for 24 keywords.
+                        - generic [ref=e391]: connected
+                      - paragraph [ref=e392]: Last sync about 4 hours ago
+                    - generic [ref=e393]:
+                      - generic [ref=e394]:
+                        - generic [ref=e395]:
+                          - generic [ref=e396]:
+                            - img [ref=e397]
+                            - paragraph [ref=e401]: Competitor Observation
+                          - paragraph [ref=e402]: Watching three nearby competitors for post cadence and FAQ gaps.
+                        - generic [ref=e403]: syncing
+                      - paragraph [ref=e404]: Last sync about 3 hours ago
+  - alert [ref=e405]

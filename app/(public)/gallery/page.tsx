@@ -8,6 +8,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '店内ギャラリー｜関内キャバクラ CLUB Animo',
   description: '関内・馬車道エリアの高級キャバクラ「CLUB Animo」の店内写真・ギャラリー。洗練された上質な大人の社交場を写真でご案内します。',
+  alternates: {
+    canonical: '/gallery',
+  },
 };
 
 // サーバーコンポーネントとしてギャラリーデータを取得

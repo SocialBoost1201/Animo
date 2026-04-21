@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Download, Printer, Plus } from 'lucide-react';
-import { generateDaysForSplit, TemplateShiftData, SplitDay } from '@/lib/actions/template-shifts';
+import { generateDaysForSplit, type TemplateShiftData, type SplitDay } from '@/lib/template-shift-utils';
 import { toast } from 'sonner';
 
 export function TemplateShiftEditor({ initialData }: { initialData: TemplateShiftData }) {

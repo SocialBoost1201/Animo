@@ -11,6 +11,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '関内キャバクラの選び方｜失敗しない優良店の見極めポイント',
   description: '初めて関内でキャバクラに行く方から、接待で絶対に外せない方まで。優良店とそうでない店舗を見極めるポイント（明朗会計、接客レベル、客層）を詳しく解説します。',
+  alternates: {
+    canonical: '/blog/how-to-choose-cabaret',
+  },
 };
 
 const CHOOSE_POINTS = [

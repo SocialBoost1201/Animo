@@ -115,20 +115,6 @@ body {
   box-shadow: var(--shadow-aura);
 }
 
-/* Hero Opening Animation */
-@keyframes clip-hero-anim {
-  from { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); }
-  to   { clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
-}
-@keyframes hero-bg-scale {
-  from { transform: scale(1.25); }
-  to   { transform: scale(1.1); }
-}
-@keyframes hero-fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* Sheen Button Effect */
 @keyframes sheen {
   0% { transform: translateX(-100%) skewX(-15deg); }
@@ -151,6 +137,85 @@ body {
   transform: translateX(-100%) skewX(-15deg);
   animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
   pointer-events: none;
+}
+
+/* Silver Sheen Button Effect — 銀グラデーション+影アニメーション */
+@keyframes silver-shadow-sweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+}
+
+.btn-silver-sheen {
+  position: relative;
+  overflow: hidden;
+  /* 銀グラデーション背景 */
+  background: linear-gradient(
+    135deg,
+    #8a8a8a 0%,
+    #c8c8c8 18%,
+    #f0f0f0 35%,
+    #d0d0d0 50%,
+    #a0a0a0 65%,
+    #c4c4c4 80%,
+    #888888 100%
+  ) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(200, 200, 200, 0.4) !important;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.btn-silver-sheen:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 黒い影ストリーク（掃け影） */
+.btn-silver-sheen::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 40%;
+  height: 120%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.18) 30%,
+    rgba(0, 0, 0, 0.32) 50%,
+    rgba(0, 0, 0, 0.18) 70%,
+    transparent 100%
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  animation: silver-shadow-sweep 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 白い光ハイライト（副次エフェクト） */
+.btn-silver-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  animation: sheen 4s cubic-bezier(0.25, 1, 0.5, 1) 1.75s infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .pb-safe {
@@ -268,3 +333,146 @@ body {
     @apply font-sans;
   }
 }
+
+/* ============================================================
+   .card-premium-skin — 共通プレミアム積層スキン v4
+   ============================================================
+   4層アーキテクチャ:
+   Layer 1 — root自体  = Back Black Foundation (#393939)
+   Layer 2 — ::before  = Gold Material Layer (透過ゴールド)
+   Layer 3 — ::after   = Gold Main Layer (メタリック)
+   Layer 4 — __surface = Front Dark Gloss Surface (漆黒)
+   ============================================================ */
+
+.card-premium-skin {
+  --bright-gold-bezel: 4px;
+  --dark-gold-bezel: 8px;
+}
+
+.card-premium-skin {
+  position: relative;
+  isolation: isolate;
+  transition: translate 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Layer 1+2: Foundation #393939 + Dark Gold */
+.card-premium-skin::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--dark-gold-bezel));
+  border-radius: inherit;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.10) 0%, rgba(249,223,81,0.10) 100%),
+    linear-gradient(89deg, rgba(230,179,0,0.50) 1.17%, rgba(245,214,74,0.50) 18.26%, rgba(245,214,74,0.50) 54.88%, rgba(237,184,3,0.50) 90.99%, rgba(230,179,0,0.50) 98.83%),
+    #393939;
+  box-shadow: 2px 3px 15px 0 rgba(0,0,0,1);
+}
+
+/* Layer 3: Bright Gold */
+.card-premium-skin::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--bright-gold-bezel));
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.40) 0%, rgba(249,223,81,0.40) 100%),
+    linear-gradient(89deg, #E6B300 1.17%, #F5D64A 18.26%, #E6B300 56.27%, #F5D64A 77.43%, #EDB803 90.99%);
+  box-shadow: 0 -10px 19px -4px #EBB802 inset;
+}
+
+/* Layer 4: Front Dark Gloss Surface */
+.card-premium-skin__surface {
+  position: relative;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(1deg, #000 7.95%, #1C1C1C 27.54%, #000 79.40%, #383838 104.18%, #191717 127.80%);
+}
+
+.card-premium-skin > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .card-premium-skin:hover::before {
+    inset: calc(-1 * var(--bright-gold-bezel) - 1px);
+    transition: inset 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-premium-skin:hover::after {
+    inset: calc(-1 * var(--dark-gold-bezel) - 1px);
+    transition: inset 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-premium-skin::before,
+  .card-premium-skin::after {
+    transition: inset 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.card-premium-skin:active::before { inset: 0px; transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1); }
+.card-premium-skin:active::after  { inset: -1px; transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1); }
+.card-premium-skin:active         { translate: 2px 2px; transition: translate 80ms cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ============================================================
+   .btn-week-selector — 週選択ボタン用プレミアムスキン
+   非対称: 左=ほぼ金なし / 右=ほんの少し金が見える
+   ============================================================ */
+.btn-week-selector {
+  position: relative;
+  isolation: isolate;
+  border-radius: 14px;
+}
+
+/* Layer 1+2: Foundation + Dark Gold — 右下にのみ露出 */
+.btn-week-selector::after {
+  content: '';
+  position: absolute;
+  inset-block: -6px;
+  inset-inline-start: 1px;   /* 左: ほぼフラッシュ（金ほぼ隠れる） */
+  inset-inline-end: -6px;    /* 右: 6px 露出 */
+  border-radius: inherit;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.10) 0%, rgba(249,223,81,0.10) 100%),
+    linear-gradient(89deg, rgba(230,179,0,0.50) 1.17%, rgba(245,214,74,0.50) 18.26%, rgba(245,214,74,0.50) 54.88%, rgba(237,184,3,0.50) 90.99%, rgba(230,179,0,0.50) 98.83%),
+    #393939;
+  box-shadow: 2px 3px 15px 0 rgba(0,0,0,1);
+}
+
+/* Layer 3: Bright Gold — 右に少しだけ見える */
+.btn-week-selector::before {
+  content: '';
+  position: absolute;
+  inset-block: -2px;
+  inset-inline-start: 2px;   /* 左: 表面で隠れる */
+  inset-inline-end: -2px;    /* 右: 2px だけ金が覗く */
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.40) 0%, rgba(249,223,81,0.40) 100%),
+    linear-gradient(89deg, #E6B300 1.17%, #F5D64A 18.26%, #E6B300 56.27%, #F5D64A 77.43%, #EDB803 90.99%);
+  box-shadow: 0 -6px 14px -3px #EBB802 inset;
+}
+
+/* Layer 4: Dark Gloss Surface — ボタン表面 */
+.btn-week-selector__surface {
+  position: relative;
+  z-index: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0b0d12 0%, #131720 60%, #1a1f2e 100%);
+}
+
+.btn-week-selector > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* active: 押し込み */
+.btn-week-selector:active { translate: 1px 1px; transition: translate 80ms; }
+.btn-week-selector:active::before { inset-block: 0; inset-inline-end: 0; }
+.btn-week-selector:active::after  { inset-block: 0; inset-inline-end: -1px; }

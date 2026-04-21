@@ -9,6 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '関内キャバクラとは・特徴と魅力｜CLUB Animo',
   description: '横浜・関内エリアのキャバクラの歴史や特徴、客層について解説。高級キャバクラ「CLUB Animo」が選ばれる理由と、ワンランク上の夜遊びの魅力をご紹介します。',
+  alternates: {
+    canonical: '/about/kannai-cabaret',
+  },
   openGraph: {
     title: '関内キャバクラとは・特徴と魅力｜CLUB Animo',
     description: '横浜・関内エリアのキャバクラの歴史や特徴、客層について解説。',

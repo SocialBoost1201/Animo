@@ -7,6 +7,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'English | CLUB Animo',
   description: 'Welcome to CLUB Animo, the finest luxury lounge in Kannai, Yokohama. Enjoy an unforgettable nightlife experience with our premium hospitality.',
+  alternates: {
+    canonical: '/en',
+  },
 };
 
 export default function EnglishPage() {

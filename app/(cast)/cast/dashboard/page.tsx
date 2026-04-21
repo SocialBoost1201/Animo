@@ -5,8 +5,8 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getMyShiftSubmission } from '@/lib/actions/cast-shifts';
-import { getTargetWeekMonday } from '@/lib/shift-utils';
-import { getMyConfirmedSchedules } from '@/lib/actions/cast-change-requests';
+import { getTargetWeekMonday, formatDate } from '@/lib/shift-utils';
+import { getMySchedulesForWeek } from '@/lib/actions/cast-change-requests';
 import { getCastTodayCheckin, getCastTodayReservations } from '@/lib/actions/today';
 import { getCastNotices } from '@/lib/actions/cast-notices';
 import { createClient } from '@/lib/supabase/server';
@@ -18,10 +18,9 @@ import {
 } from '@/components/features/cast/CastMobileShell';
 import { getJstDateString } from '@/lib/date-utils';
 
-function getWeeklySummaryLabel(value: 'work' | 'off' | 'unknown') {
-  if (value === 'work') return { text: '●', color: 'text-[#33b36b]' };
-  if (value === 'off') return { text: 'OFF', color: 'text-[#6b7280]' };
-  return { text: '未', color: 'text-[#e6a23c]' };
+function getWeeklySummaryLabel(value: 'work' | 'off') {
+  if (value === 'work') return { text: '○', color: 'text-[#3b82f6]' };
+  return { text: '×', color: 'text-[#ef4444]' };
 }
 
 function getNoticeTone(importance: 'high' | 'normal') {
@@ -36,6 +35,68 @@ function getNoticeTone(importance: 'high' | 'normal') {
       };
 }
 
+function getTodayStatusMeta(
+  checkinStatus: 'pending' | 'approved' | 'rejected' | null
+) {
+  switch (checkinStatus) {
+    case 'approved':
+      return {
+        badge: '承認済み',
+        badgeClass: 'bg-[rgba(51,179,107,0.12)] text-[#33b36b]',
+        description: '承認済みです。変更があれば店長へ連絡してください。',
+      };
+    case 'pending':
+      return {
+        badge: '承認待ち',
+        badgeClass: 'bg-[rgba(230,162,60,0.12)] text-[#e6a23c]',
+        description: '送信済みです。店長承認までお待ちください。',
+      };
+    case 'rejected':
+      return {
+        badge: '差戻し',
+        badgeClass: 'bg-[rgba(224,106,106,0.12)] text-[#e06a6a]',
+        description: '差し戻しされています。内容を確認して再送信してください。',
+      };
+    default:
+      return {
+        badge: '未送信',
+        badgeClass: 'bg-[rgba(255,255,255,0.08)] text-[#a9afbc]',
+        description: '本日の確認と来店予定を18:30までに送信してください。',
+      };
+  }
+}
+
+function getWeeklyShiftStatusMeta(
+  submissionStatus: 'pending' | 'approved' | 'rejected' | null
+) {
+  switch (submissionStatus) {
+    case 'approved':
+      return {
+        badge: '承認済み',
+        badgeClass: 'bg-[rgba(51,179,107,0.12)] text-[#33b36b]',
+        description: '翌週シフトは承認済みです。変更があれば変更申請へ進んでください。',
+      };
+    case 'pending':
+      return {
+        badge: '承認待ち',
+        badgeClass: 'bg-[rgba(230,162,60,0.12)] text-[#e6a23c]',
+        description: '提出済みです。店長承認までお待ちください。',
+      };
+    case 'rejected':
+      return {
+        badge: '差戻し',
+        badgeClass: 'bg-[rgba(224,106,106,0.12)] text-[#e06a6a]',
+        description: '差し戻しされています。内容を見直して再提出してください。',
+      };
+    default:
+      return {
+        badge: '未提出',
+        badgeClass: 'bg-[rgba(255,255,255,0.08)] text-[#a9afbc]',
+        description: '土曜23:55までに翌週シフトを提出してください。',
+      };
+  }
+}
+
 export default async function CastDashboardPage() {
   const cast = await getCurrentCast();
   if (!cast) redirect('/cast/login');
@@ -43,10 +104,17 @@ export default async function CastDashboardPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
+  // 翌週月曜（シフト提出ステータス・対象期間表示用）
   const nextWeekBaseDate = new Date();
   nextWeekBaseDate.setDate(nextWeekBaseDate.getDate() + 7);
   const nextMondayDate = getTargetWeekMonday(nextWeekBaseDate);
-  const nextMondayStr = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  const nextMondayStr = formatDate(nextMondayDate);
+  const nextSundayDate = new Date(nextMondayDate);
+  nextSundayDate.setDate(nextMondayDate.getDate() + 6);
+
+  // 今週月曜（スケジュール表示用）
+  const thisWeekMondayDate = getTargetWeekMonday(new Date());
+  const thisWeekMondayStr = formatDate(thisWeekMondayDate);
 
   const [
     { data: shiftSubmission },
@@ -58,7 +126,7 @@ export default async function CastDashboardPage() {
     { data: recentPosts },
   ] = await Promise.all([
     getMyShiftSubmission(nextMondayStr),
-    getMyConfirmedSchedules(cast.id, 7),
+    getMySchedulesForWeek(cast.id, thisWeekMondayStr),
     getCastNotices(cast.id),
     getCastTodayCheckin(),
     getCastTodayReservations(),
@@ -76,33 +144,37 @@ export default async function CastDashboardPage() {
       .limit(3),
   ]);
 
-  const hasTodayCheckin = Boolean(todayCheckin);
   const reservationCount = todayReservations?.length ?? 0;
   const hasBlogPost = Boolean(recentPosts && recentPosts.length > 0 && recentPosts[0]?.created_at?.startsWith(today));
+  const todayStatusMeta = getTodayStatusMeta(todayCheckin?.approval_status ?? null);
+  const weeklyShiftStatusMeta = getWeeklyShiftStatusMeta(shiftSubmission?.status ?? null);
 
   const statusChips = [
-    !hasTodayCheckin ? '本日の確認 未送信' : null,
+    todayStatusMeta.badge !== '承認済み' ? `本日の確認 ${todayStatusMeta.badge}` : null,
     !hasBlogPost ? 'ブログ 未投稿' : null,
-    !shiftSubmission ? 'シフト 残り4日' : null,
+    weeklyShiftStatusMeta.badge !== '承認済み' ? `シフト ${weeklyShiftStatusMeta.badge}` : null,
   ].filter(Boolean) as string[];
 
   const unreadNotices = notices.filter((notice) => !notice.is_read).slice(0, 3);
+  // 今週7日分（月〜日）
   const summaryDates = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(nextMondayDate);
-    date.setDate(nextMondayDate.getDate() + index);
+    const date = new Date(thisWeekMondayDate);
+    date.setDate(thisWeekMondayDate.getDate() + index);
     return date;
   });
 
+  // work_date -> 'work' のマップ（レコードなし = 休み）
   const scheduleStatusMap = new Map(
     (schedules ?? []).map((schedule) => [
       schedule.work_date,
-      schedule.status === 'confirmed' ? 'work' : 'unknown',
+      'work' as const,
     ])
   );
 
-  const submittedCount = summaryDates.filter((date) =>
-    Boolean(scheduleStatusMap.get(date.toISOString().split('T')[0]))
+  const workCount = summaryDates.filter((date) =>
+    scheduleStatusMap.has(formatDate(date))
   ).length;
+  const offCount = 7 - workCount;
 
   return (
     <CastMobileShell>
@@ -144,12 +216,12 @@ export default async function CastDashboardPage() {
                     <div className="text-[17px] font-bold text-[#f7f4ed]">本日の確認</div>
                   </div>
                 </div>
-                <span className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
-                  {hasTodayCheckin ? '送信済' : '未送信'}
+                <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${todayStatusMeta.badgeClass}`}>
+                  {todayStatusMeta.badge}
                 </span>
               </div>
               <p className="text-[13px] leading-[1.7] text-[#a9afbc]">
-                出勤確認・送りの有無・来店予定をまとめて送信してください
+                {todayStatusMeta.description}
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/8 bg-white/5 px-3 py-1.5 text-xs text-[#a9afbc]">
@@ -178,18 +250,18 @@ export default async function CastDashboardPage() {
                   <div className="text-[10px] uppercase tracking-[0.14em] text-[#6b7280]">Weekly Shift</div>
                   <div className="text-base font-bold text-[#f7f4ed]">翌週シフト提出</div>
                 </div>
-              </div>
-              <span className="rounded-full bg-[rgba(230,162,60,0.12)] px-2.5 py-1 text-[11px] font-bold text-[#e6a23c]">
-                {shiftSubmission ? (shiftSubmission.status === 'approved' ? '承認済' : '提出済') : '未提出'}
+                </div>
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${weeklyShiftStatusMeta.badgeClass}`}>
+                {weeklyShiftStatusMeta.badge}
               </span>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">対象期間</div>
                 <div className="font-bold text-[#f7f4ed]">
-                  {summaryDates[0].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                  {nextMondayDate.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
                   {' 〜 '}
-                  {summaryDates[6].toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                  {nextSundayDate.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
                 </div>
               </div>
               <div className="border-l border-white/8 pl-4">
@@ -197,6 +269,9 @@ export default async function CastDashboardPage() {
                 <div className="font-bold text-[#e6a23c]">土曜 23:55</div>
               </div>
             </div>
+            <p className="mt-4 text-[13px] leading-[1.7] text-[#a9afbc]">
+              {weeklyShiftStatusMeta.description}
+            </p>
             <div className="mt-5 rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]">
               シフトを提出する
             </div>
@@ -233,40 +308,51 @@ export default async function CastDashboardPage() {
           </CastMobileCard>
         </Link>
 
-        <CastMobileCard className="p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-bold text-[#f7f4ed]">
-              <CalendarDays className="h-4 w-4 text-[#c9a76a]" />
-              今週のスケジュール
+        <Link href="/cast/schedule" aria-label="今週のスケジュール詳細を見る">
+          <CastMobileCard className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#f7f4ed]">
+                <CalendarDays className="h-4 w-4 text-[#c9a76a]" />
+                今週のスケジュール
+              </div>
+              <div className="flex items-center gap-1 text-xs text-[#8f96a3]">
+                詳細
+                <ChevronRight className="h-3.5 w-3.5" />
+              </div>
             </div>
-            <Link href="/cast/shift" className="flex items-center gap-1 text-xs text-[#8f96a3]">
-              詳細
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          <div className="mt-4 grid grid-cols-7 gap-1.5">
-            {summaryDates.map((date) => {
-              const dateKey = date.toISOString().split('T')[0];
-              const indicator = getWeeklySummaryLabel((scheduleStatusMap.get(dateKey) as 'work' | 'off' | 'unknown') ?? 'unknown');
+            <div className="mt-4 grid grid-cols-7 gap-1.5">
+              {summaryDates.map((date) => {
+                const dateKey = formatDate(date);
+                const status = scheduleStatusMap.has(dateKey) ? 'work' : 'off';
+                const indicator = getWeeklySummaryLabel(status);
+                const isToday = dateKey === today;
 
-              return (
-                <div key={dateKey} className="rounded-[10px] border border-transparent px-1 py-2 text-center">
-                  <div className="text-[10px] text-[#6b7280]">{date.toLocaleDateString('ja-JP', { weekday: 'short' }).replace('曜', '')}</div>
-                  <div className={`mt-2 text-[9px] font-bold ${indicator.color}`}>{indicator.text}</div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 flex items-center justify-between border-t border-white/8 pt-3 text-xs">
-            <div className="flex gap-4">
-              <span className="text-[#a9afbc]">出勤: <strong className="text-[#f7f4ed]">{submittedCount}日</strong></span>
-              <span className="text-[#e6a23c]">未提出 {Math.max(7 - submittedCount, 0)}日</span>
+                return (
+                  <div
+                    key={dateKey}
+                    className={`rounded-[10px] border px-1 py-2 text-center ${
+                      isToday ? 'border-[rgba(201,167,106,0.4)] bg-[rgba(201,167,106,0.08)]' : 'border-transparent'
+                    }`}
+                  >
+                    <div className={`text-[10px] ${isToday ? 'text-[#c9a76a]' : 'text-[#6b7280]'}`}>
+                      {date.toLocaleDateString('ja-JP', { weekday: 'short' }).replace('曜', '')}
+                    </div>
+                    <div className={`mt-2 text-base font-bold leading-none ${indicator.color}`}>{indicator.text}</div>
+                  </div>
+                );
+              })}
             </div>
-            <span className="font-bold text-[#c9a76a]">
-              {todayShift ? `本日 ${todayShift.start_time?.slice(0, 5)}-${todayShift.end_time?.slice(0, 5)}` : '本日 OFF'}
-            </span>
-          </div>
-        </CastMobileCard>
+            <div className="mt-4 flex items-center justify-between border-t border-white/8 pt-3 text-xs">
+              <div className="flex gap-4">
+                <span className="text-[#a9afbc]">出勤: <strong className="text-[#3b82f6]">{workCount}日</strong></span>
+                <span className="text-[#a9afbc]">休み: <strong className="text-[#ef4444]">{offCount}日</strong></span>
+              </div>
+              <span className="font-bold text-[#c9a76a]">
+                {todayShift ? `本日 ${todayShift.start_time?.slice(0, 5)}-${todayShift.end_time?.slice(0, 5)}` : '本日 OFF'}
+              </span>
+            </div>
+          </CastMobileCard>
+        </Link>
 
         <CastMobileCard className="overflow-hidden bg-[#181d27]">
           <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
