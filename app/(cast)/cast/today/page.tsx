@@ -11,7 +11,8 @@ import {
   CastMobileShell,
   CastMobileSectionTitle,
 } from '@/components/features/cast/CastMobileShell';
-import { getJstDateString } from '@/lib/date-utils';
+import { getJstDateString, formatShiftTime } from '@/lib/date-utils';
+import { isMasterAccount } from '@/lib/config/master';
 
 type CastDashboardReservationRow = {
   id: string;
@@ -20,7 +21,6 @@ type CastDashboardReservationRow = {
   guest_count?: number | null;
   reservation_type: 'douhan' | 'reservation';
   note?: string | null;
-  approval_status?: 'pending' | 'approved' | 'rejected';
 };
 
 export default async function CastTodayPage() {
@@ -30,6 +30,10 @@ export default async function CastTodayPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
+  // auth user の email を取得（master 判定に使用）
+  const { data: { user } } = await supabase.auth.getUser();
+  const isMaster = isMasterAccount(user?.email);
+
   const [{ data: todayShift }, todayCheckin, todayReservations] = await Promise.all([
     supabase.from('cast_schedules').select('*').eq('cast_id', cast.id).eq('work_date', today).maybeSingle(),
     getCastTodayCheckin(),
@@ -38,15 +42,35 @@ export default async function CastTodayPage() {
 
   const submissionState = await getTodaySubmissionState();
 
-  const reservationsForForm = (todayReservations || []).map((reservation: CastDashboardReservationRow) => ({
-    id: reservation.id,
-    visit_time: reservation.visit_time,
-    guest_name: reservation.guest_name,
-    guest_count: reservation.guest_count ?? null,
-    reservation_type: reservation.reservation_type,
-    note: reservation.note ?? undefined,
-    approval_status: reservation.approval_status,
-  }));
+  // マスターアカウントは締切後でも編集可能
+  const isSubmissionClosed = submissionState.isClosed && !isMaster;
+  // マスターが締切後にアクセスしている場合にバナーを出す
+  const isMasterOverride = isMaster && submissionState.isClosed;
+
+  const allReservations = (todayReservations || []) as CastDashboardReservationRow[];
+
+  // 同伴と通常来店予定を分離
+  const douhanReservationRaw = allReservations.find(r => r.reservation_type === 'douhan') ?? null;
+  const normalReservations = allReservations
+    .filter(r => r.reservation_type === 'reservation')
+    .map(r => ({
+      id: r.id,
+      visit_time: r.visit_time,
+      guest_name: r.guest_name,
+      guest_count: r.guest_count ?? null,
+      reservation_type: r.reservation_type,
+      note: r.note ?? undefined,
+    }));
+
+  const existingDouhan = douhanReservationRaw
+    ? {
+        id: douhanReservationRaw.id,
+        visit_time: douhanReservationRaw.visit_time,
+        guest_name: douhanReservationRaw.guest_name,
+        guest_count: douhanReservationRaw.guest_count ?? null,
+        note: douhanReservationRaw.note ?? null,
+      }
+    : null;
 
   return (
     <CastMobileShell>
@@ -55,28 +79,34 @@ export default async function CastTodayPage() {
         <CastMobileSectionTitle
           eyebrow={new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
           title="本日の確認"
-          description="出勤確認、送りの有無、来店予定をまとめて送信します。"
+          description="出勤確認・同伴情報・来店予定をまとめて送信します。"
         />
 
         <CastMobileCard className="px-5 py-4">
           <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">Today&apos;s Schedule</div>
           <div className="mt-3 text-base font-bold text-[#f7f4ed]">
-            {todayShift ? `${todayShift.start_time?.slice(0, 5)} 〜 ${todayShift.end_time?.slice(0, 5)}` : '本日の出勤予定はありません'}
+            {todayShift
+              ? formatShiftTime(todayShift.start_time, todayShift.end_time)
+              : '本日の出勤予定はありません'}
           </div>
         </CastMobileCard>
 
+        {/* ── 01: 出勤確認（同伴フォーム内包）── */}
         <div className="[&_input]:bg-[#10141d] [&_input]:text-[#f7f4ed] [&_select]:bg-[#10141d] [&_select]:text-[#f7f4ed] [&_textarea]:bg-[#10141d] [&_textarea]:text-[#f7f4ed]">
           <CheckinForm
             existing={todayCheckin}
-            isSubmissionClosed={submissionState.isClosed}
+            existingDouhan={existingDouhan}
+            isSubmissionClosed={isSubmissionClosed}
             deadlineLabel={submissionState.deadlineLabel}
+            isMasterOverride={isMasterOverride}
           />
         </div>
 
+        {/* ── 02: 通常来店予定（任意・複数可）── */}
         <div className="[&_input]:bg-[#10141d] [&_input]:text-[#f7f4ed] [&_select]:bg-[#10141d] [&_select]:text-[#f7f4ed] [&_textarea]:bg-[#10141d] [&_textarea]:text-[#f7f4ed]">
           <ReservationForm
-            reservations={reservationsForForm}
-            isSubmissionClosed={submissionState.isClosed}
+            reservations={normalReservations}
+            isSubmissionClosed={isSubmissionClosed}
             deadlineLabel={submissionState.deadlineLabel}
           />
         </div>

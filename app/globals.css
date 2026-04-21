@@ -338,24 +338,49 @@ body {
    .card-premium-skin — 共通プレミアム積層スキン v4
    ============================================================
    4層アーキテクチャ:
-   Layer 1 — root自体  = Back Black Foundation (#393939)
-   Layer 2 — ::before  = Gold Material Layer (透過ゴールド)
-   Layer 3 — ::after   = Gold Main Layer (メタリック)
-   Layer 4 — __surface = Front Dark Gloss Surface (漆黒)
+
+   Layer 1 — root自体 = Back Black Foundation (#393939)
+       最深部の黒基盤。物理的な重さと浮遊感を与える。
+
+   Layer 2 — ::before = Gold Material Layer
+       柔らかく透過的なゴールド層。inset shadow 必須。
+       translate: var(--gold-soft-x) var(--gold-soft-y) (default 1px 1px)
+
+   Layer 3 — ::after = Gold Main Layer
+       メタリックゴールドの主層。最も強い金の視覚厚み。
+       translate: var(--gold-main-x) var(--gold-main-y) (default 3px 3px)
+
+   Layer 4 — .card-premium-skin__surface = Front Dark Gloss Surface
+       最前面の漆塗り風グロッシーブラック面。ユーザーが知覚する「カード表面」。
+
+   Content — > * = z-index:1 でデコレーション層の上に固定
+
+   規則:
+   - isolation: isolate でスタッキング隔離
+   - border-radius: inherit で既存角丸を自動継承
+   - width / height / padding / margin / gap は一切変更しない
    ============================================================ */
 
+/* ── bezel thickness variables ── */
 .card-premium-skin {
-  --bright-gold-bezel: 4px;
-  --dark-gold-bezel: 8px;
+  --bright-gold-bezel: 6px;
+  --dark-gold-bezel: 14px;
 }
 
+/* ── Root: positioning wrapper ── */
 .card-premium-skin {
   position: relative;
   isolation: isolate;
+
   transition: translate 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Layer 1+2: Foundation #393939 + Dark Gold */
+/*
+  ============================================================
+  Layer 1+2 Combined: ::after
+  Foundation (#1a1600 より暗く) + Dark Gold (50%透過) を合成
+  暗いベースに半透明ゴールドを重ねることで、深みある琥珀色になる
+  ============================================================ */
 .card-premium-skin::after {
   content: '';
   position: absolute;
@@ -363,14 +388,34 @@ body {
   border-radius: inherit;
   z-index: -2;
   pointer-events: none;
+
   background:
-    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.10) 0%, rgba(249,223,81,0.10) 100%),
-    linear-gradient(89deg, rgba(230,179,0,0.50) 1.17%, rgba(245,214,74,0.50) 18.26%, rgba(245,214,74,0.50) 54.88%, rgba(237,184,3,0.50) 90.99%, rgba(230,179,0,0.50) 98.83%),
-    #393939;
-  box-shadow: 2px 3px 15px 0 rgba(0,0,0,1);
+    radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(250, 200, 30, 0.15) 0%,
+      transparent              70%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(200, 140, 0, 0.80)  0%,
+      rgba(230, 175, 0, 0.65) 30%,
+      rgba(180, 110, 0, 0.80) 60%,
+      rgba(220, 160, 0, 0.70) 100%
+    ),
+    #1a1600;
+
+  /* 浮遊感: 下側に深い影 */
+  box-shadow:
+    0 6px 24px 0   rgba(0, 0, 0, 0.90),
+    0 2px  8px 0   rgba(0, 0, 0, 0.60),
+    0 0   40px -8px rgba(200, 140, 0, 0.20);
 }
 
-/* Layer 3: Bright Gold */
+/*
+  ============================================================
+  Layer 3: ::before = Bright Gold
+  明るいメタリック金 — 不透明、鮮やかなゴールド光沢
+  ============================================================ */
 .card-premium-skin::before {
   content: '';
   position: absolute;
@@ -378,25 +423,67 @@ body {
   border-radius: inherit;
   z-index: -1;
   pointer-events: none;
+
   background:
-    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.40) 0%, rgba(249,223,81,0.40) 100%),
-    linear-gradient(89deg, #E6B300 1.17%, #F5D64A 18.26%, #E6B300 56.27%, #F5D64A 77.43%, #EDB803 90.99%);
-  box-shadow: 0 -10px 19px -4px #EBB802 inset;
+    /* 上部ハイライト: 光の当たる感 */
+    radial-gradient(
+      ellipse 80% 40% at 50% 0%,
+      rgba(255, 240, 120, 0.70) 0%,
+      transparent               60%
+    ),
+    /* メタリック線形グラデーション */
+    linear-gradient(
+      89deg,
+      #C88800  0%,
+      #F5D648 20%,
+      #FFEA70 38%,
+      #F0C820 55%,
+      #FFE060 72%,
+      #D4A000 88%,
+      #B87C00 100%
+    );
+
+  /* 内側グロー: 金の発光感 */
+  box-shadow:
+    0  0  12px  2px rgba(255, 215,  0, 0.55) inset,
+    0 -8px 16px -2px rgba(255, 200,  0, 0.80) inset,
+    0  4px  8px -2px rgba(100,  60,  0, 0.40) inset;
 }
 
-/* Layer 4: Front Dark Gloss Surface */
+/*
+  ============================================================
+  Layer 4: __surface = Front Dark Gloss Surface
+  黒鏡面 — 中央が微かに明るく縁が締まる、プレミアムな質感
+  ============================================================ */
 .card-premium-skin__surface {
   position: relative;
   z-index: 0;
   border-radius: inherit;
-  background: linear-gradient(1deg, #000 7.95%, #1C1C1C 27.54%, #000 79.40%, #383838 104.18%, #191717 127.80%);
+
+  background:
+    /* 中央の微光: 鏡面反射 */
+    radial-gradient(
+      ellipse 70% 50% at 50% 30%,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent               100%
+    ),
+    /* 縦グラデ: 上が少し明るく、下が締まる */
+    linear-gradient(
+      175deg,
+      #1a1a1a  0%,
+      #0a0a0a 35%,
+      #000000 65%,
+      #111111 100%
+    );
 }
 
+/* ── content を絶対最前面に固定 ── */
 .card-premium-skin > * {
   position: relative;
   z-index: 1;
 }
 
+/* ── hover: 金ベゼルが広がる ── */
 @media (hover: hover) {
   .card-premium-skin:hover::before {
     inset: calc(-1 * var(--bright-gold-bezel) - 1px);
@@ -408,71 +495,23 @@ body {
   }
   .card-premium-skin::before,
   .card-premium-skin::after {
-    transition: inset 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: inset 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-.card-premium-skin:active::before { inset: 0px; transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1); }
-.card-premium-skin:active::after  { inset: -1px; transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1); }
-.card-premium-skin:active         { translate: 2px 2px; transition: translate 80ms cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* ============================================================
-   .btn-week-selector — 週選択ボタン用プレミアムスキン
-   非対称: 左=ほぼ金なし / 右=ほんの少し金が見える
-   ============================================================ */
-.btn-week-selector {
-  position: relative;
-  isolation: isolate;
-  border-radius: 14px;
+/* ── active: 押し込み感 ── */
+.card-premium-skin:active::before {
+  inset: 0px;
+  transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-premium-skin:active::after {
+  inset: -1px;
+  transition: inset 80ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-premium-skin:active {
+  translate: 2px 2px;
+  transition: translate 80ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Layer 1+2: Foundation + Dark Gold — 右下にのみ露出 */
-.btn-week-selector::after {
-  content: '';
-  position: absolute;
-  inset-block: -6px;
-  inset-inline-start: 1px;   /* 左: ほぼフラッシュ（金ほぼ隠れる） */
-  inset-inline-end: -6px;    /* 右: 6px 露出 */
-  border-radius: inherit;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.10) 0%, rgba(249,223,81,0.10) 100%),
-    linear-gradient(89deg, rgba(230,179,0,0.50) 1.17%, rgba(245,214,74,0.50) 18.26%, rgba(245,214,74,0.50) 54.88%, rgba(237,184,3,0.50) 90.99%, rgba(230,179,0,0.50) 98.83%),
-    #393939;
-  box-shadow: 2px 3px 15px 0 rgba(0,0,0,1);
-}
 
-/* Layer 3: Bright Gold — 右に少しだけ見える */
-.btn-week-selector::before {
-  content: '';
-  position: absolute;
-  inset-block: -2px;
-  inset-inline-start: 2px;   /* 左: 表面で隠れる */
-  inset-inline-end: -2px;    /* 右: 2px だけ金が覗く */
-  border-radius: inherit;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(50% 50% at 50% 50%, rgba(250,224,77,0.40) 0%, rgba(249,223,81,0.40) 100%),
-    linear-gradient(89deg, #E6B300 1.17%, #F5D64A 18.26%, #E6B300 56.27%, #F5D64A 77.43%, #EDB803 90.99%);
-  box-shadow: 0 -6px 14px -3px #EBB802 inset;
-}
-
-/* Layer 4: Dark Gloss Surface — ボタン表面 */
-.btn-week-selector__surface {
-  position: relative;
-  z-index: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0b0d12 0%, #131720 60%, #1a1f2e 100%);
-}
-
-.btn-week-selector > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* active: 押し込み */
-.btn-week-selector:active { translate: 1px 1px; transition: translate 80ms; }
-.btn-week-selector:active::before { inset-block: 0; inset-inline-end: 0; }
-.btn-week-selector:active::after  { inset-block: 0; inset-inline-end: -1px; }

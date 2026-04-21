@@ -107,7 +107,13 @@ export function CastMobileCard({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`rounded-[20px] border border-white/8 bg-[#131720] ${className}`.trim()}>{children}</div>;
+  return (
+    <div className={`rounded-[20px] card-premium-skin ${className}`.trim()}>
+      <div className="card-premium-skin__surface rounded-[20px] overflow-hidden">
+        {children}
+      </div>
+    </div>
+  );
 }
 
 function CastMobileBottomNav() {

@@ -56,3 +56,20 @@ export function isPastJstTime(hour: number, minute: number, date: Date = new Dat
   const targetMinutes = hour * 60 + minute
   return currentMinutes >= targetMinutes
 }
+
+/**
+ * シフト時刻を安全にフォーマットする。
+ *
+ * - start あり、end あり → "21:00〜24:00"
+ * - start あり、end なし → "21:00〜LAST"
+ * - start なし           → "未定"
+ */
+export function formatShiftTime(
+  start: string | null | undefined,
+  end: string | null | undefined,
+): string {
+  if (!start) return '未定'
+  const s = start.slice(0, 5)
+  const e = end?.slice(0, 5)
+  return e ? `${s}〜${e}` : `${s}〜LAST`
+}

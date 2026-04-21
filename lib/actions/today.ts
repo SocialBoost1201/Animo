@@ -7,6 +7,7 @@ import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
 import { StaffSlave } from './staffs'
 import { getAnalyticsSummary } from './analytics'
+import { isMasterAccount } from '@/lib/config/master'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -588,7 +589,7 @@ export async function submitCheckin(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  if (isTodaySubmissionClosed() && !isMasterAccount(user.email)) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
@@ -605,63 +606,102 @@ export async function submitCheckin(formData: FormData) {
     .eq('checkin_date', today)
     .maybeSingle()
 
-  if (existing?.approval_status === 'approved') {
-    return { error: 'この本日の確認はすでに承認済みです。修正が必要な場合は店長に連絡してください。' }
-  }
+  try {
+    if (existing?.approval_status === 'approved') {
+      return { error: 'この本日の確認はすでに承認済みです。修正が必要な場合は店長に連絡してください。' }
+    }
 
-  const hasChange = formData.get('has_change') === 'true'
-  const isAbsent = formData.get('is_absent') === 'true'
-  const changeNote = (formData.get('change_note') as string) || null
-  const memo = (formData.get('memo') as string) || null
-  const { error } = await supabase.from('daily_checkins').upsert({
-    cast_id: cast.id,
-    checkin_date: today,
-    has_change: hasChange,
-    change_note: changeNote,
-    is_absent: isAbsent,
-    memo,
-    submitted_at: new Date().toISOString(),
-    approval_status: 'pending',
-    approved_at: null,
-    approved_by: null,
-  }, { onConflict: 'cast_id,checkin_date' })
+    const status = (formData.get('status') as string) || 'work'
+    const isAbsent = status === 'absent'
+    const hasChange = formData.get('has_change') === 'true'
+    const changeNote = (formData.get('change_note') as string) || null
+    const memo = (formData.get('memo') as string) || null
 
-  if (error) return { success: false as const, error: error.message }
-  const castName = cast.stage_name || cast.name || '不明'
-  const lineResult = await sendLineGroupMessage(
-    buildCheckinLineMessage({
-      castName,
-      today,
-      isAbsent,
-      hasChange,
-      changeNote,
-      memo,
-    })
-  )
+    const { error } = await supabase.from('daily_checkins').upsert({
+      cast_id: cast.id,
+      checkin_date: today,
+      has_change: hasChange,
+      change_note: changeNote,
+      is_absent: isAbsent,
+      memo: memo,
+      submitted_at: new Date().toISOString(),
+    }, { onConflict: 'cast_id,checkin_date' })
 
-  if (!lineResult.ok) {
-    console.warn('[LINE] 本日の確認通知の送信に失敗しました', {
-      castId: cast.id,
-      reason: lineResult.reason,
-      skipped: lineResult.skipped,
-      status: lineResult.status,
-    })
-  }
+    if (error) return { error: error.message }
 
-  revalidatePath('/cast/dashboard')
-  revalidatePath('/admin/today')
-  if (!lineResult.ok) {
+    // ── 同伴の場合: daily_reservations に upsert ──
+    if (status === 'douhan') {
+      const douhanVisitTime = (formData.get('douhan_visit_time') as string) || null
+      const douhanGuestName = (formData.get('douhan_guest_name') as string) || null
+      const douhanGuestCountRaw = formData.get('douhan_guest_count') as string | null
+      const douhanGuestCount =
+        douhanGuestCountRaw && douhanGuestCountRaw.trim() !== ''
+          ? Number.parseInt(douhanGuestCountRaw, 10)
+          : null
+      const douhanNote = (formData.get('douhan_note') as string) || null
+
+      if (douhanVisitTime && douhanGuestName) {
+        // 既存の同伴予定を削除してから挿入（1組のみ保証）
+        await supabase
+          .from('daily_reservations')
+          .delete()
+          .eq('cast_id', cast.id)
+          .eq('reservation_date', today)
+          .eq('reservation_type', 'douhan')
+
+        const { error: douhanError } = await supabase.from('daily_reservations').insert({
+          cast_id: cast.id,
+          reservation_date: today,
+          visit_time: douhanVisitTime,
+          guest_name: douhanGuestName,
+          guest_count: douhanGuestCount,
+          reservation_type: 'douhan',
+          note: douhanNote,
+        })
+        if (douhanError) return { error: douhanError.message }
+      }
+    }
+
+    const castName = cast.stage_name || cast.name || '不明'
+    const lineResult = await sendLineGroupMessage(
+      buildCheckinLineMessage({
+        castName,
+        today,
+        isAbsent,
+        hasChange,
+        changeNote: changeNote,
+        memo: memo,
+      })
+    )
+
+    if (!lineResult.ok) {
+      console.warn('[LINE] 本日の確認通知の送信に失敗しました', {
+        castId: cast.id,
+        reason: lineResult.reason,
+        skipped: lineResult.skipped,
+        status: lineResult.status,
+      })
+    }
+
+    revalidatePath('/cast/dashboard')
+    revalidatePath('/cast/today')
+    revalidatePath('/admin/today')
+    if (!lineResult.ok) {
+      return {
+        success: true,
+        warning: lineResult.skipped
+          ? '提出は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
+          : '提出は保存されましたが、LINE通知の送信に失敗しました。',
+        message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
+      }
+    }
     return {
       success: true,
-      warning: lineResult.skipped
-        ? '提出は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
-        : '提出は保存されましたが、LINE通知の送信に失敗しました。',
       message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
     }
-  }
-  return {
-    success: true,
-    message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
+  } catch (err: unknown) {
+    console.error('submitCheckin unhandled error:', err)
+    return { error: 'サーバーエラーが発生しました: ' + (err instanceof Error ? err.message : String(err)) }
   }
 }
 
@@ -672,7 +712,7 @@ export async function addReservation(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です' }
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  if (isTodaySubmissionClosed() && !isMasterAccount(user.email)) return { error: getSubmissionClosedError() }
 
   const { data: cast } = await supabase
     .from('casts')
@@ -681,75 +721,76 @@ export async function addReservation(formData: FormData) {
     .single()
   if (!cast) return { error: 'キャスト情報が見つかりません' }
 
-  const today = getJstDateString()
-  const guestCountValue = formData.get('guest_count')
-  const guestCount = typeof guestCountValue === 'string' && guestCountValue.trim() !== ''
-    ? Number.parseInt(guestCountValue, 10)
-    : null
+  try {
+    const today = getJstDateString()
+    const guestCountValue = formData.get('guest_count') as string | null
+    const guestCount = guestCountValue && guestCountValue.trim() !== ''
+      ? Number.parseInt(guestCountValue, 10)
+      : null
 
-  if (guestCount !== null && (!Number.isInteger(guestCount) || guestCount <= 0)) {
-    return { error: '人数は1以上の整数で入力してください' }
-  }
+    if (guestCount !== null && (!Number.isInteger(guestCount) || guestCount <= 0)) {
+      return { error: '人数は1以上の整数で入力してください' }
+    }
 
-  const visitTime = formData.get('visit_time') as string
-  const guestName = formData.get('guest_name') as string
-  const reservationType = formData.get('reservation_type') as string
-  const note = (formData.get('note') as string) || null
-  const visitCertainty = (formData.get('visit_certainty') as 'confirmed' | 'maybe' | 'contacting') || 'maybe'
+    const visitTime = formData.get('visit_time') as string
+    const guestName = formData.get('guest_name') as string
+    const reservationType = formData.get('reservation_type') as string
+    const note = (formData.get('note') as string) || null
 
-  const { error } = await supabase.from('daily_reservations').insert({
-    cast_id: cast.id,
-    reservation_date: today,
-    visit_time: visitTime,
-    guest_name: guestName,
-    guest_count: guestCount,
-    reservation_type: reservationType,
-    note,
-    visit_certainty: visitCertainty,
-    approval_status: 'pending',
-    approved_at: null,
-    approved_by: null,
-  })
-
-  if (error) return { success: false as const, error: error.message }
-  const castName = cast.stage_name || cast.name || '不明'
-  const lineResult = await sendLineGroupMessage(
-    buildReservationLineMessage({
-      castName,
-      today,
-      visitTime,
-      guestName,
-      guestCount,
-      reservationType,
+    const { error } = await supabase.from('daily_reservations').insert({
+      cast_id: cast.id,
+      reservation_date: today,
+      visit_time: visitTime,
+      guest_name: guestName,
+      guest_count: guestCount,
+      reservation_type: reservationType,
       note,
     })
-  )
 
-  if (!lineResult.ok) {
-    console.warn('[LINE] 来店予定通知の送信に失敗しました', {
-      castId: cast.id,
-      reason: lineResult.reason,
-      skipped: lineResult.skipped,
-      status: lineResult.status,
-    })
-  }
+    if (error) return { error: error.message }
+    const castName = cast.stage_name || cast.name || '不明'
+    const lineResult = await sendLineGroupMessage(
+      buildReservationLineMessage({
+        castName,
+        today,
+        visitTime,
+        guestName,
+        guestCount,
+        reservationType,
+        note,
+      })
+    )
 
-  revalidatePath('/cast/dashboard')
-  revalidatePath('/admin/today')
-  return {
-    success: true,
-    warning: !lineResult.ok
-      ? lineResult.skipped
-        ? '来店予定は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
-        : '来店予定は保存されましたが、LINE通知の送信に失敗しました。'
-      : undefined,
-    message: '来店予定を提出しました。店長の承認後に営業状況へ反映されます。',
+    if (!lineResult.ok) {
+      console.warn('[LINE] 来店予定通知の送信に失敗しました', {
+        castId: cast.id,
+        reason: lineResult.reason,
+        skipped: lineResult.skipped,
+        status: lineResult.status,
+      })
+    }
+
+    revalidatePath('/cast/dashboard')
+    revalidatePath('/admin/today')
+    return {
+      success: true,
+      warning: !lineResult.ok
+        ? lineResult.skipped
+          ? '来店予定は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
+          : '来店予定は保存されましたが、LINE通知の送信に失敗しました。'
+        : undefined,
+      message: '来店予定を提出しました。店長の承認後に営業状況へ反映されます。',
+    }
+  } catch (err: unknown) {
+    console.error('addReservation unhandled error:', err)
+    return { error: 'サーバーエラーが発生しました: ' + (err instanceof Error ? err.message : String(err)) }
   }
 }
 
 export async function deleteReservation(id: string) {
   const supabase = await createClient()
-  if (isTodaySubmissionClosed()) return { error: getSubmissionClosedError() }
+  const { data: { user } } = await supabase.auth.getUser()
+  if (isTodaySubmissionClosed() && !isMasterAccount(user?.email)) return { error: getSubmissionClosedError() }
 
   const { data: reservation } = await supabase
     .from('daily_reservations')

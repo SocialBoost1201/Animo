@@ -41,7 +41,8 @@ export async function DashboardTodayShifts() {
   const trialCount = casts.filter((c) => c.status === 'trial').length;
 
   return (
-    <div className="flex flex-col bg-black/94 rounded-[18px] overflow-hidden border border-[#ffffff10] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] font-sans h-full">
+    <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
+      <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header */}
       <div className="flex items-center justify-between px-10 h-[88px] border-b border-[#ffffff0f] shrink-0">
         <div className="flex items-center gap-5">
@@ -147,6 +148,7 @@ export async function DashboardTodayShifts() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

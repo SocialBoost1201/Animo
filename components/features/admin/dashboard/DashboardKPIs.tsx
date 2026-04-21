@@ -117,8 +117,9 @@ export async function DashboardKPIs() {
           <Link
             key={card.id}
             href={card.href}
-            className={`group relative flex flex-col bg-black/94 rounded-[18px] overflow-hidden border border-[#ffffff10] hover:border-[#dfbd6940] transition-all duration-300 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_24px_-6px_rgba(0,0,0,0.6)] h-[180px] min-w-0 ${card.width}`}
+            className={`group relative flex flex-col rounded-[18px] h-[180px] min-w-0 card-premium-skin ${card.width}`}
           >
+            <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
             {/* Design Token: Top Highlight Bar */}
             {card.topBar && (
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 z-10" />
@@ -164,6 +165,7 @@ export async function DashboardKPIs() {
             {card.alert && (
               <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-[#fb3a3a] shadow-[0_-2px_15px_rgba(251,58,58,0.5)]" />
             )}
+            </div>
           </Link>
         );
       })}
