@@ -38,6 +38,7 @@ const NAV_ITEMS = [
   // ── SYSTEM ────────────────────────────────────────────────────────────────
   { href: '/admin/design',             icon: Palette,         label: 'デザイン',       section: 'system' },
   { href: '/admin/settings',           icon: Settings,        label: '設定',           section: 'system', roles: ['owner', 'manager'] },
+  { href: '/admin/manual',             icon: BookOpen,        label: '操作マニュアル', section: 'system' },
 ];
 
 const SECTIONS: Record<string, string> = {
