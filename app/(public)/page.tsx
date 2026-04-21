@@ -219,12 +219,7 @@ export default async function HomePage() {
                   <div className="px-2 pt-2 pb-2.5 md:px-3 md:pt-2.5 md:pb-3 bg-white text-center flex-1">
                     <Link href={`/cast/${cast.slug}`}>
                       <p className="text-xs md:text-xs font-bold tracking-[0.2em] text-gray-400 uppercase leading-none mb-0.5">
-                        {cast.name_kana
-                          ? cast.name_kana
-                              .replace(/[ぁ-ん]/g, (c: string) => String.fromCharCode(c.charCodeAt(0) + 0x60))
-                              .toUpperCase()
-                          : cast.name.toUpperCase()
-                        }
+                        CAST
                       </p>
                       <h3 className="font-serif text-xs md:text-sm text-[#171717] hover:text-gold transition-colors leading-snug">
                         {cast.name}

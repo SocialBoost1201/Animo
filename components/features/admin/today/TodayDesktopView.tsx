@@ -127,6 +127,8 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   const activeCasts    = dashboardData.shifts.filter(s => !dashboardData.absentCastIds.includes(s.cast_id))
   const confirmedCount = activeCasts.length + dashboardData.dispatches.length
   const douhanCount    = dashboardData.reservations.filter(r => r.reservation_type === 'douhan').length
+  const pendingApprovalCount = dashboardData.pendingCheckins.length + dashboardData.pendingReservations.length
+  const unansweredCount = dashboardData.unconfirmedCasts.length
   const absentNames    = [
     ...dashboardData.shifts.filter(s => dashboardData.absentCastIds.includes(s.cast_id)).map(s => s.stage_name),
     ...dashboardData.shiftChanges.filter(c => !c.new_time).map(c => c.stage_name),
@@ -137,7 +139,6 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
     alerts.push({ label: 'シフト未提出', detail: `${kpi.shiftMissingCount}名が今週未提出`, level: 'warn' })
   if (dashboardData.unconfirmedCasts.length > 0)
     alerts.push({ label: '来店予定未確定', detail: `${dashboardData.unconfirmedCasts.length}名が確認待ち`, level: 'danger' })
-  const pendingApprovalCount = dashboardData.pendingCheckins.length + dashboardData.pendingReservations.length
   if (pendingApprovalCount > 0)
     alerts.push({ label: '承認待ち', detail: `${pendingApprovalCount}件の当日提出が承認待ち`, level: 'warn' })
   if (kpi.unreadApplications > 0)
@@ -251,7 +252,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 py-2">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">Operation Dashboard</h1>
-          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日オペレーション・一元管理</p>
+          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日確認承認・来店予定確認・営業状況生成ハブ</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
@@ -269,6 +270,45 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
           </button>
         </div>
       </div>
+
+      {pendingApprovalCount > 0 && (
+        <div className="flex flex-col gap-4 rounded-[18px] border border-[rgba(201,167,106,0.24)] bg-[linear-gradient(135deg,rgba(201,167,106,0.12),rgba(17,19,24,0.96))] px-6 py-5 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge color="gold">承認優先</Badge>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">Today Approval Queue</span>
+              </div>
+              <p className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">
+                承認待ちの当日提出があります。内容確認後に承認し、本日の営業状況へ反映してください。
+              </p>
+              <p className="text-[12px] leading-relaxed text-[#c7c0b2]">
+                承認待ち {pendingApprovalCount}件
+                {unansweredCount > 0 ? ` / 未回答 ${unansweredCount}名` : ''}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('unconfirmed')}
+              className="inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3 text-[11px] font-bold tracking-[0.2em] text-black uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
+            >
+              承認する
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <div className="min-w-[120px] rounded-sm border border-white/10 bg-black/20 px-4 py-3">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#8a8478] uppercase">承認待ち件数</p>
+              <p className="mt-1 text-2xl font-bold text-[#f4f1ea]">{pendingApprovalCount}</p>
+            </div>
+            <div className="min-w-[120px] rounded-sm border border-white/10 bg-black/20 px-4 py-3">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#8a8478] uppercase">未回答件数</p>
+              <p className="mt-1 text-2xl font-bold text-[#f4f1ea]">{unansweredCount}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── KPI Bar ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">

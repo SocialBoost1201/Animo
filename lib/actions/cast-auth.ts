@@ -1,58 +1,238 @@
 'use server';
 
+import { cookies } from 'next/headers';
+import {
+  CAST_REAUTH_COOKIE_NAME,
+  CAST_REAUTH_WINDOW_MS,
+  normalizeCastPhone,
+  toE164JpPhone,
+} from '@/lib/cast-auth-utils';
 import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
-const PRODUCTION_AUTH_BASE_URL = 'https://club-animo.jp';
+type CastIdentityCandidate = {
+  cast_id: string;
+  real_name: string | null;
+  date_of_birth: string | null;
+  phone: string | null;
+  email?: string | null;
+  line_id?: string | null;
+  casts: {
+    id: string;
+    stage_name: string | null;
+    auth_user_id: string | null;
+  } | {
+    id: string;
+    stage_name: string | null;
+    auth_user_id: string | null;
+  }[] | null;
+};
 
-function resolveAuthBaseUrl() {
-  const candidates = [
-    process.env.NEXT_PUBLIC_APP_URL,
-    process.env.NEXT_PUBLIC_SITE_URL,
-    process.env.APP_URL,
-  ];
+function getCastRecord(candidate: CastIdentityCandidate) {
+  const raw = Array.isArray(candidate.casts) ? candidate.casts[0] : candidate.casts;
+  return raw
+    ? {
+        id: raw.id,
+        stage_name: raw.stage_name ?? '',
+        auth_user_id: raw.auth_user_id,
+      }
+    : null;
+}
 
-  for (const candidate of candidates) {
-    if (!candidate) continue;
+async function setCastReauthCookie() {
+  const cookieStore = await cookies();
+  cookieStore.set(CAST_REAUTH_COOKIE_NAME, String(Date.now() + CAST_REAUTH_WINDOW_MS), {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: Math.floor(CAST_REAUTH_WINDOW_MS / 1000),
+  });
+}
 
-    try {
-      const url = new URL(candidate);
-      const isLocal =
-        url.hostname === 'localhost' ||
-        url.hostname === '127.0.0.1' ||
-        url.hostname.endsWith('.local');
+async function clearCastReauthCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete(CAST_REAUTH_COOKIE_NAME);
+}
 
-      if (isLocal) continue;
-      return url.origin;
-    } catch {
-      // ignore invalid env value and continue to next candidate
-    }
-  }
+async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
+  const { data, error } = await serviceRoleClient
+    .from('cast_private_info')
+    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, auth_user_id)')
+    .eq('phone', normalizedPhone)
+    .limit(5);
 
-  return PRODUCTION_AUTH_BASE_URL;
+  return {
+    data: (data ?? []) as CastIdentityCandidate[],
+    error,
+  };
 }
 
 /**
- * キャストログイン
+ * キャストログイン用 SMS 送信
  */
-export async function castLogin(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+export async function castSendLoginOtp(formData: FormData) {
+  const phone = String(formData.get('phone') ?? '');
+  const normalizedPhone = normalizeCastPhone(phone);
+  const authPhone = toE164JpPhone(phone);
 
-  if (!email || !password) {
-    return { success: false, error: 'メールアドレスとパスワードを入力してください。' };
+  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
+    return { success: false, error: '電話番号の形式が正しくありません。' };
+  }
+
+  const serviceRoleClient = createServiceClient();
+  const { data: candidates, error: lookupError } = await findCastIdentityByPhone(serviceRoleClient, normalizedPhone);
+
+  if (lookupError) {
+    return { success: false, error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。' };
+  }
+
+  const [candidate] = candidates;
+  const castRecord = candidate ? getCastRecord(candidate) : null;
+
+  if (!candidate || !castRecord) {
+    return {
+      success: false,
+      error: 'この電話番号に紐づくキャスト情報が見つかりませんでした。担当者にお問い合わせください。',
+    };
+  }
+
+  if (!castRecord.auth_user_id) {
+    return {
+      success: false,
+      error: 'まだアカウント登録が完了していません。先に新規登録を行ってください。',
+      code: 'UNREGISTERED',
+    };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: authPhone,
+    options: {
+      shouldCreateUser: false,
+    },
+  });
 
   if (error) {
-    return { success: false, error: 'ログインに失敗しました。メールアドレスまたはパスワードをご確認ください。' };
+    return { success: false, error: `SMS送信に失敗しました: ${error.message}` };
   }
 
+  return {
+    success: true,
+    message: 'SMS認証コードを送信しました。',
+    normalizedPhone,
+  };
+}
+
+/**
+ * キャストログイン用 SMS 検証
+ */
+export async function castVerifyLoginOtp(formData: FormData) {
+  const phone = String(formData.get('phone') ?? '');
+  const otp = String(formData.get('otp') ?? '').trim();
+  const normalizedPhone = normalizeCastPhone(phone);
+  const authPhone = toE164JpPhone(phone);
+
+  if (!authPhone) {
+    return { success: false, error: '電話番号の形式が正しくありません。' };
+  }
+
+  if (!/^\d{6}$/.test(otp)) {
+    return { success: false, error: '認証コードは6桁で入力してください。' };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: authPhone,
+    token: otp,
+    type: 'sms',
+  });
+
+  if (error) {
+    return { success: false, error: '認証コードが正しくないか、有効期限が切れています。' };
+  }
+
+  const authUserId = data.user?.id;
+  const now = new Date().toISOString();
+
+  if (!authUserId) {
+    return { success: false, error: 'ログイン情報の取得に失敗しました。再度お試しください。' };
+  }
+
+  const { error: metadataError } = await supabase.auth.updateUser({
+    data: { last_sms_verified_at: now },
+  });
+
+  if (metadataError) {
+    return { success: false, error: '認証状態の更新に失敗しました。再度お試しください。' };
+  }
+
+  const serviceRoleClient = createServiceClient();
+  const { data: candidates, error: lookupError } = await findCastIdentityByPhone(
+    serviceRoleClient,
+    normalizedPhone
+  );
+
+  if (lookupError) {
+    return { success: false, error: 'キャスト情報の同期に失敗しました。時間をおいて再度お試しください。' };
+  }
+
+  const [candidate] = candidates;
+  const castRecord = candidate ? getCastRecord(candidate) : null;
+
+  if (!candidate || !castRecord) {
+    return { success: false, error: 'キャスト情報との紐付けに失敗しました。担当者にお問い合わせください。' };
+  }
+
+  const { error: castUpdateError } = await serviceRoleClient
+    .from('casts')
+    .update({
+      auth_user_id: authUserId,
+      last_sms_verified_at: now,
+      last_login_at: now,
+    })
+    .eq('id', castRecord.id);
+
+  if (castUpdateError) {
+    return { success: false, error: 'キャスト情報の更新に失敗しました。時間をおいて再度お試しください。' };
+  }
+
+  const { data: existingRoles, error: roleLookupError } = await serviceRoleClient
+    .from('user_roles')
+    .select('user_id')
+    .eq('user_id', authUserId)
+    .limit(1);
+
+  if (roleLookupError) {
+    console.error('[castVerifyLoginOtp] user role lookup error', {
+      authUserId,
+      message: roleLookupError.message,
+      details: roleLookupError.details,
+      hint: roleLookupError.hint,
+      code: roleLookupError.code,
+    });
+    return { success: false, error: '権限設定の更新に失敗しました。担当者にお問い合わせください。' };
+  }
+
+  const roleWrite = existingRoles && existingRoles.length > 0
+    ? await serviceRoleClient.from('user_roles').update({ role: 'cast' }).eq('user_id', authUserId)
+    : await serviceRoleClient.from('user_roles').insert({ user_id: authUserId, role: 'cast' });
+
+  if (roleWrite.error) {
+    console.error('[castVerifyLoginOtp] user role write error', {
+      authUserId,
+      message: roleWrite.error.message,
+      details: roleWrite.error.details,
+      hint: roleWrite.error.hint,
+      code: roleWrite.error.code,
+    });
+    return { success: false, error: '権限設定の更新に失敗しました。担当者にお問い合わせください。' };
+  }
+
+  await setCastReauthCookie();
   redirect('/cast/dashboard');
 }
 
@@ -60,9 +240,6 @@ export async function castLogin(formData: FormData) {
  * キャスト新規登録
  */
 export async function castRegister(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
   const lastName = (formData.get('lastName') as string)?.trim();
   const firstName = (formData.get('firstName') as string)?.trim();
   const stageName = (formData.get('stageName') as string)?.trim();
@@ -71,31 +248,37 @@ export async function castRegister(formData: FormData) {
   const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
-  const normalizedEmail = email?.trim().toLowerCase();
-  const normalizedPhone = phone?.replace(/\D/g, '');
+  const normalizedPhone = normalizeCastPhone(phone ?? '');
+  const authPhone = toE164JpPhone(phone ?? '');
   const normalizedStageName = stageName?.replace(/\s+/g, '').toLowerCase();
 
-  if (!normalizedEmail || !password || !confirmPassword || !realName || !phone) {
+  if (!realName || !normalizedPhone || !lineId) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
-  if (password !== confirmPassword) {
-    return { success: false, error: 'パスワードが一致しません。' };
-  }
-  if (password.length < 8) {
-    return { success: false, error: 'パスワードは8文字以上にしてください。' };
+  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
+    return { success: false, error: '電話番号の形式が正しくありません。' };
   }
 
-  const supabase = await createClient();
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('[castRegister] missing service role env', {
+      hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    });
+    return {
+      success: false,
+      error: '登録設定の読み込みに失敗しました。担当者にお問い合わせください。',
+      code: 'UNEXPECTED',
+    };
+  }
+
   const serviceRoleClient = createServiceClient();
-  const authBaseUrl = resolveAuthBaseUrl();
   const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
 
   try {
-    // Figma準拠の登録画面入力でキャスト本人を特定する。
-    const { data: privateInfoCandidates, error: privateInfoError } = await serviceRoleClient
-      .from('cast_private_info')
-      .select('cast_id, real_name, date_of_birth, phone, email, casts!inner(id, stage_name, auth_user_id)')
-      .limit(500);
+    const { data: privateInfoCandidates, error: privateInfoError } = await findCastIdentityByPhone(
+      serviceRoleClient,
+      normalizedPhone
+    );
 
     if (privateInfoError) {
       return {
@@ -106,20 +289,18 @@ export async function castRegister(formData: FormData) {
     }
 
     const matchedCandidates = (privateInfoCandidates ?? []).filter((candidate) => {
-      const candidatePhone = (candidate.phone ?? '').replace(/\D/g, '');
-      const candidateEmail = (candidate.email ?? '').trim().toLowerCase();
-      const candidateStageName = (((candidate.casts as unknown as { stage_name?: string } | null)?.stage_name) ?? '')
+      const candidatePhone = normalizeCastPhone(candidate.phone ?? '');
+      const candidateStageName = ((getCastRecord(candidate)?.stage_name) ?? '')
         .replace(/\s+/g, '')
         .toLowerCase();
 
       const isSameRealName =
         normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
       const isSamePhone = Boolean(normalizedPhone) && candidatePhone === normalizedPhone;
-      const isSameEmail = candidateEmail ? candidateEmail === normalizedEmail : true;
       const isSameStageName = normalizedStageName ? candidateStageName === normalizedStageName : true;
       const isSameBirthDate = dateOfBirth ? candidate.date_of_birth === dateOfBirth : true;
 
-      return isSameRealName && isSamePhone && isSameEmail && isSameStageName && isSameBirthDate;
+      return isSameRealName && isSamePhone && isSameStageName && isSameBirthDate;
     });
 
     if (matchedCandidates.length > 1) {
@@ -131,20 +312,15 @@ export async function castRegister(formData: FormData) {
     }
 
     const privateInfo = matchedCandidates[0];
+    const castRecord = privateInfo ? getCastRecord(privateInfo) : null;
 
-    if (!privateInfo) {
+    if (!privateInfo || !castRecord) {
       return {
         success: false,
         error: '入力された情報に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
         code: 'NO_MATCH',
       };
     }
-
-    const castRecord = privateInfo.casts as unknown as {
-      id: string;
-      stage_name: string;
-      auth_user_id: string | null;
-    };
 
     if (castRecord.auth_user_id) {
       return {
@@ -154,96 +330,19 @@ export async function castRegister(formData: FormData) {
       };
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email: normalizedEmail,
-      password,
-      options: {
-        emailRedirectTo: `${authBaseUrl}/cast/verify-email`,
-      },
+    const { data, error } = await serviceRoleClient.auth.admin.createUser({
+      phone: authPhone,
+      phone_confirm: false,
     });
 
-    let authUser = data.user;
-    let usedAuthFallback = false;
+    const authUser = data.user;
 
     if (error) {
-      const normalizedErrorMessage = error.message.toLowerCase();
-      const shouldBypassEmailDelivery =
-        normalizedErrorMessage.includes('email rate limit exceeded') ||
-        normalizedErrorMessage.includes('error sending confirmation email');
-
-      if (shouldBypassEmailDelivery) {
-        usedAuthFallback = true;
-
-        const { data: fallbackData, error: fallbackError } =
-          await serviceRoleClient.auth.admin.createUser({
-            email: normalizedEmail,
-            password,
-            email_confirm: true,
-          });
-
-        if (fallbackError) {
-          const fallbackMessage = fallbackError.message.toLowerCase();
-          const duplicateUserError =
-            fallbackMessage.includes('already been registered') ||
-            fallbackMessage.includes('already registered') ||
-            fallbackMessage.includes('already exists');
-
-          if (!duplicateUserError) {
-            return {
-              success: false,
-              error: `アカウント作成に失敗しました: ${fallbackError.message}`,
-              code: 'AUTH_SIGNUP_FAILED',
-            };
-          }
-
-          const { data: usersData, error: usersError } = await serviceRoleClient.auth.admin.listUsers({
-            page: 1,
-            perPage: 1000,
-          });
-
-          if (usersError) {
-            return {
-              success: false,
-              error: `アカウント作成に失敗しました: ${usersError.message}`,
-              code: 'AUTH_SIGNUP_FAILED',
-            };
-          }
-
-          const existingUser = usersData.users.find((user) => user.email?.toLowerCase() === normalizedEmail);
-
-          if (!existingUser) {
-            return {
-              success: false,
-              error: `アカウント作成に失敗しました: ${fallbackError.message}`,
-              code: 'AUTH_SIGNUP_FAILED',
-            };
-          }
-
-          const { data: updatedUserData, error: updateUserError } =
-            await serviceRoleClient.auth.admin.updateUserById(existingUser.id, {
-              password,
-              email_confirm: true,
-            });
-
-          if (updateUserError) {
-            return {
-              success: false,
-              error: `アカウント作成に失敗しました: ${updateUserError.message}`,
-              code: 'AUTH_SIGNUP_FAILED',
-            };
-          }
-
-          authUser = updatedUserData.user;
-        } else {
-          authUser = fallbackData.user;
-        }
-      } else {
-        return {
-          success: false,
-          error: `アカウント作成に失敗しました: ${error.message}`,
-          code: 'AUTH_SIGNUP_FAILED',
-        };
-      }
+      return {
+        success: false,
+        error: `アカウント作成に失敗しました: ${error.message}`,
+        code: 'AUTH_SIGNUP_FAILED',
+      };
     }
 
     if (!authUser) {
@@ -293,12 +392,17 @@ export async function castRegister(formData: FormData) {
 
     return {
       success: true,
-      message: usedAuthFallback
-        ? 'アカウントを登録しました。確認メール送信に失敗したため、このままログインできます。'
-        : 'アカウントを登録しました。確認メールをご確認の上、認証後にログインしてください。',
+      message: 'アカウントを登録しました。ログイン画面からSMS認証を行ってください。',
       code: 'SUCCESS',
     };
-  } catch {
+  } catch (error) {
+    console.error('[castRegister] unexpected error', {
+      realName,
+      normalizedPhone,
+      stageName,
+      dateOfBirth,
+      error,
+    });
     return {
       success: false,
       error: '想定外のエラーが発生しました。時間をおいて再度お試しください。',
@@ -311,58 +415,23 @@ export async function castRegister(formData: FormData) {
 /**
  * パスワード再設定メール送信
  */
-export async function castForgotPassword(formData: FormData) {
-  const email = (formData.get('email') as string)?.trim().toLowerCase();
-  const resetRedirectUrl = `${PRODUCTION_AUTH_BASE_URL}/cast/reset-password`;
-
-  if (!email) {
-    return { success: false, error: 'メールアドレスを入力してください。' };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: resetRedirectUrl,
-  });
-
-  if (error) {
-    const normalizedErrorMessage = error.message.toLowerCase();
-
-    if (normalizedErrorMessage.includes('redirect url') && normalizedErrorMessage.includes('not allowed')) {
-      return {
-        success: false,
-        error: '再設定リンクURLが許可されていません。認証設定（URL Configuration）をご確認ください。',
-      };
-    }
-
-    if (
-      normalizedErrorMessage.includes('error sending recovery email') ||
-      normalizedErrorMessage.includes('failed to send message') ||
-      normalizedErrorMessage.includes('smtp')
-    ) {
-      return {
-        success: false,
-        error:
-          '再設定メールの送信に失敗しました。SMTP設定（Sender / Host / Port / Username / Password）をご確認ください。',
-      };
-    }
-
-    if (normalizedErrorMessage.includes('rate limit')) {
-      return {
-        success: false,
-        error: '短時間での送信回数が上限に達しました。しばらく待ってから再度お試しください。',
-      };
-    }
-
-    return { success: false, error: error.message };
-  }
-
-  return { success: true, message: 'パスワード再設定のメールを送信しました。' };
+export async function castForgotPassword(formData: FormData): Promise<{
+  success: boolean;
+  error?: string;
+  message?: string;
+}> {
+  void formData;
+  return {
+    success: false,
+    error: 'キャストログインはSMS認証に変更されました。ログイン画面から電話番号で認証してください。',
+  };
 }
 
 /**
  * キャストログアウト
  */
 export async function castLogout() {
+  await clearCastReauthCookie();
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/cast/login');

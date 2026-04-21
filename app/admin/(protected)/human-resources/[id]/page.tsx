@@ -25,7 +25,7 @@ export default async function EditCastPage({ params }: { params: Promise<{ id: s
     : cast?.cast_private_info
   const accountSnapshot = await getCastAccountSnapshot({
     authUserId: cast?.auth_user_id ?? null,
-    privateEmail: privateInfo?.email ?? null,
+    privatePhone: privateInfo?.phone ?? null,
   })
 
   const images = (cast?.cast_images ?? []).map((img: {
@@ -82,8 +82,8 @@ export default async function EditCastPage({ params }: { params: Promise<{ id: s
 
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="space-y-1">
-            <dt className="text-gray-500">登録メールアドレス</dt>
-            <dd className="text-[#171717] break-all">{accountSnapshot.email ?? '-'}</dd>
+            <dt className="text-gray-500">SMSログイン電話番号</dt>
+            <dd className="text-[#171717] break-all">{accountSnapshot.phone ?? privateInfo?.phone ?? '-'}</dd>
           </div>
           <div className="space-y-1">
             <dt className="text-gray-500">登録日時</dt>
@@ -96,6 +96,14 @@ export default async function EditCastPage({ params }: { params: Promise<{ id: s
           <div className="space-y-1 md:col-span-2">
             <dt className="text-gray-500">Auth User ID</dt>
             <dd className="text-[#171717] font-mono text-xs break-all">{accountSnapshot.authUserId ?? '-'}</dd>
+          </div>
+          <div className="space-y-1">
+            <dt className="text-gray-500">LINE ID</dt>
+            <dd className="text-[#171717] break-all">{privateInfo?.line_id ?? '-'}</dd>
+          </div>
+          <div className="space-y-1">
+            <dt className="text-gray-500">LINE連携状態</dt>
+            <dd className="text-[#171717]">{privateInfo?.line_user_id ? '連携済み' : '未連携'}</dd>
           </div>
         </dl>
 

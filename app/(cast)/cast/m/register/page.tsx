@@ -5,30 +5,6 @@ import Link from 'next/link';
 import { castRegister } from '@/lib/actions/cast-auth';
 import { toast } from 'sonner';
 
-function EyeIcon({ open }: { open: boolean }) {
-  return open ? (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  ) : (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-      <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4h16v16H4z" />
-      <path d="m22 6-10 7L2 6" />
-    </svg>
-  );
-}
-
 function ArrowRightIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -41,10 +17,8 @@ function ArrowRightIcon() {
 export default function CastRegisterMobilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [completedMessage, setCompletedMessage] = useState(
-    '確認メールを送信しました。メール内のリンクで認証を完了してからログインしてください。'
+    '登録が完了しました。ログイン画面からSMS認証を行ってください。'
   );
   const [feedback, setFeedback] = useState<{
     type: 'error' | 'success';
@@ -74,7 +48,7 @@ export default function CastRegisterMobilePage() {
     try {
       const result = await castRegister(formData);
       if (result.success) {
-        const successMessage = result.message ?? 'アカウントを登録しました。確認メールをご確認ください。';
+        const successMessage = result.message ?? 'アカウントを登録しました。ログイン画面からSMS認証を行ってください。';
         toast.success(successMessage);
         setFeedback({
           type: 'success',
@@ -248,90 +222,20 @@ export default function CastRegisterMobilePage() {
             </div>
 
             <div>
-              <label className="block text-xs mb-1.5 flex items-center gap-1.5" style={{ color: '#9f9fa9' }}>
+              <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
                 LINE ID
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: '#3f3f47', color: '#71717b' }}>任意</span>
               </label>
               <input
                 name="lineId"
                 type="text"
+                required
                 className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="@your-line-id"
                 style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
               />
               <p className="text-[10px] mt-1" style={{ color: '#52525b' }}>
-                LINE アプリ → プロフィール → ID で確認できます
+                LINE アプリ → プロフィール → ID で確認できます。LINE ID はログインには使用しません。
               </p>
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
-                メールアドレス
-              </label>
-              <div className="relative">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: '#71717b' }} aria-hidden>
-                  <MailIcon />
-                </span>
-                <input
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="w-full rounded-[10px] pl-9 pr-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
-                  placeholder="example@email.com"
-                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
-                パスワード
-              </label>
-              <div className="relative">
-                <input
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
-                  placeholder="パスワードを入力"
-                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
-                  aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                >
-                  <EyeIcon open={showPassword} />
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
-                パスワード確認
-              </label>
-              <div className="relative">
-                <input
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  className="w-full rounded-[10px] px-[10px] py-[6px] pr-9 text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
-                  placeholder="パスワードを再入力"
-                  style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword((value) => !value)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
-                  aria-label={showConfirmPassword ? 'パスワードを隠す' : 'パスワードを表示'}
-                >
-                  <EyeIcon open={showConfirmPassword} />
-                </button>
-              </div>
             </div>
 
             {feedback && (
@@ -345,6 +249,10 @@ export default function CastRegisterMobilePage() {
                 {feedback.title}: {feedback.message}
               </p>
             )}
+
+            <p className="text-[11px] leading-relaxed" style={{ color: '#9f9fa9' }}>
+              事前登録済みのキャストのみ利用できます。登録後のログインは電話番号へのSMS認証で行います。
+            </p>
 
             <button
               type="submit"
