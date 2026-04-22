@@ -58,8 +58,6 @@ const BOTTOM_TAB_ITEMS = [
   { href: '/admin/applications',    icon: Briefcase,       label: '応募' },
 ];
 
-const STAFF_NAV_HREFS = new Set(['/admin/dashboard']);
-
 type AdminLayoutProps = {
   children: React.ReactNode;
   pendingPostsCount?: number;
@@ -156,11 +154,10 @@ function AdminLayoutInner({
       <div className={`mx-6 h-px ${T.divider}`} />
 
       {/* Navigation */}
-	      <nav className="flex-1 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
+      <nav className="flex-1 min-h-0 py-5 px-3 overflow-y-auto space-y-5 custom-scrollbar">
         {Object.keys(SECTIONS).map((section) => {
           const items = NAV_ITEMS.filter((i) => {
             if (i.section !== section) return false;
-            if (role === 'staff' && !STAFF_NAV_HREFS.has(i.href)) return false;
             const itemRoles = (i as { roles?: string[] }).roles;
             if (itemRoles && !itemRoles.includes(role)) return false;
             return true;
@@ -218,7 +215,7 @@ function AdminLayoutInner({
       </nav>
 
       {/* Footer */}
-      <div className={`p-3.5 border-t space-y-3 ${T.footerBorder}`}>
+      <div className={`shrink-0 p-3.5 border-t space-y-3 ${T.footerBorder}`}>
         {/* Mode Switch */}
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 px-1">
@@ -316,7 +313,7 @@ function AdminLayoutInner({
 	      {/* Mobile Bottom Tab */}
       <nav className={`fixed bottom-0 left-0 right-0 z-30 md:hidden border-t pb-safe font-inter ${T.mobileTab}`}>
         <div className="flex items-center">
-          {BOTTOM_TAB_ITEMS.filter((item) => role !== 'staff' || STAFF_NAV_HREFS.has(item.href)).map((item) => {
+          {BOTTOM_TAB_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
