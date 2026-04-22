@@ -95,6 +95,126 @@ export async function getPublicCasts() {
   }
 }
 
+// ─── 公開TOP専用: 承認済み本日確認に連動した本日の出勤キャスト ───
+export async function getPublicTodayCasts() {
+  try {
+    const supabase = createServiceClient()
+    const today = jstToday()
+
+    const { data: checkins, error: checkinError } = await supabase
+      .from('daily_checkins')
+      .select('cast_id')
+      .eq('checkin_date', today)
+      .eq('approval_status', 'approved')
+      .eq('is_absent', false)
+
+    if (checkinError) { console.error('getPublicTodayCasts checkins:', checkinError); return [] }
+
+    const checkedCastIds = [...new Set((checkins || []).map((row) => row.cast_id).filter(Boolean))]
+    if (checkedCastIds.length === 0) return []
+
+    // daily_checkinsにはwork/douhanの種別が残らないため、同伴だけdaily_reservationsで承認状態を厳密化する。
+    const { data: douhanReservations, error: douhanError } = await supabase
+      .from('daily_reservations')
+      .select('cast_id, approval_status')
+      .eq('reservation_date', today)
+      .eq('reservation_type', 'douhan')
+      .neq('approval_status', 'rejected')
+      .in('cast_id', checkedCastIds)
+
+    if (douhanError) { console.error('getPublicTodayCasts douhan reservations:', douhanError); return [] }
+
+    const douhanCastIds = new Set((douhanReservations || []).map((row) => row.cast_id).filter(Boolean))
+    const approvedDouhanCastIds = new Set(
+      (douhanReservations || [])
+        .filter((row) => row.approval_status === 'approved')
+        .map((row) => row.cast_id)
+        .filter(Boolean)
+    )
+    const eligibleCastIds = checkedCastIds.filter(
+      (castId) => !douhanCastIds.has(castId) || approvedDouhanCastIds.has(castId)
+    )
+    if (eligibleCastIds.length === 0) return []
+
+    const { data: schedules, error: scheduleError } = await supabase
+      .from('cast_schedules')
+      .select('cast_id')
+      .eq('work_date', today)
+      .in('cast_id', eligibleCastIds)
+
+    if (scheduleError) { console.error('getPublicTodayCasts schedules:', scheduleError); return [] }
+
+    const scheduledCastIds = [...new Set((schedules || []).map((row) => row.cast_id).filter(Boolean))]
+    if (scheduledCastIds.length === 0) return []
+
+    const { data, error } = await supabase
+      .from('casts')
+      .select(`
+        id,
+        slug,
+        name,
+        stage_name,
+        age,
+        height,
+        image_url,
+        cast_images(image_url, image_type, is_primary, sort_order)
+      `)
+      .eq('is_active', true)
+      .eq('status', 'public')
+      .in('id', scheduledCastIds)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(10)
+
+    if (error) { console.error('getPublicTodayCasts casts:', error); return [] }
+    if (data.length === 0) return []
+
+    const diaryThreshold = Date.now() - 72 * 60 * 60 * 1000
+    const { data: posts, error: postsError } = await supabase
+      .from('cast_posts')
+      .select('cast_id, created_at')
+      .in('cast_id', data.map((cast) => cast.id))
+      .eq('status', 'published')
+      .gte('created_at', new Date(diaryThreshold).toISOString())
+
+    if (postsError) {
+      console.error('getPublicTodayCasts posts:', postsError)
+    }
+
+    const latestPostMap = new Map<string, number>()
+    for (const post of posts || []) {
+      const timestamp = new Date(post.created_at).getTime()
+      if (Number.isNaN(timestamp)) continue
+      const current = latestPostMap.get(post.cast_id) ?? 0
+      if (timestamp > current) latestPostMap.set(post.cast_id, timestamp)
+    }
+
+    return data.map((cast) => {
+      const latest = latestPostMap.get(cast.id)
+      const displayName = cast.stage_name || cast.name || ''
+      const imageUrl = resolveCastImageUrl(cast.image_url, cast.cast_images as CastImageRecord[] | null | undefined)
+
+      return {
+        id: cast.id,
+        slug: cast.slug,
+        name: cast.name,
+        stage_name: cast.stage_name,
+        display_name: displayName,
+        age: cast.age,
+        height: cast.height,
+        image_url: imageUrl,
+        cast_images: cast.cast_images,
+        is_today: true,
+        has_recent_post: typeof latest === 'number' ? latest >= diaryThreshold : false,
+        latest_post_at: latest ? new Date(latest).toISOString() : null,
+      }
+    })
+  } catch (err) {
+    console.error('getPublicTodayCasts: unexpected error', err)
+    return []
+  }
+}
+
 // ─── Night Style 診断マッチキャスト（スコア順 top N）─────────
 export async function getMatchedCasts(tags: string[], limit = 4) {
   try {

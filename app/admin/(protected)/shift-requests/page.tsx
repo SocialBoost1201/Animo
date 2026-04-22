@@ -76,10 +76,10 @@ export default async function ShiftRequestsPage({
 
   return (
     <div
-      className="min-h-screen -m-6 md:-m-10 lg:-m-14 p-5 md:p-8 lg:p-12 font-inter"
+      className="rounded-[24px] p-4 md:p-6 font-inter"
       style={{ background: 'linear-gradient(180deg, #242424 0%, #171717 100%)' }}
     >
-      <div className="space-y-4 max-w-[1920px] mx-auto">
+      <div className="space-y-4 w-full">
 
         {/* ── Page Header: light card / black title ── */}
         <div

@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { 
-  Plus, Check, X, Trash2, Power, Clock, MessageSquare, AlertCircle, Calendar as CalendarIcon 
+  Plus, Check, X, Trash2, Power, Clock, MessageSquare, AlertCircle, Calendar as CalendarIcon, Loader2
 } from 'lucide-react';
 import { 
   ShiftRequest, 
@@ -41,8 +42,9 @@ export function HelpRequestList({
       setIsCreating(false);
       setNewDate('');
       setNewMessage('');
+      toast.success('店舗からの募集を発行しました。');
     } catch (error) {
-      alert(error instanceof Error ? error.message : '作成に失敗しました');
+      toast.error(error instanceof Error ? error.message : '作成に失敗しました');
     } finally {
       setIsSubmitting(false);
     }
@@ -52,8 +54,9 @@ export function HelpRequestList({
     setProcessingId(id);
     try {
       await toggleShiftRequestActive(id, !currentActive);
-    } catch (error) {
-      alert('操作に失敗しました');
+      toast.success(currentActive ? '募集の受付を終了しました。' : '募集を再開しました。');
+    } catch {
+      toast.error('操作に失敗しました');
     } finally {
       setProcessingId(null);
     }
@@ -64,8 +67,9 @@ export function HelpRequestList({
     setProcessingId(id);
     try {
       await deleteShiftRequest(id);
-    } catch (error) {
-      alert('削除に失敗しました');
+      toast.success('募集を削除しました。');
+    } catch {
+      toast.error('削除に失敗しました');
     } finally {
       setProcessingId(null);
     }
@@ -82,8 +86,9 @@ export function HelpRequestList({
       } else {
         await rejectShiftRequestResponse(responseId);
       }
+      toast.success(`応募を${actionName}しました。`);
     } catch (error) {
-      alert(`${actionName}に失敗しました: ` + (error instanceof Error ? error.message : ''));
+      toast.error(`${actionName}に失敗しました: ` + (error instanceof Error ? error.message : ''));
     } finally {
       setProcessingId(null);
     }
@@ -139,8 +144,9 @@ export function HelpRequestList({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-8 py-3 bg-gold text-black font-bold rounded-full hover:bg-[#d4b35a] disabled:opacity-50 transition-all shadow-lg shadow-gold/20 active:scale-95"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-black font-bold rounded-full hover:bg-[#d4b35a] disabled:opacity-50 transition-all shadow-lg shadow-gold/20 active:scale-95"
               >
+                {isSubmitting && <Loader2 size={16} className="animate-spin" />}
                 {isSubmitting ? '作成中...' : '募集を発行する'}
               </button>
             </div>
@@ -173,21 +179,21 @@ export function HelpRequestList({
                   <div className="flex items-center gap-3 shrink-0">
                     <button
                       onClick={() => handleToggle(req.id, req.is_active)}
-                      disabled={processingId === req.id}
+                      disabled={processingId !== null}
                       className={`p-3 rounded-xl border transition-all duration-300 ${
                         req.is_active ? 'bg-white/5 border-white/10 text-[#f4f1ea] hover:bg-white/10' : 'bg-gold text-black border-gold hover:scale-105'
                       } disabled:opacity-50`}
                       title={req.is_active ? "受付を終了する" : "募集を再開する"}
                     >
-                      <Power size={20} />
+                      {processingId === req.id ? <Loader2 size={20} className="animate-spin" /> : <Power size={20} />}
                     </button>
                     <button
                       onClick={() => handleDelete(req.id)}
-                      disabled={processingId === req.id}
+                      disabled={processingId !== null}
                       className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded-xl transition-all duration-300 disabled:opacity-50 hover:scale-105"
                       title="削除する"
                     >
-                      <Trash2 size={20} />
+                      {processingId === req.id ? <Loader2 size={20} className="animate-spin" /> : <Trash2 size={20} />}
                     </button>
                   </div>
                 </div>
@@ -259,17 +265,35 @@ export function HelpRequestList({
                     <>
                       <button
                         onClick={() => handleResponseAction(res.id, 'approve')}
-                        disabled={processingId === res.id}
+                        disabled={processingId !== null}
                         className="flex-1 lg:px-8 py-3 bg-gold text-black text-sm font-bold rounded-full hover:bg-[#d4b35a] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-gold/20 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <Check size={18} /> 承認
+                        {processingId === res.id ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            承認中...
+                          </>
+                        ) : (
+                          <>
+                            <Check size={18} /> 承認
+                          </>
+                        )}
                       </button>
                       <button
                         onClick={() => handleResponseAction(res.id, 'reject')}
-                        disabled={processingId === res.id}
+                        disabled={processingId !== null}
                         className="flex-1 lg:px-8 py-3 bg-white/5 border border-white/10 text-[#8a8478] text-sm font-bold rounded-full hover:bg-white/10 hover:text-[#f4f1ea] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <X size={18} /> 却下
+                        {processingId === res.id ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            却下中...
+                          </>
+                        ) : (
+                          <>
+                            <X size={18} /> 却下
+                          </>
+                        )}
                       </button>
                     </>
                   ) : (

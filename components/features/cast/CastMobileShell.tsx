@@ -108,8 +108,8 @@ export function CastMobileCard({
   className?: string;
 }) {
   return (
-    <div className={`rounded-[20px] card-premium-skin ${className}`.trim()}>
-      <div className="card-premium-skin__surface rounded-[20px] overflow-hidden">
+    <div className="rounded-[20px] card-premium-skin">
+      <div className={`card-premium-skin__surface rounded-[20px] overflow-hidden ${className}`.trim()}>
         {children}
       </div>
     </div>

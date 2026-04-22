@@ -872,6 +872,7 @@ export async function approveCheckin(id: string) {
   if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
   return { success: true as const, id }
 }
 
@@ -889,6 +890,7 @@ export async function rejectCheckin(id: string) {
   if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
   return { success: true as const, id }
 }
 
@@ -910,6 +912,7 @@ export async function approveReservation(id: string) {
   if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
   return { success: true as const, id }
 }
 
@@ -928,6 +931,7 @@ export async function rejectReservation(id: string) {
   if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
   return { success: true as const, id }
 }
 

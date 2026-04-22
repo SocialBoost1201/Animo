@@ -31,18 +31,16 @@ export function ShiftRequestList({
   }, [initialSubmissions]);
 
   const handleApprove = async (id: string) => {
-    const prev = submissions;
     setIsProcessing(id);
-    setSubmissions((cur) =>
-      currentStatus === 'pending'
-        ? cur.filter((s) => s.id !== id)
-        : cur.map((s) => (s.id === id ? { ...s, status: 'approved' } : s))
-    );
     const result = await approveShiftSubmission(id);
     if (result.success) {
+      setSubmissions((cur) =>
+        currentStatus === 'pending'
+          ? cur.filter((s) => s.id !== id)
+          : cur.map((s) => (s.id === id ? { ...s, status: 'approved' } : s))
+      );
       toast.success('シフトを承認し、公開設定に反映しました。');
     } else {
-      setSubmissions(prev);
       toast.error(result.error);
     }
     setIsProcessing(null);
@@ -50,18 +48,16 @@ export function ShiftRequestList({
 
   const handleReject = async (id: string) => {
     if (!confirm('この提出を却下しますか？')) return;
-    const prev = submissions;
     setIsProcessing(id);
-    setSubmissions((cur) =>
-      currentStatus === 'pending'
-        ? cur.filter((s) => s.id !== id)
-        : cur.map((s) => (s.id === id ? { ...s, status: 'rejected' } : s))
-    );
     const result = await rejectShiftSubmission(id);
     if (result.success) {
+      setSubmissions((cur) =>
+        currentStatus === 'pending'
+          ? cur.filter((s) => s.id !== id)
+          : cur.map((s) => (s.id === id ? { ...s, status: 'rejected' } : s))
+      );
       toast.success('提出を却下しました。');
     } else {
-      setSubmissions(prev);
       toast.error(result.error);
     }
     setIsProcessing(null);
@@ -222,7 +218,7 @@ export function ShiftRequestList({
                 {/* 却下 */}
                 <button
                   onClick={() => handleReject(sub.id)}
-                  disabled={processing}
+                  disabled={isProcessing !== null}
                   className="inline-flex items-center justify-center font-bold transition-all active:scale-[0.97] disabled:opacity-50"
                   style={{
                     width: '180px',
@@ -235,13 +231,20 @@ export function ShiftRequestList({
                     cursor: 'pointer',
                   }}
                 >
-                  {processing ? <Loader2 size={18} className="animate-spin" /> : '却下'}
+                  {processing ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      却下中...
+                    </>
+                  ) : (
+                    '却下'
+                  )}
                 </button>
 
                 {/* 承認して公開 */}
                 <button
                   onClick={() => handleApprove(sub.id)}
-                  disabled={processing}
+                  disabled={isProcessing !== null}
                   className="inline-flex items-center justify-center font-bold transition-all active:scale-[0.97] disabled:opacity-50"
                   style={{
                     width: '180px',
@@ -255,7 +258,10 @@ export function ShiftRequestList({
                   }}
                 >
                   {processing ? (
-                    <Loader2 size={18} className="animate-spin text-black" />
+                    <>
+                      <Loader2 size={18} className="animate-spin text-black" />
+                      承認中...
+                    </>
                   ) : (
                     '承認して公開'
                   )}

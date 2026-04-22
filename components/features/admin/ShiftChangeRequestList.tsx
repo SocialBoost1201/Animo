@@ -14,15 +14,13 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
   }, [requests]);
 
   const handleApprove = async (id: string, stageName: string, dateStr: string) => {
-    const previousRequests = requestItems;
     setIsProcessing(id);
-    setRequestItems((current) => current.filter((request) => request.id !== id));
     const { success, error } = await approveShiftChangeRequest(id);
     
     if (success) {
+      setRequestItems((current) => current.filter((request) => request.id !== id));
       toast.success(`${stageName} の ${dateStr} の変更申請を承認しました`);
     } else {
-      setRequestItems(previousRequests);
       toast.error(`承認に失敗しました: ${error}`);
     }
     
@@ -32,15 +30,13 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
   const handleReject = async (id: string, stageName: string, dateStr: string) => {
     if (!window.confirm(`${stageName} の ${dateStr} の変更申請を却下しますか？`)) return;
     
-    const previousRequests = requestItems;
     setIsProcessing(id);
-    setRequestItems((current) => current.filter((request) => request.id !== id));
     const { success, error } = await rejectShiftChangeRequest(id);
     
     if (success) {
+      setRequestItems((current) => current.filter((request) => request.id !== id));
       toast.success(`${stageName} の変更申請を却下しました`);
     } else {
-      setRequestItems(previousRequests);
       toast.error(`却下に失敗しました: ${error}`);
     }
     
@@ -116,8 +112,17 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
                   disabled={isProcessing !== null}
                   className="px-4 py-2 rounded-lg text-sm font-bold text-[#8a8478] hover:text-red-400 hover:bg-red-400/10 transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
-                  <X className="w-4 h-4" />
-                  却下
+                  {isActioning ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      却下中...
+                    </>
+                  ) : (
+                    <>
+                      <X className="w-4 h-4" />
+                      却下
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => handleApprove(req.id, req.casts.stage_name, targetDate)}
@@ -125,11 +130,16 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
                   className="px-6 py-2 rounded-lg text-sm font-bold bg-[#f4f1ea] text-black hover:bg-white transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
                 >
                   {isActioning ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      承認中...
+                    </>
                   ) : (
-                    <Check className="w-4 h-4" />
+                    <>
+                      <Check className="w-4 h-4" />
+                      {req.action_type === 'cancel' ? '取消を承認する' : '変更を承認する'}
+                    </>
                   )}
-                  {req.action_type === 'cancel' ? '取消を承認する' : '変更を承認する'}
                 </button>
               </div>
             </div>
