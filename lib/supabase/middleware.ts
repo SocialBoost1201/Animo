@@ -20,6 +20,16 @@ const ADMIN_PUBLIC_PATHS = new Set([
 ])
 const STAFF_ADMIN_PATHS = new Set(['/admin', '/admin/dashboard'])
 
+function isStaffAllowedAdminPath(pathname: string) {
+  if (STAFF_ADMIN_PATHS.has(pathname)) return true
+
+  return (
+    pathname.startsWith('/admin/human-resources') ||
+    pathname.startsWith('/admin/huma-resources') ||
+    pathname.startsWith('/admin/human-resource')
+  )
+}
+
 async function getLinkedCastData(
   supabase: ReturnType<typeof createServerClient>,
   userId: string
@@ -118,7 +128,7 @@ export async function updateSession(request: NextRequest) {
       return redirectToSafeDestination(request, role)
     }
 
-    if (role === 'staff' && !STAFF_ADMIN_PATHS.has(pathname)) {
+    if (role === 'staff' && !isStaffAllowedAdminPath(pathname)) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/dashboard'
       return NextResponse.redirect(url)
