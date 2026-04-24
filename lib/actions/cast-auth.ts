@@ -20,10 +20,10 @@ import { revalidatePath } from 'next/cache';
 
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
   // DBには数字のみ形式と旧ハイフン付き形式が混在している可能性があるため両方で検索
-  const formattedPhone = formatJapaneseMobilePhone(normalizedPhone)
+  const formattedPhone = formatJapaneseMobilePhone(normalizedPhone);
   const phonesToSearch = formattedPhone !== normalizedPhone
     ? [normalizedPhone, formattedPhone]
-    : [normalizedPhone]
+    : [normalizedPhone];
 
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
@@ -117,6 +117,13 @@ export async function castSendLoginOtp(formData: FormData) {
     };
   }
 
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
   if (!castRecord.auth_user_id) {
     return {
       success: false,
@@ -139,7 +146,12 @@ export async function castSendLoginOtp(formData: FormData) {
       ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
       : Infinity;
 
-    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS;
+    const hasCompletedSmsVerification = Boolean(lastVerifiedRaw);
+    const isValidSession =
+      Boolean(castRecord.auth_user_id) &&
+      hasCompletedSmsVerification &&
+      Boolean(isValidCookie) &&
+      daysSince < CAST_REAUTH_WINDOW_DAYS;
 
     if (isValidSession) {
       return {
@@ -228,6 +240,20 @@ export async function castVerifyLoginOtp(formData: FormData) {
 
   if (!candidate || !castRecord) {
     return { success: false, error: 'キャスト情報との紐付けに失敗しました。担当者にお問い合わせください。' };
+  }
+
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
+  if (castRecord.auth_user_id && castRecord.auth_user_id !== authUserId) {
+    return {
+      success: false,
+      error: 'キャスト情報の紐付け状態が不正です。担当者にお問い合わせください。',
+    };
   }
 
   const { error: castUpdateError } = await serviceRoleClient
@@ -374,70 +400,19 @@ export async function castRegister(formData: FormData) {
       };
     }
 
-    const { data: createData, error: createError } = await serviceRoleClient.auth.admin.createUser({
+    const { data, error } = await serviceRoleClient.auth.admin.createUser({
       phone: authPhone,
       phone_confirm: false,
     });
 
-    let authUser: { id: string } | null = createData?.user ?? null;
+    const authUser = data.user;
 
-    if (createError) {
-      // 同一電話番号の Auth user が既に存在する場合はリカバリーを試みる
-      const errMsg = (createError.message ?? '').toLowerCase();
-      const isPhoneDuplicate = errMsg.includes('already') || errMsg.includes('registered') || errMsg.includes('exists');
-
-      if (!isPhoneDuplicate) {
-        return {
-          success: false,
-          error: 'アカウント作成に失敗しました。時間をおいて再度お試しください。',
-          code: 'AUTH_SIGNUP_FAILED',
-        };
-      }
-
-      // GoTrue Admin REST API で phone フィルタ検索
-      // supabase-js の TypeScript 型に filter がないため fetch を直接使用する
-      const searchParams = new URLSearchParams({ page: '1', per_page: '10', filter: `phone=${authPhone}` });
-      const resp = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/admin/users?${searchParams}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-            'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY!,
-          },
-        }
-      );
-
-      if (!resp.ok) {
-        return {
-          success: false,
-          error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
-          code: 'AUTH_RECOVERY_FAILED',
-        };
-      }
-
-      type AuthUserLite = { id: string; phone?: string };
-      const json = await resp.json() as { users?: AuthUserLite[] };
-
-      // phone が完全一致するユーザーだけを対象にする
-      const matched = (json.users ?? []).filter((u: AuthUserLite) => u.phone === authPhone);
-
-      if (matched.length === 0) {
-        return {
-          success: false,
-          error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
-          code: 'AUTH_RECOVERY_FAILED',
-        };
-      }
-
-      if (matched.length > 1) {
-        return {
-          success: false,
-          error: '同一電話番号のアカウントが複数存在します。担当者にお問い合わせください。',
-          code: 'AUTH_MULTIPLE_USERS',
-        };
-      }
-
-      authUser = matched[0];
+    if (error) {
+      return {
+        success: false,
+        error: `アカウント作成に失敗しました: ${error.message}`,
+        code: 'AUTH_SIGNUP_FAILED',
+      };
     }
 
     if (!authUser) {
