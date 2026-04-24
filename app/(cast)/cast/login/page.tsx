@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { castSendLoginOtp } from '@/lib/actions/cast-auth';
+import { formatJapaneseMobilePhone, normalizeJapanesePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
 export default function CastLoginPage() {
@@ -28,6 +29,11 @@ export default function CastLoginPage() {
       const result = await castSendLoginOtp(formData);
 
       if (!result.success) {
+        if ('code' in result && result.code === 'NEEDS_REGISTER') {
+          const normalizedPhone = normalizeJapanesePhone(phone);
+          router.push(`/cast/register?phone=${encodeURIComponent(normalizedPhone)}`);
+          return;
+        }
         toast.error(result.error);
         return;
       }
@@ -99,9 +105,9 @@ export default function CastLoginPage() {
                 type="tel"
                 required
                 autoComplete="tel"
-                inputMode="tel"
+                inputMode="numeric"
                 value={phone}
-                onChange={(event) => setPhone(event.target.value)}
+                onChange={(event) => setPhone(formatJapaneseMobilePhone(event.target.value))}
                 className="w-full rounded-[10px] px-4 py-3 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="090-1234-5678"
                 style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}

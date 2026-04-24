@@ -5,9 +5,13 @@ import {
   CAST_REAUTH_COOKIE_NAME,
   CAST_REAUTH_WINDOW_DAYS,
   CAST_REAUTH_WINDOW_MS,
-  normalizeCastPhone,
-  toE164JpPhone,
 } from '@/lib/cast-auth-utils';
+import {
+  normalizeJapanesePhone,
+  formatJapaneseMobilePhone,
+  isValidJapaneseMobilePhone,
+  toE164JapanesePhone,
+} from '@/lib/utils/phone';
 import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
@@ -15,10 +19,16 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
+  // DBには数字のみ形式と旧ハイフン付き形式が混在している可能性があるため両方で検索
+  const formattedPhone = formatJapaneseMobilePhone(normalizedPhone)
+  const phonesToSearch = formattedPhone !== normalizedPhone
+    ? [normalizedPhone, formattedPhone]
+    : [normalizedPhone]
+
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
     .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, auth_user_id, last_sms_verified_at)')
-    .eq('phone', normalizedPhone)
+    .in('phone', phonesToSearch)
     .limit(5);
 
   return {
@@ -82,12 +92,13 @@ async function clearCastReauthCookie() {
  */
 export async function castSendLoginOtp(formData: FormData) {
   const phone = String(formData.get('phone') ?? '');
-  const normalizedPhone = normalizeCastPhone(phone);
-  const authPhone = toE164JpPhone(phone);
+  const normalizedPhone = normalizeJapanesePhone(phone);
 
-  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
-    return { success: false, error: '電話番号の形式が正しくありません。' };
+  if (!isValidJapaneseMobilePhone(normalizedPhone)) {
+    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
   }
+
+  const authPhone = toE164JapanesePhone(normalizedPhone);
 
   const serviceRoleClient = createServiceClient();
   const { data: candidates, error: lookupError } = await findCastIdentityByPhone(serviceRoleClient, normalizedPhone);
@@ -102,15 +113,16 @@ export async function castSendLoginOtp(formData: FormData) {
   if (!candidate || !castRecord) {
     return {
       success: false,
-      error: 'この電話番号に紐づくキャスト情報が見つかりませんでした。担当者にお問い合わせください。',
+      error: 'この電話番号は事前登録されていません。店舗スタッフに確認してください。',
     };
   }
 
   if (!castRecord.auth_user_id) {
     return {
       success: false,
-      error: 'まだアカウント登録が完了していません。先に新規登録を行ってください。',
-      code: 'UNREGISTERED',
+      code: 'NEEDS_REGISTER' as const,
+      error: 'この電話番号はまだ登録が完了していません。新規登録を行ってください。',
+      redirectTo: '/cast/register' as const,
     };
   }
 
@@ -147,7 +159,7 @@ export async function castSendLoginOtp(formData: FormData) {
   });
 
   if (error) {
-    return { success: false, error: `SMS送信に失敗しました: ${error.message}` };
+    return { success: false, error: 'SMS送信に失敗しました。電話番号を確認してください。' };
   }
 
   return {
@@ -163,12 +175,13 @@ export async function castSendLoginOtp(formData: FormData) {
 export async function castVerifyLoginOtp(formData: FormData) {
   const phone = String(formData.get('phone') ?? '');
   const otp = String(formData.get('otp') ?? '').trim();
-  const normalizedPhone = normalizeCastPhone(phone);
-  const authPhone = toE164JpPhone(phone);
+  const normalizedPhone = normalizeJapanesePhone(phone);
 
-  if (!authPhone) {
-    return { success: false, error: '電話番号の形式が正しくありません。' };
+  if (!isValidJapaneseMobilePhone(normalizedPhone)) {
+    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
   }
+
+  const authPhone = toE164JapanesePhone(normalizedPhone);
 
   if (!/^\d{6}$/.test(otp)) {
     return { success: false, error: '認証コードは6桁で入力してください。' };
@@ -278,16 +291,17 @@ export async function castRegister(formData: FormData) {
   const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
-  const normalizedPhone = normalizeCastPhone(phone ?? '');
-  const authPhone = toE164JpPhone(phone ?? '');
+  const normalizedPhone = normalizeJapanesePhone(phone ?? '');
   const normalizedStageName = stageName?.replace(/\s+/g, '').toLowerCase();
 
   if (!realName || !normalizedPhone || !lineId) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
-  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
-    return { success: false, error: '電話番号の形式が正しくありません。' };
+  if (!isValidJapaneseMobilePhone(normalizedPhone)) {
+    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
   }
+
+  const authPhone = toE164JapanesePhone(normalizedPhone);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     console.error('[castRegister] missing service role env', {
@@ -319,7 +333,7 @@ export async function castRegister(formData: FormData) {
     }
 
     const matchedCandidates = (privateInfoCandidates ?? []).filter((candidate) => {
-      const candidatePhone = normalizeCastPhone(candidate.phone ?? '');
+      const candidatePhone = normalizeJapanesePhone(candidate.phone ?? '');
       const candidateStageName = ((getCastRecord(candidate)?.stage_name) ?? '')
         .replace(/\s+/g, '')
         .toLowerCase();
@@ -355,24 +369,75 @@ export async function castRegister(formData: FormData) {
     if (castRecord.auth_user_id) {
       return {
         success: false,
-        error: 'このキャストのアカウントはすでに登録済みです。担当者にお問い合わせください。',
+        error: 'この電話番号は既に登録済みです。ログイン画面からSMS認証してください。',
         code: 'ALREADY_REGISTERED',
       };
     }
 
-    const { data, error } = await serviceRoleClient.auth.admin.createUser({
+    const { data: createData, error: createError } = await serviceRoleClient.auth.admin.createUser({
       phone: authPhone,
       phone_confirm: false,
     });
 
-    const authUser = data.user;
+    let authUser: { id: string } | null = createData?.user ?? null;
 
-    if (error) {
-      return {
-        success: false,
-        error: `アカウント作成に失敗しました: ${error.message}`,
-        code: 'AUTH_SIGNUP_FAILED',
-      };
+    if (createError) {
+      // 同一電話番号の Auth user が既に存在する場合はリカバリーを試みる
+      const errMsg = (createError.message ?? '').toLowerCase();
+      const isPhoneDuplicate = errMsg.includes('already') || errMsg.includes('registered') || errMsg.includes('exists');
+
+      if (!isPhoneDuplicate) {
+        return {
+          success: false,
+          error: 'アカウント作成に失敗しました。時間をおいて再度お試しください。',
+          code: 'AUTH_SIGNUP_FAILED',
+        };
+      }
+
+      // GoTrue Admin REST API で phone フィルタ検索
+      // supabase-js の TypeScript 型に filter がないため fetch を直接使用する
+      const searchParams = new URLSearchParams({ page: '1', per_page: '10', filter: `phone=${authPhone}` });
+      const resp = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/admin/users?${searchParams}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          },
+        }
+      );
+
+      if (!resp.ok) {
+        return {
+          success: false,
+          error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
+          code: 'AUTH_RECOVERY_FAILED',
+        };
+      }
+
+      type AuthUserLite = { id: string; phone?: string };
+      const json = await resp.json() as { users?: AuthUserLite[] };
+
+      // phone が完全一致するユーザーだけを対象にする
+      const matched = (json.users ?? []).filter((u: AuthUserLite) => u.phone === authPhone);
+
+      if (matched.length === 0) {
+        return {
+          success: false,
+          error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
+          code: 'AUTH_RECOVERY_FAILED',
+        };
+      }
+
+      if (matched.length > 1) {
+        return {
+          success: false,
+          error: '同一電話番号のアカウントが複数存在します。担当者にお問い合わせください。',
+          code: 'AUTH_MULTIPLE_USERS',
+        };
+      }
+
+      authUser = matched[0];
     }
 
     if (!authUser) {

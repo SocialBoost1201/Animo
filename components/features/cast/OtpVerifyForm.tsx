@@ -2,6 +2,7 @@
 
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { castSendLoginOtp, castVerifyLoginOtp } from '@/lib/actions/cast-auth';
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
 type OtpVerifyFormProps = {
@@ -10,7 +11,7 @@ type OtpVerifyFormProps = {
 };
 
 export function OtpVerifyForm({ initialPhone, initialCodeSent = false }: OtpVerifyFormProps) {
-  const [phone, setPhone] = useState(initialPhone);
+  const [phone, setPhone] = useState(formatJapaneseMobilePhone(initialPhone));
   const [otp, setOtp] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -74,9 +75,9 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false }: OtpVeri
           type="tel"
           required
           autoComplete="tel"
-          inputMode="tel"
+          inputMode="numeric"
           value={phone}
-          onChange={(event) => setPhone(event.target.value)}
+          onChange={(event) => setPhone(formatJapaneseMobilePhone(event.target.value))}
           className="w-full rounded-[10px] px-4 py-3 text-base text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
           placeholder="090-1234-5678"
           style={{ background: '#27272a', border: '0.556px solid #3f3f47' }}

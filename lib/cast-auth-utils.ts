@@ -1,3 +1,5 @@
+import { normalizeJapanesePhone } from '@/lib/utils/phone'
+
 const CAST_PORTAL_PUBLIC_PATHS = new Set([
   '/cast/login',
   '/cast/verify',
@@ -27,16 +29,12 @@ export const CAST_REAUTH_COOKIE_NAME = 'cast_reauth_until'
 export const CAST_REAUTH_WINDOW_DAYS = 14
 export const CAST_REAUTH_WINDOW_MS = CAST_REAUTH_WINDOW_DAYS * 24 * 60 * 60 * 1000
 
-function toHalfWidthDigits(value: string) {
-  return value.replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
+export function normalizeCastPhone(value: string): string {
+  return normalizeJapanesePhone(value)
 }
 
-export function normalizeCastPhone(value: string) {
-  return toHalfWidthDigits(value).replace(/[^\d]/g, '')
-}
-
-export function toE164JpPhone(value: string) {
-  const normalized = normalizeCastPhone(value)
+export function toE164JpPhone(value: string): string | null {
+  const normalized = normalizeJapanesePhone(value)
 
   if (/^0\d{9,10}$/.test(normalized)) {
     return `+81${normalized.slice(1)}`
