@@ -1,5 +1,6 @@
 import { getDashboardCastShifts } from '@/lib/actions/dashboard';
 import Link from 'next/link';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { ChevronRight, Users } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -68,6 +69,11 @@ export async function DashboardTodayShifts() {
       </div>
 
       {/* Table */}
+      {casts.length === 0 ? (
+        <div className="flex-1 p-5">
+          <DashboardEmptyState className="min-h-[200px] h-full" />
+        </div>
+      ) : (
       <div className="flex-1 overflow-x-auto custom-scrollbar">
         <div className="min-w-[900px]">
           {/* Table Header Row */}
@@ -80,13 +86,7 @@ export async function DashboardTodayShifts() {
 
           {/* Table Body */}
           <div className="divide-y divide-[#ffffff0a]">
-            {casts.length === 0 ? (
-              <div className="h-60 flex flex-col items-center justify-center italic gap-4">
-                <Users size={32} className="text-[#1c1d22]" />
-                <p className="text-[14px] text-[#5a5650]">本日の出勤登録はありません</p>
-              </div>
-            ) : (
-              casts.map((cast) => {
+            {casts.map((cast) => {
                 const cfg = STATUS_CONFIG[cast.status] || STATUS_CONFIG.pending;
                 return (
                   <div
@@ -115,7 +115,7 @@ export async function DashboardTodayShifts() {
                       <div className="inline-flex items-center gap-2 text-[14px] font-bold text-gold font-sans bg-gold/5 px-3 py-1.5 rounded-[6px] border border-gold/10">
                         <span>{cast.startTime}</span>
                         <span className="text-[#5a5650] font-normal opacity-50">—</span>
-                        <span className="text-[#8a8478] font-medium">{cast.endTime || 'LAST'}</span>
+                        <span className="text-[#8a8478] font-medium">{cast.endTime || '—'}</span>
                       </div>
                     </div>
 
@@ -144,11 +144,11 @@ export async function DashboardTodayShifts() {
                     </div>
                   </div>
                 );
-              })
-            )}
+              })}
           </div>
         </div>
       </div>
+      )}
       </div>
     </div>
   );

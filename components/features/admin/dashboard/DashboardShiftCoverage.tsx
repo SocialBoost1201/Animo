@@ -1,4 +1,5 @@
 import { getDashboardShiftCoverage } from '@/lib/actions/dashboard';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { BarChart3 } from 'lucide-react';
 
 export async function DashboardShiftCoverage() {
@@ -21,6 +22,13 @@ export async function DashboardShiftCoverage() {
       </div>
 
       <div className="flex-1 p-5.5 flex flex-col min-w-0">
+        {!data.hasSourceRecords ? (
+          <DashboardEmptyState
+            description="データ蓄積後に表示されます"
+            className="min-h-[220px] flex-1"
+          />
+        ) : (
+          <>
         {/* Weekly Chart (Matching AnalyticsSectionSubsection:710-752) */}
         <div className="relative h-[116px] mb-8 mt-1 px-2">
           <div className="flex items-end justify-between h-20 gap-[23px]">
@@ -79,11 +87,13 @@ export async function DashboardShiftCoverage() {
             ))}
           </div>
         </div>
+          </>
+        )}
       </div>
 
       {/* Missing Submission Alert (Matching AnalyticsSectionSubsection:810) */}
       <div className="px-6 pb-6">
-        {data.missingCount > 0 && (
+        {data.hasSourceRecords && data.missingCount > 0 && (
           <div className="flex items-center justify-center gap-2 px-3 h-8 bg-[#fb3a3a14] rounded-[9px] border-[0.56px] border-[#fb3a3a26]">
             <p className="text-[10px] text-[#cbc3b3] tracking-[0.12px]">
               シフト未提出 <span className="font-semibold text-[#fb3a3a]">{data.missingCount}名</span> — 催促が必要

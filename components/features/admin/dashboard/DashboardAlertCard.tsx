@@ -1,4 +1,5 @@
 import { getDashboardKPIs } from '@/lib/actions/dashboard';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { AlertTriangle } from 'lucide-react';
 
 type AlertItem = {
@@ -59,9 +60,7 @@ export async function DashboardAlertCard() {
       {/* Alert List */}
       <div className="flex-1 p-4 space-y-2.5 overflow-y-auto custom-scrollbar">
         {alerts.length === 0 ? (
-          <div className="h-full flex items-center justify-center">
-            <p className="text-[12px] text-[#5a5650] italic">現在アラートはありません</p>
-          </div>
+          <DashboardEmptyState className="min-h-40 h-full" />
         ) : (
           alerts.map((a) => {
             const s = LEVEL_STYLES[a.level];

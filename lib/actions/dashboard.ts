@@ -5,6 +5,7 @@ import { getJstDateString } from '@/lib/date-utils';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format } from 'date-fns';
 
 export type DashboardKPIData = {
+  hasOperationalRecords: boolean;
   todayShiftCount: number;
   confirmedCount: number;
   unconfirmedCount: number;
@@ -18,6 +19,7 @@ export type DashboardKPIData = {
 };
 
 export type DashboardTodayOpsData = {
+  hasOperationalRecords: boolean;
   date: string;
   dateLabel: string;
   startTime: string;
@@ -61,7 +63,7 @@ export type DashboardCastRanking = {
   score: number;
   blogCount: number;
   shiftDays: number;
-  nominations: number;
+  nominations: number | null;
 };
 
 export type WeeklyShiftCoverage = {
@@ -73,6 +75,7 @@ export type WeeklyShiftCoverage = {
 };
 
 export type DashboardShiftCoverageData = {
+  hasSourceRecords: boolean;
   weekly: WeeklyShiftCoverage[];
   minDay: string;
   maxDay: string;
@@ -101,6 +104,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     { data: yesterdayReservations },
     { data: trials },
     { count: unreadApps },
+    { count: totalApplications },
     { count: activeCasts },
     { count: pendingShifts },
   ] = await Promise.all([
@@ -110,6 +114,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     supabase.from('daily_reservations').select('id').eq('reservation_date', yesterdayStr),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('recruit_applications').select('id', { count: 'exact', head: true }).eq('is_read', false),
+    supabase.from('recruit_applications').select('id', { count: 'exact', head: true }),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
   ]);
@@ -151,9 +156,22 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     .eq('reservation_date', today)
     .eq('reservation_type', 'reservation');
 
+  const hasOperationalRecords =
+    (shiftsRaw?.length ?? 0) > 0 ||
+    (checkinsRaw?.length ?? 0) > 0 ||
+    (todayReservations?.length ?? 0) > 0 ||
+    (yesterdayReservations?.length ?? 0) > 0 ||
+    (trials?.length ?? 0) > 0 ||
+    (weeklyShifts?.length ?? 0) > 0 ||
+    (totalApplications ?? 0) > 0 ||
+    (activeCasts ?? 0) > 0 ||
+    (pendingShifts ?? 0) > 0 ||
+    (unconfirmedReservations ?? 0) > 0;
+
   const alertCount = unconfirmedCount + (unconfirmedReservations ?? 0) + (pendingShifts ?? 0 > 3 ? 1 : 0);
 
   return {
+    hasOperationalRecords,
     todayShiftCount,
     confirmedCount,
     unconfirmedCount,
@@ -184,12 +202,14 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     { data: trials },
     { count: activeCasts },
     { data: noticeMemos },
+    { count: pendingShifts },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
+    supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
   ]);
 
   let confirmedCastCount = 0;
@@ -205,8 +225,16 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
   const vipMemo = noticeMemos?.find(m => m.memo_type === 'vip')?.content ?? null;
   const eventMemo = noticeMemos?.find(m => m.memo_type === 'event')?.content ?? null;
   const urgentMemo = noticeMemos?.find(m => m.memo_type === 'urgent')?.content ?? null;
+  const hasOperationalRecords =
+    (shiftsRaw?.length ?? 0) > 0 ||
+    (reservations?.length ?? 0) > 0 ||
+    (trials?.length ?? 0) > 0 ||
+    (activeCasts ?? 0) > 0 ||
+    (noticeMemos?.length ?? 0) > 0 ||
+    (pendingShifts ?? 0) > 0;
 
   return {
+    hasOperationalRecords,
     date: today,
     dateLabel,
     startTime: '20:00',
@@ -393,7 +421,7 @@ export async function getDashboardCastRanking(): Promise<DashboardCastRanking[]>
       score: s.total_score ?? 0,
       blogCount: blogCountMap.get(s.cast_id) ?? 0,
       shiftDays: shiftDaysMap.get(s.cast_id) ?? 0,
-      nominations: 0, // 指名データは別途実装
+      nominations: null,
     };
   });
 }
@@ -418,7 +446,8 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
   ]);
 
-  const totalCasts = activeCasts ?? 1;
+  const activeCastCount = activeCasts ?? 0;
+  const totalCasts = Math.max(activeCastCount, 1);
   const weekDayLabels = ['月', '火', '水', '木', '金', '土', '日'];
 
   const weekly: WeeklyShiftCoverage[] = weekDays.map((day, idx) => {
@@ -450,7 +479,13 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     .select('id', { count: 'exact', head: true })
     .eq('status', 'pending');
 
+  const hasSourceRecords =
+    (shiftsRaw?.length ?? 0) > 0 ||
+    activeCastCount > 0 ||
+    (pendingCount ?? 0) > 0;
+
   return {
+    hasSourceRecords,
     weekly,
     minDay,
     maxDay,
@@ -458,7 +493,7 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     maxRate,
     avgRate,
     missingCount: pendingCount ?? 0,
-    activeCastCount: totalCasts,
+    activeCastCount,
   };
 }
 
@@ -486,5 +521,3 @@ export async function upsertDailyMemo(
 
   return { success: true };
 }
-
-

@@ -1,13 +1,15 @@
 'use client';
 
-import { type ReactElement } from 'react';
 import { CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line, XAxis, YAxis } from 'recharts';
+import { DashboardEmptyState } from './DashboardEmptyState';
 
 export function DashboardChartsClient({
   monthlyData,
 }: {
   monthlyData: { month: string; applications: number }[];
 }) {
+  const hasSourceRecords = monthlyData.some((item) => item.applications > 0);
+
   return (
     <div className="grid grid-cols-1 gap-6">
 
@@ -18,21 +20,28 @@ export function DashboardChartsClient({
           <span className="w-0.5 h-3.5 bg-[linear-gradient(180deg,#dfbd69_0%,#926f34_100%)] inline-block rounded-full" />
           求人応募 推移（直近6ヶ月）
         </h2>
-        <div className="h-64 w-full text-xs">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} dy={10} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} allowDecimals={false} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#1c1d22', border: '1px solid #ffffff0f', borderRadius: '10px', fontSize: '12px', color: '#f4f1ea' }} 
-                itemStyle={{ color: '#dfbd69' }}
-              />
-              <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', color: '#8a8478', fontSize: '10px' }} />
-              <Line type="monotone" dataKey="applications" name="応募者数" stroke="#dfbd69" strokeWidth={3} dot={{ strokeWidth: 2, r: 4, fill: '#17181c', stroke: '#dfbd69' }} activeDot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        {hasSourceRecords ? (
+          <div className="h-64 w-full text-xs">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#8a8478', fontSize: 10 }} allowDecimals={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1c1d22', border: '1px solid #ffffff0f', borderRadius: '10px', fontSize: '12px', color: '#f4f1ea' }}
+                  itemStyle={{ color: '#dfbd69' }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', color: '#8a8478', fontSize: '10px' }} />
+                <Line type="monotone" dataKey="applications" name="応募者数" stroke="#dfbd69" strokeWidth={3} dot={{ strokeWidth: 2, r: 4, fill: '#17181c', stroke: '#dfbd69' }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <DashboardEmptyState
+            description="データ蓄積後に表示されます"
+            className="min-h-64"
+          />
+        )}
       </div>
     </div>
   );

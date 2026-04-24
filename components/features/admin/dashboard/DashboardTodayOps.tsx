@@ -1,4 +1,5 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus } from 'lucide-react';
 
 export async function DashboardTodayOps() {
@@ -54,7 +55,9 @@ export async function DashboardTodayOps() {
         </div>
         <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
           <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
-          <span className="font-sans text-[10px] font-semibold text-[#72B894] tracking-[0.117px] leading-[12px] uppercase">· 営業準備中</span>
+          <span className="font-sans text-[10px] font-semibold text-[#72B894] tracking-[0.117px] leading-[12px] uppercase">
+            · {ops.hasOperationalRecords ? '営業準備中' : '運用開始待ち'}
+          </span>
         </div>
       </div>
 
@@ -64,17 +67,21 @@ export async function DashboardTodayOps() {
         <div className="flex-1 p-6 flex flex-col min-w-0">
           <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">OVERVIEW</p>
           <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
-            {overviewRows.map((row, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between py-4 px-1 border-b border-[#ffffff0a] last:border-0"
-              >
-                <span className="text-[14px] text-[#8a8478] font-medium leading-none">{row.label}</span>
-                <span className={`text-[15px] tracking-tight leading-none ${row.bold ? 'font-bold text-white' : 'font-semibold text-[#cbc3b3]'}`}>
-                  {row.value}
-                </span>
-              </div>
-            ))}
+            {!ops.hasOperationalRecords ? (
+              <DashboardEmptyState className="min-h-[220px]" />
+            ) : (
+              overviewRows.map((row, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-4 px-1 border-b border-[#ffffff0a] last:border-0"
+                >
+                  <span className="text-[14px] text-[#8a8478] font-medium leading-none">{row.label}</span>
+                  <span className={`text-[15px] tracking-tight leading-none ${row.bold ? 'font-bold text-white' : 'font-semibold text-[#cbc3b3]'}`}>
+                    {row.value}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -83,10 +90,7 @@ export async function DashboardTodayOps() {
           <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">MANAGEMENT MEMO</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
-              <div className="h-40 flex flex-col items-center justify-center gap-3 border border-dashed border-[#ffffff0f] rounded-[18px]">
-                 <Plus size={18} className="text-[#5a5650] opacity-40" />
-                 <p className="text-[12px] text-[#5a5650]">管理メモはありません</p>
-              </div>
+              <DashboardEmptyState className="min-h-40" />
             ) : (
               memos.map((memo, i) => (
                 <div

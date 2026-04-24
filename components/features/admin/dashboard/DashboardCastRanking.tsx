@@ -1,5 +1,6 @@
 import { getDashboardCastRanking } from '@/lib/actions/dashboard';
 import Link from 'next/link';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { Trophy } from 'lucide-react';
 
 export async function DashboardCastRanking() {
@@ -48,9 +49,7 @@ export async function DashboardCastRanking() {
         {/* List */}
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
           {ranking.length === 0 ? (
-            <div className="h-40 flex items-center justify-center italic">
-               <p className="text-[12px] text-[#5a5650]">データがありません</p>
-            </div>
+            <DashboardEmptyState className="min-h-40" />
           ) : (
             ranking.map((r, index) => (
               <div key={r.castId} className="group flex items-center h-[36px] hover:bg-[#ffffff05] transition-colors rounded-sm px-1">
@@ -85,7 +84,7 @@ export async function DashboardCastRanking() {
 
                 {/* Nomination */}
                 <div className="w-[34px] text-center">
-                   <span className="text-[10px] font-semibold text-[#c7c0b2]">{r.nominations}</span>
+                   <span className="text-[10px] font-semibold text-[#c7c0b2]">{r.nominations ?? '—'}</span>
                 </div>
               </div>
             ))
