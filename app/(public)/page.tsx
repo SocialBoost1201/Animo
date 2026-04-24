@@ -108,9 +108,8 @@ export default async function HomePage() {
     },
   ];
 
-  // Today's Cast: is_todayフラグ優先。なければ最大10名表示
   const todayCasts = dbCasts.filter((c) => c.is_today);
-  const displayTodayCasts = todayCasts.length > 0 ? todayCasts.slice(0, 10) : dbCasts.slice(0, 10);
+  const displayTodayCasts = todayCasts.slice(0, 10);
   
   // 在籍キャスト用 (最大10名表示)
   const displayAllCasts = dbCasts.slice(0, 10);
@@ -183,10 +182,7 @@ export default async function HomePage() {
               <GsapRevealTitle text="Today's Cast" />
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
-            <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
-            <Link href="/shift" className="inline-flex items-center text-gold text-xs font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
-              View Schedule →
-            </Link>
+            <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase">本日の出勤</p>
           </FadeIn>
 
           <div
@@ -249,11 +245,6 @@ export default async function HomePage() {
             </div>
           )}
 
-          <div className="mt-8 text-center md:hidden">
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/shift">出勤スケジュールを見る</Link>
-            </Button>
-          </div>
         </div>
       </section>
 
