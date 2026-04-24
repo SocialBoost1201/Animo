@@ -51,7 +51,7 @@ export const Footer = () => {
               <li><Link href="/system" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">System</Link></li>
               <li><Link href="/cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Cast</Link></li>
               <li><Link href="/news" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">News</Link></li>
-              <li><Link href="/shift" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Today&apos;s Shift</Link></li>
+              <li><Link href="/#today-cast" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Today&apos;s Shift</Link></li>
               <li><Link href="/gallery" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">Gallery</Link></li>
               <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors text-xs font-serif uppercase luxury-tracking">FAQ</Link></li>
             </ul>

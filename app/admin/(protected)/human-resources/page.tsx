@@ -16,7 +16,10 @@ export default async function HumanResourcesPage({
   const { q, month, tab = 'casts' } = await searchParams;
 
   const [castsData, staffsData] = await Promise.all([
-    getCasts(q),
+    getCasts(q).catch((error) => {
+      console.error('[admin/human-resources] Failed to load casts:', error);
+      return [];
+    }),
     getStaffs(true),
   ]);
 

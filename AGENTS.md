@@ -1,33 +1,49 @@
 # AGENTS.md — Animo
 
-## Execution Flow
-Analysis → Plan → Explicit Approval → Execution → Verification
-Execution requires explicit approval.
+## Core Execution Contract
+- Only perform work explicitly requested by the master.
+- Do not expand scope.
+- If anything outside the stated scope may be affected, stop and ask the master for approval.
+- Only modify files explicitly listed in the master-approved plan.
+- Minimal diff only.
+- No unrelated refactoring.
+- Required outputs may be created or updated only when explicitly included in the master-approved plan.
+- Approval is required before touching shared components, UI/UX outside the explicitly approved task scope, DB, env, config, auth, routing, dependencies, or creating new files (excluding test files required for validation).
+- If requirements are unclear or conflicting, stop and ask.
+- For non-trivial tasks: plan first, list target files and risks, then wait for approval.
+- Separate implementation and review roles.
 
-## Non-Negotiables
-- pnpm only
-- PPR must remain enabled
-- No unsafe AI endpoints
-- No `any` in TypeScript
-- No DB/auth/env changes without approval
+## Project Non-Negotiables
+- Do not bypass Supabase RLS or weaken authorization rules.
+- Do not run Three.js or browser-only code directly in SSR/server render paths; use safe client-only patterns.
+- Public-facing submission or contact flows must not be implemented without rate limiting.
+- Public-facing forms must not be implemented without bot protection such as Turnstile where applicable.
+- Never expose secrets.
+- Never send PII to AI systems.
+- No unsafe AI endpoints.
+- If framework/runtime version is referenced, verify it against `package.json`.
+
+## Project Rules
+- Use pnpm only.
+- PPR must remain enabled.
+- No `any` in TypeScript.
+- Follow established project architecture and existing module boundaries.
 
 ## UI Protection
-- Do not change layout, spacing, typography, animations without explicit request
-
-## Data / Security
-- Never expose secrets
-- Sanitize all user input before AI usage
-- No PII in AI requests
+- Do not change layout, spacing, typography, animations, or interactions without explicit instruction.
+- Never break existing navigation (sidebar, layout, routing).
 
 ## Git Safety
-- No direct commits to `main`
-- Use conventional commits
+- No direct commits to `main`.
+- Use conventional commits.
 
 ## Validation
-- `pnpm lint` and `pnpm build` must pass before commit
+- For code changes, `pnpm lint` and `pnpm build` must pass before commit.
+- For docs-only changes, validate only the changed markdown content and scope.
 
 ## Stop Conditions
-- Unclear requirements
-- UI risk
-- DB impact uncertainty
-- Cross-module side effects
+- Unclear requirements.
+- UI risk.
+- DB/auth/env/config impact uncertainty.
+- Cross-module side effects.
+- Unable to verify safely.

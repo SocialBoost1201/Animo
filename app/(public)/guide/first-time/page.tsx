@@ -226,7 +226,7 @@ export default function FirstTimeGuidePage() {
                 </Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/shift" className="px-8 luxury-tracking font-serif text-xs uppercase">
+                <Link href="/#today-cast" className="px-8 luxury-tracking font-serif text-xs uppercase">
                   本日の出勤
                 </Link>
               </Button>
@@ -287,7 +287,7 @@ export default function FirstTimeGuidePage() {
                 </a>
               </Button>
               <Button asChild size="lg" className="btn-sheen px-10">
-                <Link href="/shift">
+                <Link href="/#today-cast">
                   <Clock3 className="mr-3 w-4 h-4" />
                   本日の出勤を見る
                 </Link>

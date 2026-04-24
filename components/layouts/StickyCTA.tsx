@@ -28,7 +28,7 @@ export const StickyCTA: React.FC = () => {
 
             {/* 本日の出勤 */}
             <Link
-              href="/shift"
+              href="/#today-cast"
               className="flex-1 flex flex-col items-center justify-center border-r border-gray-100 text-foreground hover:bg-gray-50 transition-colors"
             >
               <CalendarDays className="w-5 h-5 mb-1" />

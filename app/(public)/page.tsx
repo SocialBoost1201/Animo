@@ -108,8 +108,8 @@ export default async function HomePage() {
     },
   ];
 
-  const todayCasts = dbCasts.filter((c) => c.is_today);
-  const displayTodayCasts = todayCasts.slice(0, 10);
+  // Today's Cast: is_today=true のキャストのみを表示
+  const displayTodayCasts = dbCasts.filter((c) => c.is_today).slice(0, 10);
   
   // 在籍キャスト用 (最大10名表示)
   const displayAllCasts = dbCasts.slice(0, 10);
@@ -119,7 +119,7 @@ export default async function HomePage() {
     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full px-6 sm:px-0">
       <Magnetic strength={0.3}>
         <Link
-          href="/shift"
+          href="/#today-cast"
           className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 min-h-[44px] bg-white/10 backdrop-blur-sm border border-white/40 text-white font-serif luxury-tracking text-xs uppercase hover:bg-white/20 transition-all"
         >
           <CalendarDays className="w-4 h-4" />
@@ -182,7 +182,10 @@ export default async function HomePage() {
               <GsapRevealTitle text="Today's Cast" />
             </h2>
             <div className="w-px h-12 bg-linear-to-b from-gold to-transparent mx-auto mb-4 opacity-50" />
-            <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase">本日の出勤</p>
+            <p className="text-xs text-gray-400 font-serif luxury-tracking uppercase mb-6">本日の出勤</p>
+            <Link href="/#today-cast" className="inline-flex items-center text-gold text-xs font-bold tracking-widest hover:underline underline-offset-4 uppercase font-serif">
+              View Schedule →
+            </Link>
           </FadeIn>
 
           <div
@@ -244,6 +247,12 @@ export default async function HomePage() {
               本日の出勤予定はまだ公開されていません。
             </div>
           )}
+
+          <div className="mt-8 text-center md:hidden">
+            <Button asChild variant="outline" className="w-full">
+              <Link href="/#today-cast">出勤スケジュールを見る</Link>
+            </Button>
+          </div>
 
         </div>
       </section>

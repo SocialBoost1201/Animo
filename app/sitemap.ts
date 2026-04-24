@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next'
 
-import { getPublishedPosts } from '@/lib/actions/cast-posts'
 import { getPublicCasts, getPublicContents } from '@/lib/actions/public/data'
 
 const BASE_URL = 'https://club-animo.jp'
@@ -18,23 +17,15 @@ type ContentEntry = SitemapDateSource & {
   id: string
 }
 
-type CastPostEntry = SitemapDateSource & {
-  id: string
-  casts?: {
-    slug?: string | null
-  } | null
-}
-
 function resolveLastModified(item: SitemapDateSource) {
   return new Date(item.updated_at || item.created_at || Date.now())
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [casts, news, events, posts] = await Promise.all([
+  const [casts, news, events] = await Promise.all([
     getPublicCasts().catch(() => []),
     getPublicContents('news').catch(() => []),
     getPublicContents('event').catch(() => []),
-    getPublishedPosts(1000).then((res) => res.data || []).catch(() => []),
   ])
 
   const staticPages = [
@@ -49,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/faq', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/terms', priority: 0.3, changeFrequency: 'yearly' as const },
     { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
+    { path: '/tokusho', priority: 0.3, changeFrequency: 'yearly' as const },
     { path: '/recruit/cast', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/recruit/staff', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/guide/first-time', priority: 0.8, changeFrequency: 'monthly' as const },
@@ -98,14 +90,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  const postEntries: MetadataRoute.Sitemap = (posts as CastPostEntry[])
-    .filter((post) => Boolean(post.casts?.slug))
-    .map((post) => ({
-      url: `${BASE_URL}/cast/${post.casts?.slug}/posts/${post.id}`,
-      lastModified: resolveLastModified(post),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }))
-
-  return [...staticEntries, ...castEntries, ...newsEntries, ...eventEntries, ...postEntries]
+  return [...staticEntries, ...castEntries, ...newsEntries, ...eventEntries]
 }

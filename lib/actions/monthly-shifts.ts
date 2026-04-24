@@ -24,6 +24,16 @@ type CastRow = {
   stage_name: string;
 };
 
+type ShiftSubmissionEntry = {
+  type?: string;
+  start?: string;
+};
+
+type ShiftSubmissionRow = {
+  cast_id: string;
+  shifts_data: Record<string, ShiftSubmissionEntry> | null;
+};
+
 type MonthlyShiftUpsertRow = {
   cast_id: string;
   work_date: string;
@@ -144,14 +154,14 @@ export async function getAdminMonthlyShifts(year: number, month: number) {
     return [];
   }
 
-  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-  const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+  const monthStr = String(month).padStart(2, '0');
+  const startDate = `${year}-${monthStr}-01`;
+  const endDate = `${year}-${monthStr}-${String(new Date(year, month, 0).getDate()).padStart(2, '0')}`;
 
-  const { data: shifts, error: shiftsErr } = await supabase
-    .from('cast_shifts')
-    .select('cast_id, work_date, status, start_time, is_douhan')
-    .gte('work_date', startDate)
-    .lte('work_date', endDate);
+  const { data: submissions, error: shiftsErr } = await supabase
+    .from('shift_submissions')
+    .select('cast_id, shifts_data')
+    .eq('status', 'approved');
 
   if (shiftsErr) {
     console.error('Error fetching admin monthly shifts:', shiftsErr);
@@ -159,17 +169,27 @@ export async function getAdminMonthlyShifts(year: number, month: number) {
   }
 
   return (casts satisfies CastRow[]).map((cast) => {
-    const castShifts = (shifts satisfies CastShiftRow[] | null)?.filter((shift) => shift.cast_id === cast.id) || [];
     const shiftMap: Record<number, MonthlyShiftDetail> = {};
-    
-    castShifts.forEach((shift) => {
-      const day = new Date(shift.work_date).getDate();
-      shiftMap[day] = {
-        status: shift.status,
-        startTime: shift.start_time ? shift.start_time.substring(0, 5) : null,
-        isDouhan: !!shift.is_douhan,
-      };
-    });
+
+    (submissions satisfies ShiftSubmissionRow[] | null)
+      ?.filter((submission) => submission.cast_id === cast.id)
+      .forEach((submission) => {
+        const shiftsData = submission.shifts_data;
+        if (!shiftsData) return;
+
+        Object.entries(shiftsData as Record<string, ShiftSubmissionEntry>).forEach(([dateKey, detail]) => {
+          if (dateKey < startDate || dateKey > endDate) return;
+
+          const day = Number(dateKey.slice(-2));
+          if (!Number.isInteger(day) || day < 1) return;
+
+          shiftMap[day] = {
+            status: detail?.type === 'work' ? 'available' : 'unavailable',
+            startTime: detail?.start ? detail.start.substring(0, 5) : null,
+            isDouhan: false,
+          };
+        });
+      });
 
     return {
       castId: cast.id,

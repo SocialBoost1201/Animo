@@ -149,7 +149,7 @@ export const PriceSimulator = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg" className="btn-silver-sheen px-12 h-14 w-full md:w-52">
-              <Link href="/shift">
+              <Link href="/#today-cast">
                 <Users className="mr-2 w-5 h-5" />
                 本日の出勤を見る
               </Link>
