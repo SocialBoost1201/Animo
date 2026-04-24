@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { castRegister } from '@/lib/actions/cast-auth';
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
 function ArrowRightIcon() {
@@ -16,6 +17,7 @@ function ArrowRightIcon() {
 
 export default function CastRegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [phone, setPhone] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
   const [completedMessage, setCompletedMessage] = useState(
     '登録が完了しました。ログイン画面からSMS認証を行ってください。'
@@ -213,7 +215,11 @@ export default function CastRegisterPage() {
               </label>
               <input
                 name="phone"
-                inputMode="tel"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(formatJapaneseMobilePhone(e.target.value))}
                 required
                 className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="090-1234-5678"

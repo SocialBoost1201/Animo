@@ -1,3 +1,5 @@
+import { normalizeJapanesePhone, isValidJapaneseMobilePhone } from '@/lib/utils/phone'
+
 export type CastProfileField =
   | 'real_name'
   | 'name_kana'
@@ -27,6 +29,10 @@ export type CastProfileNormalized = {
   email: string | null;
 };
 
+export function normalizePhone(value: string): string {
+  return normalizeJapanesePhone(value)
+}
+
 function normalizeWhitespace(value: string) {
   return value.trim();
 }
@@ -36,15 +42,6 @@ export function normalizeRealNameForIdentityMatch(value: string) {
     .normalize('NFKC')
     .replace(/[\s\u3000]+/g, '')
     .trim();
-}
-
-function toHalfWidthDigits(value: string) {
-  return value.replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0));
-}
-
-export function normalizePhone(value: string) {
-  const half = toHalfWidthDigits(value);
-  return half.replace(/[^\d]/g, '');
 }
 
 function isValidDateString(value: string) {
@@ -117,8 +114,8 @@ export function validateCastProfileInput(input: CastProfileInput): {
 
   if (!values.phone) {
     fieldErrors.phone = '電話番号を入力してください。';
-  } else if (!/^0\d{9,10}$/.test(values.phone)) {
-    fieldErrors.phone = '電話番号の形式が正しくありません。';
+  } else if (!isValidJapaneseMobilePhone(values.phone)) {
+    fieldErrors.phone = '携帯番号は09012345678のように11桁で入力してください。';
   }
 
   if (values.email && values.email.length > 254) {

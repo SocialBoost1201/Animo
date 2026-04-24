@@ -8,6 +8,7 @@ import {
   normalizeCastPhone,
   toE164JpPhone,
 } from '@/lib/cast-auth-utils';
+import { isValidJapaneseMobilePhone } from '@/lib/utils/phone';
 import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
@@ -85,8 +86,8 @@ export async function castSendLoginOtp(formData: FormData) {
   const normalizedPhone = normalizeCastPhone(phone);
   const authPhone = toE164JpPhone(phone);
 
-  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
-    return { success: false, error: '電話番号の形式が正しくありません。' };
+  if (!isValidJapaneseMobilePhone(normalizedPhone) || !authPhone) {
+    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
   }
 
   const serviceRoleClient = createServiceClient();
@@ -285,8 +286,8 @@ export async function castRegister(formData: FormData) {
   if (!realName || !normalizedPhone || !lineId) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
-  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
-    return { success: false, error: '電話番号の形式が正しくありません。' };
+  if (!isValidJapaneseMobilePhone(normalizedPhone) || !authPhone) {
+    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
   }
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
