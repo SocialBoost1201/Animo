@@ -363,8 +363,8 @@ body {
 
 /* ── bezel thickness variables ── */
 .card-premium-skin {
-  --bright-gold-bezel: 3px;
-  --dark-gold-bezel: 7px;
+  --bright-gold-bezel: 1px;
+  --dark-gold-bezel: 2px;
 }
 
 /* ── Root: positioning wrapper ── */
@@ -390,25 +390,18 @@ body {
   pointer-events: none;
 
   background:
-    radial-gradient(
-      50% 50% at 50% 50%,
-      rgba(250, 200, 30, 0.15) 0%,
-      transparent              70%
-    ),
     linear-gradient(
       135deg,
-      rgba(200, 140, 0, 0.80)  0%,
-      rgba(230, 175, 0, 0.65) 30%,
-      rgba(180, 110, 0, 0.80) 60%,
-      rgba(220, 160, 0, 0.70) 100%
+      rgba(180, 120, 0, 0.60)  0%,
+      rgba(200, 150, 0, 0.45) 50%,
+      rgba(160, 100, 0, 0.60) 100%
     ),
-    #1a1600;
+    #141200;
 
-  /* 浮遊感: 下側に深い影 */
+  /* 控えめな浮遊感 */
   box-shadow:
-    0 6px 24px 0   rgba(0, 0, 0, 0.90),
-    0 2px  8px 0   rgba(0, 0, 0, 0.60),
-    0 0   40px -8px rgba(200, 140, 0, 0.20);
+    0 4px 16px 0  rgba(0, 0, 0, 0.70),
+    0 1px  4px 0  rgba(0, 0, 0, 0.40);
 }
 
 /*
@@ -425,29 +418,18 @@ body {
   pointer-events: none;
 
   background:
-    /* 上部ハイライト: 光の当たる感 */
-    radial-gradient(
-      ellipse 80% 40% at 50% 0%,
-      rgba(255, 240, 120, 0.70) 0%,
-      transparent               60%
-    ),
-    /* メタリック線形グラデーション */
     linear-gradient(
       89deg,
-      #C88800  0%,
-      #F5D648 20%,
-      #FFEA70 38%,
-      #F0C820 55%,
-      #FFE060 72%,
-      #D4A000 88%,
-      #B87C00 100%
+      #A07000  0%,
+      #C8A030 25%,
+      #D4B040 50%,
+      #C8A030 75%,
+      #A07000 100%
     );
 
-  /* 内側グロー: 金の発光感 */
+  /* 控えめな内側グロー */
   box-shadow:
-    0  0  12px  2px rgba(255, 215,  0, 0.55) inset,
-    0 -8px 16px -2px rgba(255, 200,  0, 0.80) inset,
-    0  4px  8px -2px rgba(100,  60,  0, 0.40) inset;
+    0 0 4px 0 rgba(200, 160, 0, 0.25) inset;
 }
 
 /*
@@ -461,19 +443,13 @@ body {
   border-radius: inherit;
 
   background:
-    /* 中央の微光: 鏡面反射 */
-    radial-gradient(
-      ellipse 70% 50% at 50% 30%,
-      rgba(255, 255, 255, 0.03) 0%,
-      transparent               100%
-    ),
-    /* 縦グラデ: 上が少し明るく、下が締まる */
+    /* 縦グラデ: Figma準拠の黒鏡面 */
     linear-gradient(
-      175deg,
-      #1a1a1a  0%,
-      #0a0a0a 35%,
-      #000000 65%,
-      #111111 100%
+      1deg,
+      #1c1c1c  0%,
+      #141414 25%,
+      #0e0e0e 60%,
+      #181818 100%
     );
 }
 
@@ -514,4 +490,170 @@ body {
   transition: translate 80ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ── compact variant: KPI cards use even thinner bezels ── */
+.card-premium-skin--compact {
+  --bright-gold-bezel: 1px;
+  --dark-gold-bezel: 1.5px;
+}
 
+/* ============================================================
+   Light Mode — card-premium-skin adaptation
+   ============================================================
+   Triggered by data-theme="light" on AdminLayout wrapper.
+   Replaces gold bezel layers with clean white surface + subtle shadow.
+   No component changes needed — pure CSS cascade.
+   ============================================================ */
+
+[data-theme="light"] .card-premium-skin {
+  --bright-gold-bezel: 0px;
+  --dark-gold-bezel: 0px;
+}
+
+/* Kill gold bezel pseudo-elements in light mode */
+[data-theme="light"] .card-premium-skin::before,
+[data-theme="light"] .card-premium-skin::after {
+  display: none;
+}
+
+/* White surface with subtle shadow (Figma: bg #FFF, radius 18px) */
+[data-theme="light"] .card-premium-skin__surface {
+  background: #FFFFFF !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Light mode: panel text hierarchy ── */
+[data-theme="light"] .card-premium-skin__surface .text-\[\#f4f1ea\] {
+  color: #1a1710 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#c7c0b2\] {
+  color: #4a4640 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#8a8478\] {
+  color: #7a7268 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#5a5650\] {
+  color: #9a9080 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-white {
+  color: #1a1710 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#cbc3b3\] {
+  color: #2e2b26 !important;
+}
+
+/* ── Light mode: dividers and borders ── */
+[data-theme="light"] .card-premium-skin__surface .border-\[\#ffffff0f\],
+[data-theme="light"] .card-premium-skin__surface .border-\[\#ffffff0a\] {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .divide-\[\#ffffff0f\] > * + *,
+[data-theme="light"] .card-premium-skin__surface .divide-\[\#ffffff0a\] > * + * {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Light mode: table header bg ── */
+[data-theme="light"] .card-premium-skin__surface .bg-white\/1 {
+  background: #f8f6f2 !important;
+}
+
+/* ── Light mode: hover rows ── */
+[data-theme="light"] .card-premium-skin__surface .hover\:bg-white\/2:hover,
+[data-theme="light"] .card-premium-skin__surface .hover\:bg-\[\#ffffff05\]:hover {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* ── Light mode: memo card bg ── */
+[data-theme="light"] .card-premium-skin__surface .bg-black\/40 {
+  background: #f5f1ea !important;
+}
+
+/* ── Light mode: KPI value gradient ── */
+[data-theme="light"] .card-premium-skin--compact .card-premium-skin__surface p[style*="WebkitTextFillColor"] {
+  background: linear-gradient(90deg, #7a5820 0%, #5a4018 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ── Light mode: gold icon containers ── */
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#dfbd691a\] {
+  background: rgba(122, 88, 32, 0.08) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#dfbd69\] {
+  color: #926f34 !important;
+}
+
+/* ── Light mode: status pills ── */
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#50a0641a\] {
+  background: rgba(45, 122, 80, 0.08) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#72b894\],
+[data-theme="light"] .card-premium-skin__surface .text-\[\#72B894\] {
+  color: #2d7a50 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#72b894\] {
+  background: #2d7a50 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .border-\[\#50a06426\] {
+  border-color: rgba(45, 122, 80, 0.15) !important;
+}
+
+/* ── Light mode: warning/danger status ── */
+[data-theme="light"] .card-premium-skin__surface .text-\[\#c8884d\] {
+  color: #a06828 !important;
+}
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#c882321f\],
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#c8643c1a\] {
+  background: rgba(160, 104, 40, 0.08) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-\[\#d4785a\] {
+  color: #c0503a !important;
+}
+
+/* ── Light mode: top highlight bar (gold accent — keep same) ── */
+/* Gold CTA gradient and top bar gradient are brand elements — no change */
+
+/* ── Light mode: critical alert bar ── */
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#fb3a3a\] {
+  background: #e63030 !important;
+}
+
+/* ── Light mode: empty state borders ── */
+[data-theme="light"] .card-premium-skin__surface .border-dashed {
+  border-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+/* ── Light mode: tag pills ── */
+[data-theme="light"] .card-premium-skin__surface .bg-white\/3 {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── Light mode: avatar ring ── */
+[data-theme="light"] .card-premium-skin__surface .ring-white\/10 {
+  --tw-ring-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Light mode: time badge ── */
+[data-theme="light"] .card-premium-skin__surface .bg-gold\/5 {
+  background: rgba(122, 88, 32, 0.06) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .border-gold\/10 {
+  border-color: rgba(122, 88, 32, 0.10) !important;
+}
+[data-theme="light"] .card-premium-skin__surface .text-gold {
+  color: #7a5820 !important;
+}
+
+/* ── Light mode: shift status pill shadow ── */
+[data-theme="light"] .card-premium-skin__surface .shadow-lg.shadow-black\/20 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Light mode: cast initial text ── */
+[data-theme="light"] .card-premium-skin__surface .bg-\[\#1c1d22\] {
+  background: #f0ece5 !important;
+}

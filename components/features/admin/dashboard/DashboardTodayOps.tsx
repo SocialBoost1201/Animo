@@ -42,27 +42,27 @@ export async function DashboardTodayOps() {
     <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header row */}
-      <div className="flex items-center justify-between px-10 h-[88px] border-b border-[#ffffff0f] shrink-0">
-        <div className="flex items-center gap-5">
-          <div className="w-[42px] h-[42px] flex items-center justify-center bg-[#dfbd691a] rounded-[10px] shrink-0">
-             <Plus size={18} className="text-[#dfbd69]" strokeWidth={2.5} />
+      <div className="flex items-center justify-between px-6 h-[56px] border-b border-[#ffffff0f] shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+             <Plus size={15} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-[17px] font-bold text-[#f4f1ea] tracking-[-0.1px] leading-tight">本日の営業状況</p>
-            <p className="text-[12px] text-[#8a8478] tracking-[0.08px] leading-tight opacity-70">今夜のオペレーション概要</p>
+          <div className="flex flex-col">
+            <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の営業状況</p>
+            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">今夜のオペレーション概要</p>
           </div>
         </div>
         <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
           <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
-          <span className="text-[11px] font-bold text-[#72b894] tracking-[1px] uppercase">READY</span>
+          <span className="font-sans text-[10px] font-semibold text-[#72B894] tracking-[0.117px] leading-[12px] uppercase">· 営業準備中</span>
         </div>
       </div>
 
       {/* Body: two columns */}
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#ffffff0f]">
         {/* Left: OVERVIEW */}
-        <div className="flex-1 p-10 flex flex-col min-w-0">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">OVERVIEW</p>
+        <div className="flex-1 p-6 flex flex-col min-w-0">
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">OVERVIEW</p>
           <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
             {overviewRows.map((row, i) => (
               <div
@@ -79,8 +79,8 @@ export async function DashboardTodayOps() {
         </div>
 
         {/* Right: MANAGEMENT MEMO */}
-        <div className="flex-1 p-10 flex flex-col min-w-0 bg-white/1">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-6 px-1">MANAGEMENT MEMO</p>
+        <div className="flex-1 p-6 flex flex-col min-w-0 bg-white/1">
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">MANAGEMENT MEMO</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
               <div className="h-40 flex flex-col items-center justify-center gap-3 border border-dashed border-[#ffffff0f] rounded-[18px]">
@@ -93,8 +93,8 @@ export async function DashboardTodayOps() {
                   key={i}
                   className={`flex flex-col gap-3 bg-black/40 rounded-[15px] border ${memo.cardBorder} p-6 shadow-lg`}
                 >
-                  <div className={`self-start px-2 py-0.5 rounded-[4px] ${memo.tagBg}`}>
-                    <span className={`text-[10px] font-bold tracking-[1px] leading-[1.6] ${memo.tagText}`}>{memo.tag}</span>
+                  <div className={`self-start inline-flex items-center justify-center min-w-[29px] h-[15px] px-[5px] rounded-[4px] ${memo.tagBg}`}>
+                    <span className="font-sans text-[9px] font-bold text-[#FDFDFD] tracking-[0.887px] leading-[14.4px]">{memo.tag}</span>
                   </div>
                   <p className="text-[13px] text-[#c7c0b2] leading-[1.7] tracking-[0.2px] font-medium">{memo.content}</p>
                 </div>

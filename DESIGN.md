@@ -1,290 +1,112 @@
-HTML
-<div class="kpi-grid">
-  <div class="kpi-card kpi-card--default">
-    <div class="kpi-card__base"></div>
-    <div class="kpi-card__gold-back"></div>
-    <div class="kpi-card__gold-accent"></div>
-    <div class="kpi-card__surface"></div>
+# Animo Design Constitution
 
-    <div class="kpi-card__icon">👥</div>
+This file is the root design authority for the Animo project.
+It defines brand principles, surface hierarchy, and points to detailed design rules.
 
-    <div class="kpi-card__content">
-      <div class="kpi-card__title">本日の出勤人数</div>
-      <div class="kpi-card__value">14</div>
-      <div class="kpi-card__sub">確定 11名 / 未確定 3名</div>
-    </div>
-  </div>
+---
 
-  <div class="kpi-card kpi-card--highlighted">
-    <div class="kpi-card__base"></div>
-    <div class="kpi-card__gold-back"></div>
-    <div class="kpi-card__gold-accent"></div>
-    <div class="kpi-card__surface"></div>
+## Visual Source of Truth
 
-    <div class="kpi-card__icon">📅</div>
+**Figma** is the single source of truth for all visual decisions.
 
-    <div class="kpi-card__content">
-      <div class="kpi-card__title">来店予定件数</div>
-      <div class="kpi-card__value">8</div>
-      <div class="kpi-card__sub">予定人数 19名</div>
-    </div>
-  </div>
-</div> 
+- File: `Animo` (Figma team project)
+- Desktop Admin: `Animo Dashboard` page
+- Mobile Admin: `Animo Dashboard-Mobile` page
+- Cast Dashboard: `Animo Cast Dashboard` page
+- Public Site: `Animo Login Desktop` page
 
-CSS
+When Figma and code diverge, Figma wins.
+When Figma is ambiguous, this document and `docs/design/` win.
+When neither covers a case, escalate — do not invent.
 
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 183px);
-  gap: 16px;
-}
+---
 
-.kpi-card {
-  position: relative;
-  width: 183px;
-  height: 151px;
-  border-radius: 18px;
-  overflow: visible;
-  cursor: pointer;
-  transition:
-    transform 180ms ease,
-    filter 180ms ease;
-}
+## Brand Principles
 
-/* 土台 */
-.kpi-card__base {
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: #393939;
-  box-shadow: 2px 4px 10px rgba(0,0,0,0.5);
-}
+1. **Black is the main surface.** Admin interfaces use dark surfaces (#0a0a0a – #1a1a1a).
+2. **Gold is a controlled accent.** Used for values, active states, and thin bezels — never for large fills or thick ornamental frames.
+3. **Quiet luxury over decoration.** Prefer subtle depth (layered shadows, micro-gradients) over loud visual effects.
+4. **Information density over empty space.** Every pixel should serve operational clarity. Avoid oversized empty cards.
+5. **Shared components, not one-off visuals.** Every new surface must use an existing component family or formally extend one.
 
-/* 奥の金 */
-.kpi-card__gold-back {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 180px;
-  height: 148px;
-  border-radius: 18px;
-  background:
-    radial-gradient(
-      50% 50% at 50% 50%,
-      rgba(253,224,91,0.20) 0%,
-      rgba(251,222,91,0.20) 100%
-    ),
-    linear-gradient(
-      89deg,
-      #E8AA00 1.17%,
-      #FBD84B 18.26%,
-      #E7AB00 56.27%,
-      #FBD94D 77.43%,
-      #EEB502 90.99%
-    );
-  transition:
-    transform 180ms ease,
-    filter 180ms ease,
-    opacity 180ms ease;
-}
+---
 
-/* 手前の金 */
-.kpi-card__gold-accent {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 180px;
-  height: 148px;
-  border-radius: 18px;
-  background:
-    radial-gradient(
-      50% 50% at 50% 50%,
-      rgba(253,224,91,0.10) 0%,
-      rgba(251,222,91,0.10) 100%
-    ),
-    linear-gradient(
-      89deg,
-      rgba(232,170,0,0.70) 1.17%,
-      rgba(251,216,75,0.70) 18.26%,
-      rgba(231,171,0,0.70) 56.27%,
-      rgba(251,217,77,0.70) 77.43%,
-      rgba(238,181,2,0.70) 90.99%
-    );
-  box-shadow: 1px 1px 20px rgba(236,203,71,0.3);
-  transition:
-    transform 180ms ease,
-    filter 180ms ease,
-    opacity 180ms ease,
-    box-shadow 180ms ease;
-}
+## Surface Hierarchy (Admin)
 
-/* 前面の黒い鏡面 */
-.kpi-card__surface {
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 178px;
-  height: 146px;
-  border-radius: 18px;
-  background: linear-gradient(
-    1deg,
-    #282727 7.95%,
-    #191717 27.54%,
-    #191717 79.4%,
-    #393939 118.24%,
-    #191717 127.8%
-  );
-  transition:
-    transform 180ms ease,
-    filter 180ms ease;
-}
+| Layer | Role | Example |
+|-------|------|---------|
+| Page background | Deepest black | `#0b0b0d` |
+| Card surface | Dark gloss panel | `.card-premium-skin__surface` |
+| Gold bezel | Thin metallic edge (3–7px) | `.card-premium-skin::before/::after` |
+| Content | Text, icons, badges | z-index: 1, always on top |
 
-/* コンテンツ */
-.kpi-card__content {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  text-align: center;
-}
+The `.card-premium-skin` class in `globals.css` is the canonical shared surface for all admin panels and cards.
+KPI cards use a specialized variant (`.kpi-card`) with a 4-layer stack: base → gold-back → gold-accent → surface.
 
-.kpi-card__title {
-  font-family: Inter, sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 15.4px;
-  letter-spacing: 0.064px;
-  color: #8A8478;
-  margin-bottom: 8px;
-}
+---
 
-.kpi-card__value {
-  font-family: Inter, sans-serif;
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 30px;
-  letter-spacing: -0.204px;
-  background: linear-gradient(90deg, #D1B25E 0%, #8F7130 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-}
+## Color System (Admin Surfaces)
 
-.kpi-card__sub {
-  font-family: Inter, sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 15.4px;
-  letter-spacing: 0.064px;
-  color: #8A8478;
-}
+| Token | Hex | Usage |
+|-------|-----|-------|
+| Surface black | `#0a0a0a` – `#1a1a1a` | Card backgrounds |
+| Foundation | `#393939` | Deepest card layer |
+| Text primary | `#f4f1ea` | Headings, values |
+| Text secondary | `#c7c0b2` – `#cbc3b3` | Body text |
+| Text muted | `#8a8478` | Labels, subtitles |
+| Text dim | `#5a5650` | Table headers, placeholders |
+| Gold accent | `#dfbd69` | Icons, active states |
+| Gold gradient | `#D1B25E → #8F7130` | KPI values |
+| Success | `#72b894` / bg `#50a064` | Confirmed states |
+| Warning | `#c8884d` / bg `#c88232` | Pending, late states |
+| Danger | `#d4785a` / bg `#c8643c` | Alerts, errors |
 
-.kpi-card__icon {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 3;
-  color: #D6B85A;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+---
 
-/* default */
-.kpi-card--default .kpi-card__gold-back {
-  opacity: 1;
-}
+## Typography (Admin)
 
-.kpi-card--default .kpi-card__gold-accent {
-  opacity: 1;
-}
+| Role | Family | Size | Weight |
+|------|--------|------|--------|
+| Page title | `font-sans` (Noto Sans JP) | 22px | 700 |
+| Section title | `font-sans` | 17px | 700 |
+| Card title | `font-sans` | 13px | 600–700 |
+| KPI value | `font-sans` (Inter) | 30px | 700 |
+| Body | `font-sans` | 13–14px | 500 |
+| Label | `font-sans` | 11–12px | 500–700 |
+| Table header | `font-sans` | 9–10px | 700 |
+| Badge | `font-sans` | 10px | 700 |
 
-/* hover */
-.kpi-card:hover {
-  transform: translateY(-2px);
-}
+---
 
-.kpi-card:hover .kpi-card__gold-back {
-  transform: translate(4px, 4px);
-  filter: brightness(1.05);
-}
+## Non-Negotiable Rules
 
-.kpi-card:hover .kpi-card__gold-accent {
-  transform: translate(3px, 3px);
-  filter: brightness(1.08);
-  box-shadow: 1px 1px 24px rgba(236,203,71,0.42);
-}
+1. **No thick gold frames.** Gold bezels are 3–7px. Anything larger is a bug.
+2. **No oversized empty cards.** If a card has less than 3 data points, it is too large.
+3. **No one-off status colors.** Use `StatusBadge` patterns: success/warning/danger/neutral/accent.
+4. **No custom scrollbars without `.custom-scrollbar`.** Scrollable regions use the shared class.
+5. **No inline font-family.** Always use Tailwind `font-sans` / `font-serif` / `font-heading`.
+6. **Mobile minimum font: 12px.** Enforced via `globals.css` media query.
+7. **Border radius: 18px for cards, 10–12px for buttons, 6–8px for badges.**
 
-.kpi-card:hover .kpi-card__surface {
-  transform: translate(-1px, -1px);
-}
+---
 
-/* active */
-.kpi-card:active {
-  transform: translateY(1px);
-}
+## Detailed Design Documents
 
-.kpi-card:active .kpi-card__gold-back {
-  transform: translate(2px, 2px);
-}
+| File | Scope |
+|------|-------|
+| [shared-foundation.md](docs/design/shared-foundation.md) | Color, surface, border, radius, depth, typography, shared components, status pills, buttons, tables |
+| [mobile-admin.md](docs/design/mobile-admin.md) | Mobile admin layout, compact KPIs, urgent action blocks, operational lists, bottom nav, anti-patterns |
 
-.kpi-card:active .kpi-card__gold-accent {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 14px rgba(236,203,71,0.22);
-}
+Future files (not yet created):
+- `docs/design/mobile-cast.md` — Cast-side mobile interface
+- `docs/design/public-site.md` — Public-facing website
 
-.kpi-card:active .kpi-card__surface {
-  transform: translate(0, 0);
-}
+---
 
-/* highlighted */
-.kpi-card--highlighted .kpi-card__gold-back {
-  filter: brightness(1.08);
-}
+## Implementation Notes
 
-.kpi-card--highlighted .kpi-card__gold-accent {
-  box-shadow: 1px 1px 28px rgba(236,203,71,0.45);
-  filter: brightness(1.08);
-}
-
-.kpi-card--highlighted .kpi-card__value {
-  background: linear-gradient(90deg, #E8D483 0%, #A78435 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}  React 
-type KpiCardProps = {
-  title: string
-  value: string | number
-  sub: string
-  icon?: React.ReactNode
-  highlighted?: boolean
-}
-
-export function KpiCard({
-  title,
-  value,
-  sub,
-  icon,
-  highlighted = false,
-}: KpiCardProps) {
-  return (
-    <div className={`kpi-card ${highlighted ? "kpi-card--highlighted" : "kpi-card--default"}`}>
-      <div className="kpi-card__base" />
-      <div className="kpi-card__gold-back" />
-      <div className="kpi-card__gold-accent" />
-      <div className="kpi-card__surface" />
-
-      {icon ? <div className="kpi-card__icon">{icon}</div> : null}
-
-      <div className="kpi-card__content">
-        <div className="kpi-card__title">{title}</div>
-        <div className="kpi-card__value">{value}</div>
-        <div className="kpi-card__sub">{sub}</div>
-      </div>
-    </div>
-  )
-}
+- Desktop admin is the parent visual system.
+- Mobile admin is the compressed operational surface using the same design language.
+- All admin components live in `components/features/admin/`.
+- The canonical CSS surface is defined in `app/globals.css` (`.card-premium-skin` family).
+- Do not duplicate design rules into `CLAUDE.md` or `AGENTS.md`.

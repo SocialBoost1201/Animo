@@ -268,7 +268,7 @@ function AdminLayoutInner({
   );
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
+    <div data-theme={theme} className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
       {/* Desktop Sidebar */}
       <aside className="w-[260px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
         {renderSidebarContent()}

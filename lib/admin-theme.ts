@@ -25,26 +25,26 @@ export const SIDEBAR_DARK = {
 };
 
 export const SIDEBAR_LIGHT = {
-  pageBg:           'bg-[#f0ece5]',
-  sidebarBg:        'bg-[#faf8f4]',
-  sidebarBorder:    'border-[#0000000f]',
-  divider:          'bg-[#0000000a]',
-  sectionLabel:     'text-[#b0a898]',
-  navInactive:      'text-[#7a7268] hover:bg-[#00000008] hover:text-[#1a1710]',
-  navIconInactive:  'text-[#b0a898] group-hover:text-[#1a1710]',
-  footerBorder:     'border-[#0000000a]',
-  toggleWrap:       'bg-[#f0ece5] border border-[#0000000f]',
-  toggleInactive:   'text-[#b0a898] hover:text-[#7a7268]',
+  pageBg:           'bg-[#efe9e0]',                                              // ① warmer page bg
+  sidebarBg:        'bg-[#f9f6f1]',
+  sidebarBorder:    'border-[#00000008]',                                        // ② reduced border strength
+  divider:          'bg-[#00000008]',                                            // ② softer divider
+  sectionLabel:     'text-[#9a9080]',                                            // ⑤ slightly stronger section label
+  navInactive:      'text-[#5a5348] hover:bg-[#0000000a] hover:text-[#1a1710]',  // ⑤ tighter inactive contrast
+  navIconInactive:  'text-[#7a7268] group-hover:text-[#1a1710]',                 // ⑤ darker inactive icon
+  footerBorder:     'border-[#00000008]',                                        // ② softer
+  toggleWrap:       'bg-[#efe9e0] border border-[#0000000a]',                    // ② reduced
+  toggleInactive:   'text-[#9a9080] hover:text-[#5a5348]',                       // ⑤ tighter
   toggleLightActive:'bg-white text-[#1a1710] shadow-sm',
-  userCard:         'bg-[#f0ece5] border border-[#0000000f]',
+  userCard:         'bg-[#efe9e0] border border-[#0000000a]',                    // ① match page bg
   userName:         'text-[#2e2b26]',
-  userSub:          'text-[#b0a898]',
+  userSub:          'text-[#9a9080]',                                            // ⑤ slightly stronger
   primaryText:      'text-[#1a1710]',
-  mobileHeader:     'bg-[#faf8f4] border-[#0000000f]',
-  mobileTab:        'bg-[#faf8f4] border-[#0000000f]',
-  mobileMenuBtn:    'text-[#b0a898] hover:text-[#7a7268]',
-  mobileTabActive:  'text-[#926f34]',
-  mobileTabInactive:'text-[#b0a898]',
+  mobileHeader:     'bg-[#f9f6f1] border-[#00000008]',
+  mobileTab:        'bg-[#f9f6f1] border-[#00000008]',
+  mobileMenuBtn:    'text-[#9a9080] hover:text-[#5a5348]',                       // ⑤ tighter
+  mobileTabActive:  'text-[#7a5820]',                                            // ④ stronger gold active
+  mobileTabInactive:'text-[#9a9080]',                                            // ⑤ tighter
 };
 
 // ── Form / Page tokens ──────────────────────────────────────────────────────
@@ -82,17 +82,17 @@ export const FORM_DARK: AdminFormTokens = {
 };
 
 export const FORM_LIGHT: AdminFormTokens = {
-  card:        'bg-[#faf8f4] border border-[#00000012] rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)]',
-  input:       'w-full bg-white border border-[#00000018] rounded-lg px-3 py-2 text-sm text-[#2e2b26] placeholder-[#b0a898] focus:outline-none focus:border-[#926f34] transition-colors',
-  label:       'block text-xs font-bold tracking-widest text-[#7a7268] uppercase mb-2',
+  card:        'bg-white border border-[#00000008] rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.03)]', // ③ stronger surface separation
+  input:       'w-full bg-white border border-[#00000012] rounded-lg px-3 py-2 text-sm text-[#2e2b26] placeholder-[#9a9080] focus:outline-none focus:border-[#7a5820] transition-colors', // ④ stronger focus gold
+  label:       'block text-xs font-bold tracking-widest text-[#5a5348] uppercase mb-2', // ⑤ tighter label
   heading:     'text-[#1a1710]',
-  subtle:      'text-[#b0a898]',
-  divider:     'border-[#0000000a]',
-  snsSection:  'bg-[#f0ece5] border border-[#0000000a] rounded-xl p-4 space-y-4',
-  backLink:    'inline-flex items-center text-sm text-[#7a7268] hover:text-[#1a1710] transition-colors',
+  subtle:      'text-[#9a9080]',
+  divider:     'border-[#00000008]',                                             // ② softer
+  snsSection:  'bg-[#f5f1ea] border border-[#00000008] rounded-xl p-4 space-y-4', // ① warmer tint
+  backLink:    'inline-flex items-center text-sm text-[#5a5348] hover:text-[#1a1710] transition-colors', // ⑤ tighter
   activeLabel: 'text-[#1a1710]',
-  tagInactive: 'border-[#00000015] text-[#7a7268] hover:border-[#926f3440]',
-  tagActive:   'border-[#926f34] bg-[#926f3410] text-[#1a1710]',
-  error:       'rounded-lg border border-[#d4785a40] bg-[#d4785a10] px-4 py-3 text-sm text-[#d4785a]',
-  noteText:    'text-xs text-[#7a7268]',
+  tagInactive: 'border-[#00000010] text-[#5a5348] hover:border-[#7a582040]',    // ⑤ tighter
+  tagActive:   'border-[#7a5820] bg-[#7a582010] text-[#1a1710]',                // ④ stronger gold
+  error:       'rounded-lg border border-[#c0503a30] bg-[#c0503a08] px-4 py-3 text-sm text-[#c0503a]',
+  noteText:    'text-xs text-[#5a5348]',                                         // ⑤ tighter
 };

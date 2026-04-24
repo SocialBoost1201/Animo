@@ -44,14 +44,14 @@ export async function DashboardTodayShifts() {
     <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header */}
-      <div className="flex items-center justify-between px-10 h-[88px] border-b border-[#ffffff0f] shrink-0">
-        <div className="flex items-center gap-5">
-          <div className="w-[42px] h-[42px] flex items-center justify-center bg-[#dfbd691a] rounded-[10px] shrink-0">
-            <Users size={20} className="text-[#dfbd69]" strokeWidth={2.5} />
+      <div className="flex items-center justify-between px-6 h-[56px] border-b border-[#ffffff0f] shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+            <Users size={15} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-[17px] font-bold text-[#f4f1ea] tracking-[-0.1px] leading-tight">本日の出勤キャスト</p>
-            <p className="text-[12px] text-[#8a8478] tracking-[0.08px] leading-tight opacity-70">
+          <div className="flex flex-col">
+            <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤キャスト</p>
+            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">
               確定 {confirmedCount}名
               {lateCount > 0 && ` / 遅刻 ${lateCount}名`}
               {trialCount > 0 && ` / 体験 ${trialCount}名`}
@@ -71,11 +71,11 @@ export async function DashboardTodayShifts() {
       <div className="flex-1 overflow-x-auto custom-scrollbar">
         <div className="min-w-[900px]">
           {/* Table Header Row */}
-          <div className="flex items-center h-[56px] border-t border-b border-[#ffffff0a] px-10 bg-white/1">
-            <div className="w-[280px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase">CAST NAME</div>
-            <div className="w-section text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">SHIFT TIME</div>
-            <div className="w-[140px] text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase text-center">STATUS</div>
-            <div className="flex-1 text-[10px] font-bold tracking-[1.5px] text-[#5a5650] uppercase px-6">MEMO / TAGS</div>
+          <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6 bg-white/1">
+            <div className="w-[240px] text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase">CAST NAME</div>
+            <div className="w-section text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase px-4">SHIFT TIME</div>
+            <div className="w-[120px] text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase text-center">STATUS</div>
+            <div className="flex-1 text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase px-4">MEMO / TAGS</div>
           </div>
 
           {/* Table Body */}
@@ -91,9 +91,9 @@ export async function DashboardTodayShifts() {
                 return (
                   <div
                     key={cast.castId}
-                    className="flex items-center min-h-[72px] hover:bg-white/2 transition-colors px-10"
+                    className="flex items-center min-h-[52px] hover:bg-white/2 transition-colors px-6"
                   >
-                    <div className="w-[280px] flex items-center gap-4 shrink-0">
+                    <div className="w-[240px] flex items-center gap-3 shrink-0">
                       <div className="w-10 h-10 rounded-full bg-[#1c1d22] border border-[#ffffff0a] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xl">
                         {cast.avatarUrl ? (
                            <img 
@@ -123,17 +123,17 @@ export async function DashboardTodayShifts() {
                     <div className="w-[140px] flex justify-center">
                       <div className={`flex items-center gap-2 px-4 py-1.5 ${cfg.bg} rounded-full border ${cfg.border} min-w-[90px] justify-center shadow-lg shadow-black/20`}>
                         <div className={`w-[6px] h-[6px] rounded-full ${cfg.dot}`} />
-                        <span className={`text-[10px] font-bold tracking-[0.5px] uppercase ${cfg.textColor}`}>{cfg.label}</span>
+                        <span className={`font-sans text-[10px] font-bold tracking-[0.117px] leading-[14px] uppercase ${cfg.textColor}`}>{cfg.label}</span>
                       </div>
                     </div>
 
                     {/* Tags */}
-                    <div className="flex-1 px-6 flex flex-wrap gap-2">
+                    <div className="flex-1 px-4 flex flex-wrap gap-2">
                       {cast.tags.length > 0 ? (
                         cast.tags.map((tag, i) => (
                           <span
                              key={i}
-                             className="px-2.5 py-1 bg-white/3 border border-white/5 rounded-[6px] text-[10px] font-semibold text-[#8a8478] tracking-[0.2px] hover:text-[#dfbd69] transition-colors"
+                             className="px-2.5 py-1 bg-white/3 border border-white/5 rounded-[6px] font-sans text-[10px] font-semibold text-[#8a8478] tracking-[0.117px] leading-[14px] hover:text-[#dfbd69] transition-colors"
                           >
                             {tag}
                           </span>
