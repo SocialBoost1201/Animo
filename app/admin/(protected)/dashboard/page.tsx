@@ -10,6 +10,8 @@ import { DashboardCastRanking }    from '@/components/features/admin/dashboard/D
 import { DashboardAlertCard }      from '@/components/features/admin/dashboard/DashboardAlertCard';
 import { DashboardReservations }   from '@/components/features/admin/dashboard/DashboardReservations';
 import { DashboardMemoCard }       from '@/components/features/admin/dashboard/DashboardMemoCard';
+import { DashboardQuickActions }   from '@/components/features/admin/dashboard/DashboardQuickActions';
+import { DashboardShiftCoverage }  from '@/components/features/admin/dashboard/DashboardShiftCoverage';
 import { getJstDateLabel } from '@/lib/date-utils';
 import { getAdminNotificationSummary } from '@/lib/actions/admin-notifications';
 
@@ -66,39 +68,56 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── KPI Row ── */}
+      {/* ── KPI Row (full width) ── */}
       <Suspense fallback={<Skeleton className="h-[110px]" />}>
         <DashboardKPIs />
       </Suspense>
 
-      {/* ── 本日の営業状況（全幅）── */}
-      <Suspense fallback={<Skeleton className="h-72" />}>
-        <DashboardTodayOps />
-      </Suspense>
+      {/* ── Main Content + Right Rail ── */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-4">
+        {/* ── Left: Main Panels ── */}
+        <div className="space-y-4 min-w-0">
+          {/* 本日の営業状況 */}
+          <Suspense fallback={<Skeleton className="h-72" />}>
+            <DashboardTodayOps />
+          </Suspense>
 
-      {/* ── 本日の出勤キャスト（全幅）── */}
-      <Suspense fallback={<Skeleton className="h-80" />}>
-        <DashboardTodayShifts />
-      </Suspense>
+          {/* 本日の出勤キャスト */}
+          <Suspense fallback={<Skeleton className="h-80" />}>
+            <DashboardTodayShifts />
+          </Suspense>
 
-      {/* ── キャスト行動成績評価 ＋ 重要アラート ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] xl:grid-cols-[3fr_1fr] gap-4">
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardCastRanking />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardAlertCard />
-        </Suspense>
-      </div>
+          {/* キャスト行動成績評価 */}
+          <Suspense fallback={<Skeleton className="h-64" />}>
+            <DashboardCastRanking />
+          </Suspense>
 
-      {/* ── 来店予定一覧 ＋ 営業メモ ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] xl:grid-cols-[3fr_1fr] gap-4">
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardReservations />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-64" />}>
-          <DashboardMemoCard />
-        </Suspense>
+          {/* 来店予定一覧 ＋ 営業メモ */}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+            <Suspense fallback={<Skeleton className="h-64" />}>
+              <DashboardReservations />
+            </Suspense>
+            <Suspense fallback={<Skeleton className="h-64" />}>
+              <DashboardMemoCard />
+            </Suspense>
+          </div>
+        </div>
+
+        {/* ── Right: Support Rail ── */}
+        <div className="hidden xl:flex flex-col gap-4">
+          {/* クイックアクション */}
+          <DashboardQuickActions />
+
+          {/* シフト充足率 */}
+          <Suspense fallback={<Skeleton className="h-72" />}>
+            <DashboardShiftCoverage />
+          </Suspense>
+
+          {/* 重要アラート */}
+          <Suspense fallback={<Skeleton className="h-64" />}>
+            <DashboardAlertCard />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
