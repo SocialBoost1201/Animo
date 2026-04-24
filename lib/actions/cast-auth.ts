@@ -19,11 +19,11 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
-  // DBには数字のみ形式と旧ハイフン付き形式が混在している可能性があるため両方で検索
+  // DBには数字のみ形式・ハイフン付き形式・E.164形式が混在している可能性があるため全形式で検索
   const formattedPhone = formatJapaneseMobilePhone(normalizedPhone);
-  const phonesToSearch = formattedPhone !== normalizedPhone
-    ? [normalizedPhone, formattedPhone]
-    : [normalizedPhone];
+  const e164Phone = `+81${normalizedPhone.slice(1)}`;  // +817012343590
+  const e164NoPlus = `81${normalizedPhone.slice(1)}`;  // 817012343590
+  const phonesToSearch = Array.from(new Set([normalizedPhone, formattedPhone, e164Phone, e164NoPlus]));
 
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
