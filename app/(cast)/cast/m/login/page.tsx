@@ -4,7 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { castSendLoginOtp } from '@/lib/actions/cast-auth';
-import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
+import { formatJapaneseMobilePhone, normalizeJapanesePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
 export default function CastLoginMobilePage() {
@@ -29,6 +29,11 @@ export default function CastLoginMobilePage() {
       const result = await castSendLoginOtp(formData);
 
       if (!result.success) {
+        if ('code' in result && result.code === 'NEEDS_REGISTER') {
+          const normalizedPhone = normalizeJapanesePhone(phone);
+          router.push(`/cast/m/register?phone=${encodeURIComponent(normalizedPhone)}`);
+          return;
+        }
         toast.error(result.error);
         return;
       }

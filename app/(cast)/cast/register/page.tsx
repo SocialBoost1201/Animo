@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { castRegister } from '@/lib/actions/cast-auth';
-import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
+import { formatJapaneseMobilePhone, normalizeJapanesePhone, isValidJapaneseMobilePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
 function ArrowRightIcon() {
@@ -18,6 +18,17 @@ function ArrowRightIcon() {
 export default function CastRegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const phoneParam = params.get('phone');
+    if (phoneParam) {
+      const normalized = normalizeJapanesePhone(phoneParam);
+      if (isValidJapaneseMobilePhone(normalized)) {
+        setPhone(formatJapaneseMobilePhone(normalized));
+      }
+    }
+  }, []);
   const [isCompleted, setIsCompleted] = useState(false);
   const [completedMessage, setCompletedMessage] = useState(
     '登録が完了しました。ログイン画面からSMS認証を行ってください。'

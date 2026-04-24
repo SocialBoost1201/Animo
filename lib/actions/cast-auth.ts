@@ -120,8 +120,9 @@ export async function castSendLoginOtp(formData: FormData) {
   if (!castRecord.auth_user_id) {
     return {
       success: false,
-      error: 'まだアカウント登録が完了していません。先に新規登録を行ってください。',
-      code: 'UNREGISTERED',
+      code: 'NEEDS_REGISTER' as const,
+      error: 'この電話番号はまだ登録が完了していません。新規登録を行ってください。',
+      redirectTo: '/cast/register' as const,
     };
   }
 
