@@ -1,5 +1,6 @@
 import { getDashboardReservations } from '@/lib/actions/dashboard';
 import Link from 'next/link';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus, Calendar } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -71,6 +72,11 @@ export async function DashboardReservations() {
       </div>
 
       {/* Table (Matching AnalyticsSectionSubsection:424-532) */}
+      {reservations.length === 0 ? (
+        <div className="flex-1 p-5">
+          <DashboardEmptyState className="min-h-40 h-full" />
+        </div>
+      ) : (
       <div className="flex-1 overflow-x-auto custom-scrollbar">
         <div className="min-w-[800px]">
           {/* Table Header Row */}
@@ -85,12 +91,7 @@ export async function DashboardReservations() {
 
           {/* Table Body */}
           <div className="divide-y divide-[#ffffff0a]">
-            {reservations.length === 0 ? (
-              <div className="h-40 flex items-center justify-center italic">
-                <p className="text-[12px] text-[#5a5650]">本日の来店予定はありません</p>
-              </div>
-            ) : (
-              reservations.map((r) => {
+            {reservations.map((r) => {
                 const cfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
                 return (
                   <div
@@ -142,11 +143,11 @@ export async function DashboardReservations() {
                     </div>
                   </div>
                 );
-              })
-            )}
+              })}
           </div>
         </div>
       </div>
+      )}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { Users, Calendar, AlertTriangle, UserPlus, TrendingUp, ClipboardList } f
 
 export async function DashboardKPIs() {
   const kpi = await getDashboardKPIs();
+  const isWaitingForOperations = !kpi.hasOperationalRecords;
 
   const cards = [
     {
@@ -18,7 +19,7 @@ export async function DashboardKPIs() {
       href: '/admin/today',
       badge: null as null | { label: string; bg: string; textColor: string },
       topBar: true,
-      alert: kpi.unconfirmedCount > 0,
+      alert: !isWaitingForOperations && kpi.unconfirmedCount > 0,
     },
     {
       id: 2,
@@ -31,9 +32,9 @@ export async function DashboardKPIs() {
       iconColor: 'text-[#dfbd69]',
       href: '/admin/today',
       badge:
-        kpi.reservationCount > kpi.yesterdayReservationCount
+        !isWaitingForOperations && kpi.reservationCount > kpi.yesterdayReservationCount
           ? { label: `+${kpi.reservationCount - kpi.yesterdayReservationCount}`, bg: 'bg-[#50a0641a]', textColor: 'text-[#72b894]' }
-          : kpi.reservationCount < kpi.yesterdayReservationCount
+          : !isWaitingForOperations && kpi.reservationCount < kpi.yesterdayReservationCount
             ? { label: `-${kpi.yesterdayReservationCount - kpi.reservationCount}`, bg: 'bg-[#c8643c1a]', textColor: 'text-[#d4785a]' }
             : null,
       topBar: false,
@@ -44,7 +45,7 @@ export async function DashboardKPIs() {
       label: '来店人数',
       value: kpi.totalGuests,
       unit: '名',
-      sub: kpi.reservationCount > 0 ? `平均 ${(kpi.totalGuests / kpi.reservationCount).toFixed(1)} / 組` : '予約なし',
+      sub: kpi.reservationCount > 0 ? `平均 ${(kpi.totalGuests / kpi.reservationCount).toFixed(1)} / 組` : '—',
       icon: TrendingUp,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
@@ -133,12 +134,16 @@ export async function DashboardKPIs() {
                 {/* Value */}
                 <p className="text-[30px] font-bold leading-none tracking-[-0.2px] mb-1.5"
                   style={{ background: 'linear-gradient(90deg, #D1B25E 0%, #8F7130 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  {card.value}
+                  {isWaitingForOperations ? (
+                    <span className="block text-[15px] leading-tight tracking-[0.02em]">運用開始待ち</span>
+                  ) : (
+                    card.value
+                  )}
                 </p>
 
                 {/* Subtitle */}
                 <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight line-clamp-1 font-normal" title={card.sub}>
-                  {card.sub}
+                  {isWaitingForOperations ? '—' : card.sub}
                 </p>
 
                 {/* Badge */}

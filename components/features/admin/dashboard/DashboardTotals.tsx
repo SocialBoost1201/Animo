@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { DashboardEmptyState } from './DashboardEmptyState';
 import { Briefcase } from 'lucide-react';
 
 export async function DashboardTotals() {
@@ -17,7 +18,11 @@ export async function DashboardTotals() {
           <Briefcase size={14} className="text-[#8a8478]" />
           <p className="text-[11px] font-bold tracking-widest text-[#8a8478] uppercase">累計求人応募</p>
         </div>
-        <p className="text-2xl font-bold text-[#f4f1ea]">{totalApps ?? 0}<span className="text-sm text-[#8a8478] ml-1 font-normal">件</span></p>
+        {(totalApps ?? 0) > 0 ? (
+          <p className="text-2xl font-bold text-[#f4f1ea]">{totalApps}<span className="text-sm text-[#8a8478] ml-1 font-normal">件</span></p>
+        ) : (
+          <DashboardEmptyState className="min-h-28" />
+        )}
       </div>
     </div>
   );

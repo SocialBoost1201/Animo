@@ -24,6 +24,11 @@ async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof crea
   const phonesToSearch = formattedPhone !== normalizedPhone
     ? [normalizedPhone, formattedPhone]
     : [normalizedPhone]
+  // DBには数字のみ形式・ハイフン付き形式・E.164形式が混在している可能性があるため全形式で検索
+  const formattedPhone = formatJapaneseMobilePhone(normalizedPhone);
+  const e164Phone = `+81${normalizedPhone.slice(1)}`;  // +817012343590
+  const e164NoPlus = `81${normalizedPhone.slice(1)}`;  // 817012343590
+  const phonesToSearch = Array.from(new Set([normalizedPhone, formattedPhone, e164Phone, e164NoPlus]));
 
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
@@ -117,6 +122,13 @@ export async function castSendLoginOtp(formData: FormData) {
     };
   }
 
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
   if (!castRecord.auth_user_id) {
     return {
       success: false,
@@ -139,7 +151,12 @@ export async function castSendLoginOtp(formData: FormData) {
       ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
       : Infinity;
 
-    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS;
+    const hasCompletedSmsVerification = Boolean(lastVerifiedRaw);
+    const isValidSession =
+      Boolean(castRecord.auth_user_id) &&
+      hasCompletedSmsVerification &&
+      Boolean(isValidCookie) &&
+      daysSince < CAST_REAUTH_WINDOW_DAYS;
 
     if (isValidSession) {
       return {
@@ -230,12 +247,27 @@ export async function castVerifyLoginOtp(formData: FormData) {
     return { success: false, error: 'キャスト情報との紐付けに失敗しました。担当者にお問い合わせください。' };
   }
 
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
+  if (castRecord.auth_user_id && castRecord.auth_user_id !== authUserId) {
+    return {
+      success: false,
+      error: 'キャスト情報の紐付け状態が不正です。担当者にお問い合わせください。',
+    };
+  }
+
   const { error: castUpdateError } = await serviceRoleClient
     .from('casts')
     .update({
       auth_user_id: authUserId,
       last_sms_verified_at: now,
       last_login_at: now,
+      updated_at: now,
     })
     .eq('id', castRecord.id);
 
