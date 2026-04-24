@@ -262,6 +262,7 @@ export async function castVerifyLoginOtp(formData: FormData) {
       auth_user_id: authUserId,
       last_sms_verified_at: now,
       last_login_at: now,
+      updated_at: now,
     })
     .eq('id', castRecord.id);
 
