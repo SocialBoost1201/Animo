@@ -7,6 +7,7 @@ import {
   validateCastProfileInput,
   type CastProfileFieldErrors,
 } from '@/lib/validators/cast-profile'
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle, Users, CheckCheck } from 'lucide-react'
@@ -79,7 +80,7 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
   const [nameKana, setNameKana] = useState(initialData?.name_kana || '')
   const [realName, setRealName] = useState(privateInfo?.real_name || '')
   const [dateOfBirth, setDateOfBirth] = useState(privateInfo?.date_of_birth || '')
-  const [phone, setPhone] = useState(privateInfo?.phone || '')
+  const [phone, setPhone] = useState(formatJapaneseMobilePhone(privateInfo?.phone || ''))
   const [email, setEmail] = useState(privateInfo?.email || '')
   const [lineId, setLineId] = useState(privateInfo?.line_id || '')
   const [lineUserId, setLineUserId] = useState(privateInfo?.line_user_id || '')
@@ -396,9 +397,10 @@ export function CastForm({ initialData }: { initialData?: Cast }) {
                   id="phone"
                   name="phone"
                   type="tel"
+                  inputMode="numeric"
                   value={phone}
                   onChange={(e) => {
-                    setPhone(e.target.value)
+                    setPhone(formatJapaneseMobilePhone(e.target.value))
                     clearFieldError('phone')
                   }}
                   onBlur={() => validateSingleField('phone')}
