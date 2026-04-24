@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { RevealText } from '@/components/motion/RevealText';
 import Image from 'next/image';
@@ -127,6 +128,7 @@ function CastRecruitPageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [phone, setPhone] = useState('');
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -504,6 +506,10 @@ function CastRecruitPageContent() {
                     電話番号 <span className="text-gold ml-1">*</span>
                   </label>
                   <input required id="phone" name="phone" type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(formatJapaneseMobilePhone(e.target.value))}
                     className="w-full bg-transparent border-b border-gray-200 py-3 outline-none focus:border-gold transition-colors text-sm font-serif luxury-tracking rounded-none"
                     placeholder="090-1234-5678" />
                 </div>

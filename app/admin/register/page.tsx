@@ -3,6 +3,7 @@
 import React, { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { adminRegisterAction } from '@/lib/actions/admin-auth'
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone'
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -61,6 +62,7 @@ export default function AdminRegisterPage() {
   const [state, formAction, isPending] = useActionState(adminRegisterAction, null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [phone, setPhone] = useState('')
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-6">
@@ -151,7 +153,11 @@ export default function AdminRegisterPage() {
               </label>
               <input
                 name="phone"
-                inputMode="tel"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(formatJapaneseMobilePhone(e.target.value))}
                 required
                 className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white placeholder-[#71717b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
                 placeholder="090-1234-5678"

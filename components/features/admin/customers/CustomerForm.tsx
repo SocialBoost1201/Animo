@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Save, Loader2, ArrowLeft, User, Phone, Mail, Star, FileText, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { createCustomer, updateCustomerFull } from '@/lib/actions/customers';
+import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
 
 type Customer = {
   id: string;
@@ -46,6 +47,7 @@ export function CustomerForm({ initialData }: { initialData?: Customer }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [rank, setRank] = useState(initialData?.rank ?? 'normal');
+  const [phone, setPhone] = useState(formatJapaneseMobilePhone(initialData?.phone ?? ''));
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,7 +115,10 @@ export function CustomerForm({ initialData }: { initialData?: Customer }) {
               <input
                 name="phone"
                 type="tel"
-                defaultValue={initialData?.phone ?? ''}
+                inputMode="numeric"
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(formatJapaneseMobilePhone(e.target.value))}
                 placeholder="090-0000-0000"
                 className={inputCls}
               />
