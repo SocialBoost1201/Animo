@@ -106,6 +106,13 @@ export async function castSendLoginOtp(formData: FormData) {
     };
   }
 
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
   if (!castRecord.auth_user_id) {
     return {
       success: false,
@@ -166,7 +173,7 @@ export async function castVerifyLoginOtp(formData: FormData) {
   const normalizedPhone = normalizeCastPhone(phone);
   const authPhone = toE164JpPhone(phone);
 
-  if (!authPhone) {
+  if (!/^0\d{9,10}$/.test(normalizedPhone) || !authPhone) {
     return { success: false, error: '電話番号の形式が正しくありません。' };
   }
 
@@ -215,6 +222,20 @@ export async function castVerifyLoginOtp(formData: FormData) {
 
   if (!candidate || !castRecord) {
     return { success: false, error: 'キャスト情報との紐付けに失敗しました。担当者にお問い合わせください。' };
+  }
+
+  if (candidates.length > 1) {
+    return {
+      success: false,
+      error: '同一電話番号に複数のキャスト情報が見つかりました。担当者にお問い合わせください。',
+    };
+  }
+
+  if (castRecord.auth_user_id && castRecord.auth_user_id !== authUserId) {
+    return {
+      success: false,
+      error: 'キャスト情報の紐付け状態が不正です。担当者にお問い合わせください。',
+    };
   }
 
   const { error: castUpdateError } = await serviceRoleClient
