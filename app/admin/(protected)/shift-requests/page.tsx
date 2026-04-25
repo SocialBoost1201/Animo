@@ -93,7 +93,7 @@ export default async function ShiftRequestsPage({
             className="font-bold leading-none tracking-[-0.02em] text-[#111]"
             style={{ fontSize: 'clamp(36px, 5vw, 52px)' }}
           >
-            出勤調整＆承認
+            出勤調整・承認
           </h1>
           <p className="mt-2.5 text-[12px] text-[#6b6460] leading-relaxed">
             週次提出・変更申請・店舗募集の承認状況を確認し、既存の承認フローへ接続します。
