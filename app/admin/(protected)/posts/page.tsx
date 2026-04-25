@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { revalidatePath } from 'next/cache';
 
 export const metadata = {
-  title: 'キャスト投稿管理 | Animo CMS',
+  title: 'キャストブログ管理 | Animo CMS',
 };
 
 export default async function AdminCastPostsPage({
@@ -62,7 +62,7 @@ export default async function AdminCastPostsPage({
     <div className="space-y-6 font-inter">
       {/* ── Page Header ── */}
       <div className="py-2">
-        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">キャスト投稿</h1>
+        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">キャストブログ</h1>
         <p className="text-[11px] text-[#8a8478] tracking-[0.06px] mt-0.5">キャストの日記投稿を管理・承認します</p>
       </div>
 
