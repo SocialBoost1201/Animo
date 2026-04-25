@@ -19,15 +19,15 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
-  // DBには数字のみ形式と旧ハイフン付き形式が混在している可能性があるため両方で検索
+  // DBには数字のみ形式・ハイフン付き形式・E.164形式が混在している可能性があるため全形式で検索
   const formattedPhone = formatJapaneseMobilePhone(normalizedPhone);
-  const phonesToSearch = formattedPhone !== normalizedPhone
-    ? [normalizedPhone, formattedPhone]
-    : [normalizedPhone];
+  const e164Phone = `+81${normalizedPhone.slice(1)}`;  // +817012343590
+  const e164NoPlus = `81${normalizedPhone.slice(1)}`;  // 817012343590
+  const phonesToSearch = Array.from(new Set([normalizedPhone, formattedPhone, e164Phone, e164NoPlus]));
 
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
-    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, auth_user_id, last_sms_verified_at)')
+    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, name_kana, auth_user_id, last_sms_verified_at)')
     .in('phone', phonesToSearch)
     .limit(5);
 
@@ -47,11 +47,13 @@ type CastIdentityCandidate = {
   casts: {
     id: string;
     stage_name: string | null;
+    name_kana: string | null;
     auth_user_id: string | null;
     last_sms_verified_at: string | null;
   } | {
     id: string;
     stage_name: string | null;
+    name_kana: string | null;
     auth_user_id: string | null;
     last_sms_verified_at: string | null;
   }[] | null;
@@ -63,6 +65,7 @@ function getCastRecord(candidate: CastIdentityCandidate) {
     ? {
         id: raw.id,
         stage_name: raw.stage_name ?? '',
+        name_kana: raw.name_kana ?? '',
         auth_user_id: raw.auth_user_id,
         last_sms_verified_at: raw.last_sms_verified_at,
       }
@@ -312,15 +315,16 @@ export async function castRegister(formData: FormData) {
   const lastName = (formData.get('lastName') as string)?.trim();
   const firstName = (formData.get('firstName') as string)?.trim();
   const stageName = (formData.get('stageName') as string)?.trim();
+  const nameKana = (formData.get('nameKana') as string)?.trim();
   const phone = (formData.get('phone') as string)?.trim();
   const legacyRealName = (formData.get('realName') as string)?.trim();
   const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
   const normalizedPhone = normalizeJapanesePhone(phone ?? '');
-  const normalizedStageName = stageName?.replace(/\s+/g, '').toLowerCase();
+  const normalizedNameKana = (nameKana ?? '').normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
 
-  if (!realName || !normalizedPhone || !lineId) {
+  if (!realName || !normalizedPhone || !normalizedNameKana) {
     return { success: false, error: 'すべての項目を入力してください。' };
   }
   if (!isValidJapaneseMobilePhone(normalizedPhone)) {
@@ -360,17 +364,17 @@ export async function castRegister(formData: FormData) {
 
     const matchedCandidates = (privateInfoCandidates ?? []).filter((candidate) => {
       const candidatePhone = normalizeJapanesePhone(candidate.phone ?? '');
-      const candidateStageName = ((getCastRecord(candidate)?.stage_name) ?? '')
-        .replace(/\s+/g, '')
-        .toLowerCase();
+      const candidateNameKana = ((getCastRecord(candidate)?.name_kana) ?? '')
+        .normalize('NFKC')
+        .replace(/[\s\u3000]+/g, '')
+        .trim();
 
       const isSameRealName =
         normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
       const isSamePhone = Boolean(normalizedPhone) && candidatePhone === normalizedPhone;
-      const isSameStageName = normalizedStageName ? candidateStageName === normalizedStageName : true;
-      const isSameBirthDate = dateOfBirth ? candidate.date_of_birth === dateOfBirth : true;
+      const isSameNameKana = candidateNameKana === normalizedNameKana;
 
-      return isSameRealName && isSamePhone && isSameStageName && isSameBirthDate;
+      return isSameRealName && isSamePhone && isSameNameKana;
     });
 
     if (matchedCandidates.length > 1) {
