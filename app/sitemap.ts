@@ -14,11 +14,15 @@ type CastEntry = SitemapDateSource & {
 }
 
 type ContentEntry = SitemapDateSource & {
-  id: string
+  id?: string | null
 }
 
 function resolveLastModified(item: SitemapDateSource) {
   return new Date(item.updated_at || item.created_at || Date.now())
+}
+
+function hasRouteSegment(value: string | null | undefined) {
+  return typeof value === 'string' && value.trim() !== ''
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -68,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   const castEntries: MetadataRoute.Sitemap = (casts as CastEntry[])
-    .filter((cast) => Boolean(cast.slug))
+    .filter((cast) => hasRouteSegment(cast.slug))
     .map((cast) => ({
       url: `${BASE_URL}/cast/${cast.slug}`,
       lastModified: resolveLastModified(cast),
@@ -76,19 +80,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-  const newsEntries: MetadataRoute.Sitemap = (news as ContentEntry[]).map((post) => ({
-    url: `${BASE_URL}/news/${post.id}`,
-    lastModified: resolveLastModified(post),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  const newsEntries: MetadataRoute.Sitemap = (news as ContentEntry[])
+    .filter((post) => hasRouteSegment(post.id))
+    .map((post) => ({
+      url: `${BASE_URL}/news/${post.id}`,
+      lastModified: resolveLastModified(post),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
 
-  const eventEntries: MetadataRoute.Sitemap = (events as ContentEntry[]).map((event) => ({
-    url: `${BASE_URL}/events/${event.id}`,
-    lastModified: resolveLastModified(event),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  const eventEntries: MetadataRoute.Sitemap = (events as ContentEntry[])
+    .filter((event) => hasRouteSegment(event.id))
+    .map((event) => ({
+      url: `${BASE_URL}/events/${event.id}`,
+      lastModified: resolveLastModified(event),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
 
   return [...staticEntries, ...castEntries, ...newsEntries, ...eventEntries]
 }
