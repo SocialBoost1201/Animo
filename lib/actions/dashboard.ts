@@ -45,16 +45,22 @@ export type DashboardReservation = {
   reservationType: string;
 };
 
+export type ManualAttendanceStatus = 'working' | 'absent' | 'undecided'
+export type FinalStatusSource = 'manual' | 'checkin' | 'shift' | 'none'
+
 export type DashboardCastShift = {
-  castId: string;
-  castName: string;
-  initial: string;
-  startTime: string;
-  endTime?: string;
-  status: 'confirmed' | 'late' | 'trial' | 'pending';
-  tags: string[];
-  avatarUrl?: string;
-};
+  castId: string
+  castName: string
+  initial: string
+  startTime: string
+  endTime?: string
+  status: 'confirmed' | 'late' | 'trial' | 'pending' | 'working' | 'absent'
+  tags: string[]
+  avatarUrl?: string
+  manualStatus: ManualAttendanceStatus
+  manualNote: string | null
+  finalStatusSource: FinalStatusSource
+}
 
 export type DashboardCastRanking = {
   rank: number;
@@ -290,14 +296,15 @@ export async function getDashboardReservations(): Promise<DashboardReservation[]
 // 本日の出勤キャスト（Figmaデザイン版）
 // ─────────────────────────────────────────────
 export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
-  const supabase = createServiceClient();
-  const today = getJstDateString();
+  const supabase = createServiceClient()
+  const today = getJstDateString()
 
   const [
     { data: shiftsRaw },
     { data: checkinsRaw },
     { data: trials },
     { data: postsRaw },
+    { data: manualRaw },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data, casts(stage_name, profile_image_url)').eq('status', 'approved'),
     supabase.from('daily_checkins').select('cast_id, is_absent, has_change, change_note').eq('checkin_date', today),
@@ -307,38 +314,62 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       .select('cast_id, created_at')
       .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
       .eq('status', 'approved'),
-  ]);
+    supabase
+      .from('daily_cast_attendance')
+      .select('cast_id, status, note')
+      .eq('business_date', today),
+  ])
 
-  const checkinMap = new Map((checkinsRaw || []).map(c => [c.cast_id, c]));
-  const recentPostCastIds = new Set((postsRaw || []).map(p => p.cast_id));
+  const checkinMap = new Map((checkinsRaw || []).map(c => [c.cast_id, c]))
+  const recentPostCastIds = new Set((postsRaw || []).map(p => p.cast_id))
+  const manualMap = new Map(
+    (manualRaw || []).map(m => [m.cast_id, { status: m.status as ManualAttendanceStatus, note: m.note as string | null }])
+  )
 
-  const results: DashboardCastShift[] = [];
+  const results: DashboardCastShift[] = []
 
-  // 承認済シフトから本日出勤キャストを抽出
+  // 承認済シフトから本日出勤キャストを抽出（欠勤フィルタなし — manual override で表示制御）
   if (shiftsRaw) {
     for (const row of shiftsRaw) {
-      const d = row.shifts_data as Record<string, { type: string; start: string; end: string }>;
-      if (d[today]?.type !== 'work') continue;
+      const d = row.shifts_data as Record<string, { type: string; start: string; end: string }>
+      if (d[today]?.type !== 'work') continue
 
-      // Supabaseの結合データからキャスト情報を取得
-      const castRaw = row.casts as unknown as { stage_name: string; profile_image_url?: string } | null;
-      const castName = castRaw?.stage_name ?? '不明';
-      const avatarUrl = castRaw?.profile_image_url ?? undefined;
-      
-      const checkin = checkinMap.get(row.cast_id);
-      const isAbsent = checkin?.is_absent ?? false;
-      const hasChange = checkin?.has_change ?? false;
+      const castRaw = row.casts as unknown as { stage_name: string; profile_image_url?: string } | null
+      const castName = castRaw?.stage_name ?? '不明'
+      const avatarUrl = castRaw?.profile_image_url ?? undefined
 
-      if (isAbsent) continue;
+      const manual = manualMap.get(row.cast_id)
+      const checkin = checkinMap.get(row.cast_id)
 
-      let status: DashboardCastShift['status'] = 'pending';
-      if (checkin && !isAbsent) {
-        status = hasChange ? 'late' : 'confirmed';
+      // 最終出勤状態の優先順位:
+      //   1. manual working/absent (firm override)
+      //   2. daily_checkins (cast self-report)
+      //   3. shift exists → pending
+      //   4. undecided
+      let status: DashboardCastShift['status']
+      let finalStatusSource: FinalStatusSource
+
+      if (manual && (manual.status === 'working' || manual.status === 'absent')) {
+        status = manual.status
+        finalStatusSource = 'manual'
+      } else if (checkin) {
+        if (checkin.is_absent) {
+          status = 'absent'
+        } else if (checkin.has_change) {
+          status = 'late'
+        } else {
+          status = 'confirmed'
+        }
+        finalStatusSource = 'checkin'
+      } else {
+        status = 'pending'
+        finalStatusSource = 'shift'
       }
 
-      const tags: string[] = [];
-      if (recentPostCastIds.has(row.cast_id)) tags.push('ブログ更新済');
-      if (status === 'late') tags.push('確認必要');
+      const tags: string[] = []
+      if (recentPostCastIds.has(row.cast_id)) tags.push('ブログ更新済')
+      if (status === 'late') tags.push('確認必要')
+      if (status === 'absent') tags.push('欠勤')
 
       results.push({
         castId: row.cast_id,
@@ -349,11 +380,14 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
         status,
         tags,
         avatarUrl,
-      });
+        manualStatus: manual?.status ?? 'undecided',
+        manualNote: manual?.note ?? null,
+        finalStatusSource,
+      })
     }
   }
 
-  // 体験入店
+  // 体験入店（manual override 対象外）
   for (const trial of (trials || [])) {
     results.push({
       castId: `trial-${trial.id}`,
@@ -362,11 +396,14 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       startTime: trial.start_time?.substring(0, 5) ?? '20:00',
       status: 'trial',
       tags: ['初回体入'],
-    });
+      manualStatus: 'undecided',
+      manualNote: null,
+      finalStatusSource: 'none',
+    })
   }
 
-  results.sort((a, b) => a.startTime.localeCompare(b.startTime));
-  return results;
+  results.sort((a, b) => a.startTime.localeCompare(b.startTime))
+  return results
 }
 
 // ─────────────────────────────────────────────

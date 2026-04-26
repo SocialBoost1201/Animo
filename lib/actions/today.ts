@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache'
 import { StaffSlave } from './staffs'
 import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
+import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -936,4 +937,48 @@ export async function getTodaySubmissionState(date: Date = new Date()) {
     isClosed: isTodaySubmissionClosed(date),
     deadlineLabel: getTodaySubmissionDeadlineLabel(),
   }
+}
+
+// ==========================================
+// 管理者: 本日のキャスト出勤手動オーバーライド
+// ==========================================
+
+export type DailyCastAttendanceStatus = 'working' | 'absent' | 'undecided'
+
+export async function updateDailyCastAttendance(input: {
+  castId: string
+  status: DailyCastAttendanceStatus
+  note?: string | null
+}): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Unauthorized' }
+
+  const role = await getAppRole(supabase, user.id)
+  if (!isAdminLoginRole(role)) return { success: false, error: 'Forbidden' }
+
+  const today = getJstDateString()
+
+  const { error } = await supabase
+    .from('daily_cast_attendance')
+    .upsert(
+      {
+        cast_id: input.castId,
+        business_date: today,
+        status: input.status,
+        source: 'manual',
+        note: input.note ?? null,
+        updated_by: user.id,
+      },
+      { onConflict: 'cast_id,business_date' }
+    )
+
+  if (error) {
+    console.error('[updateDailyCastAttendance]', error)
+    return { success: false, error: error.message }
+  }
+
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/today')
+  return { success: true }
 }
