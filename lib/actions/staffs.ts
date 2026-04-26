@@ -51,6 +51,7 @@ export async function createStaff(formData: FormData) {
   if (error) return { error: error.message }
   
   revalidatePath('/admin/human-resources')
+  revalidatePath('/admin/staffs')
   return { success: true, data }
 }
 
