@@ -21,8 +21,8 @@ export default async function ShiftsPage({
         </div>
       </div>
 
-      <ShiftManager 
-        initialData={{ casts: data.casts, shifts: data.schedules, dates: data.dates }} 
+      <ShiftManager
+        initialData={{ casts: data.casts, shifts: data.schedules, dates: data.dates, dailyStaffing: data.dailyStaffing }}
         viewType={viewType}
       />
     </div>

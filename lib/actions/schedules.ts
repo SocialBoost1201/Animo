@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getStaffingLevel, type DailyStaffing } from '@/lib/config/shift-staffing'
 
 function getWeekDates(startDate = new Date()): string[] {
   const dates: string[] = []
@@ -50,7 +51,8 @@ export async function getWeeklySchedules(targetDate = new Date()) {
     .lte('work_date', dates[6])
   if (schedulesError) throw new Error(schedulesError.message)
 
-  return { casts, schedules, dates }
+  const dailyStaffing = computeDailyStaffing(dates, schedules ?? [])
+  return { casts, schedules, dates, dailyStaffing }
 }
 
 export async function getMonthlySchedules(targetDate = new Date()) {
@@ -73,7 +75,27 @@ export async function getMonthlySchedules(targetDate = new Date()) {
     .lte('work_date', dates[dates.length - 1])
   if (schedulesError) throw new Error(schedulesError.message)
 
-  return { casts, schedules, dates }
+  const dailyStaffing = computeDailyStaffing(dates, schedules ?? [])
+  return { casts, schedules, dates, dailyStaffing }
+}
+
+// Compute scheduledWorkingCount and staffing level per date from already-fetched schedule rows.
+// Uses distinct cast_id per date to avoid double-counting any duplicate rows.
+function computeDailyStaffing(
+  dates: string[],
+  schedules: { cast_id: string; work_date?: string; date?: string; [key: string]: unknown }[]
+): Record<string, DailyStaffing> {
+  const result: Record<string, DailyStaffing> = {}
+  for (const date of dates) {
+    const castIds = new Set<string>()
+    for (const s of schedules) {
+      const workDate = s.work_date ?? s.date ?? ''
+      if (workDate === date) castIds.add(s.cast_id)
+    }
+    const scheduledWorkingCount = castIds.size
+    result[date] = { scheduledWorkingCount, level: getStaffingLevel(scheduledWorkingCount) }
+  }
+  return result
 }
 
 export async function saveSchedules(formData: FormData) {
