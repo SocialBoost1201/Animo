@@ -148,7 +148,7 @@ export async function DashboardKPIs() {
 
                 {/* Badge */}
                 {card.badge && (
-                  <div className={`inline-flex items-center px-[6px] py-[1px] rounded-full mt-1 ${card.badge.bg}`}>
+                  <div className={`inline-flex items-center px-[6px] py-px rounded-full mt-1 ${card.badge.bg}`}>
                     <span className={`text-[10px] font-bold tracking-[0.12px] whitespace-nowrap leading-none ${card.badge.textColor}`}>
                       {card.badge.label}
                     </span>

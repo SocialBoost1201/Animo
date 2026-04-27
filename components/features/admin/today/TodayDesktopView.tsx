@@ -541,7 +541,9 @@ function AllTab({
             <Row key={s.id}>
               <Users size={12} className="text-[#5a5650]" />
               <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
-              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
+              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
+                {s.start_time.substring(0, 5)}〜{s.end_time ? s.end_time.substring(0, 5) : ''}
+              </span>
             </Row>
           ))}
         </div>
@@ -1016,7 +1018,9 @@ function StaffTab({
           <Row key={s.id}>
             <Users size={12} className="text-[#5a5650]" />
             <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
-            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
+              {s.start_time.substring(0, 5)}〜{s.end_time ? s.end_time.substring(0, 5) : ''}
+            </span>
             <button
               disabled={isBusy(`staff-${s.id}`)}
               onClick={() => {
@@ -1062,6 +1066,7 @@ function StaffTab({
                     id: tempId,
                     display_name: displayName,
                     start_time: String(fd.get('start_time') || ''),
+                    end_time: String(fd.get('end_time') || '') || null,
                   },
                 ]),
               }))
@@ -1072,6 +1077,7 @@ function StaffTab({
                   id: string
                   display_name: string
                   start_time: string
+                  end_time?: string | null
                 }>
                 setBusy('add-staff', false)
 
@@ -1099,10 +1105,13 @@ function StaffTab({
             <select name="staff_id" required className={inputCls}>
               <option value="">Select Staff...</option>
               {data.allStaffs.map(s => (
-                <option key={s.id} value={s.id}>{s.display_name} ({s.role || 'No Role'})</option>
+                <option key={s.id} value={s.id}>{s.display_name}（{s.name}）</option>
               ))}
             </select>
-            <input name="start_time" type="time" required className={inputCls} />
+            <div className="grid grid-cols-2 gap-3">
+              <input name="start_time" type="time" required className={inputCls} />
+              <input name="end_time" type="time" className={inputCls} />
+            </div>
             <input type="hidden" name="display_name" value="" />
             <button type="submit" disabled={isBusy('add-staff')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD STAFF</button>
             {data.allStaffs.length === 0 && (

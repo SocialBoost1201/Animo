@@ -6,6 +6,6 @@ export const metadata = {
   title: 'スタッフ登録 | Animo CMS',
 };
 
-export default function NewStaffPage() {
+export default async function NewStaffPage() {
   return <StaffForm />;
 }
