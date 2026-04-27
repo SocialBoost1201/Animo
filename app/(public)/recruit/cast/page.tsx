@@ -12,6 +12,7 @@ import {
   CalendarHeart, Star, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { submitRecruitApplication } from '@/lib/actions/public/submit';
+import { classifyRecruitSubmitResult } from '@/lib/recruit-form-result';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { ReCaptchaProvider } from '@/components/providers/ReCaptchaProvider';
 import { RecruitTable, RecruitTableData, RecruitTag } from '@/components/features/recruit/RecruitTable';
@@ -134,6 +135,13 @@ function CastRecruitPageContent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Must snapshot before any await: React may null out synthetic event targets after yield.
+    const formEl = e.currentTarget;
+    if (!formEl) {
+      setErrorMessage('フォームの参照が失われました。ページを再読み込みして再度お試しください。');
+      return;
+    }
+
     if (!executeRecaptcha) {
       setErrorMessage('スパム対策システムの読み込みに失敗しました。時間をおいて再度お試しください。');
       return;
@@ -141,25 +149,70 @@ function CastRecruitPageContent() {
 
     setIsSubmitting(true);
     setErrorMessage('');
-    
+
+    // Snapshot fields synchronously before any await (DOM / controlled inputs stable at submit time).
+    const formData = new FormData(formEl);
+    formData.append('type', 'cast');
+
+    let token: string;
     try {
-      const token = await executeRecaptcha('recruit_submit');
-      const formData = new FormData(e.currentTarget);
-      formData.append('type', 'cast');
-      formData.append('recaptchaToken', token);
-      
-      const result = await submitRecruitApplication(formData);
+      token = await executeRecaptcha('recruit_submit');
+    } catch (recaptchaErr) {
+      console.error('[recruit/cast] executeRecaptcha', recaptchaErr);
+      setErrorMessage(
+        'スパム対策の認証に失敗しました。ページを再読み込みし、しばらく待ってから再度お試しください。'
+      );
       setIsSubmitting(false);
-      
-      if (result.error) {
-        setErrorMessage(result.error);
-      } else {
+      return;
+    }
+
+    formData.append('recaptchaToken', token);
+
+    try {
+      const result = await submitRecruitApplication(formData).catch((invokeErr) => {
+        console.error('[recruit/cast] submitRecruitApplication rejected', invokeErr);
+        return {
+          error: '送信処理でエラーが発生しました。時間をおいて再度お試しください。',
+        };
+      });
+
+      const outcome = classifyRecruitSubmitResult(result);
+      if (outcome.outcome === 'error') {
+        setErrorMessage(outcome.message);
+      } else if (outcome.outcome === 'success') {
         setIsSuccess(true);
-        trackRecruitSubmit('cast');
+        try {
+          trackRecruitSubmit('cast');
+        } catch {
+          /* analytics must not block submit success */
+        }
+      } else {
+        setErrorMessage('送信結果を確認できませんでした。時間をおいて再度お試しください。');
       }
     } catch (err) {
-      console.error(err);
-      setErrorMessage('予期せぬエラーが発生しました。');
+      // #region agent log
+      const logPayload = JSON.stringify({
+        sessionId: 'a3392f',
+        hypothesisId: 'H-client-catch',
+        location: 'recruit/cast/handleSubmit/catch',
+        name: err instanceof Error ? err.name : typeof err,
+        message: err instanceof Error ? err.message : String(err).slice(0, 200),
+        timestamp: Date.now(),
+      });
+      void fetch('/api/debug/agent-ingest', { method: 'POST', body: logPayload }).catch(() => {});
+      void fetch('http://127.0.0.1:7558/ingest/8501010b-6585-4387-aecf-9813ad99c1ba', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'a3392f' },
+        body: logPayload,
+      }).catch(() => {});
+      // #endregion
+      console.error('[recruit/cast] submit', err);
+      setErrorMessage(
+        process.env.NODE_ENV === 'development'
+          ? `開発表示: ${err instanceof Error ? err.message : String(err)}`
+          : '予期せぬエラーが発生しました。',
+      );
+    } finally {
       setIsSubmitting(false);
     }
   };

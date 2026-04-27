@@ -6,6 +6,15 @@ This file is the active implementation plan and progress tracker.
 Agents must follow this plan and the user's latest instruction.
 Do not perform work outside this plan unless explicitly instructed.
 
+## Approved implementation plans
+
+### Cast register: error-handling, contract file, role split (2026-04-28)
+
+- **Plan document:** [docs/superpowers/plans/2026-04-28-cast-register-error-handling-implementation.md](docs/superpowers/plans/2026-04-28-cast-register-error-handling-implementation.md)
+- **Approval:** [x] Approved (master, 2026-04-28)
+- **Execution order:** M1 → M2 → M3 → M4 → M5 as defined in that document. **Out of scope there:** 14-day SMS-less re-login (separate plan).
+- **M1:** [x] Contract doc [docs/agent-system/cast-register-errors.md](docs/agent-system/cast-register-errors.md) + shared [lib/cast-register-error-titles.ts](lib/cast-register-error-titles.ts); PC/mobile register pages use shared map (`AUTH_RECOVERY_FAILED` / `AUTH_MULTIPLE_USERS` など欠け解消).
+
 ## Status Legend
 
 - [ ] Not started
