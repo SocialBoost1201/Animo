@@ -1,7 +1,5 @@
-import { StaffForm } from '@/components/features/admin/staffs/StaffForm';
-
-export const dynamic = 'force-dynamic';
+import { StaffForm } from '@/components/features/admin/staffs/StaffForm'
 
 export default function NewStaffPage() {
-  return <StaffForm />;
+  return <StaffForm />
 }

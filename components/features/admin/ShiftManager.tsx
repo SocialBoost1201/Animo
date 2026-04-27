@@ -5,6 +5,8 @@ import { saveSchedules } from '@/lib/actions/schedules'
 import { toast } from 'sonner'
 import { ChevronLeft, ChevronRight, Clock, Save, Loader2, Check, CalendarDays, List } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { type DailyStaffing } from '@/lib/config/shift-staffing'
+import { AttendanceRequestModal } from '@/components/features/admin/AttendanceRequestModal'
 
 const TIME_OPTIONS = [
   '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
@@ -20,10 +22,10 @@ type ShiftKey = string // `${castId}_${date}`
 type ShiftMap = Map<ShiftKey, { start_time: string; end_time: string }>
 
 export function ShiftManager({ initialData, viewType = 'week' }: {
-  initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[] }
+  initialData: { casts: CastData[]; shifts: ShiftData[]; dates: string[]; dailyStaffing?: Record<string, DailyStaffing> }
   viewType?: 'week' | 'month'
 }) {
-  const { casts, shifts, dates } = initialData
+  const { casts, shifts, dates, dailyStaffing } = initialData
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
@@ -41,6 +43,7 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
   })
 
   const [editingCell, setEditingCell] = useState<{ castId: string; date: string } | null>(null)
+  const [selectedRequestDate, setSelectedRequestDate] = useState<string | null>(null)
 
   const toggleShift = useCallback((castId: string, date: string) => {
     setShiftMap(prev => {
@@ -182,12 +185,35 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
                 const d = new Date(date)
                 const isSat = d.getDay() === 6
                 const isSun = d.getDay() === 0
+                const staffing = dailyStaffing?.[date]
+                const staffingLevel = staffing?.level
+                const staffingCount = staffing?.scheduledWorkingCount
                 return (
                   <th key={date} className="px-2 py-3 text-center bg-white/5 border-l border-white/5">
                     <p className={`text-xs font-bold tracking-widest ${isSat ? 'text-blue-400' : isSun ? 'text-red-400' : 'text-[#8a8478]'}`}>
                       {DAYS_SHORT[i]}
                     </p>
                     <p className="text-sm font-serif text-[#f4f1ea] mt-0.5">{d.getDate()}</p>
+                    {staffing && (
+                      <div className="mt-1 flex flex-col items-center gap-0.5">
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                          staffingLevel === 'critical' ? 'text-[#e08080] bg-[#e0808015]' :
+                          staffingLevel === 'low' ? 'text-[#dfbd69] bg-[#dfbd6915]' :
+                          'text-[#72b894] bg-[#72b89415]'
+                        }`}>
+                          {staffingCount}名
+                        </span>
+                        {(staffingLevel === 'low' || staffingLevel === 'critical') && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedRequestDate(date)}
+                            className="text-[9px] font-bold text-[#dfbd69] border border-[#dfbd6940] rounded-full px-1.5 py-0.5 hover:bg-[#dfbd6915] transition-colors"
+                          >
+                            依頼
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </th>
                 )
               })}
@@ -280,6 +306,47 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
         </table>
       </div>
 
+      {/* Mobile staffing summary */}
+      {dailyStaffing && (
+        <div className="md:hidden overflow-x-auto pb-1">
+          <div className="flex gap-1.5 min-w-max py-1">
+            {dates.map(date => {
+              const staffing = dailyStaffing[date]
+              if (!staffing) return null
+              const { scheduledWorkingCount: count, level } = staffing
+              const d = new Date(date)
+              const dDay = d.getDay() === 0 ? 6 : d.getDay() - 1
+              const dLabel = DAYS_SHORT[dDay] ?? ''
+              return (
+                <div
+                  key={date}
+                  className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-[8px] border min-w-[44px] ${
+                    level === 'critical' ? 'border-[#e08080]/40 bg-[#e0808010]' :
+                    level === 'low' ? 'border-[#dfbd69]/40 bg-[#dfbd6910]' :
+                    'border-white/10 bg-white/5'
+                  }`}
+                >
+                  <span className="text-[9px] text-[#8a8478]">{d.getDate()}({dLabel})</span>
+                  <span className={`text-[11px] font-bold ${
+                    level === 'critical' ? 'text-[#e08080]' :
+                    level === 'low' ? 'text-[#dfbd69]' : 'text-[#72b894]'
+                  }`}>{count}</span>
+                  {(level === 'low' || level === 'critical') && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRequestDate(date)}
+                      className="text-[8px] font-bold text-[#dfbd69] border border-[#dfbd6940] rounded-full px-1.5 py-0.5 hover:bg-[#dfbd6915] transition-colors"
+                    >
+                      依頼
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Mobile Card UI */}
       <div className="md:hidden space-y-4">
         {(!casts || casts.length === 0) ? (
@@ -371,6 +438,17 @@ export function ShiftManager({ initialData, viewType = 'week' }: {
           );
         })}
       </div>
+
+      {/* Attendance Request Modal */}
+      {selectedRequestDate && (
+        <AttendanceRequestModal
+          date={selectedRequestDate}
+          scheduledCount={dailyStaffing?.[selectedRequestDate]?.scheduledWorkingCount ?? 0}
+          allCasts={casts.map(c => ({ id: c.id, stage_name: c.stage_name }))}
+          scheduledCastIds={new Set(casts.filter(c => shiftMap.has(`${c.id}_${selectedRequestDate}`)).map(c => c.id))}
+          onClose={() => setSelectedRequestDate(null)}
+        />
+      )}
 
       {/* Summary Footer */}
       <div className="flex items-center justify-between text-xs text-[#8a8478] pt-2">

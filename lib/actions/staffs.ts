@@ -44,6 +44,20 @@ export async function getStaffById(id: string): Promise<StaffSlave | null> {
 }
 
 /**
+ * スタッフマスタ単件取得
+ */
+export async function getStaffById(id: string): Promise<StaffSlave | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('staffs')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) return null
+  return data as StaffSlave
+}
+
+/**
  * スタッフマスタ登録
  */
 export async function createStaff(formData: FormData) {
