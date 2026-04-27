@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, Settings, MessageSquare,
   LogOut, Briefcase, Menu, ChevronRight, X, Bell, ClipboardList,
-  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Printer,
+  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Printer, Newspaper,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 import { AdminThemeProvider, useAdminTheme } from '@/components/providers/AdminThemeProvider';
@@ -32,6 +32,7 @@ const NAV_ITEMS = [
 
   // ── CONTENT ───────────────────────────────────────────────────────────────
   { href: '/admin/posts',              icon: MessageSquare,   label: 'キャストブログ', section: 'content', badge: 'posts' },
+  { href: '/admin/contents',           icon: Newspaper,       label: 'コンテンツ管理', section: 'content' },
   { href: '/admin/analytics',          icon: BarChart2,       label: 'サイト分析',     section: 'content' },
 
   // ── SYSTEM ────────────────────────────────────────────────────────────────
