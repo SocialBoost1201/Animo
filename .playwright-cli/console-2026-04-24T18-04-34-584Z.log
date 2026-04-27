@@ -1,0 +1,15 @@
+[    3576ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    3627ms] [LOG] [Fast Refresh] done in 153ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    3728ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    3731ms] [LOG] [Fast Refresh] done in 103ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    4431ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    4486ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    4627ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    4722ms] [LOG] [Fast Refresh] done in 213ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    5018ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  105411ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  105432ms] [LOG] [Fast Refresh] done in 121ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  131455ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  131801ms] [LOG] [Fast Refresh] done in 446ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  131903ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  131903ms] [LOG] [Fast Refresh] done in 102ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
