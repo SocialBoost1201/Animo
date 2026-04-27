@@ -18,7 +18,7 @@ export function StaffList({ initialStaffs }: StaffListProps) {
         <UserCheck size={48} strokeWidth={1} className="mb-4 opacity-50 text-[#dfbd69]" />
         <p className="text-sm tracking-widest">スタッフが登録されていません</p>
         <Link
-          href="/admin/human-resources/staffs/new"
+          href="/admin/staffs/new"
           className="mt-6 flex items-center gap-2 rounded-[10px] border border-[#dfbd69]/22 bg-[#171717] px-4 py-2 text-xs tracking-widest text-[#f4f1ea] hover:bg-gold hover:text-[#0b0b0d] transition-colors"
         >
           <Plus size={14} />
@@ -32,7 +32,7 @@ export function StaffList({ initialStaffs }: StaffListProps) {
     <div className="space-y-6 font-sans">
       <div className="flex justify-end mb-4">
         <Link
-          href="/admin/human-resources/staffs/new"
+          href="/admin/staffs/new"
           className="flex items-center gap-2.5 px-6 py-3 rounded-[12px] text-[13px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-xl shadow-gold/20"
           style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
         >

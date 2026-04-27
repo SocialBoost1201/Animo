@@ -31,6 +31,18 @@ export async function getStaffs(includeInactive = false) {
   return data as StaffSlave[]
 }
 
+export async function getStaffById(id: string): Promise<StaffSlave | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('staffs')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) return null
+  return data as StaffSlave
+}
+
 /**
  * スタッフマスタ単件取得
  */
@@ -65,6 +77,7 @@ export async function createStaff(formData: FormData) {
   if (error) return { error: error.message }
   
   revalidatePath('/admin/human-resources')
+  revalidatePath('/admin/staffs')
   return { success: true, data }
 }
 
