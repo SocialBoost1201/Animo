@@ -56,16 +56,16 @@ export async function DashboardTodayShifts() {
             <div className="min-w-[960px]">
               {/* Table Header Row */}
               <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6 bg-white/1">
-                <div className="w-[240px] text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase">
+                <div className="w-[240px] text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">
                   CAST NAME
                 </div>
-                <div className="w-section text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase px-6">
+                <div className="w-section text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase px-6">
                   SHIFT TIME
                 </div>
-                <div className="w-[220px] text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase">
+                <div className="w-[220px] text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">
                   ATTENDANCE
                 </div>
-                <div className="flex-1 text-[9px] font-bold tracking-[1px] text-[#5a5650] uppercase px-4">
+                <div className="flex-1 text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase px-4">
                   MEMO / TAGS
                 </div>
               </div>
