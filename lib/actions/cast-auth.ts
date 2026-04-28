@@ -12,7 +12,7 @@ import {
   isValidJapaneseMobilePhone,
   toE164JapanesePhone,
 } from '@/lib/utils/phone';
-import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
+import { matchesCastRegisterIdentity } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
@@ -323,11 +323,9 @@ export async function castRegister(formData: FormData) {
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
   const normalizedPhone = normalizeJapanesePhone(phone ?? '');
-  // 源氏名は `stageName`、本人確認用フリガナは `nameKana`。フォームは `stageName` のみ送るため未指定時は源氏名で照合する。
-  const kanaForMatch = (nameKana || stageName)?.trim() ?? '';
-  const normalizedNameKana = kanaForMatch.normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
+  const castNameForMatch = (nameKana || stageName)?.trim() ?? '';
 
-  if (!realName || !normalizedPhone || !normalizedNameKana) {
+  if (!realName || !normalizedPhone || !castNameForMatch) {
     return {
       success: false,
       error: 'すべての項目を入力してください。',
@@ -357,7 +355,6 @@ export async function castRegister(formData: FormData) {
   }
 
   const serviceRoleClient = createServiceClient();
-  const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
 
   try {
     const { data: privateInfoCandidates, error: privateInfoError } = await findCastIdentityByPhone(
@@ -374,18 +371,18 @@ export async function castRegister(formData: FormData) {
     }
 
     const matchedCandidates = (privateInfoCandidates ?? []).filter((candidate) => {
-      const candidatePhone = normalizeJapanesePhone(candidate.phone ?? '');
-      const candidateNameKana = ((getCastRecord(candidate)?.name_kana) ?? '')
-        .normalize('NFKC')
-        .replace(/[\s\u3000]+/g, '')
-        .trim();
+      const candidateCast = getCastRecord(candidate);
 
-      const isSameRealName =
-        normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
-      const isSamePhone = Boolean(normalizedPhone) && candidatePhone === normalizedPhone;
-      const isSameNameKana = candidateNameKana === normalizedNameKana;
-
-      return isSameRealName && isSamePhone && isSameNameKana;
+      return matchesCastRegisterIdentity({
+        candidateRealName: candidate.real_name ?? '',
+        candidatePhone: candidate.phone ?? '',
+        candidateStageName: candidateCast?.stage_name ?? '',
+        candidateNameKana: candidateCast?.name_kana ?? '',
+        submittedRealName: realName,
+        submittedPhone: normalizedPhone,
+        submittedStageName: stageName ?? '',
+        submittedNameKana: nameKana ?? '',
+      });
     });
 
     if (matchedCandidates.length > 1) {
