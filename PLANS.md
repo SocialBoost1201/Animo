@@ -14,6 +14,7 @@ Do not perform work outside this plan unless explicitly instructed.
 - **Approval:** [x] Approved (master, 2026-04-28)
 - **Execution order:** M1 → M2 → M3 → M4 → M5 as defined in that document. **Out of scope there:** 14-day SMS-less re-login (separate plan).
 - **M1:** [x] Contract doc [docs/agent-system/cast-register-errors.md](docs/agent-system/cast-register-errors.md) + shared [lib/cast-register-error-titles.ts](lib/cast-register-error-titles.ts); PC/mobile register pages use shared map (`AUTH_RECOVERY_FAILED` / `AUTH_MULTIPLE_USERS` など欠け解消).
+- **Emergency fix:** [x] `castRegister` now matches the cast form's 源氏名 against `casts.stage_name` when `nameKana` is not submitted; regression covered by `lib/validators/cast-profile.test.ts`.
 ## Status Legend
 
 - [ ] Not started

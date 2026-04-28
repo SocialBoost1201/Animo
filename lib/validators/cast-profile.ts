@@ -44,6 +44,37 @@ export function normalizeRealNameForIdentityMatch(value: string) {
     .trim();
 }
 
+export function normalizeCastNameForIdentityMatch(value: string) {
+  return value
+    .normalize('NFKC')
+    .replace(/[\s\u3000]+/g, '')
+    .trim();
+}
+
+export type CastRegisterIdentityInput = {
+  candidateRealName: string;
+  candidatePhone: string;
+  candidateStageName: string;
+  candidateNameKana: string;
+  submittedRealName: string;
+  submittedPhone: string;
+  submittedStageName: string;
+  submittedNameKana: string;
+};
+
+export function matchesCastRegisterIdentity(input: CastRegisterIdentityInput) {
+  const submittedCastName = input.submittedNameKana || input.submittedStageName;
+  const candidateCastName = input.submittedNameKana ? input.candidateNameKana : input.candidateStageName;
+  const isSameRealName =
+    normalizeRealNameForIdentityMatch(input.candidateRealName) ===
+    normalizeRealNameForIdentityMatch(input.submittedRealName);
+  const isSamePhone = normalizeJapanesePhone(input.candidatePhone) === normalizeJapanesePhone(input.submittedPhone);
+  const isSameCastName =
+    normalizeCastNameForIdentityMatch(candidateCastName) === normalizeCastNameForIdentityMatch(submittedCastName);
+
+  return isSameRealName && isSamePhone && isSameCastName;
+}
+
 function isValidDateString(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const [yearStr, monthStr, dayStr] = value.split('-');
