@@ -72,9 +72,9 @@ export default async function CastProfilePage() {
     getMyCastPosts(cast.id as string),
   ]);
 
-  const totalPV = pvResult.success ? pvResult.totalPV : 0;
+  const totalPV: number = pvResult.success ? (pvResult.totalPV ?? 0) : 0;
   const pvRank = pvResult.success ? pvResult.rank : '-';
-  const totalCasts = pvResult.success ? pvResult.totalCasts : 0;
+  const totalCasts: number = pvResult.success ? (pvResult.totalCasts ?? 0) : 0;
   const publishedPosts = postsResult.data?.filter((p) => p.status === 'published') ?? [];
   const recentPosts = publishedPosts.slice(0, 4);
   const totalPostCount = postsResult.data?.length ?? 0;
