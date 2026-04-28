@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "smart-bug-fix": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "00243aeda488ece0bfca079756359dd30a36b4a2ac3d51449beed8a43801e9c1"
+    },
+    "supabase": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "cb675a889c60172febe84740e7c22b600c8241c390deaff3d368c408f10dffdf"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d606a1146be6d54fb9e73f718b5320b9acac5ff2ba2d7230a555df4b5a923b4a"
+    }
+  }
+}

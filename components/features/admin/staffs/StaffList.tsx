@@ -4,9 +4,20 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { UserCheck, Edit, Plus } from 'lucide-react';
 import { type StaffSlave } from '@/lib/actions/staffs';
+import { splitStaffFullName } from '@/lib/staff-name';
 
 interface StaffListProps {
   initialStaffs: StaffSlave[];
+}
+
+function namePartsForRow(staff: StaffSlave): { family: string; given: string } {
+  if (
+    (staff.family_name != null && staff.family_name.trim() !== '') ||
+    (staff.given_name != null && staff.given_name.trim() !== '')
+  ) {
+    return { family: staff.family_name?.trim() ?? '', given: staff.given_name?.trim() ?? '' };
+  }
+  return splitStaffFullName(staff.name);
 }
 
 export function StaffList({ initialStaffs }: StaffListProps) {
@@ -44,25 +55,25 @@ export function StaffList({ initialStaffs }: StaffListProps) {
         <table className="w-full">
           <thead className="bg-[#171717] border-b border-[#dfbd69]/12">
             <tr>
+              <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">苗字</th>
               <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">名前</th>
-              <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">表示名</th>
-              <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">役職</th>
+              <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">芸名</th>
+              <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">携帯</th>
               <th className="text-left px-10 py-6 font-black text-[#a89d8a] tracking-[2px] text-[11px] uppercase">ステータス</th>
               <th className="px-10 py-6" />
             </tr>
           </thead>
           <tbody className="divide-y divide-[#dfbd69]/10">
-            {staffs.map((staff) => (
+            {staffs.map((staff) => {
+              const p = namePartsForRow(staff);
+              return (
               <tr key={staff.id} className="group hover:bg-[#181818] transition-all duration-300">
                 <td className="px-10 py-8">
-                  <span className="font-bold text-[#f4f1ea] text-[16px] tracking-tight group-hover:text-gold transition-colors">{staff.name}</span>
+                  <span className="font-bold text-[#f4f1ea] text-[16px] tracking-tight group-hover:text-gold transition-colors">{p.family || '—'}</span>
                 </td>
+                <td className="px-10 py-8 text-[#e2ddd4] text-[15px] font-medium">{p.given || '—'}</td>
                 <td className="px-10 py-8 text-[#e2ddd4] text-[15px] font-medium">{staff.display_name}</td>
-                <td className="px-10 py-8">
-                  <span className="inline-flex items-center px-3 py-1 bg-[#dfbd69]/10 rounded-[6px] text-[#f0d898] text-[12px] font-bold border border-[#dfbd69]/20">
-                    {staff.role ?? '一般スタッッフ'}
-                  </span>
-                </td>
+                <td className="px-10 py-8 text-[#c7c0b2] text-[14px]">{staff.mobile_phone?.trim() || '—'}</td>
                 <td className="px-10 py-8">
                   <span
                     className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-black tracking-[1px] uppercase border transition-all ${
@@ -85,7 +96,8 @@ export function StaffList({ initialStaffs }: StaffListProps) {
                   </Link>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

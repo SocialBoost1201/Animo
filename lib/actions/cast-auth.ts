@@ -323,13 +323,23 @@ export async function castRegister(formData: FormData) {
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
   const normalizedPhone = normalizeJapanesePhone(phone ?? '');
-  const normalizedNameKana = (nameKana ?? '').normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
+  // 源氏名は `stageName`、本人確認用フリガナは `nameKana`。フォームは `stageName` のみ送るため未指定時は源氏名で照合する。
+  const kanaForMatch = (nameKana || stageName)?.trim() ?? '';
+  const normalizedNameKana = kanaForMatch.normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
 
   if (!realName || !normalizedPhone || !normalizedNameKana) {
-    return { success: false, error: 'すべての項目を入力してください。' };
+    return {
+      success: false,
+      error: 'すべての項目を入力してください。',
+      code: 'VALIDATION_INCOMPLETE',
+    };
   }
   if (!isValidJapaneseMobilePhone(normalizedPhone)) {
-    return { success: false, error: '携帯番号は09012345678のように11桁で入力してください。' };
+    return {
+      success: false,
+      error: '携帯番号は09012345678のように11桁で入力してください。',
+      code: 'INVALID_PHONE',
+    };
   }
 
   const authPhone = toE164JapanesePhone(normalizedPhone);
@@ -447,7 +457,16 @@ export async function castRegister(formData: FormData) {
       }
 
       type AuthUserLite = { id: string; phone?: string };
-      const json = await resp.json() as { users?: AuthUserLite[] };
+      let json: { users?: AuthUserLite[] };
+      try {
+        json = (await resp.json()) as { users?: AuthUserLite[] };
+      } catch {
+        return {
+          success: false,
+          error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
+          code: 'AUTH_RECOVERY_FAILED',
+        };
+      }
 
       // phone が完全一致するユーザーだけを対象にする
       const matched = (json.users ?? []).filter((u: AuthUserLite) => u.phone === authPhone);

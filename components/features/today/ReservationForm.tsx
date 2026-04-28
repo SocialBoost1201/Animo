@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { addReservation, deleteReservation } from '@/lib/actions/today'
 import { toast } from 'sonner'
 import { Plus, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 
 type Reservation = {
   id: string
@@ -15,13 +14,15 @@ type Reservation = {
   note?: string
 }
 
-const CERTAINTY_OPTIONS = [
-  { value: 'confirmed', label: '確定',   activeClass: 'border-[rgba(51,179,107,0.35)] bg-[rgba(51,179,107,0.15)] text-[#33b36b]' },
-  { value: 'maybe',     label: '来るかも', activeClass: 'border-[rgba(230,162,60,0.35)]  bg-[rgba(230,162,60,0.15)]  text-[#e6a23c]' },
-  { value: 'contacting',label: '連絡中',  activeClass: 'border-[rgba(130,130,220,0.35)] bg-[rgba(130,130,220,0.15)] text-[#9090e0]' },
-] as const
+type CertaintyValue = 'confirmed' | 'maybe' | 'contacting'
 
-type CertaintyValue = typeof CERTAINTY_OPTIONS[number]['value']
+function createTempReservationId() {
+  return `temp-reservation-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function sortReservations(items: Reservation[]) {
+  return [...items].sort((a, b) => a.visit_time.localeCompare(b.visit_time))
+}
 
 export function ReservationForm({
   reservations,
@@ -32,10 +33,15 @@ export function ReservationForm({
   isSubmissionClosed: boolean
   deadlineLabel: string
 }) {
-  const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [localReservations, setLocalReservations] = useState(reservations)
   const [showForm, setShowForm] = useState(false)
   const [selectedCertainty, setSelectedCertainty] = useState<CertaintyValue>('maybe')
+  const [pendingIds, setPendingIds] = useState<string[]>([])
+
+  useEffect(() => {
+    setLocalReservations(reservations)
+  }, [reservations])
 
   const inputClass = 'h-[48px] w-full rounded-[12px] bg-black/40 border-none px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a] transition-all'
 
@@ -43,30 +49,70 @@ export function ReservationForm({
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
     fd.set('visit_certainty', selectedCertainty)
+    const previousReservations = localReservations
+    const tempId = createTempReservationId()
+    const guestCountValue = String(fd.get('guest_count') ?? '').trim()
+    const tempReservation: Reservation = {
+      id: tempId,
+      visit_time: String(fd.get('visit_time') ?? ''),
+      guest_name: String(fd.get('guest_name') ?? '').trim(),
+      guest_count: guestCountValue ? Number.parseInt(guestCountValue, 10) : null,
+      reservation_type: String(fd.get('reservation_type') ?? 'reservation'),
+      note: String(fd.get('note') ?? '').trim() || undefined,
+    }
+
+    setLocalReservations((current) => sortReservations([...current, tempReservation]))
+    setPendingIds((current) => [...current, tempId])
+    setShowForm(false)
+    setSelectedCertainty('maybe')
+
     startTransition(async () => {
       const result = await addReservation(fd)
       if (result.error) {
+        setLocalReservations(previousReservations)
+        setPendingIds((current) => current.filter((id) => id !== tempId))
+        setShowForm(true)
         toast.error(result.error)
       } else {
         toast.success(result.message || '来店予定を追加しました')
         if ('warning' in result && result.warning) {
           toast.error(result.warning)
         }
-        setShowForm(false)
-        setSelectedCertainty('maybe')
-        router.refresh()
+        setPendingIds((current) => current.filter((id) => id !== tempId))
+        if ('data' in result && result.data) {
+          const savedReservation = result.data
+          setLocalReservations((current) =>
+            sortReservations(current.map((reservation) =>
+              reservation.id === tempId
+                ? {
+                    id: savedReservation.id,
+                    visit_time: savedReservation.visit_time,
+                    guest_name: savedReservation.guest_name,
+                    guest_count: savedReservation.guest_count ?? null,
+                    reservation_type: savedReservation.reservation_type,
+                    note: savedReservation.note ?? undefined,
+                  }
+                : reservation
+            ))
+          )
+        }
       }
     })
   }
 
   async function handleDelete(id: string) {
+    const previousReservations = localReservations
+    setLocalReservations((current) => current.filter((reservation) => reservation.id !== id))
+    setPendingIds((current) => [...current, id])
+
     startTransition(async () => {
       const result = await deleteReservation(id)
+      setPendingIds((current) => current.filter((pendingId) => pendingId !== id))
       if (result.error) {
+        setLocalReservations(previousReservations)
         toast.error(result.error)
         return
       }
-      router.refresh()
     })
   }
 
@@ -81,16 +127,20 @@ export function ReservationForm({
         </p>
       ) : null}
 
-      {reservations.length > 0 ? (
+      {localReservations.length > 0 ? (
         <div className="mb-4 space-y-3">
-          {reservations.map(r => (
+          {localReservations.map(r => (
             <div key={r.id} className="rounded-[16px] bg-[#131720] p-4">
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[13px] text-[#6b7280]">
-                  <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.08)] text-[11px] font-bold">{reservations.findIndex((item) => item.id === r.id) + 1}</span>
-                  {reservations.findIndex((item) => item.id === r.id) + 1}組目
+                  <span className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.08)] text-[11px] font-bold">{localReservations.findIndex((item) => item.id === r.id) + 1}</span>
+                  {localReservations.findIndex((item) => item.id === r.id) + 1}組目
                 </div>
-                <button onClick={() => handleDelete(r.id)} className="text-[#6b7280]">
+                <button
+                  onClick={() => handleDelete(r.id)}
+                  disabled={pendingIds.includes(r.id)}
+                  className="text-[#6b7280] disabled:opacity-40"
+                >
                   <Trash2 size={14} />
                 </button>
               </div>

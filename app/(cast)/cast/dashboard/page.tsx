@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { CalendarDays, Bell, PenLine, ChevronRight, ClipboardCheck, FileText } from 'lucide-react';
+import { CalendarDays, Bell, PenLine, ChevronRight, ClipboardCheck, FileText, MessageCircle } from 'lucide-react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
@@ -124,6 +124,7 @@ export default async function CastDashboardPage() {
     todayReservations,
     { data: todayShift },
     { data: recentPosts },
+    { data: lineConnectionInfo, error: lineConnectionError },
   ] = await Promise.all([
     getMyShiftSubmission(nextMondayStr),
     getMySchedulesForWeek(cast.id, thisWeekMondayStr),
@@ -142,6 +143,11 @@ export default async function CastDashboardPage() {
       .eq('cast_id', cast.id)
       .order('created_at', { ascending: false })
       .limit(3),
+    supabase
+      .from('cast_private_info')
+      .select('line_user_id')
+      .eq('cast_id', cast.id)
+      .maybeSingle(),
   ]);
 
   const reservationCount = todayReservations?.length ?? 0;
@@ -171,10 +177,22 @@ export default async function CastDashboardPage() {
     ])
   );
 
-  const workCount = summaryDates.filter((date) =>
-    scheduleStatusMap.has(formatDate(date))
-  ).length;
-  const offCount = 7 - workCount;
+  const isLineConnected = Boolean(lineConnectionInfo?.line_user_id);
+  const lineConnectionStatus = lineConnectionError
+    ? 'unavailable'
+    : isLineConnected
+      ? 'connected'
+      : 'not_connected';
+  const lineStatusLabel = lineConnectionStatus === 'connected'
+    ? '連携済み'
+    : lineConnectionStatus === 'unavailable'
+      ? '通知不可'
+      : '未連携';
+  const lineStatusClass = lineConnectionStatus === 'connected'
+    ? 'bg-[rgba(51,179,107,0.12)] text-[#33b36b]'
+    : lineConnectionStatus === 'unavailable'
+      ? 'bg-[rgba(224,106,106,0.12)] text-[#e06a6a]'
+      : 'bg-[rgba(255,255,255,0.08)] text-[#a9afbc]';
 
   return (
     <CastMobileShell>
@@ -307,6 +325,32 @@ export default async function CastDashboardPage() {
             </div>
           </CastMobileCard>
         </Link>
+
+        <CastMobileCard className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(201,167,106,0.15)] text-[#c9a76a]">
+                <MessageCircle className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.14em] text-[#6b7280]">Official LINE</div>
+                <div className="text-base font-bold text-[#f7f4ed]">公式LINEを連携する</div>
+              </div>
+            </div>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${lineStatusClass}`}>
+              {lineStatusLabel}
+            </span>
+          </div>
+          <p className="mt-4 text-[13px] leading-[1.7] text-[#a9afbc]">
+            シフト提出リマインドや本日の確認など、個別通知を受け取るために公式LINEの友だち追加が必要です。
+          </p>
+          <div className="mt-5 rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]">
+            公式LINEを追加する
+          </div>
+          <p className="mt-2 text-[11px] text-[#6b7280]">
+            友だち追加後、公式LINEに表示された連携コードを送信してください。
+          </p>
+        </CastMobileCard>
 
         <Link href="/cast/schedule" aria-label="今週のスケジュール詳細を見る">
           <CastMobileCard className="p-5">

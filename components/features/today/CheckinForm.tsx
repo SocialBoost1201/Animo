@@ -45,14 +45,17 @@ export function CheckinForm({
   deadlineLabel: string
   isMasterOverride?: boolean
 }) {
+  const initialStatus = deriveInitialStatus(existing, existingDouhan ?? null)
   const [status, setStatus] = useState<Status>(() =>
-    deriveInitialStatus(existing, existingDouhan ?? null)
+    initialStatus
   )
+  const [confirmedStatus, setConfirmedStatus] = useState<Status>(initialStatus)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(!!(existing || existingDouhan))
   const [approvalStatus, setApprovalStatus] = useState(
     existing?.approval_status ?? null
   )
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const inputClass =
     'h-[48px] w-full rounded-[12px] border-none bg-black/40 px-3 text-[13px] text-[#f7f4ed] placeholder:text-[rgba(247,244,237,0.4)] focus:outline-hidden focus:ring-1 focus:ring-[#c9a76a] transition-all'
@@ -86,7 +89,17 @@ export function CheckinForm({
       }
     }
 
+    const previousState = {
+      status: confirmedStatus,
+      submitted,
+      approvalStatus,
+    }
+
     setIsSubmitting(true)
+    setSubmitted(true)
+    setApprovalStatus('pending')
+    setSubmitError(null)
+
     const fd = new FormData(e.currentTarget)
     fd.set('status', status)
     fd.set('has_change', status === 'douhan' && !!fd.get('change_note') ? 'true' : 'false')
@@ -94,14 +107,17 @@ export function CheckinForm({
 
     const result = await submitCheckin(fd)
     if (result.error) {
+      setStatus(previousState.status)
+      setSubmitted(previousState.submitted)
+      setApprovalStatus(previousState.approvalStatus)
+      setSubmitError(result.error)
       toast.error(result.error)
     } else {
       toast.success(result.message ?? '本日の確認を送信しました')
       if ('warning' in result && result.warning) {
         toast.error(result.warning as string)
       }
-      setSubmitted(true)
-      setApprovalStatus('pending')
+      setConfirmedStatus(status)
     }
     setIsSubmitting(false)
   }
@@ -152,10 +168,10 @@ export function CheckinForm({
       return `${base} border border-[#c9a76a] bg-[rgba(201,167,106,0.15)] text-[#c9a76a] shadow-[0_0_12px_rgba(201,167,106,0.15)]`
     }
     if (s === 'douhan') {
-      return `${base} border border-[#dfbd69] bg-[rgba(223,189,105,0.2)] text-[#dfbd69] shadow-[0_0_16px_rgba(223,189,105,0.2)]`
+      return `${base} border border-[#9fbc73] bg-[rgba(159,188,115,0.16)] text-[#c8d99a] shadow-[0_0_14px_rgba(159,188,115,0.16)]`
     }
     // absent
-    return `${base} border border-[#e06a6a] bg-[rgba(224,106,106,0.15)] text-[#e06a6a] shadow-[0_0_12px_rgba(224,106,106,0.15)]`
+    return `${base} border border-[#d4785a] bg-[rgba(212,120,90,0.14)] text-[#e08a73] shadow-[0_0_12px_rgba(212,120,90,0.14)]`
   }
 
   return (
@@ -208,6 +224,12 @@ export function CheckinForm({
         </p>
       ) : null}
 
+      {submitError ? (
+        <p className="mb-4 rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-600">
+          {submitError}
+        </p>
+      ) : null}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* ── 3-state selector ── */}
         <div className="grid grid-cols-3 gap-2">
@@ -247,8 +269,8 @@ export function CheckinForm({
 
         {/* ── 同伴フォーム（必須）── */}
         {status === 'douhan' && (
-          <div className="rounded-[14px] ring-1 ring-[#dfbd69]/20 bg-[rgba(223,189,105,0.06)] p-4 space-y-4">
-            <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#dfbd69]/70 mb-1">
+          <div className="rounded-[14px] ring-1 ring-[#9fbc73]/20 bg-[rgba(159,188,115,0.06)] p-4 space-y-4">
+            <p className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#c8d99a]/75 mb-1">
               同伴情報（必須）
             </p>
             <div>

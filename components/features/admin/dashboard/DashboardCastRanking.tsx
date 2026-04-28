@@ -30,19 +30,19 @@ export async function DashboardCastRanking() {
         {/* Table Headers (Simplified for Dashboard) */}
         <div className="flex items-center h-[34px] border-b border-[#ffffff0a] mb-2 px-1">
           <div className="w-section-mobile">
-             <span className="text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">キャスト名</span>
+             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">キャスト名</span>
           </div>
           <div className="flex-1 min-w-0">
-             <span className="text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase ml-1">スコア</span>
+             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase ml-1">スコア</span>
           </div>
           <div className="w-[34px] text-center">
-             <span className="text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">BLG</span>
+             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">BLG</span>
           </div>
           <div className="w-[34px] text-center">
-             <span className="text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">出勤</span>
+             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">出勤</span>
           </div>
           <div className="w-[34px] text-center">
-             <span className="text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">指名</span>
+             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">指名</span>
           </div>
         </div>
 
@@ -55,15 +55,19 @@ export async function DashboardCastRanking() {
               <div key={r.castId} className="group flex items-center h-[36px] hover:bg-[#ffffff05] transition-colors rounded-sm px-1">
                 {/* Name */}
                 <div className="w-section-mobile flex items-center gap-2 overflow-hidden">
-                  <span className={`text-[11px] font-bold w-4 ${index < 3 ? 'text-[#dfbd69]' : 'text-[#5a5650]'}`}>{r.rank || index + 1}</span>
+                  {index < 3 ? (
+                    <span className="rank-badge-gold">{r.rank || index + 1}</span>
+                  ) : (
+                    <span className="rank-number-muted">{r.rank || index + 1}</span>
+                  )}
                   <span className="text-[12px] font-medium text-[#cbc3b3] truncate">{r.castName}</span>
                 </div>
 
                 {/* Score Bar (Matching AnalyticsSectionSubsection:864) */}
                 <div className="flex-1 flex items-center gap-2.5 min-w-0 pr-2">
-                  <div className="flex-1 h-[3px] bg-[#ffffff0f] rounded-sm overflow-hidden mt-px">
+                  <div className="score-bar-track">
                     <div
-                      className="h-full rounded-sm bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)]"
+                      className="score-bar-fill"
                       style={{ width: `${Math.min(r.score, 100)}%` }}
                     />
                   </div>

@@ -614,3 +614,102 @@ body {
   background: #f0ece5 !important;
 }
 
+/* ============================================================
+   Admin Dashboard — Sticky first-screen block
+   ============================================================ */
+
+.admin-dashboard-sticky {
+  /* Dark theme (default) */
+  background-color: #0b0b0d;
+  padding-bottom: 1rem;
+}
+
+[data-theme="light"] .admin-dashboard-sticky {
+  background-color: #f4f1ec;
+}
+
+/* ============================================================
+   Rank Badge — gold gradient box for top-3
+   ============================================================ */
+
+.rank-badge-gold {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  padding: 2.5px 0;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%);
+  font-size: 10px;
+  font-weight: 700;
+  color: #0b0b0d;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.rank-number-muted {
+  display: inline-flex;
+  width: 20px;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5a5650;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Score Bar — 3px gold gradient progress bar
+   ============================================================ */
+
+.score-bar-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  flex: 1;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%);
+}
+
+/* ============================================================
+   OVERVIEW Table Row — Figma border rgba(138,132,120,x)
+   ============================================================ */
+
+.overview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 4px;
+  border-bottom: 0.556px solid rgba(138, 132, 120, 0.4);
+}
+
+.overview-row:last-child {
+  border-bottom: none;
+}
+
+/* ============================================================
+   Tag Chip — informational variant (light blue per Figma)
+   ============================================================ */
+
+.tag-chip-info {
+  color: #8ab4d4 !important;
+  border-color: rgba(138, 180, 212, 0.15) !important;
+  background: rgba(138, 180, 212, 0.06) !important;
+}
+
+/* ============================================================
+   Mobile KPI — minimum tap height
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .kpi-card-mobile {
+    min-height: 100px;
+  }
+}

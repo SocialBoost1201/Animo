@@ -1,7 +1,28 @@
 'use server'
 
+import { appendFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { createClient } from '@/lib/supabase/server'
 import { sendAdminNotification, sendGuestConfirmation } from '@/lib/mail'
+
+const DEBUG_NDJSON_LOG =
+  process.env.NODE_ENV === 'development'
+    ? join(process.cwd(), '.cursor', 'debug-a3392f.log')
+    : null
+
+// #region agent log
+function debugSubmitLog(payload: Record<string, unknown>) {
+  if (!DEBUG_NDJSON_LOG) return
+  try {
+    appendFileSync(
+      DEBUG_NDJSON_LOG,
+      `${JSON.stringify({ sessionId: 'a3392f', timestamp: Date.now(), ...payload })}\n`,
+    )
+  } catch {
+    /* ignore */
+  }
+}
+// #endregion
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -142,49 +163,105 @@ export async function submitContact(formData: FormData) {
 }
 
 export async function submitRecruitApplication(formData: FormData) {
-  const supabase = await createClient()
+  try {
+    const supabase = await createClient();
 
-  const type = formData.get('type') as string // 'cast' | 'staff'
-  const name = formData.get('name') as string
-  const age = parseInt(formData.get('age') as string, 10)
-  const phone = formData.get('phone') as string
-  const email = formData.get('email') as string
-  const line_id = formData.get('lineId') as string
-  const experience = formData.get('experience') as string
-  const schedule = formData.get('schedule') as string
-  const message = formData.get('message') as string
-  const recaptchaToken = formData.get('recaptchaToken') as string | null
+    const rawType = String(formData.get('type') ?? '').trim();
+    const type =
+      rawType === 'cast' || rawType === 'staff' || rawType === 'escort' ? rawType : 'cast';
+    const name = formData.get('name') as string;
+    const age = parseInt(formData.get('age') as string, 10);
+    const phone = formData.get('phone') as string;
+    const email = formData.get('email') as string;
+    const line_id = formData.get('lineId') as string;
+    const experience = formData.get('experience') as string;
+    const schedule = formData.get('schedule') as string;
+    const message = formData.get('message') as string;
+    const recaptchaToken = formData.get('recaptchaToken') as string | null;
 
-  // reCAPTCHA検証
-  const isValid = await verifyRecaptcha(recaptchaToken);
-  if (!isValid) {
-    console.warn(`[Recruit] reCAPTCHA validation failed or score too low for: ${name} (${email || phone})`);
-    // 同様にブロック解除
-    // return { error: '不正なリクエストとしてブロックされました。' };
+    debugSubmitLog({
+      hypothesisId: 'H-enter',
+      location: 'submit.ts:submitRecruitApplication',
+      message: 'recruit submit start',
+      data: {
+        rawType,
+        type,
+        hasRecaptchaToken: Boolean(recaptchaToken && String(recaptchaToken).length > 0),
+      },
+    })
+
+    // reCAPTCHA検証
+    const isValid = await verifyRecaptcha(recaptchaToken);
+    if (!isValid) {
+      console.warn(`[Recruit] reCAPTCHA validation failed or score too low for: ${name} (${email || phone})`);
+    }
+
+    debugSubmitLog({
+      hypothesisId: 'H-recaptcha',
+      location: 'submit.ts:submitRecruitApplication',
+      message: 'after verifyRecaptcha',
+      data: { isValid },
+    })
+
+    const { error } = await supabase.from('recruit_applications').insert({
+      type,
+      name,
+      age: isNaN(age) ? null : age,
+      phone,
+      email: email || null,
+      line_id: line_id || null,
+      experience,
+      schedule,
+      message,
+      is_read: false,
+    });
+
+    if (error) {
+      console.error('Recruit submit DB error:', error.message, error.details, error.hint);
+      debugSubmitLog({
+        hypothesisId: 'H-db',
+        location: 'submit.ts:submitRecruitApplication',
+        message: 'insert recruit_applications failed',
+        data: {
+          code: error.code,
+          message: error.message,
+        },
+      })
+      return { error: '送信に失敗しました。システムエラーが発生した可能性があります。' };
+    }
+
+    debugSubmitLog({
+      hypothesisId: 'H-db',
+      location: 'submit.ts:submitRecruitApplication',
+      message: 'insert ok',
+      data: { type },
+    })
+
+    await sendAdminNotification({
+      type: type as 'cast' | 'staff' | 'escort',
+      data: { name, age, phone, email, line_id, experience, schedule, message, type },
+    });
+
+    debugSubmitLog({
+      hypothesisId: 'H-ok',
+      location: 'submit.ts:submitRecruitApplication',
+      message: 'return success',
+      data: { type },
+    })
+    return { success: true };
+  } catch (err) {
+    console.error('[Recruit] submitRecruitApplication unexpected', err);
+    debugSubmitLog({
+      hypothesisId: 'H-throw',
+      location: 'submit.ts:submitRecruitApplication/catch',
+      message: 'unexpected throw',
+      data: {
+        name: err instanceof Error ? err.name : typeof err,
+        message: err instanceof Error ? err.message : String(err).slice(0, 300),
+      },
+    })
+    return {
+      error: '送信に失敗しました。しばらく待って再度お試しください。',
+    };
   }
-
-  const { error } = await supabase.from('recruit_applications').insert({
-    type,
-    name,
-    age: isNaN(age) ? null : age,
-    phone,
-    email: email || null,
-    line_id: line_id || null,
-    experience,
-    schedule,
-    message,
-    is_read: false
-  })
-
-  if (error) {
-    console.error('Recruit submit DB error:', error.message, error.details, error.hint)
-    return { error: '送信に失敗しました。システムエラーが発生した可能性があります。' }
-  }
-
-  await sendAdminNotification({
-    type: type as 'cast' | 'staff',
-    data: { name, age, phone, experience, schedule, message }
-  });
-
-  return { success: true }
 }

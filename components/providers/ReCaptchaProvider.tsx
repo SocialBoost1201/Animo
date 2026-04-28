@@ -17,10 +17,11 @@ export function ReCaptchaProvider({ children }: { children: React.ReactNode }) {
     <GoogleReCaptchaProvider
       reCaptchaKey={siteKey}
       scriptProps={{
-        async: false,
-        defer: false,
+        // async+defer: avoid blocking first paint; reduces failed loads on slow networks
+        async: true,
+        defer: true,
         appendTo: 'head',
-        nonce: undefined
+        nonce: undefined,
       }}
     >
       {children}

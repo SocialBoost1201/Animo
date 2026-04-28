@@ -3,19 +3,13 @@
 import { type ReactElement, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2, Save, Tag, ToggleLeft, Trash2, User } from 'lucide-react';
+import { ArrowLeft, Loader2, Save, ToggleLeft, Trash2, User, Phone, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { deleteStaff, type StaffSlave, updateStaff } from '@/lib/actions/staffs';
-
-const ROLE_OPTIONS = [
-  { value: '', label: '一般スタッフ' },
-  { value: 'manager', label: 'マネージャー' },
-  { value: 'owner', label: 'オーナー' },
-] as const;
+import { splitStaffFullName } from '@/lib/staff-name';
 
 const inputCls =
   'w-full bg-[#1c1d22] border border-[#ffffff0f] rounded-[10px] px-4 py-2.5 text-[13px] text-[#f4f1ea] placeholder-[#5a5650] outline-none focus:border-[#dfbd6950] focus:bg-[#1f2028] transition-colors';
-
 function FieldLabel({
   icon: Icon,
   label,
@@ -33,7 +27,17 @@ function FieldLabel({
 
 type StaffEditFormProps = {
   staff: StaffSlave
-};
+}
+
+function getNamePartsForEdit(staff: StaffSlave): { family: string; given: string } {
+  const hasParts =
+    (staff.family_name != null && staff.family_name.trim() !== '') ||
+    (staff.given_name != null && staff.given_name.trim() !== '');
+  if (hasParts) {
+    return { family: staff.family_name?.trim() ?? '', given: staff.given_name?.trim() ?? '' };
+  }
+  return splitStaffFullName(staff.name);
+}
 
 export function StaffEditForm({ staff }: StaffEditFormProps): ReactElement {
   const router = useRouter();
@@ -41,13 +45,13 @@ export function StaffEditForm({ staff }: StaffEditFormProps): ReactElement {
   const [isDeleting, startDeleting] = useTransition();
   const [isActive, setIsActive] = useState<boolean>(staff.is_active);
   const [error, setError] = useState<string | null>(null);
+  const nameDefaults = getNamePartsForEdit(staff);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setError(null);
     const fd = new FormData(e.currentTarget);
     fd.set('is_active', String(isActive));
-
     startTransition(async () => {
       const result = await updateStaff(staff.id, fd);
       if (result.error) {
@@ -106,33 +110,64 @@ export function StaffEditForm({ staff }: StaffEditFormProps): ReactElement {
         <p className="text-[11px] text-[#8a8478] mt-1">登録済みスタッフ情報を更新します</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5" key={staff.id}>
         <div className="bg-[#17181c] rounded-[18px] border border-[#ffffff0f] p-6 space-y-5">
-          <div>
-            <FieldLabel icon={User} label="氏名（必須）" />
-            <input name="name" placeholder="例：山田 花子" required defaultValue={staff.name} className={inputCls} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <FieldLabel icon={User} label="苗字（必須）" />
+              <input
+                name="family_name"
+                placeholder="例：山田"
+                required
+                defaultValue={nameDefaults.family}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <FieldLabel icon={User} label="名前（必須）" />
+              <input
+                name="given_name"
+                placeholder="例：花子"
+                required
+                defaultValue={nameDefaults.given}
+                className={inputCls}
+              />
+            </div>
           </div>
 
           <div>
-            <FieldLabel icon={User} label="表示名（必須）" />
+            <FieldLabel icon={User} label="芸名（必須）" />
             <input
               name="display_name"
-              placeholder="例：はなこ"
+              placeholder="表記用の名前"
               required
               defaultValue={staff.display_name}
               className={inputCls}
             />
+            <p className="mt-1.5 text-[10px] text-[#5a5650]">源氏名・通称表記。ダッシュボード等の表示名として使います。</p>
           </div>
 
           <div>
-            <FieldLabel icon={Tag} label="役職" />
-            <select name="role" className={inputCls} defaultValue={staff.role ?? ''}>
-              {ROLE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <FieldLabel icon={Phone} label="携帯番号" />
+            <input
+              name="mobile_phone"
+              type="tel"
+              defaultValue={staff.mobile_phone ?? ''}
+              placeholder="例：090-1234-5678"
+              className={inputCls}
+              inputMode="tel"
+            />
+          </div>
+
+          <div>
+            <FieldLabel icon={MessageCircle} label="LINE ID" />
+            <input
+              name="line_id"
+              defaultValue={staff.line_id ?? ''}
+              placeholder="任意"
+              className={inputCls}
+              autoComplete="off"
+            />
           </div>
 
           <div>

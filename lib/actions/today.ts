@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase/service'
 import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
 import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
-import { StaffSlave } from './staffs'
+import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/staff-records'
 import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
@@ -143,6 +143,7 @@ export type StaffAttendance = {
   id: string
   display_name: string
   start_time: string
+  end_time?: string | null
 }
 
 export type AnalyticsSummary = {
@@ -322,16 +323,17 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // スタッフ出勤
   const { data: staffAttendances } = await supabase
     .from('daily_staff_attendances')
-    .select('id, display_name, start_time, staff_id')
+    .select('id, display_name, start_time, end_time, staff_id')
     .eq('staff_date', today)
     .order('start_time')
 
-  // 全スタッフ（マスタ）
-  const { data: allStaffs } = await supabase
+  // 全スタッフ（マスタ）— 形状は getStaffs と揃える
+  const { data: allStaffsRaw } = await supabase
     .from('staffs')
     .select('*')
     .eq('is_active', true)
     .order('display_name')
+  const allStaffs = (allStaffsRaw ?? []).map((row) => mapRowToStaffSlave(row as StaffTableRow))
 
   // 欠勤キャストID一覧
   const absentCastIds = checkins.filter(c => c.is_absent).map(c => c.cast_id)
@@ -422,7 +424,8 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('')
     lines.push('スタッフ')
     for (const s of data.staffAttendances) {
-      lines.push(`${s.display_name}（${s.start_time.substring(0, 5)}〜）`)
+      const endTimeLabel = s.end_time ? s.end_time.substring(0, 5) : ''
+      lines.push(`${s.display_name}（${s.start_time.substring(0, 5)}〜${endTimeLabel}）`)
     }
   }
 
@@ -566,9 +569,10 @@ export async function addStaffAttendance(formData: FormData) {
       staff_date: formData.get('staff_date') as string,
       display_name: formData.get('display_name') as string,
       start_time: formData.get('start_time') as string,
+      end_time: (formData.get('end_time') as string) || null,
       staff_id: (formData.get('staff_id') as string) || null,
     })
-    .select('id, display_name, start_time')
+    .select('id, display_name, start_time, end_time')
     .single()
   if (error) return { success: false as const, error: error.message }
   revalidatePath('/admin/today')
@@ -738,15 +742,19 @@ export async function addReservation(formData: FormData) {
     const reservationType = formData.get('reservation_type') as string
     const note = (formData.get('note') as string) || null
 
-    const { error } = await supabase.from('daily_reservations').insert({
-      cast_id: cast.id,
-      reservation_date: today,
-      visit_time: visitTime,
-      guest_name: guestName,
-      guest_count: guestCount,
-      reservation_type: reservationType,
-      note,
-    })
+    const { data: reservation, error } = await supabase
+      .from('daily_reservations')
+      .insert({
+        cast_id: cast.id,
+        reservation_date: today,
+        visit_time: visitTime,
+        guest_name: guestName,
+        guest_count: guestCount,
+        reservation_type: reservationType,
+        note,
+      })
+      .select('id, visit_time, guest_name, guest_count, reservation_type, note')
+      .single()
 
     if (error) return { error: error.message }
     const castName = cast.stage_name || cast.name || '不明'
@@ -781,6 +789,7 @@ export async function addReservation(formData: FormData) {
           : '来店予定は保存されましたが、LINE通知の送信に失敗しました。'
         : undefined,
       message: '来店予定を提出しました。店長の承認後に営業状況へ反映されます。',
+      data: reservation,
     }
   } catch (err: unknown) {
     console.error('addReservation unhandled error:', err)
@@ -824,7 +833,7 @@ export async function getCastTodayReservations() {
   const today = getJstDateString()
   const { data } = await supabase
     .from('daily_reservations')
-    .select('*')
+    .select('id, visit_time, guest_name, guest_count, reservation_type, note')
     .eq('cast_id', cast.id)
     .eq('reservation_date', today)
     .neq('approval_status', 'rejected')
@@ -848,7 +857,7 @@ export async function getCastTodayCheckin() {
   const today = getJstDateString()
   const { data } = await supabase
     .from('daily_checkins')
-    .select('*')
+    .select('has_change, change_note, is_absent, memo, approval_status')
     .eq('cast_id', cast.id)
     .eq('checkin_date', today)
     .maybeSingle()

@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "sb-nygsfetbfxngwfzbmryq-auth-token",
+      "value": "base64-WyJleUpoYkdjaU9pSkZVekkxTmlJc0ltdHBaQ0k2SW1ReE9XUXdZbU16TFdWbE56QXROR000T0MwNFlUZGlMVGxqTkRBM1pUTXhOREEwTUNJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcGMzTWlPaUpvZEhSd2N6b3ZMMjU1WjNObVpYUmlabmh1WjNkbWVtSnRjbmx4TG5OMWNHRmlZWE5sTG1OdkwyRjFkR2d2ZGpFaUxDSnpkV0lpT2lKbVpUWXpOelJqWlMwME9Ua3lMVFF4TXpBdE9ERmhaUzAzWWpReE9ESXlaalV5TVRVaUxDSmhkV1FpT2lKaGRYUm9aVzUwYVdOaGRHVmtJaXdpWlhod0lqb3hOemMzTURVM05UYzVMQ0pwWVhRaU9qRTNOemN3TlRNNU56a3NJbVZ0WVdsc0lqb2lZV2xyWVM1emJXOXJaUzR4TnpjMU1EQXdPRGN5TVRFeVFHZHRZV2xzTG1OdmJTSXNJbkJvYjI1bElqb2lJaXdpWVhCd1gyMWxkR0ZrWVhSaElqcDdJbkJ5YjNacFpHVnlJam9pWlcxaGFXd2lMQ0p3Y205MmFXUmxjbk1pT2xzaVpXMWhhV3dpWFgwc0luVnpaWEpmYldWMFlXUmhkR0VpT25zaVpXMWhhV3hmZG1WeWFXWnBaV1FpT25SeWRXVjlMQ0p5YjJ4bElqb2lZWFYwYUdWdWRHbGpZWFJsWkNJc0ltRmhiQ0k2SW1GaGJERWlMQ0poYlhJaU9sdDdJbTFsZEdodlpDSTZJbkJoYzNOM2IzSmtJaXdpZEdsdFpYTjBZVzF3SWpveE56YzFNREF4TURNNGZWMHNJbk5sYzNOcGIyNWZhV1FpT2lJNU9ETTRNRGswWmkxa01qTmhMVFJoWlRNdE9UZzJOeTAyTkRWbE5XTTBZekkwWlRjaUxDSnBjMTloYm05dWVXMXZkWE1pT21aaGJITmxmUS5kV0dqWTZyS043dTlteGVjRDh3U2QtV1cwRndRTHVSaU1sbGZWUndLNmJZOWJlN1U1cDMtdlhrQjZ3QXlvdGNaSXJoUDA0X3RPTHFROWd4UWNnREFZdyIsImRud3FhbmpncTRjeCIsbnVsbCxudWxsLG51bGxd",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1778263579,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cast_reauth_until",
+      "value": "1778263579880",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1778263579,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
