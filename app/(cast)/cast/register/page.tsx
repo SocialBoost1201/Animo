@@ -45,6 +45,9 @@ export default function CastRegisterPage() {
     setIsLoading(true);
     setFeedback(null);
     const formData = new FormData(e.currentTarget);
+    if (!formData.get('nameKana')) {
+      formData.set('nameKana', String(formData.get('stageName') ?? '').trim());
+    }
 
     try {
       const result = await castRegister(formData);
