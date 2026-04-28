@@ -14,7 +14,7 @@ import {
   isValidJapaneseMobilePhone,
   toE164JapanesePhone,
 } from '@/lib/utils/phone';
-import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
+import { matchesCastRegisterIdentity } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
@@ -403,7 +403,6 @@ export async function castRegister(formData: FormData) {
   }
 
   const serviceRoleClient = createServiceClient();
-  const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
 
   try {
     const { data: privateInfoCandidates, error: privateInfoError } = await findCastIdentityByPhone(
