@@ -1,5 +1,7 @@
 'use server';
 
+import { appendFileSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { cookies } from 'next/headers';
 import {
   CAST_REAUTH_COOKIE_NAME,
@@ -17,6 +19,24 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+
+const CAST_REGISTER_DEBUG_LOG =
+  process.env.NODE_ENV === 'development'
+    ? join(process.cwd(), '.cursor', 'debug-cast-register.log')
+    : null;
+
+function logCastRegister(payload: Record<string, unknown>) {
+  if (!CAST_REGISTER_DEBUG_LOG) return;
+  try {
+    mkdirSync(join(process.cwd(), '.cursor'), { recursive: true });
+    appendFileSync(
+      CAST_REGISTER_DEBUG_LOG,
+      `${JSON.stringify({ scope: 'castRegister', timestamp: Date.now(), ...payload })}\n`,
+    );
+  } catch {
+    // no-op
+  }
+}
 
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
   // DBには数字のみ形式・ハイフン付き形式・E.164形式が混在している可能性があるため全形式で検索
@@ -326,8 +346,24 @@ export async function castRegister(formData: FormData) {
   // 源氏名は `stageName`、本人確認用フリガナは `nameKana`。フォームは `stageName` のみ送るため未指定時は源氏名で照合する。
   const kanaForMatch = (nameKana || stageName)?.trim() ?? '';
   const normalizedNameKana = kanaForMatch.normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
+  logCastRegister({
+    hypothesisId: 'H-input',
+    message: 'cast register start',
+    data: {
+      hasRealName: Boolean(realName),
+      hasPhone: Boolean(normalizedPhone),
+      hasStageName: Boolean(stageName),
+      hasNameKana: Boolean(nameKana),
+      hasNormalizedNameKana: Boolean(normalizedNameKana),
+    },
+  });
 
   if (!realName || !normalizedPhone || !normalizedNameKana) {
+    logCastRegister({
+      hypothesisId: 'H-input',
+      message: 'validation incomplete',
+      data: { code: 'VALIDATION_INCOMPLETE' },
+    });
     return {
       success: false,
       error: 'すべての項目を入力してください。',
@@ -335,6 +371,11 @@ export async function castRegister(formData: FormData) {
     };
   }
   if (!isValidJapaneseMobilePhone(normalizedPhone)) {
+    logCastRegister({
+      hypothesisId: 'H-input',
+      message: 'invalid phone',
+      data: { code: 'INVALID_PHONE' },
+    });
     return {
       success: false,
       error: '携帯番号は09012345678のように11桁で入力してください。',
@@ -348,6 +389,11 @@ export async function castRegister(formData: FormData) {
     console.error('[castRegister] missing service role env', {
       hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
       hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    });
+    logCastRegister({
+      hypothesisId: 'H-env',
+      message: 'missing env',
+      data: { code: 'UNEXPECTED' },
     });
     return {
       success: false,
@@ -366,6 +412,11 @@ export async function castRegister(formData: FormData) {
     );
 
     if (privateInfoError) {
+      logCastRegister({
+        hypothesisId: 'H-lookup',
+        message: 'lookup failed',
+        data: { code: 'MATCH_LOOKUP_FAILED' },
+      });
       return {
         success: false,
         error: '本人確認情報の照合に失敗しました。時間をおいて再度お試しください。',
@@ -379,16 +430,34 @@ export async function castRegister(formData: FormData) {
         .normalize('NFKC')
         .replace(/[\s\u3000]+/g, '')
         .trim();
+      const candidateStageName = ((getCastRecord(candidate)?.stage_name) ?? '')
+        .normalize('NFKC')
+        .replace(/[\s\u3000]+/g, '')
+        .trim();
 
       const isSameRealName =
         normalizeRealNameForIdentityMatch(candidate.real_name ?? '') === normalizedRealName;
       const isSamePhone = Boolean(normalizedPhone) && candidatePhone === normalizedPhone;
       const isSameNameKana = candidateNameKana === normalizedNameKana;
+      const isSameStageName = candidateStageName === normalizedNameKana;
 
-      return isSameRealName && isSamePhone && isSameNameKana;
+      return isSameRealName && isSamePhone && (isSameNameKana || isSameStageName);
+    });
+    logCastRegister({
+      hypothesisId: 'H-match',
+      message: 'lookup and match complete',
+      data: {
+        candidateCount: privateInfoCandidates?.length ?? 0,
+        matchedCount: matchedCandidates.length,
+      },
     });
 
     if (matchedCandidates.length > 1) {
+      logCastRegister({
+        hypothesisId: 'H-match',
+        message: 'multiple matches',
+        data: { code: 'MULTIPLE_MATCHES' },
+      });
       return {
         success: false,
         error: '同一の本人確認情報に一致するキャストが複数見つかりました。担当者にお問い合わせください。',
@@ -400,6 +469,11 @@ export async function castRegister(formData: FormData) {
     const castRecord = privateInfo ? getCastRecord(privateInfo) : null;
 
     if (!privateInfo || !castRecord) {
+      logCastRegister({
+        hypothesisId: 'H-match',
+        message: 'no match',
+        data: { code: 'NO_MATCH' },
+      });
       return {
         success: false,
         error: '入力された情報に一致するキャスト情報が見つかりませんでした。正しく入力されているか、または担当者にお問い合わせください。',
@@ -408,6 +482,11 @@ export async function castRegister(formData: FormData) {
     }
 
     if (castRecord.auth_user_id) {
+      logCastRegister({
+        hypothesisId: 'H-match',
+        message: 'already registered',
+        data: { code: 'ALREADY_REGISTERED' },
+      });
       return {
         success: false,
         error: 'この電話番号は既に登録済みです。ログイン画面からSMS認証してください。',
@@ -428,6 +507,11 @@ export async function castRegister(formData: FormData) {
       const isPhoneDuplicate = errMsg.includes('already') || errMsg.includes('registered') || errMsg.includes('exists');
 
       if (!isPhoneDuplicate) {
+        logCastRegister({
+          hypothesisId: 'H-auth',
+          message: 'auth signup failed',
+          data: { code: 'AUTH_SIGNUP_FAILED' },
+        });
         return {
           success: false,
           error: 'アカウント作成に失敗しました。時間をおいて再度お試しください。',
@@ -449,6 +533,11 @@ export async function castRegister(formData: FormData) {
       );
 
       if (!resp.ok) {
+        logCastRegister({
+          hypothesisId: 'H-auth',
+          message: 'auth recovery failed (response)',
+          data: { code: 'AUTH_RECOVERY_FAILED' },
+        });
         return {
           success: false,
           error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
@@ -461,6 +550,11 @@ export async function castRegister(formData: FormData) {
       try {
         json = (await resp.json()) as { users?: AuthUserLite[] };
       } catch {
+        logCastRegister({
+          hypothesisId: 'H-auth',
+          message: 'auth recovery failed (json)',
+          data: { code: 'AUTH_RECOVERY_FAILED' },
+        });
         return {
           success: false,
           error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
@@ -472,6 +566,11 @@ export async function castRegister(formData: FormData) {
       const matched = (json.users ?? []).filter((u: AuthUserLite) => u.phone === authPhone);
 
       if (matched.length === 0) {
+        logCastRegister({
+          hypothesisId: 'H-auth',
+          message: 'auth recovery failed (no matched user)',
+          data: { code: 'AUTH_RECOVERY_FAILED' },
+        });
         return {
           success: false,
           error: 'アカウント情報の照合に失敗しました。担当者にお問い合わせください。',
@@ -480,6 +579,11 @@ export async function castRegister(formData: FormData) {
       }
 
       if (matched.length > 1) {
+        logCastRegister({
+          hypothesisId: 'H-auth',
+          message: 'auth multiple users',
+          data: { code: 'AUTH_MULTIPLE_USERS' },
+        });
         return {
           success: false,
           error: '同一電話番号のアカウントが複数存在します。担当者にお問い合わせください。',
@@ -491,6 +595,11 @@ export async function castRegister(formData: FormData) {
     }
 
     if (!authUser) {
+      logCastRegister({
+        hypothesisId: 'H-auth',
+        message: 'auth user missing',
+        data: { code: 'AUTH_USER_MISSING' },
+      });
       return {
         success: false,
         error: 'アカウント作成の応答が不正でした。時間をおいて再度お試しください。',
@@ -504,6 +613,11 @@ export async function castRegister(formData: FormData) {
     });
 
     if (roleError && roleError.code !== '23505') {
+      logCastRegister({
+        hypothesisId: 'H-link',
+        message: 'role insert failed',
+        data: { code: 'ROLE_INSERT_FAILED' },
+      });
       return {
         success: false,
         error: 'アカウント作成後の権限付与に失敗しました。担当者にお問い合わせください。',
@@ -518,6 +632,11 @@ export async function castRegister(formData: FormData) {
       .is('auth_user_id', null);
 
     if (castUpdateError) {
+      logCastRegister({
+        hypothesisId: 'H-link',
+        message: 'cast link failed',
+        data: { code: 'CAST_LINK_FAILED' },
+      });
       return {
         success: false,
         error: 'アカウント作成後のキャスト紐付けに失敗しました。担当者にお問い合わせください。',
@@ -534,6 +653,11 @@ export async function castRegister(formData: FormData) {
     }
 
     revalidatePath('/cast/register');
+    logCastRegister({
+      hypothesisId: 'H-success',
+      message: 'register success',
+      data: { code: 'SUCCESS' },
+    });
 
     return {
       success: true,
@@ -547,6 +671,11 @@ export async function castRegister(formData: FormData) {
       stageName,
       dateOfBirth,
       error,
+    });
+    logCastRegister({
+      hypothesisId: 'H-exception',
+      message: 'unexpected exception',
+      data: { code: 'UNEXPECTED', errorType: error instanceof Error ? error.name : typeof error },
     });
     return {
       success: false,
