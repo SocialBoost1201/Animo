@@ -24,57 +24,60 @@ export default async function DashboardPage() {
   const notifications = await getAdminNotificationSummary();
 
   return (
-    <div className="space-y-4 font-sans">
-      {/* ── Page Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-3 border-b border-[#ffffff08] mb-1">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">本日の営業概要</h1>
-          <p className="text-[12px] text-[#8a8478] tracking-[0.1px] opacity-70">今日の営業判断に必要な情報を網羅的に確認できます</p>
+    <div className="font-sans">
+      {/* ── Fixed First Screen: Page Header + KPI ── */}
+      <div className="sticky top-14 md:top-0 z-20 admin-dashboard-sticky">
+        {/* Page Header */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 py-3 border-b border-[#ffffff08] mb-4">
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">本日の営業概要</h1>
+            <p className="text-[12px] text-[#8a8478] tracking-[0.1px] opacity-70">今日の営業判断に必要な情報を網羅的に確認できます</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2.5 px-4 py-2 bg-[#ffffff0a] rounded-[10px] border border-[#ffffff0f]">
+              <Calendar size={14} className="text-[#dfbd69]" />
+              <span className="text-[11px] font-bold text-[#c7c0b2] tracking-[3px] uppercase">{dateLabel}</span>
+            </div>
+
+            <div className="hidden sm:block">
+              <DashboardSearchBar />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/internal-notices"
+                className="p-2.5 bg-[#ffffff0a] rounded-[10px] border border-[#ffffff0f] hover:bg-[#ffffff15] hover:border-[#dfbd6930] transition-all relative group"
+                title="通知一覧"
+              >
+                <Bell size={16} className="text-[#c7c0b2] group-hover:text-[#dfbd69] transition-colors" />
+                {notifications.total > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#dfbd69] px-0.5 text-[9px] font-bold leading-none text-[#0b0b0d] shadow-[0_0_8px_rgba(223,189,105,0.6)] border border-black">
+                    {notifications.total > 99 ? '99+' : notifications.total}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                href="/admin/today"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[12px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-gold/15"
+                style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
+              >
+                <Plus size={16} strokeWidth={3} />
+                来店予定を追加
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#ffffff0a] rounded-[10px] border border-[#ffffff0f]">
-            <Calendar size={14} className="text-[#dfbd69]" />
-            <span className="text-[11px] font-bold text-[#c7c0b2] tracking-[3px] uppercase">{dateLabel}</span>
-          </div>
-
-          <div className="hidden sm:block">
-            <DashboardSearchBar />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/internal-notices"
-              className="p-2.5 bg-[#ffffff0a] rounded-[10px] border border-[#ffffff0f] hover:bg-[#ffffff15] hover:border-[#dfbd6930] transition-all relative group"
-              title="通知一覧"
-            >
-              <Bell size={16} className="text-[#c7c0b2] group-hover:text-[#dfbd69] transition-colors" />
-              {notifications.total > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#dfbd69] px-0.5 text-[9px] font-bold leading-none text-[#0b0b0d] shadow-[0_0_8px_rgba(223,189,105,0.6)] border border-black">
-                  {notifications.total > 99 ? '99+' : notifications.total}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href="/admin/today"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[12px] font-bold text-[#0b0b0d] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-gold/15"
-              style={{ background: 'linear-gradient(90deg, rgba(223,189,105,1) 0%, rgba(146,111,52,1) 100%)' }}
-            >
-              <Plus size={16} strokeWidth={3} />
-              来店予定を追加
-            </Link>
-          </div>
-        </div>
+        {/* KPI Row */}
+        <Suspense fallback={<Skeleton className="h-[110px]" />}>
+          <DashboardKPIs />
+        </Suspense>
       </div>
 
-      {/* ── KPI Row (full width) ── */}
-      <Suspense fallback={<Skeleton className="h-[110px]" />}>
-        <DashboardKPIs />
-      </Suspense>
-
-      {/* ── Main Content + Right Rail ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-4">
+      {/* ── Scrollable Cards ── */}
+      <div className="mt-4 grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-4">
         {/* ── Left: Main Panels ── */}
         <div className="space-y-4 min-w-0">
           {/* 本日の営業状況 */}

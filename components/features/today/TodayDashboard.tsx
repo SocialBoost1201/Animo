@@ -502,7 +502,9 @@ export function TodayDashboard({ data, casts }: Props) {
             <select name="staff_id" required className={inputClass}>
               <option value="">スタッフを選択</option>
               {dashboardData.allStaffs.map((staff) => (
-                <option key={staff.id} value={staff.id}>{staff.display_name} ({staff.role || '役割なし'})</option>
+                <option key={staff.id} value={staff.id}>
+                  {staff.display_name}（{staff.name}）
+                </option>
               ))}
             </select>
             <input name="start_time" type="time" required className={inputClass} />

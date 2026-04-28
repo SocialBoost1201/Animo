@@ -1,0 +1,156 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "CLUB ANIMO ANIMO CMS" [ref=e7] [cursor=pointer]:
+            - /url: /admin/dashboard
+            - img [ref=e9]
+            - generic [ref=e14]:
+              - generic [ref=e15]: CLUB ANIMO
+              - generic [ref=e16]: ANIMO CMS
+          - navigation [ref=e18]:
+            - generic [ref=e19]:
+              - paragraph [ref=e21]: OVERVIEW
+              - link "本日の営業状況" [ref=e22] [cursor=pointer]:
+                - /url: /admin/today
+                - img [ref=e23]
+                - generic [ref=e26]: 本日の営業状況
+              - link "ダッシュボード" [ref=e27] [cursor=pointer]:
+                - /url: /admin/dashboard
+                - img [ref=e28]
+                - generic [ref=e33]: ダッシュボード
+            - generic [ref=e34]:
+              - paragraph [ref=e36]: OPERATIONS
+              - link "キャスト管理" [ref=e37] [cursor=pointer]:
+                - /url: /admin/human-resources
+                - img [ref=e38]
+                - generic [ref=e43]: キャスト管理
+                - img [ref=e44]
+              - link "スタッフ管理" [ref=e46] [cursor=pointer]:
+                - /url: /admin/staffs
+                - img [ref=e47]
+                - generic [ref=e51]: スタッフ管理
+              - link "出勤調整＆承認" [ref=e52] [cursor=pointer]:
+                - /url: /admin/shift-requests
+                - img [ref=e53]
+                - generic [ref=e56]: 出勤調整＆承認
+              - link "シフト管理" [ref=e57] [cursor=pointer]:
+                - /url: /admin/monthly-shifts
+                - img [ref=e58]
+                - generic [ref=e60]: シフト管理
+              - link "シフト印刷表" [ref=e61] [cursor=pointer]:
+                - /url: /admin/template-shifts
+                - img [ref=e62]
+                - generic [ref=e66]: シフト印刷表
+              - link "通知 4" [ref=e67] [cursor=pointer]:
+                - /url: /admin/internal-notices
+                - img [ref=e68]
+                - generic [ref=e71]: 通知
+                - generic [ref=e72]: "4"
+            - generic [ref=e73]:
+              - paragraph [ref=e75]: CUSTOMER
+              - link "顧客データ" [ref=e76] [cursor=pointer]:
+                - /url: /admin/customers
+                - img [ref=e77]
+                - generic [ref=e79]: 顧客データ
+            - generic [ref=e80]:
+              - paragraph [ref=e82]: RECRUITMENT
+              - link "求人応募" [ref=e83] [cursor=pointer]:
+                - /url: /admin/applications
+                - img [ref=e84]
+                - generic [ref=e87]: 求人応募
+            - generic [ref=e88]:
+              - paragraph [ref=e90]: CONTENT
+              - link "キャスト投稿" [ref=e91] [cursor=pointer]:
+                - /url: /admin/posts
+                - img [ref=e92]
+                - generic [ref=e94]: キャスト投稿
+              - link "ニュース" [ref=e95] [cursor=pointer]:
+                - /url: /admin/contents
+                - img [ref=e96]
+                - generic [ref=e99]: ニュース
+              - link "サイト分析" [ref=e100] [cursor=pointer]:
+                - /url: /admin/analytics
+                - img [ref=e101]
+                - generic [ref=e102]: サイト分析
+            - generic [ref=e103]:
+              - paragraph [ref=e105]: SYSTEM
+              - link "デザイン" [ref=e106] [cursor=pointer]:
+                - /url: /admin/design
+                - img [ref=e107]
+                - generic [ref=e113]: デザイン
+              - link "設定" [ref=e114] [cursor=pointer]:
+                - /url: /admin/settings
+                - img [ref=e115]
+                - generic [ref=e118]: 設定
+              - link "操作マニュアル" [ref=e119] [cursor=pointer]:
+                - /url: /admin/manual
+                - img [ref=e120]
+                - generic [ref=e122]: 操作マニュアル
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - img [ref=e126]
+                - generic [ref=e127]: モード選択
+              - generic [ref=e128]:
+                - button "ダーク" [ref=e129]:
+                  - img [ref=e130]
+                  - text: ダーク
+                - button "ライト" [ref=e132]:
+                  - img [ref=e133]
+                  - text: ライト
+            - generic [ref=e139]:
+              - generic [ref=e141]: A
+              - generic [ref=e142]:
+                - paragraph [ref=e143]: ANIMO CMS 管理者
+                - paragraph [ref=e144]: Club Animo · 管理アカウント
+              - button "ログアウト" [ref=e146]:
+                - img [ref=e147]
+      - main [ref=e150]:
+        - generic [ref=e191]:
+          - link "Back to staff list" [ref=e193] [cursor=pointer]:
+            - /url: /admin/human-resources?tab=staffs
+            - img [ref=e195]
+            - generic [ref=e197]: Back to staff list
+          - generic [ref=e198]:
+            - generic [ref=e201]:
+              - img [ref=e203]
+              - generic [ref=e207]:
+                - heading "New Staff" [level=2] [ref=e208]
+                - paragraph [ref=e209]: Creating a new staff master record
+            - generic [ref=e210]:
+              - generic [ref=e211]:
+                - generic [ref=e214]: Staff Profile
+                - generic [ref=e216]:
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: 名前 / Name *
+                    - textbox "名前 / Name *" [ref=e219]:
+                      - /placeholder: 山田 太郎
+                  - generic [ref=e220]:
+                    - generic [ref=e221]: 表示名 / Display Name *
+                    - textbox "表示名 / Display Name *" [ref=e222]:
+                      - /placeholder: タロウ
+                  - generic [ref=e223]:
+                    - generic [ref=e224]: 役職 / Role
+                    - combobox "役職 / Role" [ref=e225]:
+                      - option "未設定" [selected]
+                      - option "一般スタッフ"
+                      - option "ホールスタッフ"
+                      - option "マネージャー"
+                      - option "レセプション"
+                  - generic [ref=e226]:
+                    - generic [ref=e227]: ステータス / Status
+                    - generic [ref=e228]:
+                      - checkbox "ステータス / Status 有効なスタッフとして登録する" [checked] [ref=e229]
+                      - generic [ref=e230]: 有効なスタッフとして登録する
+              - generic [ref=e231]:
+                - link "Cancel" [ref=e232] [cursor=pointer]:
+                  - /url: /admin/human-resources?tab=staffs
+                - button "Save Staff" [ref=e233]:
+                  - img [ref=e234]
+                  - text: Save Staff
+  - button "Open Next.js Dev Tools" [ref=e186] [cursor=pointer]:
+    - img [ref=e187]
+  - alert [ref=e190]

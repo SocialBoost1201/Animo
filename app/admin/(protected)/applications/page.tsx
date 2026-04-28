@@ -18,6 +18,7 @@ const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
 const TYPE_MAP: Record<string, { label: string; cls: string }> = {
   cast:  { label: 'Cast 応募',  cls: 'bg-[#a882d814] text-[#a882d8]' },
   staff: { label: 'Staff 応募', cls: 'bg-[#6ab0d414] text-[#6ab0d4]' },
+  escort: { label: 'エスコート', cls: 'bg-[#c4a35e14] text-[#c4a35e]' },
 };
 
 export default async function ApplicationsPage({
@@ -34,7 +35,7 @@ export default async function ApplicationsPage({
     .order('created_at', { ascending: false });
 
   if (filter === 'cast')   query = query.eq('type', 'cast');
-  else if (filter === 'staff')  query = query.eq('type', 'staff');
+  else if (filter === 'staff')  query = query.in('type', ['staff', 'escort']);
   else if (filter === 'unread') query = query.eq('is_read', false);
 
   if (q) {

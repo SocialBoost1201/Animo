@@ -65,7 +65,7 @@ export async function DashboardTodayOps() {
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 divide-y lg:divide-y-0 lg:divide-x divide-[#ffffff0f]">
         {/* Left: OVERVIEW */}
         <div className="flex-1 p-6 flex flex-col min-w-0">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">OVERVIEW</p>
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#8a8478] uppercase mb-4 px-1">OVERVIEW</p>
           <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
             {!ops.hasOperationalRecords ? (
               <DashboardEmptyState className="min-h-[220px]" />
@@ -73,7 +73,7 @@ export async function DashboardTodayOps() {
               overviewRows.map((row, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between py-4 px-1 border-b border-[#ffffff0a] last:border-0"
+                  className="overview-row"
                 >
                   <span className="text-[14px] text-[#8a8478] font-medium leading-none">{row.label}</span>
                   <span className={`text-[15px] tracking-tight leading-none ${row.bold ? 'font-bold text-white' : 'font-semibold text-[#cbc3b3]'}`}>
@@ -87,7 +87,7 @@ export async function DashboardTodayOps() {
 
         {/* Right: MANAGEMENT MEMO */}
         <div className="flex-1 p-6 flex flex-col min-w-0 bg-white/1">
-          <p className="text-[10px] font-bold tracking-[2.5px] text-[#5a5650] uppercase mb-4 px-1">MANAGEMENT MEMO</p>
+          <p className="text-[10px] font-bold tracking-[2.5px] text-[#8a8478] uppercase mb-4 px-1">MANAGEMENT MEMO</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
               <DashboardEmptyState className="min-h-40" />

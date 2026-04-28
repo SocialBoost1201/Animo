@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { castRegister } from '@/lib/actions/cast-auth';
+import { CAST_REGISTER_ERROR_TITLE_MAP } from '@/lib/cast-register-error-titles';
 import { formatJapaneseMobilePhone, normalizeJapanesePhone, isValidJapaneseMobilePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
@@ -39,24 +40,14 @@ export default function CastRegisterMobilePage() {
     message: string;
   } | null>(null);
 
-  const errorTitleMap: Record<string, string> = {
-    NO_MATCH: '照合失敗',
-    ALREADY_REGISTERED: '既登録',
-    AUTH_SIGNUP_FAILED: 'Auth作成失敗',
-    AUTH_RATE_LIMIT: '送信上限',
-    AUTH_USER_MISSING: 'Auth作成失敗',
-    ROLE_INSERT_FAILED: '権限付与失敗',
-    CAST_LINK_FAILED: 'キャスト紐付け失敗',
-    MATCH_LOOKUP_FAILED: '照合処理失敗',
-    MULTIPLE_MATCHES: '重複候補',
-    UNEXPECTED: '想定外エラー',
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setFeedback(null);
     const formData = new FormData(e.currentTarget);
+    if (!formData.get('nameKana')) {
+      formData.set('nameKana', String(formData.get('stageName') ?? '').trim());
+    }
 
     try {
       const result = await castRegister(formData);
@@ -72,7 +63,7 @@ export default function CastRegisterMobilePage() {
         setIsCompleted(true);
       } else {
         const errorMessage = result.error ?? '登録に失敗しました。時間をおいて再度お試しください。';
-        const title = errorTitleMap[result.code ?? 'UNEXPECTED'] ?? '登録失敗';
+        const title = CAST_REGISTER_ERROR_TITLE_MAP[result.code ?? 'UNEXPECTED'] ?? '登録失敗';
         toast.error(errorMessage);
         setFeedback({
           type: 'error',

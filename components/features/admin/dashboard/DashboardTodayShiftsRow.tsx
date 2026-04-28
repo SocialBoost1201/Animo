@@ -182,7 +182,7 @@ export function DashboardTodayShiftsRow({ cast }: { cast: DashboardCastShift }) 
           cast.tags.map((tag, i) => (
             <span
               key={i}
-              className="px-2.5 py-1 bg-white/3 border border-white/5 rounded-[6px] font-sans text-[10px] font-semibold text-[#8a8478] tracking-[0.117px] leading-[14px] hover:text-[#dfbd69] transition-colors"
+              className="px-2.5 py-1 bg-white/3 border border-white/5 rounded-[6px] font-sans text-[10px] font-semibold tracking-[0.117px] leading-[14px] transition-colors tag-chip-info hover:opacity-80"
             >
               {tag}
             </span>

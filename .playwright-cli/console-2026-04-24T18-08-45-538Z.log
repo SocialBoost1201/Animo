@@ -1,0 +1,51 @@
+[     785ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[     873ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[    1761ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[   38903ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[   40072ms] [LOG] [Fast Refresh] done in 1270ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  307932ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  308384ms] [LOG] [Fast Refresh] done in 514ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  308393ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  311214ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  311331ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  311826ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  520271ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  521275ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  522277ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  523279ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  524283ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  529285ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  534287ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  539291ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  544295ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  549298ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  554301ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  559303ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=pGPUHTPnitwJ3j8ZeLy9m' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[  658310ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  658367ms] [LOG] [HMR] connected @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[  658863ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1446445ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1446529ms] [LOG] [Fast Refresh] done in 184ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1479785ms] [LOG] [Fast Refresh] rebuilding @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1479906ms] [LOG] [Fast Refresh] done in 222ms @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1505513ms] [WARNING] [HeroVideo] Auto-play prevented or interrupted: AbortError: The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22 @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1510533ms] [WARNING] [HeroVideo] Auto-play prevented or interrupted: AbortError: The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22 @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_c32843cf._.js:2297
+[ 1637938ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1638941ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1639943ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1640947ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1641950ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1646955ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1651963ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1656980ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1662009ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1667041ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1672116ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878
+[ 1677253ms] [ERROR] WebSocket connection to 'ws://127.0.0.1:4100/_next/webpack-hmr?id=EIWujbccy1Onv6vboOjHr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:4100/_next/static/chunks/fd92d_next_dist_client_004360c4._.js:10878

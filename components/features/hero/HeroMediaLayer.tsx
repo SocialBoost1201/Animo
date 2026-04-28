@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { HeroMedia } from './types';
 
@@ -23,19 +23,22 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
   mobileFallbackSrc,
   mobileFallbackAlt,
 }) => {
-  const [mounted] = useState(true);
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const shouldRenderDesktopVideo = useSyncExternalStore(
+    (callback) => {
+      const desktopQuery = window.matchMedia('(min-width: 768px)');
+      const handleChange = () => callback();
 
-  // アクティブな動画の再生制御
+      desktopQuery.addEventListener('change', handleChange);
+      return () => desktopQuery.removeEventListener('change', handleChange);
+    },
+    () => window.matchMedia('(min-width: 768px)').matches,
+    () => false
+  );
+
   useEffect(() => {
-    if (!mounted || media.length === 0 || isReducedMotion || isMobile) return;
+    if (media.length === 0 || isReducedMotion || !shouldRenderDesktopVideo) return;
 
     media.forEach((item, i) => {
       const videoEl = videoRefs.current[i];
@@ -44,14 +47,12 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
       const isVisible = i === activeIndex;
       const isNext = i === (activeIndex + 1) % media.length;
       
-      // 遅延読み込み (Lazy Loading)
       if ((isVisible || isNext) && !videoEl.getAttribute('src')) {
         videoEl.setAttribute('src', item.url);
         videoEl.load();
       }
 
       if (isVisible) {
-        // iOS/Safariの自動再生制限対策
         videoEl.currentTime = 0;
         const playPromise = videoEl.play();
         if (playPromise !== undefined) {
@@ -60,7 +61,6 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
           });
         }
       } else {
-        // フェードアウトのトランジション中（transitionMs）は動画を止めないための遅延停止
         setTimeout(() => {
           if (videoRefs.current[i]) {
              videoRefs.current[i]?.pause();
@@ -68,7 +68,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
         }, transitionMs);
       }
     });
-  }, [activeIndex, isMobile, media, isReducedMotion, transitionMs, mounted]);
+  }, [activeIndex, shouldRenderDesktopVideo, media, isReducedMotion, transitionMs]);
 
   if (media.length === 0) {
     return <div className="absolute inset-0 bg-[#171717]" />;
@@ -86,11 +86,6 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-black z-0 pointer-events-none">
-      {/* 
-        1. LCP Core Image: 
-        この要素はサーバー/クライアントで不変。
-        activeIndex が 0 の間（初期状態）はこれが最前面に見えるように z-index を調整。
-      */}
       <div 
         className="absolute inset-0 transition-opacity duration-700"
         style={{ 
@@ -109,20 +104,11 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
         />
       </div>
 
-      {/* 
-        2. Rotator Layer:
-        ハイドレーション後にデスクトップかつ非 Reduced Motion の場合のみ描画、
-        または常に描画して opacity で制御。
-        ここではハイドレーション後にアクティブにする。
-      */}
-      {mounted && !isMobile && !isReducedMotion && media.slice(0, 3).map((item, i) => {
-        // index 0 は LCP Core Image で既に出ているので、動画でない場合は飛ばしても良いが、
-        // トランジションをスムーズにするために動画の場合はここで管理する。
+      {shouldRenderDesktopVideo && !isReducedMotion && media.slice(0, 3).map((item, i) => {
         if (i === 0 && item.type !== 'video') return null;
 
         const isActive = i === activeIndex;
 
-        // トランジションのスタイリング（基本はFade）
         let enterStyle: React.CSSProperties = { opacity: 1 };
         let exitStyle: React.CSSProperties  = { opacity: 0 };
 
@@ -162,7 +148,7 @@ export const HeroMediaLayer: React.FC<HeroMediaLayerProps> = ({
                 }}
                 poster={item.posterUrl}
                 autoPlay={false}
-                preload={i === 0 ? "auto" : "none"}
+                preload="metadata"
                 loop
                 muted
                 playsInline

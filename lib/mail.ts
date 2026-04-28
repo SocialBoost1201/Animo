@@ -1,13 +1,39 @@
 import { Resend } from 'resend';
 
-const adminEmail = process.env.ADMIN_EMAIL || 'animo4266@gmail.com';
+/** 求人・問い合わせ通知は必ずこのアドレスにも届ける（追加で ADMIN_EMAIL を併用可） */
+const ADMIN_NOTIFY_PRIMARY = 'animo4266@gmail.com';
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
+/** Resend の送信元（登録済みドメイン）。未設定時は Resend の開発用 From（受信側・送信側で許可が必要） */
+function getResendFromForNotifications(): string {
+  const addr = process.env.RESEND_FROM_EMAIL?.trim();
+  if (addr) {
+    return `CLUB Animo <${addr}>`;
+  }
+  return 'CLUB Animo <onboarding@resend.dev>';
+}
+
+/** 通知メールの宛先（常に animo4266 + ADMIN_EMAIL のカンマ区切りをマージ、重複除去） */
+function getAdminNotificationRecipients(): string[] {
+  const raw = process.env.ADMIN_EMAIL?.trim();
+  const extras = raw ? raw.split(',').map((e) => e.trim()).filter(Boolean) : [];
+  return Array.from(new Set<string>([ADMIN_NOTIFY_PRIMARY, ...extras]));
+}
+
+function getAdminCtaPathForNotificationType(
+  type: 'reserve' | 'contact' | 'cast' | 'staff' | 'escort',
+): string {
+  if (type === 'cast' || type === 'staff' || type === 'escort') {
+    return '/admin/applications';
+  }
+  return '/admin/dashboard';
+}
+
 export async function sendAdminNotification(payload: {
-  type: 'reserve' | 'contact' | 'cast' | 'staff';
+  type: 'reserve' | 'contact' | 'cast' | 'staff' | 'escort';
   data: Record<string, unknown>;
 }) {
   if (!process.env.RESEND_API_KEY) {
@@ -16,7 +42,13 @@ export async function sendAdminNotification(payload: {
   }
 
   const { type, data } = payload;
-  
+  const appBase = (process.env.NEXT_PUBLIC_APP_URL || 'https://club-animo.com').replace(/\/$/, '');
+  const adminCtaPath = getAdminCtaPathForNotificationType(type);
+  const ctaLabel =
+    type === 'cast' || type === 'staff' || type === 'escort'
+      ? '求人応募を管理画面で開く'
+      : '管理画面を開く';
+
   let subject = '';
   let title = '';
   
@@ -37,6 +69,10 @@ export async function sendAdminNotification(payload: {
       subject = `【新着】スタッフ応募: ${data.name}様`;
       title = '新着：スタッフ応募';
       break;
+    case 'escort':
+      subject = `【新着】エスコート応募: ${data.name}様`;
+      title = '新着：エスコート応募';
+      break;
   }
 
   const html = `
@@ -54,18 +90,19 @@ export async function sendAdminNotification(payload: {
       </table>
       
       <div style="margin-top: 30px; text-align: center;">
-        <a href="${process.env.NEXT_PUBLIC_APP_URL || ''}/admin/inquiries" 
+        <a href="${appBase}${adminCtaPath}" 
            style="background-color: #1A1A1A; color: #fff; padding: 12px 24px; text-decoration: none; font-size: 14px; display: inline-block;">
-           管理画面で確認する
+           ${ctaLabel}
         </a>
       </div>
     </div>
   `;
 
   try {
+    const to = getAdminNotificationRecipients();
     const { error } = await getResend().emails.send({
-      from: 'Animo Notification <onboarding@resend.dev>',
-      to: adminEmail,
+      from: getResendFromForNotifications(),
+      to: to.length === 1 ? to[0]! : to,
       subject: subject,
       html: html,
     });
