@@ -44,9 +44,6 @@ export async function getStaffs(includeInactive = false) {
   return (data ?? []).map((row) => mapRowToStaffSlave(row as StaffTableRow));
 }
 
-/**
- * スタッフマスタ単件取得
- */
 export async function getStaffById(id: string): Promise<StaffSlave | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from('staffs').select('*').eq('id', id).single();

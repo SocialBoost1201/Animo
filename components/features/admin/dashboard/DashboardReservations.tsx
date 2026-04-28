@@ -77,76 +77,119 @@ export async function DashboardReservations() {
           <DashboardEmptyState className="min-h-40 h-full" />
         </div>
       ) : (
-      <div className="flex-1 overflow-x-auto custom-scrollbar">
-        <div className="min-w-[800px]">
-          {/* Table Header Row */}
-          <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6">
-            <div className="w-section-mobile text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">来店時刻</div>
-            <div className="flex-1 text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4 text-center sm:text-left">お客様名</div>
-            <div className="w-[60px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">人数</div>
-            <div className="w-[180px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">担当キャスト</div>
-            <div className="w-[110px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">確認状態</div>
-            <div className="w-[150px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">備考</div>
-          </div>
+      <>
+        <div className="hidden md:block flex-1 overflow-x-auto custom-scrollbar">
+          <div className="min-w-[800px]">
+            {/* Table Header Row */}
+            <div className="flex items-center h-[42px] border-t border-b border-[#ffffff0a] px-6">
+              <div className="w-section-mobile text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase">来店時刻</div>
+              <div className="flex-1 text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4 text-center sm:text-left">お客様名</div>
+              <div className="w-[60px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">人数</div>
+              <div className="w-[180px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">担当キャスト</div>
+              <div className="w-[110px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase text-center">確認状態</div>
+              <div className="w-[150px] text-[9px] font-bold tracking-[0.71px] text-[#5a5650] uppercase px-4">備考</div>
+            </div>
 
-          {/* Table Body */}
-          <div className="divide-y divide-[#ffffff0a]">
-            {reservations.map((r) => {
-                const cfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
-                return (
-                  <div
-                    key={r.id}
-                    className="flex items-center min-h-[52px] hover:bg-[#ffffff05] transition-colors px-6"
-                  >
-                    {/* Time */}
-                    <div className="w-section-mobile text-[12px] font-bold text-[#dfbd69]">{r.visitTime}</div>
-                    
-                    {/* Guest Name */}
-                    <div className="flex-1 text-[12px] font-bold text-[#cbc3b3] truncate px-4">
-                      {r.guestName} 様
-                    </div>
-                    
-                    {/* Guest Count */}
-                    <div className="w-[60px] text-[12px] font-medium text-[#8a8478] text-center">
-                      <span className="text-[#c7c0b2] font-bold">{r.guestCount}</span>名
-                    </div>
-                    
-                    {/* Cast Name */}
-                    <div className="w-[180px] px-4 overflow-hidden">
-                      <div className="flex items-center gap-2">
-                        {r.castName !== '—' ? (
-                          <>
-                            <div className="w-5 h-5 rounded-full bg-[#dfbd691a] flex items-center justify-center shrink-0 border border-[#dfbd6920]">
-                               <span className="text-[9px] font-bold text-[#dfbd69]">{r.castName.charAt(0)}</span>
-                            </div>
-                            <span className="text-[12px] font-bold text-[#cbc3b3] truncate">{r.castName}</span>
-                          </>
-                        ) : (
-                          <span className="text-[11px] text-[#5a5650]">—</span>
-                        )}
+            {/* Table Body */}
+            <div className="divide-y divide-[#ffffff0a]">
+              {reservations.map((r) => {
+                  const cfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
+                  return (
+                    <div
+                      key={r.id}
+                      className="flex items-center min-h-[52px] hover:bg-[#ffffff05] transition-colors px-6"
+                    >
+                      {/* Time */}
+                      <div className="w-section-mobile text-[12px] font-bold text-[#dfbd69]">{r.visitTime}</div>
+                      
+                      {/* Guest Name */}
+                      <div className="flex-1 text-[12px] font-bold text-[#cbc3b3] truncate px-4">
+                        {r.guestName} 様
+                      </div>
+                      
+                      {/* Guest Count */}
+                      <div className="w-[60px] text-[12px] font-medium text-[#8a8478] text-center">
+                        <span className="text-[#c7c0b2] font-bold">{r.guestCount}</span>名
+                      </div>
+                      
+                      {/* Cast Name */}
+                      <div className="w-[180px] px-4 overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          {r.castName !== '—' ? (
+                            <>
+                              <div className="w-5 h-5 rounded-full bg-[#dfbd691a] flex items-center justify-center shrink-0 border border-[#dfbd6920]">
+                                 <span className="text-[9px] font-bold text-[#dfbd69]">{r.castName.charAt(0)}</span>
+                              </div>
+                              <span className="text-[12px] font-bold text-[#cbc3b3] truncate">{r.castName}</span>
+                            </>
+                          ) : (
+                            <span className="text-[11px] text-[#5a5650]">—</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Status Badge */}
+                      <div className="w-[110px] flex justify-center">
+                        <div className={`flex items-center gap-1.5 px-2.5 py-1 ${cfg.bg} rounded-[20px] border-[0.56px] ${cfg.border} min-w-[76px] justify-center`}>
+                          <div className={`w-[5px] h-[5px] rounded-full ${cfg.dot}`} />
+                          <span className={`text-[10px] font-bold tracking-[0.12px] ${cfg.textColor}`}>{cfg.label}</span>
+                        </div>
+                      </div>
+
+                      {/* Note */}
+                      <div className="w-[150px] px-4 overflow-hidden">
+                        <p className="text-[11px] text-[#5a5650] truncate font-sans" title={r.note ?? ''}>
+                          {r.note || '—'}
+                        </p>
                       </div>
                     </div>
-
-                    {/* Status Badge */}
-                    <div className="w-[110px] flex justify-center">
-                      <div className={`flex items-center gap-1.5 px-2.5 py-1 ${cfg.bg} rounded-[20px] border-[0.56px] ${cfg.border} min-w-[76px] justify-center`}>
-                        <div className={`w-[5px] h-[5px] rounded-full ${cfg.dot}`} />
-                        <span className={`text-[10px] font-bold tracking-[0.12px] ${cfg.textColor}`}>{cfg.label}</span>
-                      </div>
-                    </div>
-
-                    {/* Note */}
-                    <div className="w-[150px] px-4 overflow-hidden">
-                      <p className="text-[11px] text-[#5a5650] truncate font-sans" title={r.note ?? ''}>
-                        {r.note || '—'}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+            </div>
           </div>
         </div>
-      </div>
+
+        <div className="block md:hidden divide-y divide-[#ffffff0a]">
+          {reservations.map((r) => {
+            const cfg = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
+            return (
+              <div key={r.id} className="px-5 py-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[14px] font-bold text-[#cbc3b3] truncate">{r.guestName} 様</span>
+                  <div className={`flex items-center gap-1.5 px-2.5 py-1 ${cfg.bg} rounded-full border ${cfg.border} shrink-0`}>
+                    <div className={`w-[5px] h-[5px] rounded-full ${cfg.dot}`} />
+                    <span className={`text-[10px] font-bold tracking-[0.12px] ${cfg.textColor}`}>{cfg.label}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 text-[13px]">
+                  <span className="font-bold text-[#dfbd69]">{r.visitTime}</span>
+                  <span className="text-[#5a5650] opacity-60">·</span>
+                  <span>
+                    <span className="font-bold text-[#c7c0b2]">{r.guestCount}</span>
+                    <span className="text-[#8a8478]">名</span>
+                  </span>
+                </div>
+
+                {r.castName !== '—' && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-[#dfbd691a] border border-[#dfbd6920] flex items-center justify-center shrink-0">
+                      <span className="text-[8px] font-bold text-[#dfbd69]">{r.castName.charAt(0)}</span>
+                    </div>
+                    <span className="text-[12px] text-[#8a8478]">
+                      担当: <span className="text-[#c7c0b2] font-semibold">{r.castName}</span>
+                    </span>
+                  </div>
+                )}
+
+                {r.note && (
+                  <p className="text-[11px] leading-relaxed text-[#8a8478]">{r.note}</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
       )}
       </div>
     </div>

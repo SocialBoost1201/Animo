@@ -10,7 +10,6 @@ import { splitStaffFullName } from '@/lib/staff-name';
 
 const inputCls =
   'w-full bg-[#1c1d22] border border-[#ffffff0f] rounded-[10px] px-4 py-2.5 text-[13px] text-[#f4f1ea] placeholder-[#5a5650] outline-none focus:border-[#dfbd6950] focus:bg-[#1f2028] transition-colors';
-
 function FieldLabel({
   icon: Icon,
   label,
@@ -53,7 +52,6 @@ export function StaffEditForm({ staff }: StaffEditFormProps): ReactElement {
     setError(null);
     const fd = new FormData(e.currentTarget);
     fd.set('is_active', String(isActive));
-
     startTransition(async () => {
       const result = await updateStaff(staff.id, fd);
       if (result.error) {
