@@ -94,6 +94,24 @@ function AdminLayoutInner({
   });
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setMobileOpen(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
+
+  const handleMobileSidebarClickCapture = (event: React.MouseEvent<HTMLElement>) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const link = target.closest('a[href]');
+    const href = link?.getAttribute('href');
+    if (href?.startsWith('/admin')) {
+      setMobileOpen(false);
+    }
+  };
+
+  useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
@@ -133,7 +151,13 @@ function AdminLayoutInner({
     <div className={`flex flex-col h-full font-sans border-r transition-colors duration-200 ${T.sidebarBg} ${T.sidebarBorder}`}>
       {/* Branding */}
       <div className="h-[88px] px-6 flex items-center gap-4 shrink-0">
-        <Link prefetch={false} href="/admin/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-4">
+        <Link
+          prefetch={false}
+          href="/admin/dashboard"
+          onClick={() => setMobileOpen(false)}
+          onNavigate={() => setMobileOpen(false)}
+          className="flex items-center gap-4"
+        >
           <div className="w-[42px] h-[42px] flex items-center justify-center rounded-[12px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 shadow-xl transition-transform hover:scale-105">
             <LayoutDashboard size={20} className="text-[#0b0b0d]" />
           </div>
@@ -183,6 +207,7 @@ function AdminLayoutInner({
                     href={item.href}
                     prefetch={false}
                     onClick={() => setMobileOpen(false)}
+                    onNavigate={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
                       isActive
                         ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
@@ -273,29 +298,16 @@ function AdminLayoutInner({
         {renderSidebarContent()}
       </aside>
 
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 z-40 md:hidden backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-      <aside
-        className={`fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        {renderSidebarContent()}
-      </aside>
-
       {/* Main Content */}
       <main className={`flex-1 min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 transition-colors duration-200 ${T.pageBg}`}>
         {/* Mobile Header */}
         <header className={`h-14 border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-30 ${T.mobileHeader}`}>
           <button
+            type="button"
             onClick={() => setMobileOpen(true)}
             className={`p-2 rounded-md transition-colors ${T.mobileMenuBtn}`}
             aria-label="メニューを開く"
+            aria-expanded={mobileOpen}
           >
             <Menu size={20} />
           </button>
@@ -309,7 +321,25 @@ function AdminLayoutInner({
         </div>
       </main>
 
-	      {/* Mobile Bottom Tab */}
+      {/* Mobile Overlay */}
+      {mobileOpen ? (
+        <div
+          className="fixed inset-0 bg-black/70 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          role="presentation"
+          aria-hidden
+        />
+      ) : null}
+      {mobileOpen ? (
+        <aside
+          onClickCapture={handleMobileSidebarClickCapture}
+          className="fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out translate-x-0"
+        >
+          {renderSidebarContent()}
+        </aside>
+      ) : null}
+
+      {/* Mobile Bottom Tab */}
       <nav className={`fixed bottom-0 left-0 right-0 z-30 md:hidden border-t pb-safe font-inter ${T.mobileTab}`}>
         <div className="flex items-center">
           {BOTTOM_TAB_ITEMS.map((item) => {
