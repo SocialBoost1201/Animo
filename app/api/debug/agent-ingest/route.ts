@@ -1,9 +1,17 @@
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync } from 'node:fs';
+import path from 'node:path';
 import { NextResponse } from 'next/server';
 
 /** Dev-only: append one NDJSON line for Cursor debug sessions (client cannot write disk). */
-const LOG_PATH =
-  '/Users/takumashinnyo/workspace/projects/10_active_projects/Animo/.cursor/debug-a3392f.log';
+function logPath(): string {
+  const dir = path.join(process.cwd(), '.cursor');
+  try {
+    mkdirSync(dir, { recursive: true });
+  } catch {
+    // ignore
+  }
+  return path.join(dir, 'debug-4da4d2.log');
+}
 
 export async function POST(req: Request) {
   if (process.env.NODE_ENV !== 'development') {
@@ -11,7 +19,7 @@ export async function POST(req: Request) {
   }
   try {
     const text = await req.text();
-    appendFileSync(LOG_PATH, text.endsWith('\n') ? text : `${text}\n`);
+    appendFileSync(logPath(), text.endsWith('\n') ? text : `${text}\n`);
   } catch {
     return NextResponse.json({ ok: false }, { status: 500 });
   }

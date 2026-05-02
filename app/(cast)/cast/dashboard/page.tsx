@@ -18,6 +18,8 @@ import {
 } from '@/components/features/cast/CastMobileShell';
 import { getJstDateString } from '@/lib/date-utils';
 
+const OFFICIAL_LINE_URL = 'https://line.me/R/ti/p/@794qphxb';
+
 function getWeeklySummaryLabel(value: 'work' | 'off') {
   if (value === 'work') return { text: '○', color: 'text-[#3b82f6]' };
   return { text: '×', color: 'text-[#ef4444]' };
@@ -133,13 +135,13 @@ export default async function CastDashboardPage() {
     getCastTodayReservations(),
     supabase
       .from('cast_schedules')
-      .select('*')
+      .select('start_time, end_time')
       .eq('cast_id', cast.id)
       .eq('work_date', today)
       .maybeSingle(),
     supabase
       .from('cast_posts')
-      .select('id, content, status, created_at')
+      .select('content, created_at')
       .eq('cast_id', cast.id)
       .order('created_at', { ascending: false })
       .limit(3),
@@ -344,11 +346,16 @@ export default async function CastDashboardPage() {
           <p className="mt-4 text-[13px] leading-[1.7] text-[#a9afbc]">
             シフト提出リマインドや本日の確認など、個別通知を受け取るために公式LINEの友だち追加が必要です。
           </p>
-          <div className="mt-5 rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]">
+          <Link
+            href={OFFICIAL_LINE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 block rounded-xl border border-[rgba(201,167,106,0.3)] bg-[rgba(201,167,106,0.15)] px-4 py-3 text-center text-sm font-bold text-[#c9a76a]"
+          >
             公式LINEを追加する
-          </div>
+          </Link>
           <p className="mt-2 text-[11px] text-[#6b7280]">
-            友だち追加後、公式LINEに表示された連携コードを送信してください。
+            友だち追加後、登録済みの携帯番号を公式LINEに送信してください。
           </p>
         </CastMobileCard>
 

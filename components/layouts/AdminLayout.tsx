@@ -18,7 +18,8 @@ const NAV_ITEMS = [
 
   // ── OPERATIONS ────────────────────────────────────────────────────────────
   { href: '/admin/human-resources',    icon: Users,           label: 'キャスト管理',   section: 'operations' },
-  { href: '/admin/shift-requests',     icon: ClipboardList,   label: '出勤調整・承認', section: 'operations', badge: 'shifts' },
+  { href: '/admin/shift-requests',     icon: Calendar,        label: '出勤調整',       section: 'operations' },
+  { href: '/admin/approvals',          icon: ClipboardList,   label: '承認',           section: 'operations', badge: 'shifts' },
   { href: '/admin/monthly-shifts',     icon: Calendar,        label: 'シフト管理',     section: 'operations' },
   { href: '/admin/template-shifts',    icon: Printer,         label: 'シフト印刷表',   section: 'operations' },
   { href: '/admin/staffs',             icon: UserCheck,       label: 'スタッフ管理',   section: 'operations' },
@@ -292,14 +293,14 @@ function AdminLayoutInner({
   );
 
   return (
-    <div data-theme={theme} className={`min-h-screen flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
+    <div data-theme={theme} className={`h-screen overflow-hidden flex transition-colors duration-200 ${T.pageBg} ${T.primaryText}`}>
       {/* Desktop Sidebar */}
       <aside className="w-[260px] flex-col hidden md:flex shrink-0 sticky top-0 h-screen">
         {renderSidebarContent()}
       </aside>
 
       {/* Main Content */}
-      <main className={`flex-1 min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 transition-colors duration-200 ${T.pageBg}`}>
+      <main className={`flex-1 min-w-0 h-screen overflow-y-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0 transition-colors duration-200 ${T.pageBg}`}>
         {/* Mobile Header */}
         <header className={`h-14 border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-30 ${T.mobileHeader}`}>
           <button
@@ -316,7 +317,7 @@ function AdminLayoutInner({
           </Link>
         </header>
 
-        <div className="p-6 md:p-10 lg:p-14 max-w-[1920px] mx-auto">
+        <div className="p-6 md:p-10 lg:p-14 max-w-[1920px] mx-auto min-h-full">
           {children}
         </div>
       </main>

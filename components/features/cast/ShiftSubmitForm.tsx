@@ -75,7 +75,6 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
       if (res.success) {
           toast.success('シフトを提出しました');
           router.push('/cast/dashboard');
-          router.refresh();
       } else {
           toast.error(res.error || 'シフトの提出に失敗しました');
       }

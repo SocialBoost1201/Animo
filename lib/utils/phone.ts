@@ -33,3 +33,22 @@ export function toE164JapanesePhone(input: string): string {
   }
   return `+81${digits.slice(1)}`
 }
+
+
+/**
+ * 070/080/090 11桁の国内表記へ正規化（+81/81始まりも許容）
+ * 例: +819012345678 / 819012345678 / 09012345678 -> 09012345678
+ */
+export function normalizeJapaneseMobilePhoneForMatch(input: string): string | null {
+  const digits = toHalfWidthDigits(input).replace(/\D/g, '')
+
+  if (/^(070|080|090)\d{8}$/.test(digits)) {
+    return digits
+  }
+
+  if (/^81(70|80|90)\d{8}$/.test(digits)) {
+    return `0${digits.slice(2)}`
+  }
+
+  return null
+}

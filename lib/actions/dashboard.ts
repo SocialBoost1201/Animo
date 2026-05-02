@@ -110,9 +110,10 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     { data: yesterdayReservations },
     { data: trials },
     { count: unreadApps },
-    { count: totalApplications },
     { count: activeCasts },
     { count: pendingShifts },
+    { data: manualAttendance },
+    { data: operationMemos },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_checkins').select('cast_id, is_absent').eq('checkin_date', today),
@@ -120,9 +121,10 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     supabase.from('daily_reservations').select('id').eq('reservation_date', yesterdayStr),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('recruit_applications').select('id', { count: 'exact', head: true }).eq('is_read', false),
-    supabase.from('recruit_applications').select('id', { count: 'exact', head: true }),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
+    supabase.from('daily_operation_memos').select('id').eq('operation_date', today).limit(1),
   ]);
 
   // 本日の出勤キャスト数を抽出
@@ -163,18 +165,18 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     .eq('reservation_type', 'reservation');
 
   const hasOperationalRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
+    todayShiftCount > 0 ||
     (checkinsRaw?.length ?? 0) > 0 ||
     (todayReservations?.length ?? 0) > 0 ||
     (yesterdayReservations?.length ?? 0) > 0 ||
     (trials?.length ?? 0) > 0 ||
-    (weeklyShifts?.length ?? 0) > 0 ||
-    (totalApplications ?? 0) > 0 ||
-    (activeCasts ?? 0) > 0 ||
-    (pendingShifts ?? 0) > 0 ||
+    (manualAttendance?.length ?? 0) > 0 ||
+    (operationMemos?.length ?? 0) > 0 ||
     (unconfirmedReservations ?? 0) > 0;
 
-  const alertCount = unconfirmedCount + (unconfirmedReservations ?? 0) + (pendingShifts ?? 0 > 3 ? 1 : 0);
+  const alertCount = hasOperationalRecords
+    ? unconfirmedCount + (unconfirmedReservations ?? 0) + ((pendingShifts ?? 0) > 3 ? 1 : 0)
+    : 0;
 
   return {
     hasOperationalRecords,
@@ -186,7 +188,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     yesterdayReservationCount: (yesterdayReservations || []).length,
     trialCount: (trials || []).length + (unreadApps ?? 0),
     unreadApplications: unreadApps ?? 0,
-    shiftMissingCount,
+    shiftMissingCount: hasOperationalRecords ? shiftMissingCount : 0,
     alertCount,
   };
 }
@@ -208,14 +210,14 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     { data: trials },
     { count: activeCasts },
     { data: noticeMemos },
-    { count: pendingShifts },
+    { data: manualAttendance },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
-    supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
   ]);
 
   let confirmedCastCount = 0;
@@ -232,12 +234,11 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
   const eventMemo = noticeMemos?.find(m => m.memo_type === 'event')?.content ?? null;
   const urgentMemo = noticeMemos?.find(m => m.memo_type === 'urgent')?.content ?? null;
   const hasOperationalRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
+    confirmedCastCount > 0 ||
     (reservations?.length ?? 0) > 0 ||
     (trials?.length ?? 0) > 0 ||
-    (activeCasts ?? 0) > 0 ||
     (noticeMemos?.length ?? 0) > 0 ||
-    (pendingShifts ?? 0) > 0;
+    (manualAttendance?.length ?? 0) > 0;
 
   return {
     hasOperationalRecords,
@@ -517,9 +518,7 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     .eq('status', 'pending');
 
   const hasSourceRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
-    activeCastCount > 0 ||
-    (pendingCount ?? 0) > 0;
+    weekly.some((day) => day.count > 0);
 
   return {
     hasSourceRecords,

@@ -21,8 +21,13 @@ async function getNewsDetail(id: string) {
   return data;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const news = await getNewsDetail(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const news = await getNewsDetail(slug);
 
   if (!news) {
     return {
@@ -46,8 +51,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
-  const news = await getNewsDetail(params.slug);
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const news = await getNewsDetail(slug);
 
   if (!news) {
     notFound();

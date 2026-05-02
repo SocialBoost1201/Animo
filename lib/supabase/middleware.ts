@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 import {
-  CAST_REAUTH_WINDOW_DAYS,
+  CAST_REAUTH_WINDOW_MS,
   CAST_REAUTH_COOKIE_NAME,
   isCastPortalPublicPath,
   isCastPortalProtectedPath,
@@ -142,18 +142,23 @@ export async function updateSession(request: NextRequest) {
       return redirectToSafeDestination(request, role)
     }
 
-    const lastVerifiedRaw = castData?.last_sms_verified_at
-    const daysSince = lastVerifiedRaw
-      ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
-      : Infinity
-
+    const hasCompletedSmsVerification = Boolean(castData?.last_sms_verified_at)
     const reauthCookie = request.cookies.get(CAST_REAUTH_COOKIE_NAME)?.value
     const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now()
-    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS
+    const isValidSession = hasCompletedSmsVerification && Boolean(isValidCookie)
 
     if (!isValidSession) {
       return createCastAuthRedirect(request, 'verify', true)
     }
+
+    // Keep trusted-device window sliding by extending on activity.
+    supabaseResponse.cookies.set(CAST_REAUTH_COOKIE_NAME, String(Date.now() + CAST_REAUTH_WINDOW_MS), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: Math.floor(CAST_REAUTH_WINDOW_MS / 1000),
+    })
   }
 
   if (isCastPortalPublicPath(pathname) && user) {
@@ -164,14 +169,10 @@ export async function updateSession(request: NextRequest) {
       return supabaseResponse
     }
 
-    const lastVerifiedRaw = castData?.last_sms_verified_at
-    const daysSince = lastVerifiedRaw
-      ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
-      : Infinity
-
+    const hasCompletedSmsVerification = Boolean(castData?.last_sms_verified_at)
     const reauthCookie = request.cookies.get(CAST_REAUTH_COOKIE_NAME)?.value
     const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now()
-    const isValidSession = isValidCookie && daysSince < CAST_REAUTH_WINDOW_DAYS
+    const isValidSession = hasCompletedSmsVerification && Boolean(isValidCookie)
 
     const isVerifyPath = pathname === '/cast/verify' || pathname === '/cast/m/verify'
     if (isValidSession) {

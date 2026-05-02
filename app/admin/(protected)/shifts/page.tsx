@@ -4,10 +4,11 @@ import { ShiftManager } from '@/components/features/admin/ShiftManager'
 export default async function ShiftsPage({
   searchParams,
 }: {
-  searchParams: { date?: string; view?: string }
+  searchParams: Promise<{ date?: string; view?: string }>;
 }) {
-  const targetDate = searchParams.date ? new Date(searchParams.date) : new Date()
-  const viewType = searchParams.view === 'month' ? 'month' : 'week'
+  const resolved = await searchParams;
+  const targetDate = resolved.date ? new Date(resolved.date) : new Date();
+  const viewType = resolved.view === 'month' ? 'month' : 'week';
   const data = viewType === 'month' 
     ? await getMonthlySchedules(targetDate)
     : await getWeeklySchedules(targetDate)

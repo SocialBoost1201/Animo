@@ -141,7 +141,7 @@ export default async function CustomersPage() {
                       <td className="px-5 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Link
-                            href={`/admin/customers/${c.id}`}
+                            href={`/admin/customers/${c.id}/edit`}
                             className="p-1.5 rounded-md text-[#c7c0b2] hover:text-[#dfbd69] hover:bg-[#dfbd691a] transition-colors"
                             title="編集"
                           >

@@ -14,6 +14,7 @@ import { Edit2, Eye, EyeOff, Sparkles, GripVertical, Save, Loader2, Trash2, Trop
 import { DeleteCastButton } from '@/components/features/admin/DeleteCastButton';
 import { updateCastOrder } from '@/lib/actions/cast-order';
 import { bulkUpdateCastsStatus, bulkDeleteCasts } from '@/lib/actions/cast-bulk';
+import { updateDailyCastAttendance, type DailyCastAttendanceStatus } from '@/lib/actions/today';
 import { toast } from 'sonner';
 
 import {
@@ -35,7 +36,7 @@ const goldGradientStyle: React.CSSProperties = {
 };
 
 // Shared grid template — header and row must match
-const GRID_COLS = 'md:grid-cols-[auto_72px_3fr_1fr_1.6fr_1.2fr_1.6fr_auto]';
+const GRID_COLS = 'md:grid-cols-[auto_72px_3fr_1fr_1.4fr_1fr_1.2fr_1.5fr_auto]';
 
 type CastType = {
   id: string;
@@ -47,6 +48,7 @@ type CastType = {
   quiz_tags?: string[];
   is_active?: boolean;
   status?: string;
+  today_attendance_status: DailyCastAttendanceStatus;
   display_order: number;
   score: number;
   level: number;
@@ -78,6 +80,24 @@ function SortableCastRow({
 
   const isPublic = cast.is_active ?? cast.status === 'public';
   const isElevated = isSelected || isDragging;
+  const [attendanceStatus, setAttendanceStatus] = useState<DailyCastAttendanceStatus>(cast.today_attendance_status);
+  const [isAttendancePending, startAttendanceTransition] = useTransition();
+  const todayAttendanceLabel =
+    attendanceStatus === 'working' ? '出勤' : attendanceStatus === 'absent' ? '休み' : '未設定';
+
+  function handleTodayAttendance(status: DailyCastAttendanceStatus): void {
+    const previousStatus = attendanceStatus;
+    setAttendanceStatus(status);
+    startAttendanceTransition(async () => {
+      const result = await updateDailyCastAttendance({ castId: cast.id, status });
+      if (!result.success) {
+        setAttendanceStatus(previousStatus);
+        toast.error(result.error || '本日の出勤ステータスを更新できませんでした');
+        return;
+      }
+      toast.success(`${cast.stage_name || cast.name || 'キャスト'}を${status === 'working' ? '出勤' : '休み'}にしました`);
+    });
+  }
 
   return (
     <div
@@ -278,6 +298,42 @@ function SortableCastRow({
           </span>
         </div>
 
+        {/* Today attendance */}
+        <div className="flex md:flex-col items-center md:items-start justify-between md:justify-center gap-2 py-2 md:py-0">
+          <span className="md:hidden text-[10px] font-bold text-[#978d7d] tracking-widest">TODAY</span>
+          <span className="hidden md:block text-[10px] font-bold text-[#978d7d] tracking-[0.08em]">
+            本日: {todayAttendanceLabel}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => handleTodayAttendance('working')}
+              disabled={isAttendancePending}
+              aria-pressed={attendanceStatus === 'working'}
+              className={`min-h-11 md:min-h-8 min-w-[52px] rounded-[8px] border px-3 text-[11px] font-black transition-colors ${
+                attendanceStatus === 'working'
+                  ? 'border-green-500/35 bg-green-500/14 text-green-300'
+                  : 'border-[#ffffff10] bg-white/4 text-[#c7c0b2] hover:border-green-500/25 hover:text-green-300'
+              } disabled:cursor-not-allowed disabled:opacity-60`}
+            >
+              出勤
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTodayAttendance('absent')}
+              disabled={isAttendancePending}
+              aria-pressed={attendanceStatus === 'absent'}
+              className={`min-h-11 md:min-h-8 min-w-[52px] rounded-[8px] border px-3 text-[11px] font-black transition-colors ${
+                attendanceStatus === 'absent'
+                  ? 'border-red-500/35 bg-red-500/14 text-red-300'
+                  : 'border-[#ffffff10] bg-white/4 text-[#c7c0b2] hover:border-red-500/25 hover:text-red-300'
+              } disabled:cursor-not-allowed disabled:opacity-60`}
+            >
+              休み
+            </button>
+          </div>
+        </div>
+
         {/* Desktop Actions */}
         <div className="hidden md:flex justify-end items-center gap-1 pr-2">
           <Link
@@ -449,6 +505,7 @@ export function DraggableCastList({ initialCasts }: { initialCasts: CastType[] }
           <div className="pl-1">SCORE / RANK</div>
           <div className="pl-1">TAGS</div>
           <div>STATUS</div>
+          <div>TODAY</div>
           <div className="text-right pr-2">ACTIONS</div>
         </div>
 

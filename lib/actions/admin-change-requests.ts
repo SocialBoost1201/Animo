@@ -8,6 +8,21 @@ export type ShiftChangeRequestWithCast = ShiftChangeRequest & {
   casts: { stage_name: string; slug: string };
 };
 
+type ShiftChangeRequestRow = ShiftChangeRequest & {
+  casts: { stage_name: string | null; slug: string | null } | { stage_name: string | null; slug: string | null }[] | null;
+};
+
+function mapShiftChangeRequest(row: ShiftChangeRequestRow): ShiftChangeRequestWithCast {
+  const cast = Array.isArray(row.casts) ? row.casts[0] : row.casts;
+  return {
+    ...row,
+    casts: {
+      stage_name: cast?.stage_name ?? '不明',
+      slug: cast?.slug ?? '',
+    },
+  };
+}
+
 /**
  * 管理者が変更申請の一覧を取得する
  */
@@ -17,7 +32,14 @@ export async function getAdminShiftChangeRequests(statusFilter: string = 'pendin
   let query = supabase
     .from('shift_change_requests')
     .select(`
-      *,
+      id,
+      cast_id,
+      status,
+      action_type,
+      target_date,
+      new_start_time,
+      new_end_time,
+      created_at,
       casts (stage_name, slug)
     `)
     .order('created_at', { ascending: false });
@@ -29,7 +51,22 @@ export async function getAdminShiftChangeRequests(statusFilter: string = 'pendin
   const { data, error } = await query;
 
   if (error) return { data: [], error: error.message };
-  return { data: data as ShiftChangeRequestWithCast[], error: null };
+  return { data: (data as ShiftChangeRequestRow[]).map(mapShiftChangeRequest), error: null };
+}
+
+/**
+ * 変更申請タブの未承認バッジ用に、本文を取得せず存在だけ確認する
+ */
+export async function hasPendingShiftChangeRequests() {
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from('shift_change_requests')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
+  if (error) return false;
+  return (count ?? 0) > 0;
 }
 
 /**
@@ -41,7 +78,7 @@ export async function approveShiftChangeRequest(requestId: string) {
   // 1. まず該当の申請内容を取得
   const { data: request, error: fetchErr } = await supabase
     .from('shift_change_requests')
-    .select('*')
+    .select('status, action_type, cast_id, target_date, new_start_time, new_end_time')
     .eq('id', requestId)
     .single();
 

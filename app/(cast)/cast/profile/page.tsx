@@ -66,11 +66,11 @@ export default async function CastProfilePage() {
     cast.cast_private_info as CastPrivateInfo | CastPrivateInfo[] | null | undefined,
   );
   const realName = privateInfo?.real_name || '-';
-  const joinedBaseDate = cast.joined_at || cast.created_at || null;
+  const joinedBaseDate = cast.joined_at || null;
 
   const metrics = [
     { icon: CalendarRange, value: formatTenure(joinedBaseDate), label: '在籍期間' },
-    { icon: ShieldCheck, value: '算出中', label: '出勤率' },
+    { icon: ShieldCheck, value: '-', label: '出勤率' },
   ];
 
   const details = [

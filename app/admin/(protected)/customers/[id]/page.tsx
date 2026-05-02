@@ -7,13 +7,14 @@ export const dynamic = 'force-dynamic';
 export default async function CustomerDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: customer, error } = await supabase
     .from('customers')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !customer) notFound();

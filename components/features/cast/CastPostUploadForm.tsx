@@ -142,7 +142,7 @@ export const CastPostUploadForm = ({ castId }: { castId: string }) => {
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[12px] font-bold tracking-[0.05em] text-[#c9a76a]">画像（任意）</label>
+              <label className="block text-[12px] font-bold tracking-[0.05em] text-[#c9a76a]">画像（必須）</label>
               <div
                 className="flex h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-white/10 bg-[#0b0d12] hover:border-[#c9a76a]/40 transition-colors"
                 onClick={() => fileInputRef.current?.click()}

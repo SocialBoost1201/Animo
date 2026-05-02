@@ -10,6 +10,22 @@ function jstDateAfterDays(days: number): string {
   return new Date(Date.now() + 9 * 60 * 60 * 1000 + days * 86400000).toISOString().split('T')[0]
 }
 
+async function getManualAbsentCastIds(today: string) {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from('daily_cast_attendance')
+    .select('cast_id')
+    .eq('business_date', today)
+    .eq('status', 'absent')
+
+  if (error) {
+    console.error('getManualAbsentCastIds:', error)
+    return new Set<string>()
+  }
+
+  return new Set((data || []).map((row) => row.cast_id as string))
+}
+
 type CastImageRecord = {
   image_url?: string | null
   is_primary?: boolean | null
@@ -44,6 +60,7 @@ function resolveCastImageUrl(
 export async function getPublicCasts() {
   try {
     const supabase = createServiceClient()
+    const today = jstToday()
     const { data, error } = await supabase
       .from('casts')
       .select(`
@@ -69,6 +86,7 @@ export async function getPublicCasts() {
     if (error) { console.error('getPublicCasts:', error); return [] }
 
     // 一覧表示に必要な項目を欠損時フォールバック込みで正規化する
+    const manualAbsentCastIds = await getManualAbsentCastIds(today)
     const diaryThreshold = Date.now() - 72 * 60 * 60 * 1000
 
     return data.map(cast => {
@@ -85,6 +103,7 @@ export async function getPublicCasts() {
         display_name: displayName,
         image_url: imageUrl,
         quiz_tags: Array.isArray(cast.quiz_tags) ? cast.quiz_tags : [],
+        is_today: cast.is_today && !manualAbsentCastIds.has(cast.id),
         has_recent_post: typeof latest === 'number' ? latest >= diaryThreshold : false,
         latest_post_at: latest ? new Date(latest).toISOString() : null,
       }
@@ -207,6 +226,7 @@ export async function getTodayShifts() {
   try {
     const supabase = createServiceClient()
     const today = jstToday()
+    const manualAbsentCastIds = await getManualAbsentCastIds(today)
 
     const { data, error } = await supabase
       .from('cast_schedules')
@@ -222,7 +242,7 @@ export async function getTodayShifts() {
       .eq('work_date', today)
 
     if (error) { console.error('getTodayShifts:', error); return [] }
-    return data
+    return data.filter((row) => !manualAbsentCastIds.has(row.cast_id))
   } catch (err) {
     console.error('getTodayShifts: unexpected error', err)
     return []

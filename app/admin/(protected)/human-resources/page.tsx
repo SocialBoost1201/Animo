@@ -1,5 +1,6 @@
 import { getCasts } from '@/lib/actions/casts';
 import { getStaffs } from '@/lib/actions/staffs';
+import { getTodayCastAttendanceStatuses, type DailyCastAttendanceStatus } from '@/lib/actions/today';
 import Link from 'next/link';
 import { Plus, ChevronLeft, ChevronRight, Users, UserCheck } from 'lucide-react';
 import { DraggableCastList } from '@/components/features/admin/human-resources/DraggableCastList';
@@ -15,12 +16,16 @@ export default async function HumanResourcesPage({
 }) {
   const { q, month, tab = 'casts' } = await searchParams;
 
-  const [castsData, staffsData] = await Promise.all([
+  const [castsData, staffsData, todayAttendance] = await Promise.all([
     getCasts(q).catch((error) => {
       console.error('[admin/human-resources] Failed to load casts:', error);
       return [];
     }),
     getStaffs(true),
+    getTodayCastAttendanceStatuses().catch((error) => {
+      console.error('[admin/human-resources] Failed to load today attendance:', error);
+      return {} as Record<string, DailyCastAttendanceStatus>;
+    }),
   ]);
 
   const targetMonth = month || new Date().toISOString().substring(0, 7);
@@ -46,6 +51,7 @@ export default async function HumanResourcesPage({
       quiz_tags: cast.quiz_tags || [],
       is_active: cast.is_active,
       status: cast.status,
+      today_attendance_status: todayAttendance[cast.id] ?? 'undecided',
       display_order: cast.display_order ?? 0,
       score: mScore?.total_score || 0,
       level: mScore?.current_level || 1,

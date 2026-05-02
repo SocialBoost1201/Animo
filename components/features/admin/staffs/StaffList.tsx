@@ -88,7 +88,7 @@ export function StaffList({ initialStaffs }: StaffListProps) {
                 </td>
                 <td className="px-10 py-8 text-right">
                   <Link
-                    href={`/admin/human-resources/staffs/${staff.id}`}
+                    href={`/admin/staffs/${staff.id}`}
                     className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-[10px] text-[12px] font-bold text-[#f4f1ea] bg-[#171717] border border-[#dfbd69]/18 hover:border-gold/50 hover:bg-[#1c1c1c] transition-all group/edit"
                   >
                     <Edit size={14} className="group-hover/edit:text-gold transition-colors" />

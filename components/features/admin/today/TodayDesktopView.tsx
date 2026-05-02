@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useEffect, useCallback } from 'react'
+import { useState, useTransition, useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 import {
   Calendar, Plus, AlertTriangle, StickyNote,
@@ -17,7 +17,6 @@ import {
   rejectCheckin,
   approveReservation,
   rejectReservation,
-  generateLineText,
 } from '@/lib/actions/today'
 import { type DashboardKPIData } from '@/lib/actions/dashboard'
 import { type DashboardTodayOpsData } from '@/lib/actions/dashboard'
@@ -49,6 +48,92 @@ const TABS: { id: Tab; label: string }[] = [
 // ── Inline input style ──────────────────────────────────────────────────────
 const inputCls =
   'w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-[12px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-gold/40 transition-all outline-none'
+
+const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
+
+function buildLineText(data: TodayDashboardData) {
+  const d = new Date(data.date)
+  const weekday = WEEKDAYS[d.getDay()]
+  const lines: string[] = [
+    '本日の営業状況',
+    `${d.getMonth() + 1}月${d.getDate()}日（${weekday}）`,
+  ]
+
+  const activeCasts = data.shifts.filter(s => !data.absentCastIds.includes(s.cast_id))
+  if (activeCasts.length > 0 || data.dispatches.length > 0) {
+    const groups: Record<string, string[]> = {}
+    for (const cast of activeCasts) {
+      const time = cast.start_time.substring(0, 5)
+      if (!groups[time]) groups[time] = []
+      groups[time].push(cast.stage_name)
+    }
+    for (const dispatch of data.dispatches) {
+      const time = dispatch.start_time.substring(0, 5)
+      if (!groups[time]) groups[time] = []
+      groups[time].push(`${dispatch.name}（派遣）`)
+    }
+
+    lines.push('', '出勤キャスト')
+    for (const time of Object.keys(groups).sort()) {
+      lines.push(`${time}〜`)
+      for (const name of groups[time]) lines.push(name)
+    }
+  }
+
+  if (data.trials.length > 0) {
+    lines.push('', '体入')
+    for (const trial of data.trials) {
+      lines.push(`${trial.name}（${trial.start_time.substring(0, 5)}〜）`)
+    }
+  }
+
+  if (data.staffAttendances.length > 0) {
+    lines.push('', 'スタッフ')
+    for (const staff of data.staffAttendances) {
+      const endTimeLabel = staff.end_time ? staff.end_time.substring(0, 5) : ''
+      lines.push(`${staff.display_name}（${staff.start_time.substring(0, 5)}〜${endTimeLabel}）`)
+    }
+  }
+
+  const changes = data.shiftChanges.filter(c => c.new_time !== null)
+  if (changes.length > 0) {
+    lines.push('', '当日変更')
+    for (const change of changes) {
+      const from = change.original_time ? change.original_time.substring(0, 5) : '?'
+      const to = change.new_time ? change.new_time.substring(0, 5) : '?'
+      const note = change.note ? `（${change.note}）` : ''
+      lines.push(`${change.stage_name}（${from} → ${to}）${note}`)
+    }
+  }
+
+  const absentNames = data.shifts
+    .filter(s => data.absentCastIds.includes(s.cast_id))
+    .map(s => s.stage_name)
+  const changeAbsents = data.shiftChanges
+    .filter(c => !c.new_time)
+    .map(c => c.stage_name)
+  const absentAll = [...new Set([...absentNames, ...changeAbsents])]
+  if (absentAll.length > 0) {
+    lines.push('', '当日欠勤')
+    for (const name of absentAll) lines.push(name)
+  }
+
+  if (data.reservations.length > 0) {
+    lines.push('', '来店予定')
+    for (const reservation of data.reservations) {
+      const typeLabel = reservation.reservation_type === 'douhan' ? '同伴' : '来店予定'
+      const guestCountLabel = reservation.guest_count ? `　${reservation.guest_count}名` : ''
+      lines.push(`${reservation.visit_time.substring(0, 5)}　${reservation.stage_name}　${reservation.guest_name}様${guestCountLabel}　${typeLabel}`)
+    }
+  }
+
+  if (data.unconfirmedCasts.length > 0) {
+    lines.push('', '未確認キャスト')
+    for (const cast of data.unconfirmedCasts) lines.push(cast.stage_name)
+  }
+
+  return lines.join('\n')
+}
 
 function createTempId() {
   return `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -110,7 +195,6 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
   const [dashboardData, setDashboardData] = useState(data)
   const [activeTab, setActiveTab]   = useState<Tab>('all')
   const [copied, setCopied]         = useState(false)
-  const [lineText, setLineText]     = useState('')
   const [pendingKeys, setPendingKeys] = useState<string[]>([])
 
   // ── Forms visibility ────────────────────────────────────────────────────
@@ -145,11 +229,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
     alerts.push({ label: '未返信案件', detail: `応募返信待ち ${kpi.unreadApplications}件`, level: 'warn' })
 
   // ── LINE text generation ─────────────────────────────────────────────────
-  const refreshLineText = useCallback(() => {
-    generateLineText(dashboardData).then(setLineText)
-  }, [dashboardData])
-
-  useEffect(() => { refreshLineText() }, [refreshLineText])
+  const lineText = useMemo(() => buildLineText(dashboardData), [dashboardData])
 
   const setBusy = (key: string, busy: boolean) => {
     setPendingKeys((current) =>

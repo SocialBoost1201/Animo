@@ -41,12 +41,12 @@ export default function DesignPage() {
       </div>
 
       {/* ── Section Cards ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-stretch">
         {sections.map((s) => (
           <Link
             key={s.href}
             href={s.href}
-            className="group bg-[#17181c] rounded-[18px] border border-[#ffffff0f] p-6 flex flex-col gap-4 hover:border-[#ffffff18] hover:bg-[#1c1d22] transition-all"
+            className="group h-full bg-[#17181c] rounded-[18px] border border-[#ffffff0f] p-6 flex flex-col gap-4 hover:border-[#ffffff18] hover:bg-[#1c1d22] transition-all"
           >
             <div className="flex items-start justify-between">
               <div className={`w-[44px] h-[44px] flex items-center justify-center rounded-[12px] ${s.iconBg}`}>
@@ -54,9 +54,13 @@ export default function DesignPage() {
               </div>
               <ChevronRight size={16} className="text-[#5a5650] group-hover:text-[#8a8478] transition-colors mt-1" />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-[14px] font-semibold text-[#f4f1ea] mb-1">{s.title}</p>
               <p className="text-[11px] text-[#8a8478] leading-relaxed">{s.sub}</p>
+            </div>
+            <div className="pt-1 text-[11px] font-semibold text-[#c7c0b2] inline-flex items-center gap-1">
+              管理ページを開く
+              <ChevronRight size={12} />
             </div>
           </Link>
         ))}

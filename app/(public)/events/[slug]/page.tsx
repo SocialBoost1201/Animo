@@ -21,8 +21,13 @@ async function getEventDetail(id: string) {
   return data;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const event = await getEventDetail(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEventDetail(slug);
 
   if (!event) {
     return {
@@ -46,8 +51,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function EventDetailPage({ params }: { params: { slug: string } }) {
-  const event = await getEventDetail(params.slug);
+export default async function EventDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const event = await getEventDetail(slug);
 
   if (!event) {
     notFound();
