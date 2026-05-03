@@ -14,7 +14,7 @@ import {
   toE164JapanesePhone,
   normalizeJapaneseMobilePhoneForMatch,
 } from '@/lib/utils/phone';
-import { matchesCastRegisterIdentity } from '@/lib/validators/cast-profile';
+import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
@@ -352,6 +352,7 @@ export async function castRegister(formData: FormData) {
   // 源氏名は `stageName`、本人確認用フリガナは `nameKana`。フォームは `stageName` のみ送るため未指定時は源氏名で照合する。
   const kanaForMatch = (nameKana || stageName)?.trim() ?? '';
   const normalizedNameKana = kanaForMatch.normalize('NFKC').replace(/[\s\u3000]+/g, '').trim();
+  const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
   logCastRegister({
     hypothesisId: 'H-input',
     message: 'cast register start',
