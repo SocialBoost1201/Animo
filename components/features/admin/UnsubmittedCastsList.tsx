@@ -95,7 +95,7 @@ export function UnsubmittedCastsList({
           <div
             className="inline-flex items-center justify-center gap-3 text-center"
             style={{
-              background: D.gradients.gold,
+              background: D.gradients.ctaGold,
               borderRadius: D.radius.pill,
               border: `1.5px solid ${D.border.lightGold}`,
               minWidth: '220px',
