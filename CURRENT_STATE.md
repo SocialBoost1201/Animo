@@ -1,12 +1,11 @@
 # Current State
 
 - **Project goal:** Rebuild admin operations UI and cast dashboard around real daily Club Animo workflows.
-- **Current phase:** `/admin/today` Phase 1 completed and logged.
-- **Next phase:** Map `/admin/dashboard` cards before Phase 2 implementation.
+- **Current phase:** `/admin/dashboard` Production Card Map completed; Phase 2 implementation planning next.
 - **Non-negotiables:** No mock/placeholder/fake operational UI; every visible count/card/badge/button must use existing production data/actions/routes; no DB/auth/RLS/SEO/schema changes without approval; protected time UI must display `19:00〜2:00` and never `24:00` / `25:00` / `26:00`.
-- **Completed items:** Operation time utility, `/admin/today` time selector replacement, phase cards, pre-opening risk badge, Phase 1 commit `5756806`.
-- **Open blockers:** Admin credential required for protected browser smoke; `pnpm build` blocked by unrelated `components/features/admin/UnsubmittedCastsList.tsx` type error; `/admin/dashboard` Card Map required before Phase 2.
-- **Active branch/commit:** `hotfix/admin-sidebar-staff-registration` / `5756806`.
+- **Completed items:** Operation time utility, `/admin/today` time selector replacement, phase cards, pre-opening risk badge, Phase 1 commit `5756806`; `/admin/dashboard` Production Card Map audit completed; build blocker fix commit `915969b`.
+- **Open blockers:** Admin credential required for protected browser smoke; Phase 2 implementation approval required.
+- **Active branch/commit:** `hotfix/admin-sidebar-staff-registration` / `915969b`.
 
 ## Context Rule
 
