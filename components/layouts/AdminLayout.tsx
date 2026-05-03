@@ -331,14 +331,14 @@ function AdminLayoutInner({
           aria-hidden
         />
       ) : null}
-      {mobileOpen ? (
-        <aside
-          onClickCapture={handleMobileSidebarClickCapture}
-          className="fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out translate-x-0"
-        >
-          {renderSidebarContent()}
-        </aside>
-      ) : null}
+      <aside
+        onClickCapture={handleMobileSidebarClickCapture}
+        className={`fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {renderSidebarContent()}
+      </aside>
 
       {/* Mobile Bottom Tab */}
       <nav className={`fixed bottom-0 left-0 right-0 z-30 md:hidden border-t pb-safe font-inter ${T.mobileTab}`}>
