@@ -20,6 +20,14 @@ import {
 } from '@/lib/actions/today'
 import { type DashboardKPIData } from '@/lib/actions/dashboard'
 import { type DashboardTodayOpsData } from '@/lib/actions/dashboard'
+import { OperationPhaseCard } from '@/components/features/admin/today/OperationPhaseCard'
+import { OperationTimeSelect } from '@/components/features/admin/today/OperationTimeSelect'
+import {
+  compareOperationTimes,
+  formatProtectedOperationTime,
+  isPreOpeningReservationTime,
+  PROTECTED_OPERATION_WINDOW_LABEL,
+} from '@/lib/operation-hours'
 
 type Cast = { id: string; stage_name: string }
 
@@ -63,18 +71,18 @@ function buildLineText(data: TodayDashboardData) {
   if (activeCasts.length > 0 || data.dispatches.length > 0) {
     const groups: Record<string, string[]> = {}
     for (const cast of activeCasts) {
-      const time = cast.start_time.substring(0, 5)
+      const time = formatProtectedOperationTime(cast.start_time)
       if (!groups[time]) groups[time] = []
       groups[time].push(cast.stage_name)
     }
     for (const dispatch of data.dispatches) {
-      const time = dispatch.start_time.substring(0, 5)
+      const time = formatProtectedOperationTime(dispatch.start_time)
       if (!groups[time]) groups[time] = []
       groups[time].push(`${dispatch.name}（派遣）`)
     }
 
     lines.push('', '出勤キャスト')
-    for (const time of Object.keys(groups).sort()) {
+    for (const time of Object.keys(groups).sort(compareOperationTimes)) {
       lines.push(`${time}〜`)
       for (const name of groups[time]) lines.push(name)
     }
@@ -83,15 +91,15 @@ function buildLineText(data: TodayDashboardData) {
   if (data.trials.length > 0) {
     lines.push('', '体入')
     for (const trial of data.trials) {
-      lines.push(`${trial.name}（${trial.start_time.substring(0, 5)}〜）`)
+      lines.push(`${trial.name}（${formatProtectedOperationTime(trial.start_time)}〜）`)
     }
   }
 
   if (data.staffAttendances.length > 0) {
     lines.push('', 'スタッフ')
     for (const staff of data.staffAttendances) {
-      const endTimeLabel = staff.end_time ? staff.end_time.substring(0, 5) : ''
-      lines.push(`${staff.display_name}（${staff.start_time.substring(0, 5)}〜${endTimeLabel}）`)
+      const endTimeLabel = formatProtectedOperationTime(staff.end_time)
+      lines.push(`${staff.display_name}（${formatProtectedOperationTime(staff.start_time)}〜${endTimeLabel}）`)
     }
   }
 
@@ -99,8 +107,8 @@ function buildLineText(data: TodayDashboardData) {
   if (changes.length > 0) {
     lines.push('', '当日変更')
     for (const change of changes) {
-      const from = change.original_time ? change.original_time.substring(0, 5) : '?'
-      const to = change.new_time ? change.new_time.substring(0, 5) : '?'
+      const from = formatProtectedOperationTime(change.original_time) || '?'
+      const to = formatProtectedOperationTime(change.new_time) || '?'
       const note = change.note ? `（${change.note}）` : ''
       lines.push(`${change.stage_name}（${from} → ${to}）${note}`)
     }
@@ -123,7 +131,7 @@ function buildLineText(data: TodayDashboardData) {
     for (const reservation of data.reservations) {
       const typeLabel = reservation.reservation_type === 'douhan' ? '同伴' : '来店予定'
       const guestCountLabel = reservation.guest_count ? `　${reservation.guest_count}名` : ''
-      lines.push(`${reservation.visit_time.substring(0, 5)}　${reservation.stage_name}　${reservation.guest_name}様${guestCountLabel}　${typeLabel}`)
+      lines.push(`${formatProtectedOperationTime(reservation.visit_time)}　${reservation.stage_name}　${reservation.guest_name}様${guestCountLabel}　${typeLabel}`)
     }
   }
 
@@ -140,11 +148,11 @@ function createTempId() {
 }
 
 function sortByStartTime<T extends { start_time: string }>(items: T[]) {
-  return [...items].sort((a, b) => a.start_time.localeCompare(b.start_time))
+  return [...items].sort((a, b) => compareOperationTimes(a.start_time, b.start_time))
 }
 
 function sortReservationsByVisitTime<T extends { visit_time: string }>(items: T[]) {
-  return [...items].sort((a, b) => a.visit_time.localeCompare(b.visit_time))
+  return [...items].sort((a, b) => compareOperationTimes(a.visit_time, b.visit_time))
 }
 
 // ── Tiny Badge ──────────────────────────────────────────────────────────────
@@ -406,6 +414,21 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         ))}
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <OperationPhaseCard label="Morning" title="朝の確認">
+          未確認 {dashboardData.unconfirmedCasts.length}名 / 承認待ち {pendingApprovalCount}件を確認
+        </OperationPhaseCard>
+        <OperationPhaseCard label="Pre-opening" title="開店前確認" tone={dashboardData.reservations.some((reservation) => isPreOpeningReservationTime(reservation.visit_time)) ? 'risk' : 'default'}>
+          {PROTECTED_OPERATION_WINDOW_LABEL} の出勤、体入、20:00 / 20:30 予約リスクを確認
+        </OperationPhaseCard>
+        <OperationPhaseCard label="During" title="営業中">
+          来店予定 {dashboardData.reservations.length}件 / 同伴 {douhanCount}件を確認
+        </OperationPhaseCard>
+        <OperationPhaseCard label="Closing" title="締め確認">
+          スタッフ {dashboardData.staffAttendances.length}名 / 当日変更 {dashboardData.shiftChanges.length}件を確認
+        </OperationPhaseCard>
+      </div>
+
       {/* ── Main Content ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
 
@@ -557,16 +580,16 @@ function AllTab({
   // Group active casts by start_time
   const groups: Record<string, { casts: string[]; dispatches: string[] }> = {}
   for (const s of activeCasts) {
-    const t = s.start_time.substring(0, 5)
+    const t = formatProtectedOperationTime(s.start_time)
     if (!groups[t]) groups[t] = { casts: [], dispatches: [] }
     groups[t].casts.push(s.stage_name)
   }
   for (const d of data.dispatches) {
-    const t = d.start_time.substring(0, 5)
+    const t = formatProtectedOperationTime(d.start_time)
     if (!groups[t]) groups[t] = { casts: [], dispatches: [] }
     groups[t].dispatches.push(d.name)
   }
-  const sortedGroups = Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
+  const sortedGroups = Object.entries(groups).sort(([a], [b]) => compareOperationTimes(a, b))
 
   return (
     <div className="space-y-6">
@@ -607,7 +630,7 @@ function AllTab({
             <Row key={t.id}>
               <Badge color="purple">TRIAL</Badge>
               <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
-              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
+              <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{formatProtectedOperationTime(t.start_time)}〜</span>
             </Row>
           ))}
         </div>
@@ -622,7 +645,7 @@ function AllTab({
               <Users size={12} className="text-[#5a5650]" />
               <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
               <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
-                {s.start_time.substring(0, 5)}〜{s.end_time ? s.end_time.substring(0, 5) : ''}
+                {formatProtectedOperationTime(s.start_time)}〜{formatProtectedOperationTime(s.end_time)}
               </span>
             </Row>
           ))}
@@ -638,7 +661,7 @@ function AllTab({
               <Badge color="orange">CHANGE</Badge>
               <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
               <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
-                {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
+                {formatProtectedOperationTime(c.original_time)} → {formatProtectedOperationTime(c.new_time)}
               </span>
             </Row>
           ))}
@@ -704,14 +727,14 @@ function CastTab({
         {activeCasts.map(s => (
           <Row key={s.cast_id}>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{s.stage_name}</span>
-            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{s.start_time.substring(0, 5)}〜</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{formatProtectedOperationTime(s.start_time)}〜</span>
           </Row>
         ))}
         {data.dispatches.map(d => (
           <Row key={d.id}>
             <Badge color="blue">DISPATCH</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{d.name}</span>
-            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{d.start_time.substring(0, 5)}〜</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{formatProtectedOperationTime(d.start_time)}〜</span>
             <button
               disabled={isBusy(`dispatch-${d.id}`)}
               onClick={() => {
@@ -778,7 +801,7 @@ function CastTab({
               className="space-y-3"
             >
               <input name="name" type="text" placeholder="Cast Name" required className={inputCls} />
-              <input name="start_time" type="time" required className={inputCls} />
+              <OperationTimeSelect name="start_time" required className={inputCls} />
               <button type="submit" disabled={isBusy('add-dispatch')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD DISPATCH</button>
             </form>
           </AddFormWrapper>
@@ -804,7 +827,7 @@ function CastTab({
           <Row key={t.id}>
             <Badge color="purple">TRIAL</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{t.name}</span>
-            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{t.start_time.substring(0, 5)}〜</span>
+            <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">{formatProtectedOperationTime(t.start_time)}〜</span>
             <button
               disabled={isBusy(`trial-${t.id}`)}
               onClick={() => {
@@ -871,7 +894,7 @@ function CastTab({
               className="space-y-3"
             >
               <input name="name" type="text" placeholder="Trial Cast Name" required className={inputCls} />
-              <input name="start_time" type="time" required className={inputCls} />
+              <OperationTimeSelect name="start_time" required className={inputCls} />
               <button type="submit" disabled={isBusy('add-trial')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD TRIAL</button>
             </form>
           </AddFormWrapper>
@@ -898,7 +921,7 @@ function CastTab({
             <Badge color="orange">CHANGE</Badge>
             <span className="text-[12px] font-bold text-[#cbc3b3]">{c.stage_name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
-              {c.original_time?.substring(0, 5)} → {c.new_time?.substring(0, 5)}
+              {formatProtectedOperationTime(c.original_time)} → {formatProtectedOperationTime(c.new_time)}
             </span>
             <button
               disabled={isBusy(`change-${c.id}`)}
@@ -992,8 +1015,8 @@ function CastTab({
                 {casts.map(c => <option key={c.id} value={c.id}>{c.stage_name}</option>)}
               </select>
               <div className="grid grid-cols-2 gap-3">
-                <input name="original_time" type="time" placeholder="From" className={inputCls} />
-                <input name="new_time"      type="time" placeholder="To" className={inputCls} />
+                <OperationTimeSelect name="original_time" aria-label="From" className={inputCls} />
+                <OperationTimeSelect name="new_time" aria-label="To" className={inputCls} />
               </div>
               <input name="note" type="text" placeholder="Note (e.g. Douhan)" className={inputCls} />
               <button type="submit" disabled={isBusy('add-change')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD CHANGE</button>
@@ -1038,13 +1061,16 @@ function VisitTab({ data }: { data: TodayDashboardData }) {
           {data.reservations.map(r => (
             <div key={r.id} className="flex items-center h-[40px] px-3 hover:bg-white/3 rounded-sm transition-colors border-b border-white/2 last:border-0 group">
               <span className="text-[12px] font-bold text-gold w-14 shrink-0 transition-all group-hover:tracking-wider">
-                {r.visit_time.substring(0, 5)}
+                {formatProtectedOperationTime(r.visit_time)}
               </span>
               <span className="text-[12px] font-bold text-[#f4f1ea] w-24 truncate shrink-0">{r.stage_name}</span>
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <span className="text-[12px] text-[#cbc3b3] truncate">{r.guest_name} 様</span>
                 {r.guest_count && (
                   <span className="text-[10px] font-bold text-[#5a5650] shrink-0">/ {r.guest_count} 名</span>
+                )}
+                {isPreOpeningReservationTime(r.visit_time) && (
+                  <Badge color="orange">PRE-OPEN RISK</Badge>
                 )}
               </div>
               <div className="w-16 text-right">
@@ -1099,7 +1125,7 @@ function StaffTab({
             <Users size={12} className="text-[#5a5650]" />
             <span className="text-[12px] font-bold text-[#cbc3b3]">{s.display_name}</span>
             <span className="text-[10px] font-bold text-[#5a5650] ml-auto tracking-tight">
-              {s.start_time.substring(0, 5)}〜{s.end_time ? s.end_time.substring(0, 5) : ''}
+              {formatProtectedOperationTime(s.start_time)}〜{formatProtectedOperationTime(s.end_time)}
             </span>
             <button
               disabled={isBusy(`staff-${s.id}`)}
@@ -1189,8 +1215,8 @@ function StaffTab({
               ))}
             </select>
             <div className="grid grid-cols-2 gap-3">
-              <input name="start_time" type="time" required className={inputCls} />
-              <input name="end_time" type="time" className={inputCls} />
+              <OperationTimeSelect name="start_time" required className={inputCls} />
+              <OperationTimeSelect name="end_time" className={inputCls} />
             </div>
             <input type="hidden" name="display_name" value="" />
             <button type="submit" disabled={isBusy('add-staff')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD STAFF</button>
@@ -1321,7 +1347,12 @@ function UnconfirmedTab({
                   <Badge color="blue">{reservation.reservation_type === 'douhan' ? 'DOUHAN' : 'VISIT'}</Badge>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-bold text-[#f4f1ea] tracking-tight">
-                      {reservation.visit_time.substring(0, 5)} / {reservation.stage_name}
+                      {formatProtectedOperationTime(reservation.visit_time)} / {reservation.stage_name}
+                      {isPreOpeningReservationTime(reservation.visit_time) && (
+                        <span className="ml-2">
+                          <Badge color="orange">PRE-OPEN RISK</Badge>
+                        </span>
+                      )}
                     </p>
                     <p className="mt-2 text-[11px] font-bold text-[#cbc3b3]">
                       {reservation.guest_name} 様
