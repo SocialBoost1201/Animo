@@ -5,7 +5,6 @@ import { join } from 'node:path';
 import { cookies } from 'next/headers';
 import {
   CAST_REAUTH_COOKIE_NAME,
-  CAST_REAUTH_WINDOW_DAYS,
   CAST_REAUTH_WINDOW_MS,
 } from '@/lib/cast-auth-utils';
 import {
@@ -14,7 +13,7 @@ import {
   isValidJapaneseMobilePhone,
   toE164JapanesePhone,
 } from '@/lib/utils/phone';
-import { matchesCastRegisterIdentity, normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
+import { normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
@@ -41,13 +40,17 @@ function logCastRegister(payload: Record<string, unknown>) {
 async function findCastIdentityByPhone(serviceRoleClient: ReturnType<typeof createServiceClient>, normalizedPhone: string) {
   // DBには数字のみ形式・ハイフン付き形式・E.164形式が混在している可能性があるため全形式で検索
   const formattedPhone = formatJapaneseMobilePhone(normalizedPhone);
-  const e164Phone = `+81${normalizedPhone.slice(1)}`;  // +817012343590
-  const e164NoPlus = `81${normalizedPhone.slice(1)}`;  // 817012343590
-  const phonesToSearch = Array.from(new Set([normalizedPhone, formattedPhone, e164Phone, e164NoPlus]));
+  const e164Phone = toE164JapanesePhone(normalizedPhone);
+  const phonesToSearch = Array.from(new Set([
+    normalizedPhone,
+    formattedPhone,
+    e164Phone,
+    e164Phone.replace(/^\+/, ''),
+  ]));
 
   const { data, error } = await serviceRoleClient
     .from('cast_private_info')
-    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, name_kana, auth_user_id, last_sms_verified_at)')
+    .select('cast_id, real_name, date_of_birth, phone, email, line_id, casts!inner(id, stage_name, name_kana, auth_user_id, last_sms_verified_at, last_login_at)')
     .in('phone', phonesToSearch)
     .limit(5);
 
@@ -70,12 +73,14 @@ type CastIdentityCandidate = {
     name_kana: string | null;
     auth_user_id: string | null;
     last_sms_verified_at: string | null;
+    last_login_at?: string | null;
   } | {
     id: string;
     stage_name: string | null;
     name_kana: string | null;
     auth_user_id: string | null;
     last_sms_verified_at: string | null;
+    last_login_at?: string | null;
   }[] | null;
 };
 
@@ -88,6 +93,7 @@ function getCastRecord(candidate: CastIdentityCandidate) {
         name_kana: raw.name_kana ?? '',
         auth_user_id: raw.auth_user_id,
         last_sms_verified_at: raw.last_sms_verified_at,
+        last_login_at: raw.last_login_at ?? null,
       }
     : null;
 }
@@ -164,19 +170,14 @@ export async function castSendLoginOtp(formData: FormData) {
     const reauthCookie = cookieStore.get(CAST_REAUTH_COOKIE_NAME)?.value;
     const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now();
 
-    const lastVerifiedRaw = castRecord.last_sms_verified_at;
-    const daysSince = lastVerifiedRaw
-      ? (Date.now() - new Date(lastVerifiedRaw).getTime()) / 86_400_000
-      : Infinity;
-
-    const hasCompletedSmsVerification = Boolean(lastVerifiedRaw);
+    const hasCompletedSmsVerification = Boolean(castRecord.last_sms_verified_at);
     const isValidSession =
       Boolean(castRecord.auth_user_id) &&
       hasCompletedSmsVerification &&
-      Boolean(isValidCookie) &&
-      daysSince < CAST_REAUTH_WINDOW_DAYS;
+      Boolean(isValidCookie);
 
     if (isValidSession) {
+      await setCastReauthCookie();
       return {
         success: true,
         message: '既存のセッションでログインしました。',

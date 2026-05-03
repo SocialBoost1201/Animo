@@ -2,6 +2,11 @@
 
 import { createServiceClient } from '@/lib/supabase/service';
 import { getJstDateString } from '@/lib/date-utils';
+import {
+  PROTECTED_OPERATION_WINDOW_LABEL,
+  formatDashboardShiftClockForDisplay,
+  shiftClockToSortMinutes,
+} from '@/lib/operation-hours';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format } from 'date-fns';
 
 export type DashboardKPIData = {
@@ -22,8 +27,8 @@ export type DashboardTodayOpsData = {
   hasOperationalRecords: boolean;
   date: string;
   dateLabel: string;
-  startTime: string;
-  endTime: string;
+  /** Protected admin operation window label (`PROTECTED_OPERATION_WINDOW_LABEL`). */
+  operationWindowLabel: string;
   plannedCastCount: number;
   confirmedCastCount: number;
   reservationCount: number;
@@ -110,9 +115,10 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     { data: yesterdayReservations },
     { data: trials },
     { count: unreadApps },
-    { count: totalApplications },
     { count: activeCasts },
     { count: pendingShifts },
+    { data: manualAttendance },
+    { data: operationMemos },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_checkins').select('cast_id, is_absent').eq('checkin_date', today),
@@ -120,9 +126,10 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     supabase.from('daily_reservations').select('id').eq('reservation_date', yesterdayStr),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('recruit_applications').select('id', { count: 'exact', head: true }).eq('is_read', false),
-    supabase.from('recruit_applications').select('id', { count: 'exact', head: true }),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
+    supabase.from('daily_operation_memos').select('id').eq('operation_date', today).limit(1),
   ]);
 
   // 本日の出勤キャスト数を抽出
@@ -163,18 +170,18 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     .eq('reservation_type', 'reservation');
 
   const hasOperationalRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
+    todayShiftCount > 0 ||
     (checkinsRaw?.length ?? 0) > 0 ||
     (todayReservations?.length ?? 0) > 0 ||
     (yesterdayReservations?.length ?? 0) > 0 ||
     (trials?.length ?? 0) > 0 ||
-    (weeklyShifts?.length ?? 0) > 0 ||
-    (totalApplications ?? 0) > 0 ||
-    (activeCasts ?? 0) > 0 ||
-    (pendingShifts ?? 0) > 0 ||
+    (manualAttendance?.length ?? 0) > 0 ||
+    (operationMemos?.length ?? 0) > 0 ||
     (unconfirmedReservations ?? 0) > 0;
 
-  const alertCount = unconfirmedCount + (unconfirmedReservations ?? 0) + (pendingShifts ?? 0 > 3 ? 1 : 0);
+  const alertCount = hasOperationalRecords
+    ? unconfirmedCount + (unconfirmedReservations ?? 0) + ((pendingShifts ?? 0) > 3 ? 1 : 0)
+    : 0;
 
   return {
     hasOperationalRecords,
@@ -186,7 +193,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     yesterdayReservationCount: (yesterdayReservations || []).length,
     trialCount: (trials || []).length + (unreadApps ?? 0),
     unreadApplications: unreadApps ?? 0,
-    shiftMissingCount,
+    shiftMissingCount: hasOperationalRecords ? shiftMissingCount : 0,
     alertCount,
   };
 }
@@ -208,14 +215,14 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     { data: trials },
     { count: activeCasts },
     { data: noticeMemos },
-    { count: pendingShifts },
+    { data: manualAttendance },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
-    supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
   ]);
 
   let confirmedCastCount = 0;
@@ -232,19 +239,17 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
   const eventMemo = noticeMemos?.find(m => m.memo_type === 'event')?.content ?? null;
   const urgentMemo = noticeMemos?.find(m => m.memo_type === 'urgent')?.content ?? null;
   const hasOperationalRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
+    confirmedCastCount > 0 ||
     (reservations?.length ?? 0) > 0 ||
     (trials?.length ?? 0) > 0 ||
-    (activeCasts ?? 0) > 0 ||
     (noticeMemos?.length ?? 0) > 0 ||
-    (pendingShifts ?? 0) > 0;
+    (manualAttendance?.length ?? 0) > 0;
 
   return {
     hasOperationalRecords,
     date: today,
     dateLabel,
-    startTime: '20:00',
-    endTime: '25:00',
+    operationWindowLabel: PROTECTED_OPERATION_WINDOW_LABEL,
     plannedCastCount: activeCasts ?? 0,
     confirmedCastCount,
     reservationCount: (reservations || []).length,
@@ -326,7 +331,9 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
     (manualRaw || []).map(m => [m.cast_id, { status: m.status as ManualAttendanceStatus, note: m.note as string | null }])
   )
 
-  const results: DashboardCastShift[] = []
+  type RowAcc = { row: DashboardCastShift; sortMin: number }
+
+  const accumulated: RowAcc[] = []
 
   // 承認済シフトから本日出勤キャストを抽出（欠勤フィルタなし — manual override で表示制御）
   if (shiftsRaw) {
@@ -371,39 +378,49 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       if (status === 'late') tags.push('確認必要')
       if (status === 'absent') tags.push('欠勤')
 
-      results.push({
-        castId: row.cast_id,
-        castName,
-        initial: castName.charAt(0),
-        startTime: d[today].start?.substring(0, 5) ?? '20:00',
-        endTime: d[today].end?.substring(0, 5),
-        status,
-        tags,
-        avatarUrl,
-        manualStatus: manual?.status ?? 'undecided',
-        manualNote: manual?.note ?? null,
-        finalStatusSource,
+      const rawStartSlice = d[today].start?.substring(0, 5) ?? '20:00'
+      const rawEndSlice = d[today].end?.substring(0, 5)
+
+      accumulated.push({
+        sortMin: shiftClockToSortMinutes(rawStartSlice),
+        row: {
+          castId: row.cast_id,
+          castName,
+          initial: castName.charAt(0),
+          startTime: formatDashboardShiftClockForDisplay(rawStartSlice),
+          endTime: rawEndSlice ? formatDashboardShiftClockForDisplay(rawEndSlice) : undefined,
+          status,
+          tags,
+          avatarUrl,
+          manualStatus: manual?.status ?? 'undecided',
+          manualNote: manual?.note ?? null,
+          finalStatusSource,
+        },
       })
     }
   }
 
   // 体験入店（manual override 対象外）
   for (const trial of (trials || [])) {
-    results.push({
-      castId: `trial-${trial.id}`,
-      castName: trial.name,
-      initial: trial.name.charAt(0),
-      startTime: trial.start_time?.substring(0, 5) ?? '20:00',
-      status: 'trial',
-      tags: ['初回体入'],
-      manualStatus: 'undecided',
-      manualNote: null,
-      finalStatusSource: 'none',
+    const rawTrialStart = trial.start_time?.substring(0, 5) ?? '20:00'
+    accumulated.push({
+      sortMin: shiftClockToSortMinutes(rawTrialStart),
+      row: {
+        castId: `trial-${trial.id}`,
+        castName: trial.name,
+        initial: trial.name.charAt(0),
+        startTime: formatDashboardShiftClockForDisplay(rawTrialStart),
+        status: 'trial',
+        tags: ['初回体入'],
+        manualStatus: 'undecided',
+        manualNote: null,
+        finalStatusSource: 'none',
+      },
     })
   }
 
-  results.sort((a, b) => a.startTime.localeCompare(b.startTime))
-  return results
+  accumulated.sort((a, b) => a.sortMin - b.sortMin)
+  return accumulated.map((x) => x.row)
 }
 
 // ─────────────────────────────────────────────
@@ -517,9 +534,7 @@ export async function getDashboardShiftCoverage(): Promise<DashboardShiftCoverag
     .eq('status', 'pending');
 
   const hasSourceRecords =
-    (shiftsRaw?.length ?? 0) > 0 ||
-    activeCastCount > 0 ||
-    (pendingCount ?? 0) > 0;
+    weekly.some((day) => day.count > 0);
 
   return {
     hasSourceRecords,

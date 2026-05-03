@@ -1,6 +1,8 @@
-'use server';
+import 'server-only';
 
 import { createClient } from '@/lib/supabase/server';
+
+type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
 export type AdminNotificationItem = {
   id: string;
@@ -15,9 +17,10 @@ export type AdminNotificationSummary = {
   items: AdminNotificationItem[];
 };
 
-export async function getAdminNotificationSummary(): Promise<AdminNotificationSummary> {
-  const supabase = await createClient();
-
+export async function getAdminNotificationSummary(
+  supabaseClient?: SupabaseServerClient
+): Promise<AdminNotificationSummary> {
+  const supabase = supabaseClient ?? (await createClient());
   const [
     pendingPosts,
     pendingShiftSubmissions,

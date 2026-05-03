@@ -39,7 +39,7 @@ export async function getMyShiftSubmission(targetWeekMonday: string) {
 
   const { data, error } = await supabase
     .from('shift_submissions')
-    .select('*')
+    .select('id, cast_id, target_week_monday, shifts_data, status, submitted_at')
     .eq('cast_id', cast.id)
     .eq('target_week_monday', targetWeekMonday)
     .maybeSingle();

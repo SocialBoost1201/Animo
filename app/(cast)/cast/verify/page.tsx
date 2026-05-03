@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { OtpVerifyForm } from '@/components/features/cast/OtpVerifyForm';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { createServiceClient } from '@/lib/supabase/service';
+import { normalizeJapaneseMobilePhoneForMatch } from '@/lib/utils/phone';
 
 type VerifyPageProps = {
   searchParams: Promise<{
@@ -31,7 +32,7 @@ async function resolvePhone(phoneParam?: string, reauth?: string) {
     .eq('cast_id', cast.id)
     .maybeSingle();
 
-  return data?.phone ?? null;
+  return normalizeJapaneseMobilePhoneForMatch(data?.phone ?? '') ?? null;
 }
 
 export default async function CastVerifyPage({ searchParams }: VerifyPageProps) {

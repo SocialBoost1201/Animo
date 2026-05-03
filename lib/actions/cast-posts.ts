@@ -78,8 +78,10 @@ export async function createCastPost(formData: FormData) {
       .getPublicUrl(uploadData.path);
 
     // データベース (cast_posts) へ保存
-    // 初期ステータスは 'pending'
-    const { error: dbError } = await supabase
+    // cast_posts の INSERT は cast 権限のRLS条件と衝突しやすいため、
+    // 所有者検証後に service role で確定保存する。
+    const serviceRoleClient = createServiceClient();
+    const { error: dbError } = await serviceRoleClient
       .from('cast_posts')
       .insert({
         cast_id: castId,

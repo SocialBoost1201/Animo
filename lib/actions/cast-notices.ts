@@ -25,7 +25,7 @@ export async function getCastNotices(castId: string): Promise<CastNotice[]> {
   // 1. 全てのお知らせを取得
   const { data: notices, error: noticeErr } = await supabase
     .from('internal_notices')
-    .select('*')
+    .select('id, title, content, importance, created_at')
     .order('created_at', { ascending: false });
 
   if (noticeErr) {

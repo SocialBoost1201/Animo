@@ -6,8 +6,13 @@ export const alt = 'Cast Profile | CLUB Animo';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { slug: string } }) {
-  const cast = await getPublicCastBySlug(params.slug);
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const cast = await getPublicCastBySlug(slug);
 
   const stageName = cast?.stage_name ?? 'CAST';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +31,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
       >
         {/* Left: Cast photo */}
         {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt={stageName}

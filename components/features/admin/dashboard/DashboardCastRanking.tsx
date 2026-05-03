@@ -17,7 +17,7 @@ export async function DashboardCastRanking() {
           </div>
           <div className="flex flex-col">
             <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">キャスト行動成績評価</p>
-            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">ブログ投稿数・出勤日数・場内指名本数を管理参考用に可視化</p>
+            <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">ブログ投稿数・出勤日数・スコアを管理参考用に可視化</p>
           </div>
         </div>
         <Link href="/admin/analytics" className="text-[11px] font-bold text-[#dfbd69] hover:underline">
@@ -40,9 +40,6 @@ export async function DashboardCastRanking() {
           </div>
           <div className="w-[34px] text-center">
              <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">出勤</span>
-          </div>
-          <div className="w-[34px] text-center">
-             <span className="text-[9px] font-bold tracking-[0.887px] text-[#8a8478] uppercase">指名</span>
           </div>
         </div>
 
@@ -84,11 +81,6 @@ export async function DashboardCastRanking() {
                 {/* Attendance */}
                 <div className="w-[34px] text-center">
                    <span className="text-[10px] font-normal text-[#8a8478]">{r.shiftDays}</span>
-                </div>
-
-                {/* Nomination */}
-                <div className="w-[34px] text-center">
-                   <span className="text-[10px] font-semibold text-[#c7c0b2]">{r.nominations ?? '—'}</span>
                 </div>
               </div>
             ))

@@ -302,6 +302,15 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
     }
   })
 
+  const { data: manualAttendanceRaw } = await supabase
+    .from('daily_cast_attendance')
+    .select('cast_id, status')
+    .eq('business_date', today)
+
+  const manualAttendanceMap = new Map(
+    (manualAttendanceRaw || []).map((row) => [row.cast_id, row.status as DailyCastAttendanceStatus])
+  )
+
   // 当日変更
   const { data: changesRaw } = await supabase
     .from('shift_changes')
@@ -330,18 +339,25 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // 全スタッフ（マスタ）— 形状は getStaffs と揃える
   const { data: allStaffsRaw } = await supabase
     .from('staffs')
-    .select('*')
+    .select('id, name, family_name, given_name, display_name, mobile_phone, line_id, role, is_active, created_at')
     .eq('is_active', true)
     .order('display_name')
   const allStaffs = (allStaffsRaw ?? []).map((row) => mapRowToStaffSlave(row as StaffTableRow))
 
-  // 欠勤キャストID一覧
-  const absentCastIds = checkins.filter(c => c.is_absent).map(c => c.cast_id)
+  // 欠勤キャストID一覧（手動変更がある場合は daily_cast_attendance を優先）
+  const absentCastIds = todayShifts
+    .filter((shift) => {
+      const manualStatus = manualAttendanceMap.get(shift.cast_id)
+      if (manualStatus === 'absent') return true
+      if (manualStatus === 'working') return false
+      return checkins.some((checkin) => checkin.cast_id === shift.cast_id && checkin.is_absent)
+    })
+    .map((shift) => shift.cast_id)
 
-  // 未確認キャスト（本日シフトがあるがcheckinを未提出）
+  // 未確認キャスト（本日シフトがあり、checkinも手動変更もない）
   const checkedCastIds = new Set(checkins.map(c => c.cast_id))
   const unconfirmedCasts = todayShifts
-    .filter(s => !checkedCastIds.has(s.cast_id))
+    .filter(s => !checkedCastIds.has(s.cast_id) && !manualAttendanceMap.has(s.cast_id))
     .map(s => ({ cast_id: s.cast_id, stage_name: s.stage_name }))
 
   // 当日の確認メール送信済みキャストID
@@ -954,6 +970,32 @@ export async function getTodaySubmissionState(date: Date = new Date()) {
 
 export type DailyCastAttendanceStatus = 'working' | 'absent' | 'undecided'
 
+export async function getTodayCastAttendanceStatuses(): Promise<Record<string, DailyCastAttendanceStatus>> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+
+  const role = await getAppRole(supabase, user.id)
+  if (!isAdminLoginRole(role)) throw new Error('Forbidden')
+
+  const today = getJstDateString()
+
+  const { data, error } = await supabase
+    .from('daily_cast_attendance')
+    .select('cast_id, status')
+    .eq('business_date', today)
+
+  if (error) {
+    console.error('[getTodayCastAttendanceStatuses]', error)
+    throw new Error(error.message)
+  }
+
+  return (data || []).reduce<Record<string, DailyCastAttendanceStatus>>((acc, row) => {
+    acc[row.cast_id] = row.status as DailyCastAttendanceStatus
+    return acc
+  }, {})
+}
+
 export async function updateDailyCastAttendance(input: {
   castId: string
   status: DailyCastAttendanceStatus
@@ -1012,6 +1054,7 @@ export async function updateDailyCastAttendance(input: {
 
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')
+  revalidatePath('/admin/human-resources')
   revalidatePath('/cast')
   revalidatePath('/')
   return { success: true }

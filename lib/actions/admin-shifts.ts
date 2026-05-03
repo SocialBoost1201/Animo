@@ -3,6 +3,36 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
+export type ShiftSubmissionWithCast = {
+  id: string;
+  cast_id: string;
+  target_week_monday: string;
+  status: string;
+  shifts_data: Record<string, { type: string; start?: string; end?: string }>;
+  submitted_at: string;
+  casts: { stage_name: string; slug: string };
+};
+
+type ShiftSubmissionRow = Omit<ShiftSubmissionWithCast, 'casts'> & {
+  casts: { stage_name: string | null; slug: string | null } | { stage_name: string | null; slug: string | null }[] | null;
+};
+
+function mapShiftSubmission(row: ShiftSubmissionRow): ShiftSubmissionWithCast {
+  const cast = Array.isArray(row.casts) ? row.casts[0] : row.casts;
+  return {
+    id: row.id,
+    cast_id: row.cast_id,
+    target_week_monday: row.target_week_monday,
+    status: row.status,
+    shifts_data: row.shifts_data,
+    submitted_at: row.submitted_at,
+    casts: {
+      stage_name: cast?.stage_name ?? '不明',
+      slug: cast?.slug ?? '',
+    },
+  };
+}
+
 /**
  * 承認待ち（または全ステータス）のシフト提出一覧を取得する
  * @param status 'pending' | 'approved' | 'rejected' | 'all'
@@ -15,7 +45,12 @@ export async function getShiftSubmissions(status: string = 'pending') {
   let query = supabase
     .from('shift_submissions')
     .select(`
-      *,
+      id,
+      cast_id,
+      target_week_monday,
+      status,
+      shifts_data,
+      submitted_at,
       casts:cast_id (
         stage_name,
         slug
@@ -30,7 +65,7 @@ export async function getShiftSubmissions(status: string = 'pending') {
   const { data, error } = await query;
   if (error) return { data: null, error: error.message };
   
-  return { data, error: null };
+  return { data: (data as ShiftSubmissionRow[]).map(mapShiftSubmission), error: null };
 }
 
 /**
@@ -44,7 +79,7 @@ export async function approveShiftSubmission(submissionId: string) {
   // 1. 対象の提出データを取得
   const { data: submission, error: fetchError } = await supabase
     .from('shift_submissions')
-    .select('*')
+    .select('cast_id, shifts_data')
     .eq('id', submissionId)
     .single();
 
@@ -155,7 +190,7 @@ export async function getAllCastShiftStatuses(targetWeekMonday: string) {
   // 2. 指定週の提出状況を取得
   const { data: submissions, error: subError } = await supabase
     .from('shift_submissions')
-    .select('cast_id, status, submitted_at, shifts_data')
+    .select('cast_id, status')
     .eq('target_week_monday', targetWeekMonday);
 
   if (subError) return { data: [], error: subError.message };
@@ -167,8 +202,6 @@ export async function getAllCastShiftStatuses(targetWeekMonday: string) {
       cast,
       hasAuthIndex: !!cast.auth_user_id, // アカウント登録済みか
       status: sub ? sub.status : 'unsubmitted', // pending, approved, rejected, unsubmitted
-      submittedAt: sub ? sub.submitted_at : null,
-      shiftsData: sub ? sub.shifts_data : null,
     };
   });
 

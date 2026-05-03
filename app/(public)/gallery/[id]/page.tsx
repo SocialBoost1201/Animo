@@ -10,35 +10,37 @@ import { getPublicContents } from '@/lib/actions/public/data';
 import { Metadata } from 'next';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
   const allItems = await getPublicContents('gallery');
-  const item = allItems.find((galleryItem: { id: string; title?: string; description?: string }) => galleryItem.id === params.id);
+  const item = allItems.find((galleryItem: { id: string; title?: string; description?: string }) => galleryItem.id === id);
 
   return {
     title: item?.title ? `${item.title}｜ギャラリー` : 'ギャラリー',
     description: item?.description || 'CLUB Animo のギャラリー詳細ページです。',
     alternates: {
-      canonical: `/gallery/${params.id}`,
+      canonical: `/gallery/${id}`,
     },
     openGraph: {
-      url: `https://club-animo.jp/gallery/${params.id}`,
+      url: `https://club-animo.jp/gallery/${id}`,
     },
   };
 }
 
 export default async function GalleryDetailPage({ params }: Props) {
+  const { id } = await params;
   const allItems = await getPublicContents('gallery');
-  const item = allItems.find((g: { id: string; image_url: string; title?: string; description?: string }) => g.id === params.id);
+  const item = allItems.find((g: { id: string; image_url: string; title?: string; description?: string }) => g.id === id);
 
   if (!item) {
     notFound();
   }
 
   // 前後ナビゲーション
-  const currentIndex = allItems.findIndex((g: { id: string }) => g.id === params.id);
+  const currentIndex = allItems.findIndex((g: { id: string }) => g.id === id);
   const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
   const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
 

@@ -32,7 +32,7 @@ export async function getMyConfirmedSchedules(castId: string, daysForward: numbe
 
   const { data: schedules, error } = await supabase
     .from('cast_schedules')
-    .select('*')
+    .select('id, work_date, start_time, end_time, status')
     .eq('cast_id', castId)
     .gte('work_date', todayStr)
     .lte('work_date', endStr)
@@ -51,7 +51,7 @@ export async function getMyPendingChangeRequests(castId: string) {
 
   const { data: requests, error } = await supabase
     .from('shift_change_requests')
-    .select('*')
+    .select('id, cast_id, target_date, action_type, new_start_time, new_end_time, status, created_at')
     .eq('cast_id', castId)
     .eq('status', 'pending')
     .order('target_date', { ascending: true });

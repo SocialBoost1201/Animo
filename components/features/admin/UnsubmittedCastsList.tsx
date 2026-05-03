@@ -90,23 +90,26 @@ export function UnsubmittedCastsList({
           曜日に自動で督促メールが送信されます
         </div>
 
-        {/* Summary badge */}
+        {/* Summary button */}
         <div className="mt-6 flex justify-center">
           <div
-            className="inline-flex flex-col items-center justify-center text-white font-bold text-center"
+            className="inline-flex items-center justify-center gap-3 text-center"
             style={{
-              background: D.gradients.summaryRed,
-              borderRadius: D.radius.summaryBadge,
+              background: D.gradients.ctaGold,
+              borderRadius: D.radius.pill,
               border: `1.5px solid ${D.border.lightGold}`,
-              minWidth: '160px',
-              padding: '18px 28px',
-              lineHeight: 1.35,
+              minWidth: '220px',
+              minHeight: '56px',
+              padding: '12px 24px',
+              lineHeight: 1,
               fontFamily: D.font.sans,
             }}
           >
-            <span style={{ fontSize: '22px' }}>未提出 {unsubmitted.length} 名</span>
-            <span style={{ fontSize: '14px', fontWeight: 400, opacity: 0.75 }}>
-              全 {total} 名
+            <span style={{ fontSize: '18px', fontWeight: 800, color: '#111' }}>
+              要対応 {unsubmitted.length} 名
+            </span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#2a2a2a' }}>
+              / 全 {total} 名
             </span>
           </div>
         </div>

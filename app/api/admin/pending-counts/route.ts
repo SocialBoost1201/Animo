@@ -11,16 +11,16 @@ export async function GET() {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const [pendingPosts, pendingShifts, notifications] = await Promise.all([
-    auth.supabase.from('cast_posts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    auth.supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    getAdminNotificationSummary(),
-  ]);
+  const notifications = await getAdminNotificationSummary(auth.supabase);
+  const notificationCounts: Record<string, number> = Object.fromEntries(
+    notifications.items.map((item) => [item.id, item.count])
+  );
 
   return NextResponse.json(
     {
-      pendingPostsCount: pendingPosts.count || 0,
-      pendingShiftsCount: pendingShifts.count || 0,
+      pendingPostsCount: notificationCounts['cast-posts'] ?? 0,
+      pendingShiftsCount: notificationCounts['shift-submissions'] ?? 0,
+      pendingApplicationsCount: notificationCounts.applications ?? 0,
       pendingNotificationsCount: notifications.total,
     },
     {

@@ -65,7 +65,7 @@ export default async function CastProfilePage() {
     cast.cast_private_info as CastPrivateInfo | CastPrivateInfo[] | null | undefined,
   );
   const realName = privateInfo?.real_name || '-';
-  const joinedBaseDate = cast.joined_at || cast.created_at || null;
+  const joinedBaseDate = cast.joined_at || null;
 
   const [pvResult, postsResult] = await Promise.all([
     getCastPVStats(cast.id as string),
