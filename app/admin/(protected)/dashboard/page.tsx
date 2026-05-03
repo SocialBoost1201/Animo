@@ -9,7 +9,6 @@ import { DashboardTodayShifts }    from '@/components/features/admin/dashboard/D
 import { DashboardCastRanking }    from '@/components/features/admin/dashboard/DashboardCastRanking';
 import { DashboardAlertCard }      from '@/components/features/admin/dashboard/DashboardAlertCard';
 import { DashboardReservations }   from '@/components/features/admin/dashboard/DashboardReservations';
-import { DashboardMemoCard }       from '@/components/features/admin/dashboard/DashboardMemoCard';
 import { DashboardQuickActions }   from '@/components/features/admin/dashboard/DashboardQuickActions';
 import { DashboardShiftCoverage }  from '@/components/features/admin/dashboard/DashboardShiftCoverage';
 import { getJstDateLabel } from '@/lib/date-utils';
@@ -95,15 +94,10 @@ export default async function DashboardPage() {
             <DashboardCastRanking />
           </Suspense>
 
-          {/* 来店予定一覧 ＋ 営業メモ */}
-          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-            <Suspense fallback={<Skeleton className="h-64" />}>
-              <DashboardReservations />
-            </Suspense>
-            <Suspense fallback={<Skeleton className="h-64" />}>
-              <DashboardMemoCard />
-            </Suspense>
-          </div>
+          {/* 来店予定一覧 */}
+          <Suspense fallback={<Skeleton className="h-64" />}>
+            <DashboardReservations />
+          </Suspense>
         </div>
 
         {/* ── Right: Support Rail ── */}

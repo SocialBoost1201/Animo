@@ -2,6 +2,11 @@
 
 import { createServiceClient } from '@/lib/supabase/service';
 import { getJstDateString } from '@/lib/date-utils';
+import {
+  PROTECTED_OPERATION_WINDOW_LABEL,
+  formatDashboardShiftClockForDisplay,
+  shiftClockToSortMinutes,
+} from '@/lib/operation-hours';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format } from 'date-fns';
 
 export type DashboardKPIData = {
@@ -22,8 +27,8 @@ export type DashboardTodayOpsData = {
   hasOperationalRecords: boolean;
   date: string;
   dateLabel: string;
-  startTime: string;
-  endTime: string;
+  /** Protected admin operation window label (`PROTECTED_OPERATION_WINDOW_LABEL`). */
+  operationWindowLabel: string;
   plannedCastCount: number;
   confirmedCastCount: number;
   reservationCount: number;
@@ -244,8 +249,7 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     hasOperationalRecords,
     date: today,
     dateLabel,
-    startTime: '20:00',
-    endTime: '25:00',
+    operationWindowLabel: PROTECTED_OPERATION_WINDOW_LABEL,
     plannedCastCount: activeCasts ?? 0,
     confirmedCastCount,
     reservationCount: (reservations || []).length,
@@ -327,7 +331,9 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
     (manualRaw || []).map(m => [m.cast_id, { status: m.status as ManualAttendanceStatus, note: m.note as string | null }])
   )
 
-  const results: DashboardCastShift[] = []
+  type RowAcc = { row: DashboardCastShift; sortMin: number }
+
+  const accumulated: RowAcc[] = []
 
   // 承認済シフトから本日出勤キャストを抽出（欠勤フィルタなし — manual override で表示制御）
   if (shiftsRaw) {
@@ -372,39 +378,49 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       if (status === 'late') tags.push('確認必要')
       if (status === 'absent') tags.push('欠勤')
 
-      results.push({
-        castId: row.cast_id,
-        castName,
-        initial: castName.charAt(0),
-        startTime: d[today].start?.substring(0, 5) ?? '20:00',
-        endTime: d[today].end?.substring(0, 5),
-        status,
-        tags,
-        avatarUrl,
-        manualStatus: manual?.status ?? 'undecided',
-        manualNote: manual?.note ?? null,
-        finalStatusSource,
+      const rawStartSlice = d[today].start?.substring(0, 5) ?? '20:00'
+      const rawEndSlice = d[today].end?.substring(0, 5)
+
+      accumulated.push({
+        sortMin: shiftClockToSortMinutes(rawStartSlice),
+        row: {
+          castId: row.cast_id,
+          castName,
+          initial: castName.charAt(0),
+          startTime: formatDashboardShiftClockForDisplay(rawStartSlice),
+          endTime: rawEndSlice ? formatDashboardShiftClockForDisplay(rawEndSlice) : undefined,
+          status,
+          tags,
+          avatarUrl,
+          manualStatus: manual?.status ?? 'undecided',
+          manualNote: manual?.note ?? null,
+          finalStatusSource,
+        },
       })
     }
   }
 
   // 体験入店（manual override 対象外）
   for (const trial of (trials || [])) {
-    results.push({
-      castId: `trial-${trial.id}`,
-      castName: trial.name,
-      initial: trial.name.charAt(0),
-      startTime: trial.start_time?.substring(0, 5) ?? '20:00',
-      status: 'trial',
-      tags: ['初回体入'],
-      manualStatus: 'undecided',
-      manualNote: null,
-      finalStatusSource: 'none',
+    const rawTrialStart = trial.start_time?.substring(0, 5) ?? '20:00'
+    accumulated.push({
+      sortMin: shiftClockToSortMinutes(rawTrialStart),
+      row: {
+        castId: `trial-${trial.id}`,
+        castName: trial.name,
+        initial: trial.name.charAt(0),
+        startTime: formatDashboardShiftClockForDisplay(rawTrialStart),
+        status: 'trial',
+        tags: ['初回体入'],
+        manualStatus: 'undecided',
+        manualNote: null,
+        finalStatusSource: 'none',
+      },
     })
   }
 
-  results.sort((a, b) => a.startTime.localeCompare(b.startTime))
-  return results
+  accumulated.sort((a, b) => a.sortMin - b.sortMin)
+  return accumulated.map((x) => x.row)
 }
 
 // ─────────────────────────────────────────────

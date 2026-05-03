@@ -77,6 +77,45 @@ export function formatProtectedOperationTime(value: string | null | undefined): 
   return formatMinutesAsUiTime(minutes)
 }
 
+/**
+ * Shift rows may store extended clock hours (24–26). Dashboard UI must never show 24/25/26;
+ * map to 0:00–2:00 same-night continuation.
+ */
+export function formatDashboardShiftClockForDisplay(value: string | null | undefined): string {
+  if (!value) return ''
+  const trimmed = value.trim()
+  const extended = trimmed.match(/^(\d{1,2}):([0-5]\d)/)
+  if (extended) {
+    const h = Number(extended[1])
+    const mm = extended[2]
+    if (h >= 24 && h <= 26) {
+      return `${h - 24}:${mm}`
+    }
+  }
+  const viaProtected = formatProtectedOperationTime(trimmed)
+  if (viaProtected) return viaProtected
+  const fallback = trimmed.match(/^(\d{1,2}):([0-5]\d)/)
+  if (fallback) {
+    const h = Number(fallback[1])
+    const mm = fallback[2]
+    if (h >= 0 && h <= 23) return `${h}:${mm}`
+  }
+  return trimmed.length >= 5 ? trimmed.substring(0, 5) : trimmed
+}
+
+/** Sort key for shift start/end strings including 24–26 hour storage. */
+export function shiftClockToSortMinutes(value: string | null | undefined): number {
+  if (!value) return 19 * 60
+  const m = value.trim().match(/^(\d{1,2}):([0-5]\d)/)
+  if (!m) return 19 * 60
+  const h = Number(m[1])
+  const min = Number(m[2])
+  if (h >= 24 && h <= 26) return (h - 24) * 60 + min + 24 * 60
+  if (h >= 19 && h <= 23) return h * 60 + min
+  if (h >= 0 && h <= 2) return h * 60 + min + 24 * 60
+  return h * 60 + min
+}
+
 export function isPreOpeningReservationTime(value: string | null | undefined): boolean {
   if (!value) return false
 

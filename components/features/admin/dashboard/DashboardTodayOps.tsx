@@ -7,7 +7,7 @@ export async function DashboardTodayOps() {
 
   const overviewRows = [
     { label: '営業日',      value: ops.dateLabel },
-    { label: '営業時間',    value: `${ops.startTime} — ${ops.endTime}` },
+    { label: '営業時間',    value: ops.operationWindowLabel },
     { label: '想定出勤数',  value: `${ops.plannedCastCount}名` },
     { label: '確定出勤数',  value: `${ops.confirmedCastCount}名`, bold: true },
     { label: '予約件数',    value: `${ops.reservationCount}件` },

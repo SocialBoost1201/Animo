@@ -75,7 +75,7 @@ export async function DashboardKPIs() {
       label: '体入・応募',
       value: kpi.trialCount,
       unit: '件',
-      sub: `返信待ち ${kpi.unreadApplications}件`,
+      sub: `本日体入+未読応募の合算 · 返信待ち ${kpi.unreadApplications}件`,
       icon: UserPlus,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',

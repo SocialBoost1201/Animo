@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getDashboardShiftCoverage } from '@/lib/actions/dashboard';
 import { DashboardEmptyState } from './DashboardEmptyState';
 import { BarChart3 } from 'lucide-react';
@@ -94,11 +95,15 @@ export async function DashboardShiftCoverage() {
       {/* Missing Submission Alert (Matching AnalyticsSectionSubsection:810) */}
       <div className="px-6 pb-6">
         {data.hasSourceRecords && data.missingCount > 0 && (
-          <div className="flex items-center justify-center gap-2 px-3 h-8 bg-[#fb3a3a14] rounded-[9px] border-[0.56px] border-[#fb3a3a26]">
+          <Link
+            href="/admin/shift-requests"
+            prefetch={false}
+            className="flex items-center justify-center gap-2 px-3 h-8 bg-[#fb3a3a14] rounded-[9px] border-[0.56px] border-[#fb3a3a26] hover:bg-[#fb3a3a22] transition-colors"
+          >
             <p className="text-[10px] text-[#cbc3b3] tracking-[0.12px]">
               シフト未提出 <span className="font-semibold text-[#fb3a3a]">{data.missingCount}名</span> — 催促が必要
             </p>
-          </div>
+          </Link>
         )}
       </div>
       </div>

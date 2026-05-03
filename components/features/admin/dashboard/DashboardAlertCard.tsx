@@ -17,7 +17,11 @@ export async function DashboardAlertCard() {
     if (kpi.shiftMissingCount > 0)
       alerts.push({ label: 'シフト未提出', detail: `${kpi.shiftMissingCount}名が今週未提出`, level: 'warn' });
     if (kpi.unconfirmedCount > 0)
-      alerts.push({ label: '来店予定未確定', detail: `${kpi.unconfirmedCount}名が確認待ち`, level: 'danger' });
+      alerts.push({
+        label: '出勤確認待ち',
+        detail: `本日シフトのうち${kpi.unconfirmedCount}名がチェックイン未回答`,
+        level: 'danger',
+      });
     if (kpi.unreadApplications > 0)
       alerts.push({ label: '未返信案件', detail: `応募返信待ち ${kpi.unreadApplications}件`, level: 'warn' });
   }
