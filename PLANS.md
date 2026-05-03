@@ -5,8 +5,33 @@ This file is the active implementation plan and progress tracker.
 
 Agents must follow this plan and the user's latest instruction.
 Do not perform work outside this plan unless explicitly instructed.
+Before starting work, read `CURRENT_STATE.md` plus only the latest 2 entries from `PLANS.md` and `daily_log.md`.
+Do not load full logs unless explicitly instructed.
 
 ## Approved implementation plans
+
+### /admin/today Phase 1 operation time foundation (2026-05-03)
+
+- **Approval:** [x] Approved (master, 2026-05-03)
+- **Status:** [x] Completed
+- **Commit:** `5756806`
+- **Objective:** Introduce protected operation-time handling for `/admin/today` and remove unsafe string/time-input handling before Phase 2.
+- **Completed scope:**
+  - [x] `lib/operation-hours.ts`
+  - [x] `components/features/admin/today/OperationTimeSelect.tsx`
+  - [x] `components/features/admin/today/OperationPhaseCard.tsx`
+  - [x] `components/features/admin/today/TodayDesktopView.tsx`
+- **Validation:**
+  - [x] Targeted eslint passed for Phase 1 files.
+  - [x] `pnpm lint` passed with existing warnings.
+  - [x] `git diff --check` passed.
+  - [x] Grep checks passed for removed `substring(0, 5)`, `type="time"`, string time sorting, and forbidden `24:00` / `25:00` / `26:00` UI strings in Phase 1 scope.
+  - [!] `pnpm build` blocked by existing unrelated `components/features/admin/UnsubmittedCastsList.tsx` type error (`D.gradients.gold`).
+- **Remaining tasks before Phase 2:**
+  - [ ] Browser smoke test pending.
+  - [ ] Admin credential required for protected `/admin/today` click-flow verification.
+  - [ ] Build issue remains outside Phase 1 scope.
+  - [ ] `/admin/dashboard` Card Map required before Phase 2.
 
 ### Admin operations flow reorganization + critical regressions (2026-05-02)
 
