@@ -14,7 +14,7 @@ import {
   isValidJapaneseMobilePhone,
   toE164JapanesePhone,
 } from '@/lib/utils/phone';
-import { matchesCastRegisterIdentity } from '@/lib/validators/cast-profile';
+import { matchesCastRegisterIdentity, normalizeRealNameForIdentityMatch } from '@/lib/validators/cast-profile';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
@@ -342,6 +342,7 @@ export async function castRegister(formData: FormData) {
   const dateOfBirth = (formData.get('dateOfBirth') as string)?.trim();
   const lineId = (formData.get('lineId') as string)?.trim() || null;
   const realName = legacyRealName || `${lastName ?? ''}${firstName ?? ''}`.trim();
+  const normalizedRealName = normalizeRealNameForIdentityMatch(realName);
   const normalizedPhone = normalizeJapanesePhone(phone ?? '');
   // 源氏名は `stageName`、本人確認用フリガナは `nameKana`。フォームは `stageName` のみ送るため未指定時は源氏名で照合する。
   const kanaForMatch = (nameKana || stageName)?.trim() ?? '';
