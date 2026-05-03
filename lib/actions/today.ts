@@ -987,7 +987,32 @@ export async function updateDailyCastAttendance(input: {
     return { success: false, error: error.message }
   }
 
+  // Sync casts.is_today so the public "本日の出勤キャスト" reflects the override
+  let isToday: boolean
+  if (input.status === 'working') {
+    isToday = true
+  } else if (input.status === 'absent') {
+    isToday = false
+  } else {
+    // undecided: revert to approved-shift-based value
+    const serviceSupabase = createServiceClient()
+    const { data: schedule } = await serviceSupabase
+      .from('cast_schedules')
+      .select('id')
+      .eq('cast_id', input.castId)
+      .eq('work_date', today)
+      .maybeSingle()
+    isToday = !!schedule
+  }
+
+  await supabase
+    .from('casts')
+    .update({ is_today: isToday })
+    .eq('id', input.castId)
+
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')
+  revalidatePath('/cast')
+  revalidatePath('/')
   return { success: true }
 }
