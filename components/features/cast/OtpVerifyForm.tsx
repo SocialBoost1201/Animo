@@ -8,9 +8,10 @@ import { toast } from 'sonner';
 type OtpVerifyFormProps = {
   initialPhone: string;
   initialCodeSent?: boolean;
+  redirectPath?: string | null;
 };
 
-export function OtpVerifyForm({ initialPhone, initialCodeSent = false }: OtpVerifyFormProps) {
+export function OtpVerifyForm({ initialPhone, initialCodeSent = false, redirectPath = null }: OtpVerifyFormProps) {
   const [phone, setPhone] = useState(formatJapaneseMobilePhone(initialPhone));
   const [otp, setOtp] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -31,6 +32,7 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false }: OtpVeri
     try {
       const formData = new FormData();
       formData.set('phone', phone);
+      if (redirectPath) formData.set('redirect', redirectPath);
       const result = await castSendLoginOtp(formData);
 
       if (!result.success) {
@@ -53,6 +55,7 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false }: OtpVeri
       const formData = new FormData();
       formData.set('phone', phone);
       formData.set('otp', otp);
+      if (redirectPath) formData.set('redirect', redirectPath);
       const result = await castVerifyLoginOtp(formData);
 
       if (result && !result.success) {

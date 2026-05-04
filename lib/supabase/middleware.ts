@@ -6,6 +6,7 @@ import {
   CAST_REAUTH_COOKIE_NAME,
   isCastPortalPublicPath,
   isCastPortalProtectedPath,
+  normalizeCastRedirectPath,
 } from '@/lib/cast-auth-utils'
 
 const ADMIN_PUBLIC_PATHS = new Set([
@@ -43,14 +44,28 @@ function preferCastMobileView(request: NextRequest) {
   return /Android|iPhone|iPod|Mobi/i.test(ua)
 }
 
+function getCurrentCastDestination(request: NextRequest) {
+  return `${request.nextUrl.pathname}${request.nextUrl.search}`
+}
+
 function createCastAuthRedirect(request: NextRequest, kind: 'login' | 'verify', reauth = false) {
   const url = request.nextUrl.clone()
-  const prefix = preferCastMobileView(request) ? '/cast/m' : '/cast'
+  const isLineTodayLink =
+    request.nextUrl.pathname === '/cast/today' && request.nextUrl.searchParams.get('from') === 'line'
+  const prefix = isLineTodayLink || !preferCastMobileView(request) ? '/cast' : '/cast/m'
   url.pathname = `${prefix}/${kind}`
+  const redirectPath = normalizeCastRedirectPath(
+    request.nextUrl.searchParams.get('redirect') ?? getCurrentCastDestination(request)
+  )
   if (reauth) {
     url.searchParams.set('reauth', '1')
   } else {
     url.searchParams.delete('reauth')
+  }
+  if (redirectPath) {
+    url.searchParams.set('redirect', redirectPath)
+  } else {
+    url.searchParams.delete('redirect')
   }
   return NextResponse.redirect(url)
 }
@@ -177,7 +192,9 @@ export async function updateSession(request: NextRequest) {
     const isVerifyPath = pathname === '/cast/verify' || pathname === '/cast/m/verify'
     if (isValidSession) {
       const url = request.nextUrl.clone()
-      url.pathname = '/cast/dashboard'
+      const redirectPath = normalizeCastRedirectPath(request.nextUrl.searchParams.get('redirect'))
+      url.pathname = redirectPath ? new URL(redirectPath, request.nextUrl.origin).pathname : '/cast/dashboard'
+      url.search = redirectPath ? new URL(redirectPath, request.nextUrl.origin).search : ''
       url.searchParams.delete('reauth')
       return NextResponse.redirect(url)
     }

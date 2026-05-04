@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { castSendLoginOtp } from '@/lib/actions/cast-auth';
+import { normalizeCastRedirectPath } from '@/lib/cast-auth-utils';
 import { formatJapaneseMobilePhone, normalizeJapanesePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
 
@@ -11,9 +12,11 @@ export default function CastLoginMobilePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState('');
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
+    setRedirectPath(normalizeCastRedirectPath(searchParams.get('redirect')));
     if (searchParams.get('reauth') === '1') {
       toast.info('14日以上アクセスがなかったため、SMS認証をお願いします。');
     }
@@ -31,7 +34,9 @@ export default function CastLoginMobilePage() {
       if (!result.success) {
         if ('code' in result && result.code === 'NEEDS_REGISTER') {
           const normalizedPhone = normalizeJapanesePhone(phone);
-          router.push(`/cast/m/register?phone=${encodeURIComponent(normalizedPhone)}`);
+          const params = new URLSearchParams({ phone: normalizedPhone });
+          if (redirectPath) params.set('redirect', redirectPath);
+          router.push(`/cast/m/register?${params.toString()}`);
           return;
         }
         toast.error(result.error);
@@ -40,12 +45,14 @@ export default function CastLoginMobilePage() {
 
       if ('skippedSms' in result && result.skippedSms) {
         toast.success(result.message ?? '既存のセッションでログインしました。');
-        router.push('/cast/dashboard');
+        router.push(redirectPath ?? '/cast/dashboard');
         return;
       }
 
       toast.success(result.message ?? 'SMS認証コードを送信しました。');
-      router.push(`/cast/m/verify?phone=${encodeURIComponent(phone)}`);
+      const params = new URLSearchParams({ phone });
+      if (redirectPath) params.set('redirect', redirectPath);
+      router.push(`/cast/m/verify?${params.toString()}`);
     } finally {
       setIsLoading(false);
     }

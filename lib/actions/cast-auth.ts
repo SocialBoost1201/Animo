@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import {
   CAST_REAUTH_COOKIE_NAME,
   CAST_REAUTH_WINDOW_MS,
+  normalizeCastRedirectPath,
 } from '@/lib/cast-auth-utils';
 import {
   normalizeJapanesePhone,
@@ -211,6 +212,7 @@ export async function castSendLoginOtp(formData: FormData) {
 export async function castVerifyLoginOtp(formData: FormData) {
   const phone = String(formData.get('phone') ?? '');
   const otp = String(formData.get('otp') ?? '').trim();
+  const redirectPath = normalizeCastRedirectPath(String(formData.get('redirect') ?? ''));
   const normalizedPhone = normalizeJapanesePhone(phone);
 
   if (!isValidJapaneseMobilePhone(normalizedPhone)) {
@@ -327,7 +329,7 @@ export async function castVerifyLoginOtp(formData: FormData) {
   }
 
   await setCastReauthCookie();
-  redirect('/cast/dashboard');
+  redirect(redirectPath ?? '/cast/dashboard');
 }
 
 /**

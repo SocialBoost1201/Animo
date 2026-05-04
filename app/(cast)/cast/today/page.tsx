@@ -23,9 +23,19 @@ type CastDashboardReservationRow = {
   note?: string | null;
 };
 
-export default async function CastTodayPage() {
+type CastTodayPageProps = {
+  searchParams?: Promise<{
+    from?: string;
+  }>;
+};
+
+export default async function CastTodayPage({ searchParams }: CastTodayPageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
   const cast = await getCurrentCast();
-  if (!cast) redirect('/cast/login');
+  if (!cast) {
+    const redirectPath = resolvedSearchParams.from === 'line' ? '/cast/today?from=line' : '/cast/today';
+    redirect(`/cast/login?redirect=${encodeURIComponent(redirectPath)}`);
+  }
 
   const supabase = await createClient();
   const today = getJstDateString();
@@ -79,7 +89,11 @@ export default async function CastTodayPage() {
         <CastMobileSectionTitle
           eyebrow={new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
           title="本日の確認"
-          description="出勤確認・同伴情報・来店予定をまとめて送信します。"
+          description={
+            resolvedSearchParams.from === 'line'
+              ? 'LINE通知から開いています。出勤確認・同伴情報・来店予定を送信してください。'
+              : '出勤確認・同伴情報・来店予定をまとめて送信します。'
+          }
         />
 
         <CastMobileCard className="px-5 py-4">

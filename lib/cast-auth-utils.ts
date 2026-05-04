@@ -58,3 +58,18 @@ export function isCastPortalPublicPath(pathname: string) {
 export function isCastPortalProtectedPath(pathname: string) {
   return CAST_PORTAL_PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
 }
+
+export function normalizeCastRedirectPath(value: string | null | undefined): string | null {
+  if (!value || value.startsWith('//')) return null
+
+  try {
+    const url = new URL(value, 'https://club-animo.local')
+
+    if (url.origin !== 'https://club-animo.local') return null
+    if (!isCastPortalProtectedPath(url.pathname)) return null
+
+    return `${url.pathname}${url.search}${url.hash}`
+  } catch {
+    return null
+  }
+}

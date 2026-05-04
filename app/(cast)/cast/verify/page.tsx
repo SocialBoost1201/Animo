@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { OtpVerifyForm } from '@/components/features/cast/OtpVerifyForm';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
+import { normalizeCastRedirectPath } from '@/lib/cast-auth-utils';
 import { createServiceClient } from '@/lib/supabase/service';
 import { normalizeJapaneseMobilePhoneForMatch } from '@/lib/utils/phone';
 
@@ -8,6 +9,7 @@ type VerifyPageProps = {
   searchParams: Promise<{
     phone?: string;
     reauth?: string;
+    redirect?: string;
   }>;
 };
 
@@ -36,11 +38,14 @@ async function resolvePhone(phoneParam?: string, reauth?: string) {
 }
 
 export default async function CastVerifyPage({ searchParams }: VerifyPageProps) {
-  const { phone, reauth } = await searchParams;
+  const { phone, reauth, redirect: redirectParam } = await searchParams;
   const resolvedPhone = await resolvePhone(phone, reauth);
+  const redirectPath = normalizeCastRedirectPath(redirectParam);
 
   if (!resolvedPhone) {
-    redirect('/cast/login');
+    const params = new URLSearchParams();
+    if (redirectPath) params.set('redirect', redirectPath);
+    redirect(`/cast/login${params.size > 0 ? `?${params.toString()}` : ''}`);
   }
 
   return (
@@ -86,7 +91,7 @@ export default async function CastVerifyPage({ searchParams }: VerifyPageProps) 
               : 'SMS認証コードを送信してログインを完了してください。'}
           </p>
 
-          <OtpVerifyForm initialPhone={resolvedPhone} initialCodeSent={Boolean(phone)} />
+          <OtpVerifyForm initialPhone={resolvedPhone} initialCodeSent={Boolean(phone)} redirectPath={redirectPath} />
         </div>
       </div>
     </div>
