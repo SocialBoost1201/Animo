@@ -198,7 +198,7 @@ export function LineNotificationManager({
 
   // ── テーマ依存スタイル ───────────────────────────────────────────────────
   const cardBg = isDark
-    ? 'bg-black/94 border border-[#ffffff10] rounded-[18px] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.4)]'
+    ? 'bg-[#17181c] border border-[#ffffff0f] rounded-[18px]'
     : 'bg-white border border-[#0000001a] rounded-[18px] shadow-[0_4px_24px_rgba(0,0,0,0.08)]'
   const labelSm = isDark ? 'text-[#5a5650]' : 'text-[#b0a898]'
   const textPrimary = isDark ? 'text-[#f4f1ea]' : 'text-[#1a1710]'
@@ -209,13 +209,13 @@ export function LineNotificationManager({
     : 'text-[10px] font-bold px-2 py-0.5 rounded-full border'
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 rounded-[18px] border border-[#ffffff0f] bg-[#17181c] p-6">
 
       {/* ── ヘッダー ── */}
-      <div className={`flex items-center justify-between border-b ${divider} pb-4`}>
+      <div className={`flex items-center justify-between gap-3 border-b ${divider} pb-4`}>
         <div className="flex items-center gap-2.5">
-          <Bell size={14} className="text-gold" />
-          <h3 className={`text-sm font-bold tracking-widest uppercase ${textPrimary}`}>
+          <Bell size={15} className="text-gold" />
+          <h3 className={`text-[14px] font-semibold tracking-[-0.1px] ${textPrimary}`}>
             LINE 自動通知
           </h3>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -226,7 +226,7 @@ export function LineNotificationManager({
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true) }}
-          className="flex items-center gap-2 px-6 py-2.5 bg-gold/10 border border-gold/30 text-gold text-[12px] font-bold tracking-widest rounded-[8px] hover:bg-gold/20 transition-all font-sans"
+          className="flex items-center gap-2 rounded-[10px] border border-[#dfbd6928] bg-[#dfbd6914] px-3 py-2 text-[11px] font-semibold text-[#dfbd69] hover:bg-[#dfbd691f] transition-colors font-sans"
         >
           <Plus size={14} /> 新規追加
         </button>
@@ -242,10 +242,8 @@ export function LineNotificationManager({
           isDark={isDark}
           F={F}
           labelSm={labelSm}
-          textPrimary={textPrimary}
           textSecondary={textSecondary}
           divider={divider}
-          tagBase={tagBase}
           linkedCasts={linkedCasts}
           onSave={handleSave}
           onCancel={resetForm}
@@ -256,10 +254,10 @@ export function LineNotificationManager({
 
       {/* ── 通知一覧 ── */}
       {notifications.length === 0 && !showForm ? (
-        <div className={`py-12 text-center ${cardBg}`}>
-          <Bell size={24} className={`mx-auto mb-3 ${labelSm}`} />
-          <p className={`text-xs ${textSecondary}`}>自動通知が設定されていません</p>
-          <p className={`text-[10px] mt-1 ${labelSm}`}>「新規追加」から最初の通知を作成してください</p>
+        <div className="rounded-[14px] border border-dashed border-[#dfbd6924] bg-[#dfbd6908] px-5 py-10 text-center">
+          <Bell size={22} className="mx-auto mb-3 text-[#dfbd69]" />
+          <p className="text-[13px] font-bold tracking-[0.04em] text-[#dfbd69]">通知未設定</p>
+          <p className="mt-2 text-[11px] font-medium leading-relaxed text-[#8a8478]">「新規追加」から最初の通知を作成してください</p>
         </div>
       ) : (
         <div className="space-y-2.5">
@@ -435,7 +433,7 @@ function NotificationCard({
 // ── 新規/編集フォーム ─────────────────────────────────────────────────────────
 function NotificationForm({
   form, setForm, editingId, isPending, isDark, F,
-  labelSm, textPrimary, divider, tagBase, linkedCasts,
+  labelSm, divider, linkedCasts,
   onSave, onCancel, toggleDay, toggleDate,
 }: {
   form: CreateLineNotificationInput
@@ -445,10 +443,8 @@ function NotificationForm({
   isDark: boolean
   F: ReturnType<typeof useAdminTheme>['F']
   labelSm: string
-  textPrimary: string
   textSecondary: string
   divider: string
-  tagBase: string
   linkedCasts: LinkedCast[]
   onSave: () => void
   onCancel: () => void
@@ -460,9 +456,9 @@ function NotificationForm({
   const inactiveDayClass = isDark ? 'border-white/10 text-[#5a5650] hover:border-white/20' : 'border-[#0000001a] text-[#b0a898] hover:border-[#00000030]'
 
   return (
-    <div className={`border ${borderColor} rounded-[18px] p-8 space-y-8 ${isDark ? 'bg-gold/4' : 'bg-[#926f340a]'}`}>
+    <div className={`border ${borderColor} rounded-[18px] p-5 space-y-5 ${isDark ? 'bg-[#1c1d22]' : 'bg-[#926f340a]'}`}>
       <div className="flex items-center justify-between">
-        <h4 className={`text-xs font-bold tracking-widest uppercase ${isDark ? 'text-gold' : 'text-[#926f34]'}`}>
+        <h4 className={`text-[12px] font-semibold ${isDark ? 'text-[#dfbd69]' : 'text-[#926f34]'}`}>
           {editingId ? '通知を編集' : '新規通知を追加'}
         </h4>
         <button onClick={onCancel} className={labelSm}><X size={14} /></button>
@@ -631,7 +627,7 @@ function NotificationForm({
       </div>
 
       {/* 保存ボタン */}
-      <div className={`flex justify-end gap-3 pt-8 border-t ${divider}`}>
+      <div className={`flex justify-end gap-3 pt-5 border-t ${divider}`}>
         <button onClick={onCancel} className={`px-6 py-2.5 text-[12px] font-bold border rounded-[8px] transition-all font-sans ${
           isDark ? 'border-white/10 text-[#8a8478] hover:text-[#f4f1ea]' : 'border-[#0000001a] text-[#7a7268] hover:text-[#1a1710]'
         }`}>
