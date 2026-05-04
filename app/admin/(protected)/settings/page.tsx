@@ -13,28 +13,28 @@ export default async function SettingsPage() {
   ])
 
   return (
-    <div className="space-y-10 font-inter pb-10">
+    <div className="space-y-6 font-inter pb-8">
       {/* ── Page Header ── */}
-      <div className="flex flex-col gap-0.5 py-4">
-        <h1 className="text-[20px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">設定</h1>
-        <p className="text-[12px] text-[#8a8478]">サイト全体に関する基本情報と動作の設定</p>
+      <div className="flex flex-col gap-0.5 py-2">
+        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">設定</h1>
+        <p className="text-[11px] text-[#8a8478]">サイト全体に関する基本情報と動作の設定</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
         {/* ── サイト設定 ── */}
         <section className="h-full">
-          <div className="mb-6">
-            <h2 className="text-[14px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">サイト・ビジュアル設定</h2>
-            <p className="text-[11px] text-[#8a8478] mt-1">フロントエンドの雰囲気や演出を制御します</p>
+          <div className="mb-3 px-1">
+            <h2 className="text-[12px] font-semibold text-[#f4f1ea] tracking-[-0.1px]">サイト・ビジュアル設定</h2>
+            <p className="text-[11px] text-[#8a8478] mt-0.5">フロントエンドの雰囲気や演出を制御します</p>
           </div>
           <SettingsForm initialData={settings} />
         </section>
 
         {/* ── LINE 自動通知設定 ── */}
-        <section className="h-full">
-          <div className="mb-6">
-            <h2 className="text-[14px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">LINE 自動通知設定</h2>
-            <p className="text-[11px] text-[#8a8478] mt-1">LINE公式アカウントからの自動通知スケジュールを管理します</p>
+        <section id="line-notifications" className="h-full scroll-mt-6">
+          <div className="mb-3 px-1">
+            <h2 className="text-[12px] font-semibold text-[#f4f1ea] tracking-[-0.1px]">LINE 自動通知設定</h2>
+            <p className="text-[11px] text-[#8a8478] mt-0.5">LINE公式アカウントからの自動通知スケジュールを管理します</p>
           </div>
           <LineNotificationManager
             key={lineNotifications.map((n) => n.id).join(',')}
@@ -46,9 +46,9 @@ export default async function SettingsPage() {
 
       {/* ── デザイン管理 ── */}
       <section>
-        <div className="mb-6">
-          <h2 className="text-[14px] font-bold tracking-[2px] text-[#f4f1ea] uppercase">デザイン管理</h2>
-          <p className="text-[11px] text-[#8a8478] mt-1">ヒーロービジュアル・ギャラリーなどのビジュアル設定を管理します</p>
+        <div className="mb-3 px-1">
+          <h2 className="text-[12px] font-semibold text-[#f4f1ea] tracking-[-0.1px]">デザイン管理</h2>
+          <p className="text-[11px] text-[#8a8478] mt-0.5">ヒーロービジュアル・ギャラリーなどのビジュアル設定を管理します</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {([
@@ -59,7 +59,7 @@ export default async function SettingsPage() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex items-center gap-4 rounded-[16px] border border-[#dfbd69]/18 bg-[#17181c] px-5 py-4 transition-all hover:bg-[#1c1d22] hover:border-[#dfbd69]/30"
+              className="group flex items-center gap-4 rounded-[18px] border border-[#ffffff0f] bg-[#17181c] px-5 py-4 transition-all hover:bg-[#1c1d22] hover:border-[#ffffff18]"
             >
               <div className="w-[38px] h-[38px] flex items-center justify-center rounded-[10px] bg-[#dfbd691a] shrink-0">
                 <item.Icon size={17} className="text-[#dfbd69]" />
