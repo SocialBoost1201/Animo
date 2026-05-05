@@ -16,7 +16,7 @@ export async function DashboardKPIs() {
       icon: Users,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
-      href: '/admin/today',
+      href: '/admin/approvals?view=checkins',
       badge: null as null | { label: string; bg: string; textColor: string },
       topBar: true,
       alert: !isWaitingForOperations && kpi.unconfirmedCount > 0,
@@ -30,7 +30,7 @@ export async function DashboardKPIs() {
       icon: Calendar,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
-      href: '/admin/today',
+      href: '/admin/approvals?view=reservations',
       badge:
         !isWaitingForOperations && kpi.reservationCount > kpi.yesterdayReservationCount
           ? { label: `+${kpi.reservationCount - kpi.yesterdayReservationCount}`, bg: 'bg-[#50a0641a]', textColor: 'text-[#72b894]' }
@@ -49,7 +49,7 @@ export async function DashboardKPIs() {
       icon: TrendingUp,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
-      href: '/admin/today',
+      href: '/admin/approvals?view=reservations',
       badge: null,
       topBar: false,
       alert: false,
@@ -63,7 +63,7 @@ export async function DashboardKPIs() {
       icon: ClipboardList,
       iconBg: kpi.shiftMissingCount > 0 ? 'bg-[#c882321f]' : 'bg-[#dfbd691a]',
       iconColor: kpi.shiftMissingCount > 0 ? 'text-[#c8884d]' : 'text-[#dfbd69]',
-      href: '/admin/shift-requests',
+      href: '/admin/approvals?view=shifts',
       badge: kpi.shiftMissingCount > 0
         ? { label: '要催促', bg: 'bg-[#c8643c1a]', textColor: 'text-[#d4785a]' }
         : null,
@@ -79,7 +79,7 @@ export async function DashboardKPIs() {
       icon: UserPlus,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
-      href: '/admin/applications',
+      href: '/admin/approvals?view=posts',
       badge: kpi.unreadApplications > 0
         ? { label: `+${kpi.unreadApplications}`, bg: 'bg-[#50a0641a]', textColor: 'text-[#72b894]' }
         : null,
@@ -95,7 +95,7 @@ export async function DashboardKPIs() {
       icon: AlertTriangle,
       iconBg: kpi.alertCount > 0 ? 'bg-[#c882321f]' : 'bg-[#dfbd691a]',
       iconColor: kpi.alertCount > 0 ? 'text-[#c8884d]' : 'text-[#dfbd69]',
-      href: '/admin/today',
+      href: '/admin/approvals?view=alerts',
       badge: kpi.alertCount > 0
         ? { label: '要確認', bg: 'bg-[#c8643c1a]', textColor: 'text-[#d4785a]' }
         : null,
@@ -105,14 +105,14 @@ export async function DashboardKPIs() {
   ] as const;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 font-sans">
+    <div className="grid grid-cols-1 gap-3 font-sans sm:grid-cols-2 md:grid-cols-3 md:gap-4 xl:grid-cols-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
           <Link
             key={card.id}
             href={card.href}
-            className="group relative flex flex-col rounded-[18px] h-[110px] xl:h-[120px] min-w-0 card-premium-skin card-premium-skin--compact"
+            className="group relative flex min-h-28 min-w-0 flex-col rounded-[18px] card-premium-skin card-premium-skin--compact kpi-card-mobile md:min-h-[110px] xl:min-h-[120px]"
           >
             <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
               {/* Top Highlight Bar */}
@@ -120,19 +120,19 @@ export async function DashboardKPIs() {
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] shrink-0 z-10" />
               )}
 
-              <div className="p-4 flex flex-col items-center justify-center flex-1 min-w-0 text-center relative">
+              <div className="relative flex min-w-0 flex-1 flex-col items-center justify-center p-4 text-center">
                 {/* Icon (top-right) */}
-                <div className={`absolute top-3 right-3 w-[22px] h-[22px] flex items-center justify-center rounded-[5px] ${card.iconBg}`}>
+                <div className={`absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-[5px] ${card.iconBg}`}>
                   <Icon size={12} className={card.iconColor} strokeWidth={2.5} />
                 </div>
 
                 {/* Label */}
-                <span className="text-[11px] text-[#8a8478] tracking-[0.06px] font-medium mb-2 leading-tight">
+                <span className="mb-1.5 pr-6 text-[12px] font-medium leading-snug tracking-[0.06px] text-[#8a8478] md:mb-2 md:pr-5 md:text-[11px]">
                   {card.label}
                 </span>
 
                 {/* Value */}
-                <p className="text-[30px] font-bold leading-none tracking-[-0.2px] mb-1.5"
+                <p className="mb-1 text-[28px] font-bold leading-none tracking-[-0.2px] md:mb-1.5 md:text-[30px]"
                   style={{ background: 'linear-gradient(90deg, #D1B25E 0%, #8F7130 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   {isWaitingForOperations ? (
                     <span className="block text-[15px] leading-tight tracking-[0.02em]">運用開始待ち</span>
@@ -142,7 +142,7 @@ export async function DashboardKPIs() {
                 </p>
 
                 {/* Subtitle */}
-                <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight line-clamp-1 font-normal" title={card.sub}>
+                <p className="line-clamp-2 min-h-[2.4em] text-[12px] font-normal leading-tight tracking-[0.06px] text-[#8a8478] md:line-clamp-1 md:min-h-0 md:text-[11px]" title={card.sub}>
                   {isWaitingForOperations ? '—' : card.sub}
                 </p>
 
