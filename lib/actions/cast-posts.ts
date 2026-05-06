@@ -134,6 +134,7 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
     }
 
     revalidatePath('/admin/posts');
+    revalidatePath('/admin/approvals');
     revalidatePath('/');
     return { success: true };
   } catch (err: unknown) {

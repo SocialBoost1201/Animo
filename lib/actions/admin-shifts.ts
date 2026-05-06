@@ -136,9 +136,10 @@ export async function approveShiftSubmission(submissionId: string) {
 
   revalidatePath('/admin/shift-requests');
   revalidatePath('/admin/shifts');
+  revalidatePath('/admin/approvals');
   revalidatePath('/shift');
   revalidatePath('/');
-  
+
   return { success: true };
 }
 
@@ -160,6 +161,7 @@ export async function rejectShiftSubmission(submissionId: string) {
   }
 
   revalidatePath('/admin/shift-requests');
+  revalidatePath('/admin/approvals');
   return { success: true };
 }
 

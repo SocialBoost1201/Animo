@@ -12,7 +12,6 @@ import {
   rejectShiftSubmission,
 } from '@/lib/actions/admin-shifts'
 import { updateCastPostStatus } from '@/lib/actions/cast-posts'
-import { revalidatePath } from 'next/cache'
 import { UserCheck, Calendar, FileText, Clock } from 'lucide-react'
 
 type CastPostPending = {
@@ -303,78 +302,6 @@ export default async function AdminApprovalsPage({
       : sortedPendingShiftSubmissions
   const visibleCastPosts = showPosts ? sortedPendingCastPosts : []
 
-  const approveCheckinAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await approveCheckin(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const rejectCheckinAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await rejectCheckin(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const approveReservationAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await approveReservation(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const rejectReservationAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await rejectReservation(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const approveShiftAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await approveShiftSubmission(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const rejectShiftAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await rejectShiftSubmission(id)
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const approvePostAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await updateCastPostStatus(id, 'published')
-      revalidatePath('/admin/approvals')
-    }
-  }
-
-  const rejectPostAction = async (formData: FormData) => {
-    'use server'
-    const id = formData.get('id')
-    if (typeof id === 'string' && id) {
-      await updateCastPostStatus(id, 'draft')
-      revalidatePath('/admin/approvals')
-    }
-  }
-
   return (
     <div className="font-sans space-y-5">
       {/* Page Header */}
@@ -466,14 +393,12 @@ export default async function AdminApprovalsPage({
                         )}
                       </div>
                       <div className="flex gap-2 pt-0.5">
-                        <form action={approveCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
+                        <form action={approveCheckin.bind(null, checkin.id)} className="flex-1">
                           <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
                             承認
                           </button>
                         </form>
-                        <form action={rejectCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
+                        <form action={rejectCheckin.bind(null, checkin.id)} className="flex-1">
                           <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
                             却下
                           </button>
@@ -531,14 +456,12 @@ export default async function AdminApprovalsPage({
                         )}
                       </div>
                       <div className="flex gap-2 pt-0.5">
-                        <form action={approveReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
+                        <form action={approveReservation.bind(null, reservation.id)} className="flex-1">
                           <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
                             承認
                           </button>
                         </form>
-                        <form action={rejectReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
+                        <form action={rejectReservation.bind(null, reservation.id)} className="flex-1">
                           <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
                             却下
                           </button>
@@ -601,14 +524,12 @@ export default async function AdminApprovalsPage({
                     </div>
                   </div>
                   <div className="flex gap-2 pt-0.5">
-                    <form action={approveShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
+                    <form action={approveShiftSubmission.bind(null, submission.id)} className="flex-1">
                       <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
                         承認
                       </button>
                     </form>
-                    <form action={rejectShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
+                    <form action={rejectShiftSubmission.bind(null, submission.id)} className="flex-1">
                       <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
                         却下
                       </button>
@@ -654,14 +575,12 @@ export default async function AdminApprovalsPage({
                   </div>
                   <p className="text-[12px] text-[#8a8478] leading-relaxed line-clamp-4">{post.content}</p>
                   <div className="flex gap-2 pt-0.5">
-                    <form action={approvePostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
+                    <form action={updateCastPostStatus.bind(null, post.id, 'published')} className="flex-1">
                       <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
                         承認
                       </button>
                     </form>
-                    <form action={rejectPostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
+                    <form action={updateCastPostStatus.bind(null, post.id, 'draft')} className="flex-1">
                       <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
                         却下
                       </button>
