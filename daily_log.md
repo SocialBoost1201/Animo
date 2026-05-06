@@ -201,3 +201,17 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `lib/actions/staffs.ts`, `daily_log.md`.
 - validation: Targeted eslint passed; `tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed; authenticated browser smoke created a temporary `CodexRlsTest-*` staff row and deleted it successfully.
 - remaining risks: `staffs` RLS policy still only checks `user_roles`; code now preserves security by authorizing via the app admin model before the service-role insert, but a future migration may be needed if direct client-side `staffs` writes are ever required.
+
+### 2026-05-07 (settings sidebar link restore)
+
+- scope: Restored the `設定・デザイン` sidebar link for all authenticated admin roles so staff-role admin sessions can access settings and LINE automatic notification settings from the menu.
+- files changed: `components/layouts/AdminLayout.tsx`, `daily_log.md`.
+- validation: Targeted eslint passed for `AdminLayout.tsx`; `tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed.
+- remaining risks: Browser smoke on a staff-role admin session is recommended after preview deploy.
+
+### 2026-05-07 (admin login roles alignment)
+
+- scope: Removed `staff` from the admin-login role set because staff users are not expected to log into the admin screen; admin access is now limited to `owner` and `manager`.
+- files changed: `lib/auth/admin-roles.ts`, `daily_log.md`.
+- validation: Targeted eslint passed for `lib/auth/admin-roles.ts` and `AdminLayout.tsx`; `tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed.
+- remaining risks: Existing database roles and RLS policies still mention `staff`; no DB migration was applied in this minimal app-auth alignment.

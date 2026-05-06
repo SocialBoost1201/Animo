@@ -5,6 +5,8 @@ import { getLineNotifications, getLinkedCasts } from '@/lib/actions/line-notific
 import { SettingsForm } from '@/components/features/admin/SettingsForm'
 import { LineNotificationManager } from '@/components/features/admin/LineNotificationManager'
 
+export const dynamic = 'force-dynamic'
+
 export default async function SettingsPage() {
   const [settings, lineNotifications, linkedCasts] = await Promise.all([
     getSiteSettings(),

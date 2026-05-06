@@ -1,8 +1,8 @@
-export const adminLoginRoles = new Set(['owner', 'manager', 'staff'])
+export const adminLoginRoles = new Set(['owner', 'manager'])
 export const adminManageRoles = new Set(['owner', 'manager'])
 export const ownerOnlyRoles = new Set(['owner'])
 
-export type AdminLoginRole = 'owner' | 'manager' | 'staff'
+export type AdminLoginRole = 'owner' | 'manager'
 export type AdminManageRole = 'owner' | 'manager'
 export type OwnerRole = 'owner'
 

@@ -77,6 +77,7 @@ export function LineNotificationManager({
   const [isPending, startTransition] = useTransition()
   const [testingId, setTestingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   // ── Props同期 ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -113,13 +114,16 @@ export function LineNotificationManager({
       showToast('通知名と通知内容は必須です', 'error')
       return
     }
+    setSaveError(null)
     startTransition(async () => {
       const result = editingId
         ? await updateLineNotification(editingId, form)
         : await createLineNotification(form)
 
       if (result.error || !result.data) {
-        showToast(result.error || '保存に失敗しました', 'error')
+        const msg = result.error || '保存に失敗しました'
+        setSaveError(msg)
+        showToast(msg, 'error')
         return
       }
 
@@ -134,7 +138,9 @@ export function LineNotificationManager({
 
       showToast(editingId ? '通知を更新しました' : '通知を追加しました', 'success')
       resetForm()
-      router.refresh()
+      setTimeout(() => {
+        window.location.href = '/admin/settings#line-notifications'
+      }, 800)
     })
   }
 
@@ -170,7 +176,9 @@ export function LineNotificationManager({
       if (result.error) { showToast(result.error, 'error'); return }
       setNotifications((prev) => prev.filter((n) => n.id !== id))
       showToast('通知を削除しました', 'success')
-      router.refresh()
+      setTimeout(() => {
+        window.location.href = '/admin/settings#line-notifications'
+      }, 800)
     })
   }
 
@@ -245,6 +253,7 @@ export function LineNotificationManager({
           textSecondary={textSecondary}
           divider={divider}
           linkedCasts={linkedCasts}
+          saveError={saveError}
           onSave={handleSave}
           onCancel={resetForm}
           toggleDay={toggleDay}
@@ -433,7 +442,7 @@ function NotificationCard({
 // ── 新規/編集フォーム ─────────────────────────────────────────────────────────
 function NotificationForm({
   form, setForm, editingId, isPending, isDark, F,
-  labelSm, divider, linkedCasts,
+  labelSm, divider, linkedCasts, saveError,
   onSave, onCancel, toggleDay, toggleDate,
 }: {
   form: CreateLineNotificationInput
@@ -446,6 +455,7 @@ function NotificationForm({
   textSecondary: string
   divider: string
   linkedCasts: LinkedCast[]
+  saveError: string | null
   onSave: () => void
   onCancel: () => void
   toggleDay: (d: number) => void
@@ -625,6 +635,13 @@ function NotificationForm({
           </div>
         )}
       </div>
+
+      {/* エラー表示 */}
+      {saveError && (
+        <div className="rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-[12px] text-red-400">
+          {saveError}
+        </div>
+      )}
 
       {/* 保存ボタン */}
       <div className={`flex justify-end gap-3 pt-5 border-t ${divider}`}>
