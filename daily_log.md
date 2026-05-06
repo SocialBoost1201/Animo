@@ -194,3 +194,10 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `PLANS.md`, `daily_log.md`.
 - validation: Production login succeeded with mobile viewport `390x844`; `/admin/today` links `来店予定を追加` / `詳細を表示` / `今日` navigated correctly; `本日の営業状況`, `キャスト管理`, and `体入・応募運用開始待ち—` did not navigate within timeout and stayed on `/admin/dashboard`; mobile menu button showed no change in visible admin link count before/after click.
 - remaining risks: Broken mobile dashboard links remain on production and need a separate minimal fix plan; no source validation commands were run because this turn was verification-only.
+
+### 2026-05-07 (staff create RLS fix)
+
+- scope: Fixed staff creation RLS failure by requiring admin login in `createStaff` and performing the `staffs` insert through the server-only service client after authorization.
+- files changed: `lib/actions/staffs.ts`, `daily_log.md`.
+- validation: Targeted eslint passed; `tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed; authenticated browser smoke created a temporary `CodexRlsTest-*` staff row and deleted it successfully.
+- remaining risks: `staffs` RLS policy still only checks `user_roles`; code now preserves security by authorizing via the app admin model before the service-role insert, but a future migration may be needed if direct client-side `staffs` writes are ever required.

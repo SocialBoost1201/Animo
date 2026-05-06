@@ -1,6 +1,8 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
+import { requireAdminLogin } from '@/lib/auth/admin';
 import { revalidatePath } from 'next/cache';
 import { combineStaffFullName } from '@/lib/staff-name';
 import { mapRowToStaffSlave, type StaffTableRow, type StaffSlave } from '@/lib/staff-records';
@@ -56,7 +58,10 @@ export async function getStaffById(id: string): Promise<StaffSlave | null> {
  * スタッフマスタ登録
  */
 export async function createStaff(formData: FormData) {
-  const supabase = await createClient();
+  const auth = await requireAdminLogin();
+  if (!auth.ok) return { error: auth.error };
+
+  const serviceSupabase = createServiceClient();
   const family_name = String(formData.get('family_name') ?? '').trim();
   const given_name = String(formData.get('given_name') ?? '').trim();
   const display_name = String(formData.get('display_name') ?? '').trim();
@@ -97,7 +102,7 @@ export async function createStaff(formData: FormData) {
   if (mobile_phone.length > 0) insertPayload.mobile_phone = mobile_phone;
   if (line_id.length > 0) insertPayload.line_id = line_id;
 
-  let { data, error } = await supabase.from('staffs').insert(insertPayload).select().single();
+  let { data, error } = await serviceSupabase.from('staffs').insert(insertPayload).select().single();
 
   if (error && isExtendedColumnMissingError(error as { code?: string | null; message: string })) {
     const fallbackPayload = {
@@ -106,7 +111,7 @@ export async function createStaff(formData: FormData) {
       role: null as string | null,
       is_active,
     };
-    const retry = await supabase.from('staffs').insert(fallbackPayload).select().single();
+    const retry = await serviceSupabase.from('staffs').insert(fallbackPayload).select().single();
     data = retry.data;
     error = retry.error;
   }
