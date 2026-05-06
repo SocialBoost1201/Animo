@@ -1,5 +1,4 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
-import Link from 'next/link';
 import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus } from 'lucide-react';
 
@@ -45,11 +44,7 @@ export async function DashboardTodayOps() {
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header row */}
       <div className="flex items-center justify-between px-6 h-[56px] border-b border-[#ffffff0f] shrink-0">
-        <Link
-          href="/admin/today"
-          aria-label="本日の営業状況を開く"
-          className="flex items-center gap-3 rounded-[10px] -m-2 p-2 transition-colors hover:bg-white/[0.03]"
-        >
+        <div className="flex items-center gap-3">
           <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
              <Plus size={15} className="text-[#dfbd69]" strokeWidth={2.5} />
           </div>
@@ -57,7 +52,7 @@ export async function DashboardTodayOps() {
             <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の営業状況</p>
             <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">今夜のオペレーション概要</p>
           </div>
-        </Link>
+        </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
             <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />

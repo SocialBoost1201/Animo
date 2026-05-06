@@ -5,6 +5,13 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-07 (admin sidebar and today route rollback)
+
+- scope: Restored the dashboard today card to a non-navigating summary and removed the unapproved `Operational Dashboard` English surface from `/admin/today`; confirmed PR branch keeps the existing mainline AdminLayout sidebar implementation.
+- files changed: `components/features/admin/dashboard/DashboardTodayOps.tsx`, `components/features/admin/today/TodayDesktopView.tsx`, `daily_log.md`.
+- validation: targeted eslint passed; `./node_modules/.bin/tsc --noEmit` passed; `git diff --check` passed; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed.
+- remaining risks: Authenticated browser verification is still needed to visually confirm the protected admin sidebar in the live session.
+
 ### 2026-05-06 (credit-card fee emphasis)
 
 - scope: Prominently surfaced the no-extra-credit-card-fee policy on the public pricing system and simulator surfaces.

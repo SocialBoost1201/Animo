@@ -339,8 +339,8 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       {/* ── Page Header ─────────────────────────────────────────────────── */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 py-2">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif uppercase">Operation Dashboard</h1>
-          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日確認承認・来店予定確認・営業状況生成ハブ</p>
+          <h1 className="text-2xl font-bold text-[#f4f1ea] tracking-tight font-serif">本日の営業状況</h1>
+          <p className="text-[11px] font-bold tracking-[2px] text-[#8a8478] uppercase">当日確認・来店予定・営業状況の確認</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
@@ -354,7 +354,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             className="group relative flex items-center gap-2 px-6 py-2.5 bg-gold rounded-sm text-[11px] font-bold text-black tracking-[2px] uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
           >
             <Plus size={14} strokeWidth={3} />
-            Check Reservations
+            来店予定を確認
           </button>
         </div>
       </div>
@@ -365,7 +365,7 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge color="gold">承認優先</Badge>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">Today Approval Queue</span>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-[#8a8478] uppercase">当日承認待ち</span>
               </div>
               <p className="text-[18px] font-bold text-[#f4f1ea] tracking-tight">
                 承認待ちの当日提出があります。内容確認後に承認し、本日の営業状況へ反映してください。
@@ -415,16 +415,16 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <OperationPhaseCard label="Morning" title="朝の確認">
+        <OperationPhaseCard label="朝" title="朝の確認">
           未確認 {dashboardData.unconfirmedCasts.length}名 / 承認待ち {pendingApprovalCount}件を確認
         </OperationPhaseCard>
-        <OperationPhaseCard label="Pre-opening" title="開店前確認" tone={dashboardData.reservations.some((reservation) => isPreOpeningReservationTime(reservation.visit_time)) ? 'risk' : 'default'}>
+        <OperationPhaseCard label="開店前" title="開店前確認" tone={dashboardData.reservations.some((reservation) => isPreOpeningReservationTime(reservation.visit_time)) ? 'risk' : 'default'}>
           {PROTECTED_OPERATION_WINDOW_LABEL} の出勤、体入、20:00 / 20:30 予約リスクを確認
         </OperationPhaseCard>
-        <OperationPhaseCard label="During" title="営業中">
+        <OperationPhaseCard label="営業中" title="営業中">
           来店予定 {dashboardData.reservations.length}件 / 同伴 {douhanCount}件を確認
         </OperationPhaseCard>
-        <OperationPhaseCard label="Closing" title="締め確認">
+        <OperationPhaseCard label="締め" title="締め確認">
           スタッフ {dashboardData.staffAttendances.length}名 / 当日変更 {dashboardData.shiftChanges.length}件を確認
         </OperationPhaseCard>
       </div>
