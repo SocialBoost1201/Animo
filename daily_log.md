@@ -206,5 +206,5 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 - scope: Hardened the mobile admin sidebar toggle by applying transform and pointer-events directly from `mobileOpen`, avoiding reliance on generated translate utility classes for the open/closed state.
 - files changed: `components/layouts/AdminLayout.tsx`, `daily_log.md`.
-- validation: Targeted eslint and `tsc --noEmit` passed for the admin layout change; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed.
-- remaining risks: Authenticated browser smoke is still required in the live admin session to confirm the mobile menu opens and closes on the deployed preview.
+- validation: Targeted eslint and `tsc --noEmit` passed for the admin layout change; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed; authenticated local browser smoke at `390x844` confirmed the mobile sidebar moves from `x=-260` hidden to `x=0` visible after tapping `メニューを開く`, with `/tmp/animo-sidebar-after-open.png` captured.
+- remaining risks: Deployed preview smoke is still recommended after Vercel finishes building the latest PR commit.
