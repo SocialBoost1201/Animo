@@ -2,8 +2,6 @@ import { redirect } from 'next/navigation';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getCastTodayCheckin, getCastTodayReservations, getTodaySubmissionState } from '@/lib/actions/today';
 import { createClient } from '@/lib/supabase/server';
-import { CheckinForm } from '@/components/features/today/CheckinForm';
-import { ReservationForm } from '@/components/features/today/ReservationForm';
 import {
   CastMobileBackLink,
   CastMobileCard,
@@ -11,6 +9,7 @@ import {
   CastMobileShell,
   CastMobileSectionTitle,
 } from '@/components/features/cast/CastMobileShell';
+import { CastTodayClientShell } from '@/components/features/today/CastTodayClientShell';
 import { getJstDateString, formatShiftTime } from '@/lib/date-utils';
 import { isMasterAccount } from '@/lib/config/master';
 
@@ -30,7 +29,6 @@ export default async function CastTodayPage() {
   const supabase = await createClient();
   const today = getJstDateString();
 
-  // auth user の email を取得（master 判定に使用）
   const { data: { user } } = await supabase.auth.getUser();
   const isMaster = isMasterAccount(user?.email);
 
@@ -42,14 +40,11 @@ export default async function CastTodayPage() {
 
   const submissionState = await getTodaySubmissionState();
 
-  // マスターアカウントは締切後でも編集可能
   const isSubmissionClosed = submissionState.isClosed && !isMaster;
-  // マスターが締切後にアクセスしている場合にバナーを出す
   const isMasterOverride = isMaster && submissionState.isClosed;
 
   const allReservations = (todayReservations || []) as CastDashboardReservationRow[];
 
-  // 同伴と通常来店予定を分離
   const douhanReservationRaw = allReservations.find(r => r.reservation_type === 'douhan') ?? null;
   const normalReservations = allReservations
     .filter(r => r.reservation_type === 'reservation')
@@ -82,32 +77,33 @@ export default async function CastTodayPage() {
           description="出勤確認・同伴情報・来店予定をまとめて送信します。"
         />
 
-        <CastMobileCard className="px-5 py-4">
-          <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">Today&apos;s Schedule</div>
-          <div className="mt-3 text-base font-bold text-[#f7f4ed]">
-            {todayShift
-              ? formatShiftTime(todayShift.start_time, todayShift.end_time)
-              : '本日の出勤予定はありません'}
+        {/* ⑤ 修正: padding を card 内コンテンツ側に移し、ベゼル 1px が正しく表示されるようにする */}
+        <CastMobileCard>
+          <div className="px-5 py-4">
+            <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">Today&apos;s Schedule</div>
+            <div className="mt-3 text-base font-bold text-[#f7f4ed]">
+              {todayShift
+                ? formatShiftTime(todayShift.start_time, todayShift.end_time)
+                : '本日の出勤予定はありません'}
+            </div>
           </div>
         </CastMobileCard>
 
-        {/* ── 01: 出勤確認（同伴フォーム内包）── */}
+        {/* ── 01 + 02 統合フォームシェル ── */}
         <div className="[&_input]:bg-[#10141d] [&_input]:text-[#f7f4ed] [&_select]:bg-[#10141d] [&_select]:text-[#f7f4ed] [&_textarea]:bg-[#10141d] [&_textarea]:text-[#f7f4ed]">
-          <CheckinForm
-            existing={todayCheckin}
-            existingDouhan={existingDouhan}
-            isSubmissionClosed={isSubmissionClosed}
-            deadlineLabel={submissionState.deadlineLabel}
-            isMasterOverride={isMasterOverride}
-          />
-        </div>
-
-        {/* ── 02: 通常来店予定（任意・複数可）── */}
-        <div className="[&_input]:bg-[#10141d] [&_input]:text-[#f7f4ed] [&_select]:bg-[#10141d] [&_select]:text-[#f7f4ed] [&_textarea]:bg-[#10141d] [&_textarea]:text-[#f7f4ed]">
-          <ReservationForm
-            reservations={normalReservations}
-            isSubmissionClosed={isSubmissionClosed}
-            deadlineLabel={submissionState.deadlineLabel}
+          <CastTodayClientShell
+            checkinProps={{
+              existing: todayCheckin,
+              existingDouhan,
+              isSubmissionClosed,
+              deadlineLabel: submissionState.deadlineLabel,
+              isMasterOverride,
+            }}
+            reservationProps={{
+              reservations: normalReservations,
+              isSubmissionClosed,
+              deadlineLabel: submissionState.deadlineLabel,
+            }}
           />
         </div>
       </main>
