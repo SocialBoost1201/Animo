@@ -81,6 +81,18 @@ export const SystemPriceGrid = () => {
             </li>
           </ul>
 
+          <div className="mt-10 border border-gold/30 bg-gold/10 px-5 py-4 text-center">
+            <p className="text-[10px] font-serif uppercase luxury-tracking text-gold mb-2">
+              Credit Card Payment
+            </p>
+            <p className="text-base md:text-lg font-serif luxury-tracking text-foreground">
+              クレジットカード払いの追加手数料はございません
+            </p>
+            <p className="mt-2 text-xs text-gray-500 font-serif leading-relaxed">
+              現金払いと同じ料金で安心してご利用いただけます。
+            </p>
+          </div>
+
           <div className="mt-12 text-center text-xs text-gray-500 font-serif leading-[2] luxury-tracking space-y-1">
             <p>※1,000円単位の端数は500円以下切り下げ、501円以上切り上げとなります。</p>
             <p>※クレジットカード払いによる追加手数料はございません。</p>

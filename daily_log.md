@@ -5,6 +5,13 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-06 (credit-card fee emphasis)
+
+- scope: Prominently surfaced the no-extra-credit-card-fee policy on the public pricing system and simulator surfaces.
+- files changed: `components/features/system/SystemPriceGrid.tsx`, `components/features/system/PriceSimulator.tsx`, `daily_log.md`.
+- validation: targeted eslint passed; `./node_modules/.bin/tsc --noEmit` passed; `git diff --check` passed; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed; local `next start` smoke confirmed `/system` 200, `/` 200, and rendered the credit-card no-fee copy in HTML.
+- remaining risks: Visual browser review on production/preview is still recommended.
+
 ### 2026-05-06 (PR #54 audit follow-up)
 
 - scope: Addressed Antigravity PR #54 findings and the store pricing clarification: removed the oversized `DashboardTodayOps` link wrapper, corrected tax/service example amounts, changed public simulators to 500円以下切り下げ / 501円以上切り上げ, added no-extra-credit-card-fee copy, and documented the check-in approval-reset guard.
