@@ -37,7 +37,7 @@ const NAV_ITEMS = [
   { href: '/admin/analytics',          icon: BarChart2,       label: 'サイト分析',     section: 'content' },
 
   // ── SYSTEM ────────────────────────────────────────────────────────────────
-  { href: '/admin/settings',           icon: Settings,        label: '設定・デザイン', section: 'system', roles: ['owner', 'manager'] },
+  { href: '/admin/settings',           icon: Settings,        label: '設定・デザイン', section: 'system' },
   { href: '/admin/manual',             icon: BookOpen,        label: '操作マニュアル', section: 'system' },
 ];
 

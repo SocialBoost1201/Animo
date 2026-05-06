@@ -13,6 +13,7 @@ import {
 } from '@/lib/actions/admin-shifts'
 import { updateCastPostStatus } from '@/lib/actions/cast-posts'
 import { revalidatePath } from 'next/cache'
+import { UserCheck, Calendar, FileText, Clock } from 'lucide-react'
 
 type CastPostPending = {
   id: string
@@ -375,142 +376,303 @@ export default async function AdminApprovalsPage({
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-lg font-semibold">承認一覧</h1>
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-180px)]">
-        <section className="min-h-0 space-y-3 rounded border p-3 xl:overflow-y-auto">
-          <h2 className="text-sm font-semibold">本日の出勤 / 来店予定</h2>
+    <div className="font-sans space-y-5">
+      {/* Page Header */}
+      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#ffffff08]">
+        <div>
+          <h1 className="text-[17px] font-bold text-[#f4f1ea] tracking-tight leading-tight">承認ハブ</h1>
+          <p className="text-[12px] text-[#8a8478] mt-0.5 leading-relaxed tracking-[0.1px] opacity-70">
+            出勤・来店予定・シフト・ブログの承認を一元管理
+          </p>
+        </div>
+        {lane1Urgency !== 'normal' && (
+          <span className={`rounded-[7px] px-3 py-1.5 text-[11px] font-bold border ${
+            lane1Urgency === 'danger'
+              ? 'bg-[#c882321a] text-[#c8884d] border-[#c8823226]'
+              : 'bg-[#dfbd691a] text-[#dfbd69] border-[#dfbd6926]'
+          }`}>
+            {lane1Urgency === 'danger' ? '18:45 期限超過' : '締切間近'}
+          </span>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <p className="text-xs font-medium">出勤承認待ち ({visibleCheckins.length})</p>
-            {visibleCheckins.map((checkin) => (
-              <article key={checkin.id} className="space-y-2 rounded border p-3 text-sm">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] text-muted-foreground">18:45締切</span>
-                  {lane1Badge ? (
-                    <span className={`rounded px-2 py-0.5 text-[10px] font-medium ${lane1Badge.className}`}>
-                      {lane1Badge.label}
-                    </span>
-                  ) : null}
+      {/* Three-column grid */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-200px)]">
+
+        {/* ── Column 1: 出勤 + 来店予定 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <UserCheck size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
                 </div>
-                <p className="font-medium">{checkin.stage_name}</p>
-                <p>欠勤: {checkin.is_absent ? 'あり' : 'なし'}</p>
-                <p>変更: {checkin.has_change ? checkin.change_note || 'あり' : 'なし'}</p>
-                {checkin.memo ? <p>メモ: {checkin.memo}</p> : null}
-                <div className="flex gap-2">
-                  <form action={approveCheckinAction}>
-                    <input type="hidden" name="id" value={checkin.id} />
-                    <button type="submit" className="rounded border px-2 py-1 text-xs">
-                      承認
-                    </button>
-                  </form>
-                  <form action={rejectCheckinAction}>
-                    <input type="hidden" name="id" value={checkin.id} />
-                    <button type="submit" className="rounded border px-2 py-1 text-xs">
-                      却下
-                    </button>
-                  </form>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">本日の出勤 / 来店予定</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">18:45締切</p>
                 </div>
-              </article>
-            ))}
+              </div>
+              {(visibleCheckins.length + visibleReservations.length) > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {visibleCheckins.length + visibleReservations.length}
+                </span>
+              )}
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-5">
+              {/* Checkins */}
+              {showCheckins && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] font-bold tracking-[1.4px] uppercase text-[#8a8478]">出勤承認待ち</p>
+                    {visibleCheckins.length > 0 && (
+                      <span className="text-[9px] bg-[#ffffff0a] text-[#8a8478] rounded px-1.5 py-0.5">{visibleCheckins.length}件</span>
+                    )}
+                  </div>
+                  {visibleCheckins.length === 0 ? (
+                    <p className="text-[12px] text-[#5a5650] py-4 text-center">承認待ちなし</p>
+                  ) : visibleCheckins.map((checkin) => (
+                    <article key={checkin.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <Clock size={10} className="text-[#5a5650]" />
+                          <span className="text-[10px] text-[#5a5650]">18:45締切</span>
+                        </div>
+                        {lane1Badge && (
+                          <span className={`rounded-[5px] px-2 py-0.5 text-[9px] font-bold ${lane1Badge.className}`}>
+                            {lane1Badge.label}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[14px] font-bold text-[#f4f1ea] leading-tight">{checkin.stage_name}</p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-[#5a5650] w-8 shrink-0">欠勤</span>
+                          <span className={`text-[11px] font-medium ${checkin.is_absent ? 'text-[#c8884d]' : 'text-[#8a8478]'}`}>
+                            {checkin.is_absent ? 'あり' : 'なし'}
+                          </span>
+                        </div>
+                        {checkin.has_change && (
+                          <div className="flex items-start gap-2">
+                            <span className="text-[10px] text-[#5a5650] w-8 shrink-0">変更</span>
+                            <span className="text-[11px] text-[#dfbd69]">{checkin.change_note || 'あり'}</span>
+                          </div>
+                        )}
+                        {checkin.memo && (
+                          <div className="flex items-start gap-2">
+                            <span className="text-[10px] text-[#5a5650] w-8 shrink-0">メモ</span>
+                            <span className="text-[11px] text-[#8a8478]">{checkin.memo}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2 pt-0.5">
+                        <form action={approveCheckinAction} className="flex-1">
+                          <input type="hidden" name="id" value={checkin.id} />
+                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
+                            承認
+                          </button>
+                        </form>
+                        <form action={rejectCheckinAction} className="flex-1">
+                          <input type="hidden" name="id" value={checkin.id} />
+                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
+                            却下
+                          </button>
+                        </form>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+
+              {/* Reservations */}
+              {showReservations && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] font-bold tracking-[1.4px] uppercase text-[#8a8478]">来店予定承認待ち</p>
+                    {visibleReservations.length > 0 && (
+                      <span className="text-[9px] bg-[#ffffff0a] text-[#8a8478] rounded px-1.5 py-0.5">{visibleReservations.length}件</span>
+                    )}
+                  </div>
+                  {visibleReservations.length === 0 ? (
+                    <p className="text-[12px] text-[#5a5650] py-4 text-center">承認待ちなし</p>
+                  ) : visibleReservations.map((reservation) => (
+                    <article key={reservation.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <Clock size={10} className="text-[#5a5650]" />
+                          <span className="text-[10px] text-[#5a5650]">18:45締切</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {reservation.reservation_type === 'douhan' && (
+                            <span className="rounded-[5px] px-2 py-0.5 text-[9px] font-bold bg-[#dfbd691a] text-[#dfbd69] border border-[#dfbd6915]">同伴</span>
+                          )}
+                          {lane1Badge && (
+                            <span className={`rounded-[5px] px-2 py-0.5 text-[9px] font-bold ${lane1Badge.className}`}>
+                              {lane1Badge.label}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-[14px] font-bold text-[#f4f1ea] leading-tight">{reservation.stage_name}</p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-[#5a5650] w-10 shrink-0">来店</span>
+                          <span className="text-[11px] text-[#c7c0b2]">{reservation.visit_time.slice(0, 5)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-[#5a5650] w-10 shrink-0">ゲスト</span>
+                          <span className="text-[11px] text-[#c7c0b2]">{reservation.guest_name}</span>
+                        </div>
+                        {reservation.note && (
+                          <div className="flex items-start gap-2">
+                            <span className="text-[10px] text-[#5a5650] w-10 shrink-0">メモ</span>
+                            <span className="text-[11px] text-[#8a8478]">{reservation.note}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2 pt-0.5">
+                        <form action={approveReservationAction} className="flex-1">
+                          <input type="hidden" name="id" value={reservation.id} />
+                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
+                            承認
+                          </button>
+                        </form>
+                        <form action={rejectReservationAction} className="flex-1">
+                          <input type="hidden" name="id" value={reservation.id} />
+                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
+                            却下
+                          </button>
+                        </form>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <p className="text-xs font-medium">来店予定承認待ち ({visibleReservations.length})</p>
-            {visibleReservations.map((reservation) => (
-              <article key={reservation.id} className="space-y-2 rounded border p-3 text-sm">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] text-muted-foreground">18:45締切</span>
-                  {lane1Badge ? (
-                    <span className={`rounded px-2 py-0.5 text-[10px] font-medium ${lane1Badge.className}`}>
-                      {lane1Badge.label}
-                    </span>
-                  ) : null}
+        {/* ── Column 2: シフト承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <Calendar size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
                 </div>
-                <p className="font-medium">{reservation.stage_name}</p>
-                <p>
-                  {reservation.visit_time.slice(0, 5)} / {reservation.guest_name}
-                </p>
-                <p>種別: {reservation.reservation_type === 'douhan' ? '同伴' : '来店予定'}</p>
-                {reservation.note ? <p>メモ: {reservation.note}</p> : null}
-                <div className="flex gap-2">
-                  <form action={approveReservationAction}>
-                    <input type="hidden" name="id" value={reservation.id} />
-                    <button type="submit" className="rounded border px-2 py-1 text-xs">
-                      承認
-                    </button>
-                  </form>
-                  <form action={rejectReservationAction}>
-                    <input type="hidden" name="id" value={reservation.id} />
-                    <button type="submit" className="rounded border px-2 py-1 text-xs">
-                      却下
-                    </button>
-                  </form>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">シフト承認</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">土曜21:00締切</p>
                 </div>
-              </article>
-            ))}
+              </div>
+              {visibleShiftSubmissions.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {visibleShiftSubmissions.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {visibleShiftSubmissions.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちのシフトなし</p>
+                </div>
+              ) : visibleShiftSubmissions.map((submission) => (
+                <article key={submission.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={10} className="text-[#5a5650]" />
+                      <span className="text-[10px] text-[#5a5650]">土曜21:00締切</span>
+                    </div>
+                    {shiftBadge && (
+                      <span className={`rounded-[5px] px-2 py-0.5 text-[9px] font-bold ${shiftBadge.className}`}>
+                        {shiftBadge.label}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[14px] font-bold text-[#f4f1ea] leading-tight">{submission.casts.stage_name}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">対象週</span>
+                      <span className="text-[11px] text-[#c7c0b2]">{submission.target_week_monday}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">シフト</span>
+                      <span className="text-[11px] text-[#8a8478] leading-relaxed">{formatShiftSummary(submission.shifts_data)}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-0.5">
+                    <form action={approveShiftAction} className="flex-1">
+                      <input type="hidden" name="id" value={submission.id} />
+                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
+                        承認
+                      </button>
+                    </form>
+                    <form action={rejectShiftAction} className="flex-1">
+                      <input type="hidden" name="id" value={submission.id} />
+                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
+                        却下
+                      </button>
+                    </form>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
-        </section>
+        </div>
 
-        <section className="min-h-0 space-y-3 rounded border p-3 xl:overflow-y-auto">
-          <h2 className="text-sm font-semibold">シフト承認</h2>
-          <p className="text-xs">承認待ち: {visibleShiftSubmissions.length}</p>
-          {visibleShiftSubmissions.map((submission) => (
-            <article key={submission.id} className="space-y-2 rounded border p-3 text-sm">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] text-muted-foreground">土曜21:00締切</span>
-                {shiftBadge ? (
-                  <span className={`rounded px-2 py-0.5 text-[10px] font-medium ${shiftBadge.className}`}>
-                    {shiftBadge.label}
-                  </span>
-                ) : null}
+        {/* ── Column 3: ブログ承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <FileText size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">ブログ承認</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">公開前審査</p>
+                </div>
               </div>
-              <p className="font-medium">{submission.casts.stage_name}</p>
-              <p>対象週: {submission.target_week_monday}</p>
-              <p>{formatShiftSummary(submission.shifts_data)}</p>
-              <div className="flex gap-2">
-                <form action={approveShiftAction}>
-                  <input type="hidden" name="id" value={submission.id} />
-                  <button type="submit" className="rounded border px-2 py-1 text-xs">
-                    承認
-                  </button>
-                </form>
-                <form action={rejectShiftAction}>
-                  <input type="hidden" name="id" value={submission.id} />
-                  <button type="submit" className="rounded border px-2 py-1 text-xs">
-                    却下
-                  </button>
-                </form>
-              </div>
-            </article>
-          ))}
-        </section>
+              {visibleCastPosts.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {visibleCastPosts.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {visibleCastPosts.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちの投稿なし</p>
+                </div>
+              ) : visibleCastPosts.map((post) => (
+                <article key={post.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[13px] font-bold text-[#f4f1ea]">{getCastName(post.casts)}</p>
+                    <span className="text-[10px] text-[#5a5650] shrink-0">
+                      {new Date(post.created_at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-[#8a8478] leading-relaxed line-clamp-4">{post.content}</p>
+                  <div className="flex gap-2 pt-0.5">
+                    <form action={approvePostAction} className="flex-1">
+                      <input type="hidden" name="id" value={post.id} />
+                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">
+                        承認
+                      </button>
+                    </form>
+                    <form action={rejectPostAction} className="flex-1">
+                      <input type="hidden" name="id" value={post.id} />
+                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">
+                        却下
+                      </button>
+                    </form>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
 
-        <section className="min-h-0 space-y-3 rounded border p-3 xl:overflow-y-auto">
-          <h2 className="text-sm font-semibold">その他承認（ブログ）</h2>
-          <p className="text-xs">承認待ち: {visibleCastPosts.length}</p>
-          {visibleCastPosts.map((post) => (
-            <article key={post.id} className="space-y-2 rounded border p-3 text-sm">
-              <p className="font-medium">{getCastName(post.casts)}</p>
-              <p>{post.content}</p>
-              <p className="text-xs">{new Date(post.created_at).toLocaleString('ja-JP')}</p>
-              <div className="flex gap-2">
-                <form action={approvePostAction}>
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" className="rounded border px-2 py-1 text-xs">
-                    承認
-                  </button>
-                </form>
-                <form action={rejectPostAction}>
-                  <input type="hidden" name="id" value={post.id} />
-                  <button type="submit" className="rounded border px-2 py-1 text-xs">
-                    却下
-                  </button>
-                </form>
-              </div>
-            </article>
-          ))}
-        </section>
       </div>
     </div>
   )
