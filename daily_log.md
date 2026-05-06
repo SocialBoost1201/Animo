@@ -201,3 +201,10 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `PLANS.md`, `daily_log.md`.
 - validation: Production login succeeded with mobile viewport `390x844`; `/admin/today` links `来店予定を追加` / `詳細を表示` / `今日` navigated correctly; `本日の営業状況`, `キャスト管理`, and `体入・応募運用開始待ち—` did not navigate within timeout and stayed on `/admin/dashboard`; mobile menu button showed no change in visible admin link count before/after click.
 - remaining risks: Broken mobile dashboard links remain on production and need a separate minimal fix plan; no source validation commands were run because this turn was verification-only.
+
+### 2026-05-07 (mobile admin sidebar hardening)
+
+- scope: Hardened the mobile admin sidebar toggle by applying transform and pointer-events directly from `mobileOpen`, avoiding reliance on generated translate utility classes for the open/closed state.
+- files changed: `components/layouts/AdminLayout.tsx`, `daily_log.md`.
+- validation: Targeted eslint and `tsc --noEmit` passed for the admin layout change; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed.
+- remaining risks: Authenticated browser smoke is still required in the live admin session to confirm the mobile menu opens and closes on the deployed preview.

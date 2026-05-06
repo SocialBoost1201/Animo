@@ -333,9 +333,12 @@ function AdminLayoutInner({
       ) : null}
       <aside
         onClickCapture={handleMobileSidebarClickCapture}
-        className={`fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        aria-hidden={!mobileOpen}
+        className="fixed top-0 left-0 h-full w-[260px] z-50 md:hidden transition-transform duration-300 ease-out"
+        style={{
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+          pointerEvents: mobileOpen ? 'auto' : 'none',
+        }}
       >
         {renderSidebarContent()}
       </aside>
