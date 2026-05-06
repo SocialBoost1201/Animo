@@ -5,6 +5,13 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-07 (highest design-change rule)
+
+- scope: Added the highest-priority agent rule that no design changes may be made unless the master explicitly requests the specific design change.
+- files changed: `AGENTS.md`, `daily_log.md`.
+- validation: Markdown diff reviewed; no code validation required for docs-only rule update.
+- remaining risks: Existing unrelated dirty working-tree files remain outside this docs-only scope.
+
 ### 2026-05-07 (admin sidebar and today route rollback)
 
 - scope: Restored the dashboard today card to a non-navigating summary and removed the unapproved `Operational Dashboard` English surface from `/admin/today`; confirmed PR branch keeps the existing mainline AdminLayout sidebar implementation.

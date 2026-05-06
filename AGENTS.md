@@ -1,5 +1,13 @@
 # AGENTS.md — Animo
 
+## Highest Priority Design Change Rule
+
+- Do not change design unless the master explicitly requests that specific design change.
+- "Design" includes layout, spacing, typography, colors, labels, copy tone, animations, interactions, navigation structure, page structure, cards, buttons, sidebars, dashboards, and visual hierarchy.
+- Bug fixes, route fixes, data fixes, security fixes, and performance fixes must preserve the existing design exactly unless the master explicitly approves a design change.
+- If an implementation appears to require any design change, stop before editing and ask the master for approval.
+- Agents must not reinterpret operational fixes as permission to redesign UI.
+
 ## Implementation Plan Contract
 
 For any project startup, complex change, or multi-step implementation, the agent must follow `PLANS.md`.
