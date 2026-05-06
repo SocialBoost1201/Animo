@@ -910,7 +910,8 @@ export async function approveCheckin(id: string) {
   if (error) return { success: false as const, error: error.message }
 
   // 手動オーバーライドがない場合のみ出勤を公開表示へ反映
-  const { data: existing } = await supabase
+  const serviceSupabase = createServiceClient()
+  const { data: existing } = await serviceSupabase
     .from('daily_cast_attendance')
     .select('source')
     .eq('cast_id', checkin.cast_id)
@@ -918,13 +919,13 @@ export async function approveCheckin(id: string) {
     .maybeSingle()
 
   if (!existing || existing.source !== 'manual') {
-    await supabase
+    await serviceSupabase
       .from('daily_cast_attendance')
       .upsert(
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'working', source: 'checkin_approved', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await supabase.from('casts').update({ is_today: true }).eq('id', checkin.cast_id)
+    await serviceSupabase.from('casts').update({ is_today: true }).eq('id', checkin.cast_id)
   }
 
   revalidatePath('/admin/today')
@@ -960,7 +961,8 @@ export async function rejectCheckin(id: string) {
   if (error) return { success: false as const, error: error.message }
 
   // 手動オーバーライドがない場合のみ欠勤を公開表示へ反映
-  const { data: existing } = await supabase
+  const serviceSupabase = createServiceClient()
+  const { data: existing } = await serviceSupabase
     .from('daily_cast_attendance')
     .select('source')
     .eq('cast_id', checkin.cast_id)
@@ -968,13 +970,13 @@ export async function rejectCheckin(id: string) {
     .maybeSingle()
 
   if (!existing || existing.source !== 'manual') {
-    await supabase
+    await serviceSupabase
       .from('daily_cast_attendance')
       .upsert(
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'absent', source: 'checkin_rejected', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await supabase.from('casts').update({ is_today: false }).eq('id', checkin.cast_id)
+    await serviceSupabase.from('casts').update({ is_today: false }).eq('id', checkin.cast_id)
   }
 
   revalidatePath('/admin/today')
@@ -1078,8 +1080,9 @@ export async function updateDailyCastAttendance(input: {
   if (!isAdminLoginRole(role)) return { success: false, error: 'Forbidden' }
 
   const today = getJstDateString()
+  const serviceSupabase = createServiceClient()
 
-  const { error } = await supabase
+  const { error } = await serviceSupabase
     .from('daily_cast_attendance')
     .upsert(
       {
