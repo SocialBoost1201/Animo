@@ -82,6 +82,8 @@ export const SystemPriceGrid = () => {
           </ul>
 
           <div className="mt-12 text-center text-xs text-gray-500 font-serif leading-[2] luxury-tracking space-y-1">
+            <p>※1,000円単位の端数は500円以下切り下げ、501円以上切り上げとなります。</p>
+            <p>※クレジットカード払いによる追加手数料はございません。</p>
             <p>※当店は自動延長制となっております。</p>
             <p>※キャストドリンク代・ボトル代等は含まれておりません。</p>
           </div>

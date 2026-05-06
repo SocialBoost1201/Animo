@@ -143,7 +143,7 @@ export default function GuidePage() {
               </div>
             </div>
             <p className="text-xs text-gray-400 text-center mt-6 font-serif luxury-tracking">
-              ※ 上記に消費税10%加算後、サービス料20%が加算されます。指名料・延長料は別途。
+              ※ 上記に消費税10%加算後、サービス料20%が加算されます。端数は500円以下切り下げ、501円以上切り上げ。クレジットカード払いによる追加手数料はございません。
             </p>
             <div className="text-center mt-8">
               <Button asChild variant="outline">

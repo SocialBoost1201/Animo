@@ -5,6 +5,13 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-06 (PR #54 audit follow-up)
+
+- scope: Addressed Antigravity PR #54 findings and the store pricing clarification: removed the oversized `DashboardTodayOps` link wrapper, corrected tax/service example amounts, changed public simulators to 500円以下切り下げ / 501円以上切り上げ, added no-extra-credit-card-fee copy, and documented the check-in approval-reset guard.
+- files changed: `PLANS.md`, `components/features/admin/dashboard/DashboardTodayOps.tsx`, `app/(public)/page.tsx`, `app/(public)/guide/page.tsx`, `components/features/system/PriceSimulator.tsx`, `components/features/system/SystemPriceGrid.tsx`, `components/features/shift/ShiftTable.tsx`, `lib/actions/today.ts`, `daily_log.md`.
+- validation: targeted eslint passed with 0 errors and one existing `guide/page.tsx` warning; `./node_modules/.bin/tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed; local `next start` smoke confirmed `/` 200, `/system` 200, `/guide` 200, `/admin/dashboard` 307 to `/admin/login`, `/shift` 308 to `/#today-cast`, unauthenticated `/api/line` 401, and rendered pricing/credit-fee copy.
+- remaining risks: Authenticated admin browser click smoke is still pending.
+
 ### 2026-05-06 (final stabilization P0/P1 batches)
 
 - scope: Closed the unauthenticated LINE group test endpoint, fixed critical admin dashboard/link route issues, aligned dashboard operational data to manager-approved submissions, and corrected public pricing/CTA consistency for the business rule `subtotal × 1.1 × 1.2`.
