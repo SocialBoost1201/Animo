@@ -71,9 +71,8 @@ export const PriceSimulator = () => {
     // 5. TAX 10% then service charge 20%: subtotal × 1.1 × 1.2 = ×1.32
     const totalWithTax = Math.round(subTotal * 1.32);
 
-    // 6. 1000円単位で丸め（500円以下切り下げ、501円以上切り上げ）
-    const remainder = totalWithTax % 1000;
-    const roundedTotal = totalWithTax - remainder + (remainder > 500 ? 1000 : 0);
+    // 6. 1000円単位で丸め（500円以上切り上げ、499円以下切り下げ）
+    const roundedTotal = Math.round(totalWithTax / 1000) * 1000;
 
     return roundedTotal;
   }, [customerType, duration, nomination]);
@@ -136,18 +135,8 @@ export const PriceSimulator = () => {
               </motion.span>
             </AnimatePresence>
           </div>
-          <div className="mx-auto mb-8 max-w-xl border border-gold/30 bg-white/50 px-5 py-4 text-center shadow-aura">
-            <p className="text-[10px] font-serif uppercase luxury-tracking text-gold mb-2">
-              Credit Card Payment
-            </p>
-            <p className="text-sm md:text-base font-serif luxury-tracking text-foreground">
-              クレジットカード払いでも追加手数料はかかりません
-            </p>
-          </div>
           <p className="text-xs md:text-xs text-gray-400 font-serif option-tracking leading-loose mb-12">
             ※ 消費税10%加算後、サービス料20%を加算した金額です。<br />
-            ※ 1,000円単位の端数は500円以下切り下げ、501円以上切り上げとなります。<br />
-            ※ クレジットカード払いによる追加手数料はございません。<br />
             ※ キャストドリンク代やボトルの別注文料金は含まれておりません。<br />
             ※ あくまで目安料金となりますので、あらかじめご了承ください。
           </p>

@@ -79,7 +79,7 @@ export async function DashboardKPIs() {
       icon: UserPlus,
       iconBg: 'bg-[#dfbd691a]',
       iconColor: 'text-[#dfbd69]',
-      href: '/admin/approvals?view=posts',
+      href: '/admin/applications',
       badge: kpi.unreadApplications > 0
         ? { label: `+${kpi.unreadApplications}`, bg: 'bg-[#50a0641a]', textColor: 'text-[#72b894]' }
         : null,

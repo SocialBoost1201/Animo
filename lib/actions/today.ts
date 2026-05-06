@@ -645,7 +645,6 @@ export async function submitCheckin(formData: FormData) {
       change_note: changeNote,
       is_absent: isAbsent,
       memo: memo,
-      // Approved rows return above, so only new/pending resubmissions are reset for manager approval.
       approval_status: 'pending',
       approved_at: null,
       approved_by: null,

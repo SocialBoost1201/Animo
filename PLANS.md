@@ -21,7 +21,6 @@ Do not load full logs unless explicitly instructed.
 - **Batch 3 data truthfulness:** [x] Ensure dashboard operational numbers reflect approved cast submissions/reservations and current published post status.
 - **Batch 4 public CTA/pricing:** [x] Fix `#today-cast` target and align pricing copy to tax/service business rule.
 - **Batch 5 validation/logging:** [x] `pnpm lint`, targeted eslint, `tsc --noEmit`, `git diff --check`, and `next build` passed after local SWC recovery and network-enabled Google Fonts fetch.
-- **Audit follow-up:** [x] Address Antigravity PR #54 findings: replace the oversized `DashboardTodayOps` link wrapper, align pricing examples and simulator rounding to 500円以下切り下げ / 501円以上切り上げ, document no extra credit-card fee, and add a guard comment for check-in approval reset.
 
 ### /admin/today Phase 1 operation time foundation (2026-05-03)
 

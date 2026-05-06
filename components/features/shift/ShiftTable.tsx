@@ -20,8 +20,7 @@ function calcPrice(
   const ext = duration > 60 ? ((duration - 60) / 30) * EXTENSION_FEE : 0;
   const nom = NOM_FEE[nomination];
   const total = Math.round((base + ext + nom) * TAX_SERVICE_MULTIPLIER);
-  const remainder = total % 1000;
-  return total - remainder + (remainder > 500 ? 1000 : 0);
+  return Math.round(total / 1000) * 1000;
 }
 
 type CastData = {
@@ -125,7 +124,7 @@ function MiniSimulator({ castName }: { castName: string }) {
 
       <div className="flex items-center justify-between pt-3 border-t border-gold/20">
         <div>
-          <p className="text-xs text-gray-400 font-serif">料金目安（消費税10% + サービス料20%込・クレジット手数料なし）</p>
+          <p className="text-xs text-gray-400 font-serif">料金目安（消費税10% + サービス料20%込）</p>
           <p className="text-2xl font-serif text-[#171717]">
             ¥{price.toLocaleString()}
             <span className="text-xs text-gray-400 ml-1">前後</span>

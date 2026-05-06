@@ -1,4 +1,5 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
+import Link from 'next/link';
 import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus } from 'lucide-react';
 
@@ -40,7 +41,7 @@ export async function DashboardTodayOps() {
   ].filter(Boolean) as { tag: string; tagBg: string; tagText: string; cardBorder: string; content: string }[];
 
   return (
-    <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
+    <Link href="/admin/today" className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header row */}
       <div className="flex items-center justify-between px-6 h-[56px] border-b border-[#ffffff0f] shrink-0">
@@ -110,6 +111,6 @@ export async function DashboardTodayOps() {
         </div>
       </div>
       </div>
-    </div>
+    </Link>
   );
 }
