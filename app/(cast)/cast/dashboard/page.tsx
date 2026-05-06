@@ -153,7 +153,10 @@ export default async function CastDashboardPage() {
   ]);
 
   const reservationCount = todayReservations?.length ?? 0;
-  const hasBlogPost = Boolean(recentPosts && recentPosts.length > 0 && recentPosts[0]?.created_at?.startsWith(today));
+  const hasBlogPost = Boolean(
+    recentPosts?.[0]?.created_at &&
+    getJstDateString(new Date(recentPosts[0].created_at)) === today
+  );
   const todayStatusMeta = getTodayStatusMeta(todayCheckin?.approval_status ?? null);
   const weeklyShiftStatusMeta = getWeeklyShiftStatusMeta(shiftSubmission?.status ?? null);
 
@@ -198,16 +201,12 @@ export default async function CastDashboardPage() {
 
   return (
     <CastMobileShell>
-      <CastMobileHeader rightSlot={<CastMobileHeaderBell />} />
+      <CastMobileHeader rightSlot={<CastMobileHeaderBell hasUnread={unreadNotices.length > 0} />} />
 
       <main className="mx-auto flex min-h-[calc(100vh-108px)] w-full max-w-[422px] flex-col gap-4 px-4 pb-28 pt-5">
         <section className="space-y-3">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">
+          <div className="text-[10px] uppercase tracking-[0.12em] text-[#6b7280]">
             <span>{new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}</span>
-            <Link href="/cast/notices" className="relative flex h-6 w-6 items-center justify-center rounded-full text-[#8f96a3]">
-              <Bell className="h-4 w-4" />
-              {unreadNotices.length > 0 ? <span className="absolute right-0.5 top-1 h-1.5 w-1.5 rounded-full bg-[#e06a6a]" /> : null}
-            </Link>
           </div>
           <div>
             <h1 className="text-[22px] leading-[1.3] text-[#f7f4ed]">

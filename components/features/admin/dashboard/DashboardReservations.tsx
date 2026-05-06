@@ -73,8 +73,8 @@ export async function DashboardReservations() {
 
       {/* Table (Matching AnalyticsSectionSubsection:424-532) */}
       {reservations.length === 0 ? (
-        <div className="flex-1 p-5">
-          <DashboardEmptyState className="min-h-40 h-full" />
+        <div className="p-5">
+          <DashboardEmptyState className="min-h-[120px]" />
         </div>
       ) : (
       <>

@@ -93,8 +93,8 @@ export async function DashboardTodayShifts() {
 
         {/* Table */}
         {casts.length === 0 ? (
-          <div className="flex-1 p-5">
-            <DashboardEmptyState className="min-h-[200px] h-full" />
+          <div className="p-5">
+            <DashboardEmptyState className="min-h-[120px]" />
           </div>
         ) : (
           <>

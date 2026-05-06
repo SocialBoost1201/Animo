@@ -53,7 +53,13 @@ export function CastMobileHeader({ leftSlot, rightSlot }: CastMobileHeaderProps)
   );
 }
 
-export function CastMobileHeaderBell({ href = '/cast/notices' }: { href?: string }) {
+export function CastMobileHeaderBell({
+  href = '/cast/notices',
+  hasUnread = false,
+}: {
+  href?: string;
+  hasUnread?: boolean;
+}) {
   return (
     <Link
       href={href}
@@ -61,7 +67,7 @@ export function CastMobileHeaderBell({ href = '/cast/notices' }: { href?: string
       aria-label="お知らせ"
     >
       <Bell className="h-4 w-4" />
-      <span className="absolute right-0.5 top-1 h-1.5 w-1.5 rounded-full bg-[#e06a6a]" />
+      {hasUnread ? <span className="absolute right-0.5 top-1 h-1.5 w-1.5 rounded-full bg-[#e06a6a]" /> : null}
     </Link>
   );
 }

@@ -5,6 +5,27 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-07 (highest design-change rule)
+
+- scope: Added the highest-priority agent rule that no design changes may be made unless the master explicitly requests the specific design change.
+- files changed: `AGENTS.md`, `daily_log.md`.
+- validation: Markdown diff reviewed; no code validation required for docs-only rule update.
+- remaining risks: Existing unrelated dirty working-tree files remain outside this docs-only scope.
+
+### 2026-05-06 (credit-card fee emphasis)
+
+- scope: Prominently surfaced the no-extra-credit-card-fee policy on the public pricing system and simulator surfaces.
+- files changed: `components/features/system/SystemPriceGrid.tsx`, `components/features/system/PriceSimulator.tsx`, `daily_log.md`.
+- validation: targeted eslint passed; `./node_modules/.bin/tsc --noEmit` passed; `git diff --check` passed; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed; local `next start` smoke confirmed `/system` 200, `/` 200, and rendered the credit-card no-fee copy in HTML.
+- remaining risks: Visual browser review on production/preview is still recommended.
+
+### 2026-05-06 (PR #54 audit follow-up)
+
+- scope: Addressed Antigravity PR #54 findings and the store pricing clarification: removed the oversized `DashboardTodayOps` link wrapper, corrected tax/service example amounts, changed public simulators to 500円以下切り下げ / 501円以上切り上げ, added no-extra-credit-card-fee copy, and documented the check-in approval-reset guard.
+- files changed: `PLANS.md`, `components/features/admin/dashboard/DashboardTodayOps.tsx`, `app/(public)/page.tsx`, `app/(public)/guide/page.tsx`, `components/features/system/PriceSimulator.tsx`, `components/features/system/SystemPriceGrid.tsx`, `components/features/shift/ShiftTable.tsx`, `lib/actions/today.ts`, `daily_log.md`.
+- validation: targeted eslint passed with 0 errors and one existing `guide/page.tsx` warning; `./node_modules/.bin/tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed; local `next start` smoke confirmed `/` 200, `/system` 200, `/guide` 200, `/admin/dashboard` 307 to `/admin/login`, `/shift` 308 to `/#today-cast`, unauthenticated `/api/line` 401, and rendered pricing/credit-fee copy.
+- remaining risks: Authenticated admin browser click smoke is still pending.
+
 ### 2026-05-06 (final stabilization P0/P1 batches)
 
 - scope: Closed the unauthenticated LINE group test endpoint, fixed critical admin dashboard/link route issues, aligned dashboard operational data to manager-approved submissions, and corrected public pricing/CTA consistency for the business rule `subtotal × 1.1 × 1.2`.

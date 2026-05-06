@@ -10,10 +10,10 @@ const QUICK_ACTIONS = [
     accent: true,
   },
   {
-    href: '/admin/shift-requests',
+    href: '/admin/approvals',
     icon: Calendar,
-    label: '出勤調整',
-    sub: '承認・変更',
+    label: '承認ハブ',
+    sub: '承認・確認',
   },
   {
     href: '/admin/human-resources',
@@ -40,7 +40,7 @@ export function DashboardQuickActions() {
     <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 h-[56px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
+        <div className="flex items-center justify-between px-4 md:px-5 h-[56px] border-b-[0.56px] border-[#ffffff0f] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
               <Plus size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
@@ -61,7 +61,7 @@ export function DashboardQuickActions() {
                 key={action.href}
                 href={action.href}
                 prefetch={false}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 group ${
+                className={`group flex min-h-11 items-center gap-3 rounded-[10px] px-3 py-2.5 transition-all duration-150 ${
                   action.accent
                     ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
                     : 'text-[#8a8478] hover:bg-[#ffffff08] hover:text-[#f4f1ea]'

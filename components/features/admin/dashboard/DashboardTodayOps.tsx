@@ -1,5 +1,4 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
-import Link from 'next/link';
 import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus } from 'lucide-react';
 

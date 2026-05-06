@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
+import { formatProtectedOperationTime } from '@/lib/operation-hours'
 import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
 import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/staff-records'
@@ -405,13 +406,13 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
   if (activeCasts.length > 0 || data.dispatches.length > 0) {
     const groups: Record<string, string[]> = {}
     for (const cast of activeCasts) {
-      const time = cast.start_time.substring(0, 5)
+      const time = formatProtectedOperationTime(cast.start_time)
       if (!groups[time]) groups[time] = []
       groups[time].push(cast.stage_name)
     }
     // 派遣を同じ時間グループに追加
     for (const d of data.dispatches) {
-      const time = d.start_time.substring(0, 5)
+      const time = formatProtectedOperationTime(d.start_time)
       if (!groups[time]) groups[time] = []
       groups[time].push(`${d.name}（派遣）`)
     }
@@ -431,7 +432,7 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('')
     lines.push('体入')
     for (const t of data.trials) {
-      lines.push(`${t.name}（${t.start_time.substring(0, 5)}〜）`)
+      lines.push(`${t.name}（${formatProtectedOperationTime(t.start_time)}〜）`)
     }
   }
 
@@ -440,8 +441,8 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('')
     lines.push('スタッフ')
     for (const s of data.staffAttendances) {
-      const endTimeLabel = s.end_time ? s.end_time.substring(0, 5) : ''
-      lines.push(`${s.display_name}（${s.start_time.substring(0, 5)}〜${endTimeLabel}）`)
+      const endTimeLabel = s.end_time ? formatProtectedOperationTime(s.end_time) : ''
+      lines.push(`${s.display_name}（${formatProtectedOperationTime(s.start_time)}〜${endTimeLabel}）`)
     }
   }
 
@@ -451,8 +452,8 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('')
     lines.push('当日変更')
     for (const c of changes) {
-      const from = c.original_time ? c.original_time.substring(0, 5) : '?'
-      const to = c.new_time ? c.new_time.substring(0, 5) : '?'
+      const from = c.original_time ? formatProtectedOperationTime(c.original_time) : '?'
+      const to = c.new_time ? formatProtectedOperationTime(c.new_time) : '?'
       const noteStr = c.note ? `（${c.note}）` : ''
       lines.push(`${c.stage_name}（${from} → ${to}）${noteStr}`)
     }
@@ -481,7 +482,7 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     for (const r of data.reservations) {
       const typeLabel = r.reservation_type === 'douhan' ? '同伴' : '来店予定'
       const guestCountLabel = r.guest_count ? `　${r.guest_count}名` : ''
-      lines.push(`${r.visit_time.substring(0, 5)}　${r.stage_name}　${r.guest_name}様${guestCountLabel}　${typeLabel}`)
+      lines.push(`${formatProtectedOperationTime(r.visit_time)}　${r.stage_name}　${r.guest_name}様${guestCountLabel}　${typeLabel}`)
     }
   }
 
@@ -889,6 +890,14 @@ export async function approveCheckin(id: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: '未認証です', success: false }
 
+  const { data: checkin, error: fetchError } = await supabase
+    .from('daily_checkins')
+    .select('cast_id, checkin_date')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !checkin) return { success: false as const, error: fetchError?.message ?? 'Not found' }
+
   const { error } = await supabase
     .from('daily_checkins')
     .update({
@@ -899,13 +908,46 @@ export async function approveCheckin(id: string) {
     .eq('id', id)
 
   if (error) return { success: false as const, error: error.message }
+
+  // 手動オーバーライドがない場合のみ出勤を公開表示へ反映
+  const { data: existing } = await supabase
+    .from('daily_cast_attendance')
+    .select('source')
+    .eq('cast_id', checkin.cast_id)
+    .eq('business_date', checkin.checkin_date)
+    .maybeSingle()
+
+  if (!existing || existing.source !== 'manual') {
+    await supabase
+      .from('daily_cast_attendance')
+      .upsert(
+        { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'working', source: 'checkin_approved', updated_by: user.id },
+        { onConflict: 'cast_id,business_date' }
+      )
+    await supabase.from('casts').update({ is_today: true }).eq('id', checkin.cast_id)
+  }
+
   revalidatePath('/admin/today')
+  revalidatePath('/admin/approvals')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
+  revalidatePath('/cast')
   return { success: true as const, id }
 }
 
 export async function rejectCheckin(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: '未認証です', success: false }
+
+  const { data: checkin, error: fetchError } = await supabase
+    .from('daily_checkins')
+    .select('cast_id, checkin_date')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !checkin) return { success: false as const, error: fetchError?.message ?? 'Not found' }
+
   const { error } = await supabase
     .from('daily_checkins')
     .update({
@@ -916,8 +958,30 @@ export async function rejectCheckin(id: string) {
     .eq('id', id)
 
   if (error) return { success: false as const, error: error.message }
+
+  // 手動オーバーライドがない場合のみ欠勤を公開表示へ反映
+  const { data: existing } = await supabase
+    .from('daily_cast_attendance')
+    .select('source')
+    .eq('cast_id', checkin.cast_id)
+    .eq('business_date', checkin.checkin_date)
+    .maybeSingle()
+
+  if (!existing || existing.source !== 'manual') {
+    await supabase
+      .from('daily_cast_attendance')
+      .upsert(
+        { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'absent', source: 'checkin_rejected', updated_by: user.id },
+        { onConflict: 'cast_id,business_date' }
+      )
+    await supabase.from('casts').update({ is_today: false }).eq('id', checkin.cast_id)
+  }
+
   revalidatePath('/admin/today')
+  revalidatePath('/admin/approvals')
   revalidatePath('/cast/dashboard')
+  revalidatePath('/')
+  revalidatePath('/cast')
   return { success: true as const, id }
 }
 
@@ -1058,6 +1122,7 @@ export async function updateDailyCastAttendance(input: {
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')
   revalidatePath('/admin/human-resources')
+  revalidatePath('/cast/dashboard')
   revalidatePath('/cast')
   revalidatePath('/')
   return { success: true }

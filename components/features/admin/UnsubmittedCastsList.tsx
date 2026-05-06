@@ -20,6 +20,7 @@ export function UnsubmittedCastsList({
   const unsubmitted = statuses.filter(
     (s) => s.status === 'unsubmitted' || s.status === 'rejected'
   );
+  const unregisteredCount = unsubmitted.filter((s) => !s.hasAuthIndex).length;
   const total = statuses.length;
 
   // Build week range string
@@ -88,6 +89,7 @@ export function UnsubmittedCastsList({
           <span style={{ color: '#4ade80', fontWeight: 700 }}>木</span>・
           <span style={{ color: D.border.lightGold, fontWeight: 700 }}>金</span>
           曜日に自動で督促メールが送信されます
+          {unregisteredCount > 0 ? '（ログイン未登録は個別対応）' : ''}
         </div>
 
         {/* Summary button */}
@@ -140,10 +142,10 @@ export function UnsubmittedCastsList({
                   fontWeight: 400,
                 }}
               >
-                {s.cast.stage_name}
+                {s.cast.stage_name.trim() || '名前未設定'}
               </span>
 
-              {/* NO ACCOUNT chip */}
+              {/* Cast login account status */}
               {!s.hasAuthIndex && (
                 <span
                   className="shrink-0 inline-flex items-center justify-center text-white text-[14px] font-medium tracking-wider"
@@ -155,7 +157,7 @@ export function UnsubmittedCastsList({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  NO ACCOUNT
+                  ログイン未登録
                 </span>
               )}
             </div>

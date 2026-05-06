@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import {
   Calendar, Plus, AlertTriangle, StickyNote,
@@ -13,10 +14,6 @@ import {
   addTrial, deleteTrial,
   addShiftChange, deleteShiftChange,
   addStaffAttendance, deleteStaffAttendance,
-  approveCheckin,
-  rejectCheckin,
-  approveReservation,
-  rejectReservation,
 } from '@/lib/actions/today'
 import { type DashboardKPIData } from '@/lib/actions/dashboard'
 import { type DashboardTodayOpsData } from '@/lib/actions/dashboard'
@@ -149,10 +146,6 @@ function createTempId() {
 
 function sortByStartTime<T extends { start_time: string }>(items: T[]) {
   return [...items].sort((a, b) => compareOperationTimes(a.start_time, b.start_time))
-}
-
-function sortReservationsByVisitTime<T extends { visit_time: string }>(items: T[]) {
-  return [...items].sort((a, b) => compareOperationTimes(a.visit_time, b.visit_time))
 }
 
 // ── Tiny Badge ──────────────────────────────────────────────────────────────
@@ -325,9 +318,6 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
         return (
           <UnconfirmedTab
             data={dashboardData}
-            handleAction={handleAction}
-            setDashboardData={setDashboardData}
-            isBusy={isBusy}
           />
         )
     }
@@ -376,13 +366,12 @@ export function TodayDesktopView({ data, casts, kpi, ops, dateLabel }: Props) {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab('unconfirmed')}
+            <Link
+              href="/admin/approvals"
               className="inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3 text-[11px] font-bold tracking-[0.2em] text-black uppercase transition-all hover:bg-[#e6c982] active:scale-[0.98]"
             >
               承認する
-            </button>
+            </Link>
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -1235,14 +1224,8 @@ function StaffTab({
 // ─────────────────────────────────────────────────────────────────────────────
 function UnconfirmedTab({
   data,
-  handleAction,
-  setDashboardData,
-  isBusy,
 }: {
   data: TodayDashboardData
-  handleAction: <T,>(key: string, optimisticUpdate: () => void, rollback: () => void, action: () => Promise<ActionResult<T>>) => void
-  setDashboardData: React.Dispatch<React.SetStateAction<TodayDashboardData>>
-  isBusy: (key: string) => boolean
 }) {
   return (
     <div className="space-y-6">
@@ -1269,67 +1252,12 @@ function UnconfirmedTab({
                   </div>
                 </div>
                 <div className="mt-5 flex gap-2">
-                  <button
-                    disabled={isBusy(`approve-checkin-${checkin.id}`)}
-                    onClick={() => {
-                      const previousPending = data.pendingCheckins
-                      const previousCheckins = data.checkins
-                      const previousAbsentIds = data.absentCastIds
-                      const previousUnconfirmed = data.unconfirmedCasts
-                      handleAction(
-                        `approve-checkin-${checkin.id}`,
-                        () => {
-                          setDashboardData((current) => {
-                            const approvedCheckin = { ...checkin, approval_status: 'approved' as const }
-                            return {
-                              ...current,
-                              pendingCheckins: current.pendingCheckins.filter((entry) => entry.id !== checkin.id),
-                              checkins: [...current.checkins.filter((entry) => entry.id !== checkin.id), approvedCheckin],
-                              absentCastIds: checkin.is_absent
-                                ? [...new Set([...current.absentCastIds, checkin.cast_id])]
-                                : current.absentCastIds.filter((entry) => entry !== checkin.cast_id),
-                              unconfirmedCasts: current.unconfirmedCasts.filter((entry) => entry.cast_id !== checkin.cast_id),
-                            }
-                          })
-                        },
-                        () => {
-                          setDashboardData((current) => ({
-                            ...current,
-                            pendingCheckins: previousPending,
-                            checkins: previousCheckins,
-                            absentCastIds: previousAbsentIds,
-                            unconfirmedCasts: previousUnconfirmed,
-                          }))
-                        },
-                        () => approveCheckin(checkin.id)
-                      )
-                    }}
-                    className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
+                  <Link
+                    href="/admin/approvals"
+                    className="inline-flex w-full items-center justify-center rounded-sm border border-gold/40 px-4 py-2 text-[10px] font-bold tracking-[2px] text-gold uppercase transition-all hover:bg-gold/10"
                   >
-                    Approve
-                  </button>
-                  <button
-                    disabled={isBusy(`reject-checkin-${checkin.id}`)}
-                    onClick={() => {
-                      const previousPending = data.pendingCheckins
-                      handleAction(
-                        `reject-checkin-${checkin.id}`,
-                        () => {
-                          setDashboardData((current) => ({
-                            ...current,
-                            pendingCheckins: current.pendingCheckins.filter((entry) => entry.id !== checkin.id),
-                          }))
-                        },
-                        () => {
-                          setDashboardData((current) => ({ ...current, pendingCheckins: previousPending }))
-                        },
-                        () => rejectCheckin(checkin.id)
-                      )
-                    }}
-                    className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
-                  >
-                    Reject
-                  </button>
+                    承認ハブで確認
+                  </Link>
                 </div>
               </div>
             ))}
@@ -1364,59 +1292,12 @@ function UnconfirmedTab({
                   </div>
                 </div>
                 <div className="mt-5 flex gap-2">
-                  <button
-                    disabled={isBusy(`approve-reservation-${reservation.id}`)}
-                    onClick={() => {
-                      const previousPending = data.pendingReservations
-                      const previousReservations = data.reservations
-                      handleAction(
-                        `approve-reservation-${reservation.id}`,
-                        () => {
-                          setDashboardData((current) => ({
-                            ...current,
-                            pendingReservations: current.pendingReservations.filter((entry) => entry.id !== reservation.id),
-                            reservations: sortReservationsByVisitTime([
-                              ...current.reservations,
-                              { ...reservation, approval_status: 'approved' as const },
-                            ]),
-                          }))
-                        },
-                        () => {
-                          setDashboardData((current) => ({
-                            ...current,
-                            pendingReservations: previousPending,
-                            reservations: previousReservations,
-                          }))
-                        },
-                        () => approveReservation(reservation.id)
-                      )
-                    }}
-                    className="flex-1 rounded-sm bg-emerald-600 px-4 py-2 text-[10px] font-bold text-white tracking-[2px] uppercase hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/10"
+                  <Link
+                    href="/admin/approvals"
+                    className="inline-flex w-full items-center justify-center rounded-sm border border-gold/40 px-4 py-2 text-[10px] font-bold tracking-[2px] text-gold uppercase transition-all hover:bg-gold/10"
                   >
-                    Approve
-                  </button>
-                  <button
-                    disabled={isBusy(`reject-reservation-${reservation.id}`)}
-                    onClick={() => {
-                      const previousPending = data.pendingReservations
-                      handleAction(
-                        `reject-reservation-${reservation.id}`,
-                        () => {
-                          setDashboardData((current) => ({
-                            ...current,
-                            pendingReservations: current.pendingReservations.filter((entry) => entry.id !== reservation.id),
-                          }))
-                        },
-                        () => {
-                          setDashboardData((current) => ({ ...current, pendingReservations: previousPending }))
-                        },
-                        () => rejectReservation(reservation.id)
-                      )
-                    }}
-                    className="flex-1 rounded-sm border border-red-500/30 px-4 py-2 text-[10px] font-bold text-red-400 tracking-[2px] uppercase hover:bg-red-500/10 transition-all"
-                  >
-                    Reject
-                  </button>
+                    承認ハブで確認
+                  </Link>
                 </div>
               </div>
             ))}

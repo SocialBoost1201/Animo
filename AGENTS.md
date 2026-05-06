@@ -106,6 +106,8 @@ Status markers:
 - Run `pnpm dev` from the repository root so `.env.local` loads; starting dev from another working directory can skip env and break `/admin/*` behavior.
 - Avoid multiple `next dev` processes on the same checkout; they compete for `.next/dev/lock`.
 - In App Router page components, treat `searchParams` as a `Promise` and await before reading (matches Next.js patterns used in this repo).
+- Protected admin and cast UI must use operation time labels 19:00〜2:00; do not display 24:00, 25:00, or 26:00; public marketing/time copy remains 21:00〜LAST only where that split applies.
+- Production smoke checks for this app use https://club-animo.jp.
 
 ## Figma Design System Rules
 
@@ -171,7 +173,7 @@ They do not override the Core Execution Contract, UI Protection, or Stop Conditi
 <claude-mem-context>
 # Memory Context
 
-# [Animo] recent context, 2026-05-03 1:18am GMT+9
+# [Animo] recent context, 2026-05-07 6:53am GMT+9
 
 No previous sessions found.
 </claude-mem-context>
