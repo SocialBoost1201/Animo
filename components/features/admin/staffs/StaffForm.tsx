@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Save, Loader2, ArrowLeft, User, Phone, MessageCircle, ToggleLeft } from 'lucide-react';
 import Link from 'next/link';
-import { createStaff } from '@/lib/actions/staffs';
+import { createStaff, updateStaff, type StaffSlave } from '@/lib/actions/staffs';
+import { splitStaffFullName } from '@/lib/staff-name';
 
 const inputCls =
   'w-full bg-[#1c1d22] border border-[#ffffff0f] rounded-[10px] px-4 py-2.5 text-[13px] text-[#f4f1ea] placeholder-[#5a5650] outline-none focus:border-[#dfbd6950] focus:bg-[#1f2028] transition-colors';
@@ -25,11 +26,24 @@ function FieldLabel({
   );
 }
 
-export function StaffForm() {
+function getInitialNameParts(staff?: StaffSlave): { family: string; given: string } {
+  if (!staff) return { family: '', given: '' };
+  if (
+    (staff.family_name != null && staff.family_name.trim() !== '') ||
+    (staff.given_name != null && staff.given_name.trim() !== '')
+  ) {
+    return { family: staff.family_name?.trim() ?? '', given: staff.given_name?.trim() ?? '' };
+  }
+  return splitStaffFullName(staff.name);
+}
+
+export function StaffForm({ initialData }: { initialData?: StaffSlave }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(initialData?.is_active ?? true);
   const [error, setError] = useState<string | null>(null);
+  const isEdit = Boolean(initialData);
+  const initialName = getInitialNameParts(initialData);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,12 +52,14 @@ export function StaffForm() {
     fd.set('is_active', String(isActive));
 
     startTransition(async () => {
-      const result = await createStaff(fd);
+      const result = initialData
+        ? await updateStaff(initialData.id, fd)
+        : await createStaff(fd);
       if (result.error) {
         setError(result.error);
         return;
       }
-      toast.success('スタッフを登録しました');
+      toast.success(isEdit ? 'スタッフ情報を更新しました' : 'スタッフを登録しました');
       router.push('/admin/staffs');
       router.refresh();
     });
@@ -62,8 +78,12 @@ export function StaffForm() {
       </div>
 
       <div>
-        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">スタッフを新規登録</h1>
-        <p className="text-[11px] text-[#8a8478] mt-1">新しいスタッフデータを登録します</p>
+        <h1 className="text-[17px] font-semibold text-[#f4f1ea] tracking-[-0.31px]">
+          {isEdit ? 'スタッフ情報を編集' : 'スタッフを新規登録'}
+        </h1>
+        <p className="text-[11px] text-[#8a8478] mt-1">
+          {isEdit ? 'スタッフデータを更新します' : '新しいスタッフデータを登録します'}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -71,11 +91,11 @@ export function StaffForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <FieldLabel icon={User} label="苗字（必須）" />
-              <input name="family_name" placeholder="例：山田" required autoComplete="family-name" className={inputCls} />
+              <input name="family_name" placeholder="例：山田" required autoComplete="family-name" className={inputCls} defaultValue={initialName.family} />
             </div>
             <div>
               <FieldLabel icon={User} label="名前（必須）" />
-              <input name="given_name" placeholder="例：花子" required autoComplete="given-name" className={inputCls} />
+              <input name="given_name" placeholder="例：花子" required autoComplete="given-name" className={inputCls} defaultValue={initialName.given} />
             </div>
           </div>
 
@@ -86,18 +106,19 @@ export function StaffForm() {
               placeholder="表記用の名前"
               required
               className={inputCls}
+              defaultValue={initialData?.display_name ?? ''}
             />
             <p className="mt-1.5 text-[10px] text-[#5a5650]">源氏名・通称表記。ダッシュボード等の表示名として使います。</p>
           </div>
 
           <div>
             <FieldLabel icon={Phone} label="携帯番号" />
-            <input name="mobile_phone" type="tel" placeholder="例：090-1234-5678" className={inputCls} inputMode="tel" />
+            <input name="mobile_phone" type="tel" placeholder="例：090-1234-5678" className={inputCls} inputMode="tel" defaultValue={initialData?.mobile_phone ?? ''} />
           </div>
 
           <div>
             <FieldLabel icon={MessageCircle} label="LINE ID" />
-            <input name="line_id" placeholder="任意" className={inputCls} autoComplete="off" />
+            <input name="line_id" placeholder="任意" className={inputCls} autoComplete="off" defaultValue={initialData?.line_id ?? ''} />
           </div>
 
           <div>
@@ -146,7 +167,7 @@ export function StaffForm() {
             style={{ background: 'linear-gradient(90deg,rgba(223,189,105,1) 0%,rgba(146,111,52,1) 100%)' }}
           >
             {isPending ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
-            {isPending ? '保存中...' : '登録する'}
+            {isPending ? '保存中...' : isEdit ? '更新する' : '登録する'}
           </button>
         </div>
       </form>

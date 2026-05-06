@@ -10,6 +10,18 @@ Do not load full logs unless explicitly instructed.
 
 ## Approved implementation plans
 
+### Final stabilization for Animo restart (2026-05-06)
+
+- **Approval:** [x] Approved (master, 2026-05-06)
+- **Objective:** Fix release-blocking operational errors before the next business restart day while preserving UI/SEO/auth/RLS contracts.
+- **In scope:** P0 LINE test endpoint exposure, P1 admin broken links/routes, P1 dashboard approval-state truthfulness, public CTA anchor, and pricing display consistency for `subtotal × 1.1 × 1.2 = 1.32`.
+- **Out of scope:** DB schema changes, RLS/auth redesign, layout redesign, SEO/canonical/sitemap changes, deployment from dirty worktree, and broad copy/theme refactors.
+- **Batch 1 security:** [x] Close unauthenticated LINE group send endpoint.
+- **Batch 2 admin operations:** [x] Fix dashboard KPI/card destinations and missing admin edit routes.
+- **Batch 3 data truthfulness:** [x] Ensure dashboard operational numbers reflect approved cast submissions/reservations and current published post status.
+- **Batch 4 public CTA/pricing:** [x] Fix `#today-cast` target and align pricing copy to tax/service business rule.
+- **Batch 5 validation/logging:** [x] `pnpm lint`, targeted eslint, `tsc --noEmit`, `git diff --check`, and `next build` passed after local SWC recovery and network-enabled Google Fonts fetch.
+
 ### /admin/today Phase 1 operation time foundation (2026-05-03)
 
 - **Approval:** [x] Approved (master, 2026-05-03)
@@ -28,10 +40,11 @@ Do not load full logs unless explicitly instructed.
   - [x] Grep checks passed for removed `substring(0, 5)`, `type="time"`, string time sorting, and forbidden `24:00` / `25:00` / `26:00` UI strings in Phase 1 scope.
   - [!] `pnpm build` blocked by existing unrelated `components/features/admin/UnsubmittedCastsList.tsx` type error (`D.gradients.gold`).
 - **Remaining tasks before Phase 2:**
-  - [ ] Browser smoke test pending.
-  - [ ] Admin credential required for protected `/admin/today` click-flow verification.
+  - [x] Browser smoke test completed on production mobile viewport (`390x844`).
+  - [x] Admin credential verified for protected `/admin/today` click-flow verification.
   - [ ] Build issue remains outside Phase 1 scope.
-  - [ ] `/admin/dashboard` Card Map required before Phase 2.
+  - [x] `/admin/dashboard` Card Map captured for main mobile links before Phase 2.
+  - [ ] Mobile production dashboard has non-navigating cards/links (`本日の営業状況`, `キャスト管理`, `体入・応募運用開始待ち—`) that require a separate fix plan before Phase 2.
 
 ### Admin operations flow reorganization + critical regressions (2026-05-02)
 

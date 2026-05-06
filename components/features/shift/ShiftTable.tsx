@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp, Phone } from 'lucide-react';
 const SET_FEE = { member: 6000, visitor: 7000 };
 const EXTENSION_FEE = 3500;
 const NOM_FEE = { none: 0, inside: 2500, main: 3000, escort: 5000 };
-const TAX_RATE = 1.3;
+const TAX_SERVICE_MULTIPLIER = 1.32;
 
 function calcPrice(
   type: 'member' | 'visitor',
@@ -19,7 +19,7 @@ function calcPrice(
   const base = SET_FEE[type];
   const ext = duration > 60 ? ((duration - 60) / 30) * EXTENSION_FEE : 0;
   const nom = NOM_FEE[nomination];
-  const total = Math.round((base + ext + nom) * TAX_RATE);
+  const total = Math.round((base + ext + nom) * TAX_SERVICE_MULTIPLIER);
   return Math.round(total / 1000) * 1000;
 }
 
@@ -124,7 +124,7 @@ function MiniSimulator({ castName }: { castName: string }) {
 
       <div className="flex items-center justify-between pt-3 border-t border-gold/20">
         <div>
-          <p className="text-xs text-gray-400 font-serif">料金目安（TAX込）</p>
+          <p className="text-xs text-gray-400 font-serif">料金目安（消費税10% + サービス料20%込）</p>
           <p className="text-2xl font-serif text-[#171717]">
             ¥{price.toLocaleString()}
             <span className="text-xs text-gray-400 ml-1">前後</span>

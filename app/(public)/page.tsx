@@ -40,7 +40,7 @@ const HOW_TO_EXAMPLES = [
     tag: 'Visitor · 60分 · 指名なし',
     items: [
       { name: 'セット料金', price: '¥7,000' },
-      { name: 'TAX / Service (30%)', price: '¥2,100' },
+      { name: 'Tax 10% + Service 20%', price: '約¥2,200' },
     ],
     total: '¥9,000',
     note: '※ 最もシンプルなご利用例。まず雰囲気を楽しみたい方に。',
@@ -52,7 +52,7 @@ const HOW_TO_EXAMPLES = [
       { name: 'セット料金', price: '¥7,000' },
       { name: '延長 30分', price: '¥3,500' },
       { name: '場内指名', price: '¥2,500' },
-      { name: 'TAX / Service (30%)', price: '¥3,900' },
+      { name: 'Tax 10% + Service 20%', price: '約¥4,200' },
     ],
     total: '¥17,000',
     note: '※ 気になるキャストをその場で指名して過ごす標準パターン。',
@@ -64,7 +64,7 @@ const HOW_TO_EXAMPLES = [
       { name: 'セット料金', price: '¥7,000' },
       { name: '延長 60分', price: '¥7,000' },
       { name: '本指名', price: '¥3,000' },
-      { name: 'TAX / Service (30%)', price: '¥5,100' },
+      { name: 'Tax 10% + Service 20%', price: '約¥5,400' },
     ],
     total: '¥22,000',
     note: '※ お気に入りのキャストとたっぷり過ごしたい方のスタンダード。',
@@ -175,7 +175,7 @@ export default async function HomePage() {
       )}
 
       {/* 2. TODAY'S CAST */}
-      <section className="py-section bg-transparent px-6 overflow-hidden">
+      <section id="today-cast" className="py-section bg-transparent px-6 overflow-hidden scroll-mt-24">
         <div className="container mx-auto">
           <FadeIn className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif font-bold luxury-tracking-super text-foreground uppercase mb-4">

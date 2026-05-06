@@ -1,4 +1,5 @@
 import { getDashboardTodayOps } from '@/lib/actions/dashboard';
+import Link from 'next/link';
 import { DashboardEmptyState } from './DashboardEmptyState';
 import { Plus } from 'lucide-react';
 
@@ -40,7 +41,7 @@ export async function DashboardTodayOps() {
   ].filter(Boolean) as { tag: string; tagBg: string; tagText: string; cardBorder: string; content: string }[];
 
   return (
-    <div className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
+    <Link href="/admin/today" className="flex flex-col rounded-[18px] font-sans h-full card-premium-skin">
       <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
       {/* Header row */}
       <div className="flex items-center justify-between px-6 h-[56px] border-b border-[#ffffff0f] shrink-0">
@@ -53,11 +54,13 @@ export async function DashboardTodayOps() {
             <p className="text-[11px] text-[#8a8478] tracking-[0.06px] leading-tight">今夜のオペレーション概要</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
-          <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
-          <span className="font-sans text-[10px] font-semibold text-[#72B894] tracking-[0.117px] leading-[12px] uppercase">
-            · {ops.hasOperationalRecords ? '営業準備中' : '運用開始待ち'}
-          </span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#50a0641a] rounded-full border border-[#50a06426]">
+            <div className="w-[6px] h-[6px] rounded-full bg-[#72b894] animate-pulse" />
+            <span className="font-sans text-[10px] font-semibold text-[#72B894] tracking-[0.117px] leading-[12px] uppercase">
+              · {ops.hasOperationalRecords ? '営業準備中' : '運用開始待ち'}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -90,7 +93,7 @@ export async function DashboardTodayOps() {
           <p className="text-[10px] font-bold tracking-[2.5px] text-[#8a8478] uppercase mb-4 px-1">MANAGEMENT MEMO</p>
           <div className="flex-1 overflow-y-auto space-y-5 custom-scrollbar pr-1">
             {memos.length === 0 ? (
-              <DashboardEmptyState className="min-h-40" />
+              <DashboardEmptyState className="min-h-[220px]" />
             ) : (
               memos.map((memo, i) => (
                 <div
@@ -108,6 +111,6 @@ export async function DashboardTodayOps() {
         </div>
       </div>
       </div>
-    </div>
+    </Link>
   );
 }

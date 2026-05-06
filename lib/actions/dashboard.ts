@@ -122,8 +122,8 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_checkins').select('cast_id, is_absent').eq('checkin_date', today),
-    supabase.from('daily_reservations').select('guest_count').eq('reservation_date', today),
-    supabase.from('daily_reservations').select('id').eq('reservation_date', yesterdayStr),
+    supabase.from('daily_reservations').select('guest_count').eq('reservation_date', today).eq('approval_status', 'approved'),
+    supabase.from('daily_reservations').select('id').eq('reservation_date', yesterdayStr).eq('approval_status', 'approved'),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('recruit_applications').select('id', { count: 'exact', head: true }).eq('is_read', false),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
@@ -167,6 +167,7 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     .from('daily_reservations')
     .select('id', { count: 'exact', head: true })
     .eq('reservation_date', today)
+    .eq('approval_status', 'approved')
     .eq('reservation_type', 'reservation');
 
   const hasOperationalRecords =
@@ -218,7 +219,7 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     { data: manualAttendance },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
-    supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today),
+    supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today).eq('approval_status', 'approved'),
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
@@ -272,6 +273,7 @@ export async function getDashboardReservations(): Promise<DashboardReservation[]
     .from('daily_reservations')
     .select('id, cast_id, visit_time, guest_name, guest_count, reservation_type, note, casts(stage_name)')
     .eq('reservation_date', today)
+    .eq('approval_status', 'approved')
     .order('visit_time');
 
   if (!raw) return [];
@@ -318,7 +320,7 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       .from('cast_posts')
       .select('cast_id, created_at')
       .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-      .eq('status', 'approved'),
+      .eq('status', 'published'),
     supabase
       .from('daily_cast_attendance')
       .select('cast_id, status, note')
@@ -445,7 +447,7 @@ export async function getDashboardCastRanking(): Promise<DashboardCastRanking[]>
     supabase
       .from('cast_posts')
       .select('cast_id')
-      .eq('status', 'approved')
+      .eq('status', 'published')
       .gte('created_at', `${targetMonth}-01`)
       .lte('created_at', `${targetMonth}-31`),
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),

@@ -53,7 +53,7 @@ const FAQ_ITEMS = [
   },
   {
     q: '料金の目安を教えてください',
-    a: 'セット料金はMember ¥6,000 / Visitor ¥7,000（60分）です。別途、指名料・延長料・TAX 30% が加算されます。詳しくは料金シミュレーターをご利用ください。',
+    a: 'セット料金はMember ¥6,000 / Visitor ¥7,000（60分）です。別途、指名料・延長料が加算され、消費税10%加算後にサービス料20%を頂戴します。詳しくは料金シミュレーターをご利用ください。',
   },
   {
     q: '年齢制限はありますか？',
@@ -143,7 +143,7 @@ export default function GuidePage() {
               </div>
             </div>
             <p className="text-xs text-gray-400 text-center mt-6 font-serif luxury-tracking">
-              ※ 上記にTAX/サービス料 30% が加算されます。指名料・延長料は別途。
+              ※ 上記に消費税10%加算後、サービス料20%が加算されます。指名料・延長料は別途。
             </p>
             <div className="text-center mt-8">
               <Button asChild variant="outline">

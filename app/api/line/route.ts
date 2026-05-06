@@ -40,6 +40,11 @@ export async function sendLineGroupMessage(message: string) {
 
 // ─── 管理画面「LINE テスト送信」用エンドポイント ─────────────────────────────
 export async function GET(req: Request) {
+  const authHeader = req.headers.get('authorization');
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(req.url);
   const message = searchParams.get('message') ?? 'テスト送信: Club Animo 通知システム';
 

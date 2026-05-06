@@ -5,6 +5,71 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 
 ## Entries
 
+### 2026-05-06 (final stabilization P0/P1 batches)
+
+- scope: Closed the unauthenticated LINE group test endpoint, fixed critical admin dashboard/link route issues, aligned dashboard operational data to manager-approved submissions, and corrected public pricing/CTA consistency for the business rule `subtotal × 1.1 × 1.2`.
+- files changed: `PLANS.md`, `app/api/line/route.ts`, `app/admin/(protected)/staffs/[id]/page.tsx`, `app/admin/(protected)/customers/[id]/edit/page.tsx`, `components/features/admin/staffs/StaffForm.tsx`, `components/features/admin/dashboard/DashboardKPIs.tsx`, `components/features/admin/dashboard/DashboardTodayOps.tsx`, `lib/actions/dashboard.ts`, `lib/actions/today.ts`, `app/(public)/page.tsx`, `app/(public)/guide/page.tsx`, `components/features/system/PriceSimulator.tsx`, `components/features/system/SystemPriceGrid.tsx`, `components/features/shift/ShiftTable.tsx`, `daily_log.md`.
+- source of truth: LINE test GET now requires `CRON_SECRET`; staff/customer edit hrefs are preserved by adding matching routes; `体入・応募` dashboard KPI now opens applications; `本日の営業状況` dashboard card opens `/admin/today`; dashboard reservations count/display only `approval_status = approved`; rejected check-in resubmission returns to `pending`; cast post dashboard metrics use `published`; public price copy reflects消費税10%加算後サービス料20%.
+- validation: targeted eslint passed for changed files; `pnpm lint` passed with existing warnings only; `git diff --check` passed; `.next` was cleared and `./node_modules/.bin/tsc --noEmit` passed; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed after local SWC recovery and network-enabled Google Fonts fetch; local `next start` smoke confirmed `/` 200, `/system` 200, `/shift` 308 to `/#today-cast`, unauthenticated `/api/line` 401, and protected admin routes redirect to `/admin/login`.
+- remaining risks: Authenticated protected browser click smoke is still pending; working tree still contains pre-existing unrelated dirty files and worktrees.
+
+### 2026-05-05 (cast LINE direct check-in redirect)
+
+- scope: Added safe redirect handling for direct LINE links to `/cast/today?from=line`, preserving query parameters through cast login and SMS verification while keeping existing auth checks intact.
+- files changed: `lib/supabase/middleware.ts`, `lib/cast-auth-utils.ts`, `lib/actions/cast-auth.ts`, `app/(cast)/cast/login/page.tsx`, `app/(cast)/cast/m/login/page.tsx`, `app/(cast)/cast/verify/page.tsx`, `app/(cast)/cast/m/verify/page.tsx`, `app/(cast)/cast/today/page.tsx`, `components/features/cast/OtpVerifyForm.tsx`, `daily_log.md`.
+- validation: targeted eslint passed; `pnpm lint` passed with existing warnings only; `pnpm run build` passed with existing middleware deprecation warning.
+- remaining risks: Browser login-flow smoke was not run because no cast OTP was available in this turn.
+
+### 2026-05-05 (/admin/settings admin UI alignment)
+
+- scope: Refactored the admin settings/design page surface to match existing admin UI patterns for headers, spacing, cards, form controls, buttons, and LINE notification empty state without changing business logic, API routes, database schema, or notification behavior.
+- files changed: `app/admin/(protected)/settings/page.tsx`, `components/features/admin/SettingsForm.tsx`, `components/features/admin/LineNotificationManager.tsx`, `daily_log.md`.
+- validation: targeted eslint passed; `pnpm lint` passed with existing warnings only; `pnpm run build` passed with existing middleware deprecation warning.
+- remaining risks: Protected browser visual smoke not run in this turn.
+
+### 2026-05-05 (/admin/shift-requests unnamed cast row)
+
+- scope: Prevented blank-looking rows in the unsubmitted cast list by showing `名前未設定` when an active cast has an empty stage name.
+- files changed: `components/features/admin/UnsubmittedCastsList.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "components/features/admin/UnsubmittedCastsList.tsx"` passed.
+- remaining risks: Browser visual smoke not run in this turn; underlying cast name data should be corrected in HR if this appears.
+
+### 2026-05-05 (/admin/shift-requests unsubmitted account label)
+
+- scope: Replaced the English `NO ACCOUNT` chip in the unsubmitted cast list with production-facing `ログイン未登録` wording and clarified that login-unregistered casts require individual handling outside auto reminder email.
+- files changed: `components/features/admin/UnsubmittedCastsList.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "components/features/admin/UnsubmittedCastsList.tsx"` passed.
+- remaining risks: Browser visual smoke not run in this turn.
+
+### 2026-05-05 (/admin/dashboard empty-state card height)
+
+- scope: Aligned empty-state card height between `OVERVIEW` and `MANAGEMENT MEMO` on the admin dashboard.
+- files changed: `components/features/admin/dashboard/DashboardTodayOps.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "components/features/admin/dashboard/DashboardTodayOps.tsx"` passed.
+- remaining risks: Browser visual smoke not run in this turn.
+
+### 2026-05-05 (admin sidebar nav operational grouping)
+
+- scope: Confirmed operational sidebar section order/group labels in `AdminLayout`; LINE deep-link label aligned to spec (`LINE自動投稿`, href unchanged `/admin/settings#line-notifications`). No new routes; `/admin/casts` does not exist — cast admin remains `/admin/human-resources`.
+- files changed: `components/layouts/AdminLayout.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "components/layouts/AdminLayout.tsx"` OK; `pnpm lint` 0 errors (existing warnings only).
+
+### 2026-05-05 (/admin/dashboard Phase 2 plan execution)
+
+- scope: Executed attached Phase 2 dashboard plan with minimal diff and no DB/auth/RLS/SEO changes.
+- files changed: `components/features/admin/dashboard/DashboardKPIs.tsx`, `components/features/admin/dashboard/DashboardReservations.tsx`, `daily_log.md`.
+- source of truth: Kept time policy (`19:00〜2:00`, no `24/25/26` display), confirmed memo placeholder removal, retained `/admin/today` as deep-operation entry by restoring dashboard KPI/reservation links to `/admin/today`.
+- validation: targeted eslint passed for Phase 2 files; `pnpm lint` passed with existing warnings only; `pnpm build` passed (existing non-blocking middleware deprecation + Supabase DNS warnings).
+- remaining risks: Working tree contains unrelated pre-existing local changes outside this plan scope; not modified by this task.
+
+### 2026-05-04 (/admin/approvals deadline urgency UI)
+
+- scope: Added deadline-based urgency labels/badges to approvals cards without changing layout, sorting, or server actions.
+- files changed: `app/admin/(protected)/approvals/page.tsx`, `daily_log.md`.
+- source of truth: Lane 1 (`出勤承認待ち`/`来店予定承認待ち`) uses today 18:45 deadline; shift lane uses next Saturday 21:00; statuses are `期限超過` (overdue) and `締切間近` (within 2h), otherwise no badge.
+- validation: `pnpm exec eslint "app/admin/(protected)/approvals/page.tsx"` passed.
+- remaining risks: Deadline evaluation is shared per lane (not per item timestamp) by requirement; no backend deadline persistence was introduced.
+
 ### 2026-05-03 (Phase 2 complete — merged to main)
 
 - Merged `hotfix/admin-sidebar-staff-registration` into `main` (Phase 2 admin dashboard, operation-hours, Today flows, cast-auth normalizer); pushed to `origin/main` for Vercel production alignment; merge conflicts resolved in cast-auth, today revalidation, cast profile, design page, shifts `searchParams`; `pnpm lint` 0 errors (existing warnings only).
@@ -73,3 +138,38 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - source of truth: Reused `daily_cast_attendance` via `updateDailyCastAttendance`; no duplicate today-status table or model was added.
 - validation: `./node_modules/.bin/eslint` passed with existing warnings only; `PATH=/opt/homebrew/bin:$PATH ./node_modules/.bin/next build` passed after network access allowed Google Fonts fetch.
 - remaining risks: Browser interaction smoke was not run in this turn; verify admin list button clicks against live data before production operation.
+
+### 2026-05-05 (validation rerun for recent admin changes)
+
+- scope: Re-ran validation to confirm recently adjusted admin sidebar/approvals/dashboard-related changes remain safe without new code edits.
+- files changed: `daily_log.md`.
+- validation: `pnpm lint` passed (0 errors, existing warnings only); `pnpm build` passed; known non-blocking warnings remained (Next middleware deprecation, Supabase DNS fetch warnings during static generation in this environment).
+- remaining risks: No E2E/browser regression suite was run in this pass; recommend protected-route manual smoke for `/admin/dashboard`, `/admin/approvals`, and sidebar navigation.
+
+### 2026-05-05 (mobile dashboard UX pass with design-taste frontend)
+
+- scope: Applied a mobile-first dashboard UX pass to improve action discoverability and visual rhythm while preserving existing routes/tokens.
+- files changed: `app/admin/(protected)/dashboard/page.tsx`, `components/features/admin/dashboard/DashboardQuickActions.tsx`, `components/features/admin/dashboard/DashboardCastRanking.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "app/admin/(protected)/dashboard/page.tsx" "components/features/admin/dashboard/DashboardQuickActions.tsx" "components/features/admin/dashboard/DashboardCastRanking.tsx"` passed.
+- remaining risks: Protected-route visual smoke still needed on real mobile widths for final fit/feel confirmation.
+
+### 2026-05-05 (/admin/dashboard mobile usability improvements)
+
+- scope: Improved mobile-first usability/readability on admin dashboard header and KPI area without changing routes, backend logic, or data flows; ensured first-screen block is explicitly non-fixed on mobile and preserves sticky behavior from `md` upward.
+- files changed: `app/admin/(protected)/dashboard/page.tsx`, `components/features/admin/dashboard/DashboardKPIs.tsx`, `daily_log.md`.
+- validation: `pnpm exec eslint "app/admin/(protected)/dashboard/page.tsx" "components/features/admin/dashboard/DashboardKPIs.tsx"` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed (existing middleware deprecation + non-blocking Supabase DNS warnings).
+- remaining risks: Manual mobile browser smoke is still recommended to confirm touch ergonomics and perceived readability on actual devices.
+
+### 2026-05-05 (cast mobile notice bell correction)
+
+- scope: Corrected the cast mobile shared notice bell so the unread dot is shown only when dashboard unread data actually exists, without changing cast auth semantics or route behavior.
+- files changed: `components/features/cast/CastMobileShell.tsx`, `app/(cast)/cast/dashboard/page.tsx`, `daily_log.md`.
+- validation: `pnpm lint` passed with existing warnings only; `pnpm build` failed in existing repo state with `TypeError: generate is not a function` during `next build`.
+- remaining risks: Shared header bell now defaults to no unread dot outside dashboard until other pages explicitly pass unread state; broader "logged-out within 14 days skips SMS" behavior was not implemented because current auth model requires a trusted session/cookie.
+
+### 2026-05-05 (admin mobile production click-flow audit)
+
+- scope: Verified protected admin mobile click flows on production for `/admin/dashboard` cards and major links using real login, without code changes.
+- files changed: `PLANS.md`, `daily_log.md`.
+- validation: Production login succeeded with mobile viewport `390x844`; `/admin/today` links `来店予定を追加` / `詳細を表示` / `今日` navigated correctly; `本日の営業状況`, `キャスト管理`, and `体入・応募運用開始待ち—` did not navigate within timeout and stayed on `/admin/dashboard`; mobile menu button showed no change in visible admin link count before/after click.
+- remaining risks: Broken mobile dashboard links remain on production and need a separate minimal fix plan; no source validation commands were run because this turn was verification-only.

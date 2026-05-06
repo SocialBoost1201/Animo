@@ -645,6 +645,9 @@ export async function submitCheckin(formData: FormData) {
       change_note: changeNote,
       is_absent: isAbsent,
       memo: memo,
+      approval_status: 'pending',
+      approved_at: null,
+      approved_by: null,
       submitted_at: new Date().toISOString(),
     }, { onConflict: 'cast_id,checkin_date' })
 
