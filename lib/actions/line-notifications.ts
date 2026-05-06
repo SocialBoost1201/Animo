@@ -119,7 +119,7 @@ export async function createLineNotification(
     schedule_time: input.schedule_time,
     schedule_days: input.schedule_days ?? null,
     schedule_dates: input.schedule_dates ?? null,
-    schedule_once_at: input.schedule_once_at ?? null,
+    schedule_once_at: input.schedule_once_at || null,
     is_enabled: true,
   }
 
