@@ -136,11 +136,8 @@ export function LineNotificationManager({
         setNotifications((prev) => [result.data!, ...prev])
       }
 
-      showToast(editingId ? '通知を更新しました' : '通知を追加しました', 'success')
       resetForm()
-      setTimeout(() => {
-        window.location.href = '/admin/settings#line-notifications'
-      }, 800)
+      window.location.reload()
     })
   }
 
@@ -176,9 +173,7 @@ export function LineNotificationManager({
       if (result.error) { showToast(result.error, 'error'); return }
       setNotifications((prev) => prev.filter((n) => n.id !== id))
       showToast('通知を削除しました', 'success')
-      setTimeout(() => {
-        window.location.href = '/admin/settings#line-notifications'
-      }, 800)
+      window.location.reload()
     })
   }
 
@@ -660,7 +655,7 @@ function NotificationForm({
           }`}
         >
           {isPending ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-          {editingId ? '更新する' : '追加する'}
+          {isPending ? '保存中...' : editingId ? '更新する' : '追加する'}
         </button>
       </div>
     </div>
