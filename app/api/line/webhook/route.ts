@@ -139,6 +139,16 @@ export async function POST(req: Request) {
       if (event.type === 'message' && event.message?.type === 'text') {
         const text: string = (event.message.text ?? '').trim();
 
+        // グループ内で「グループID」と送るとそのグループIDを返信
+        if (text === 'グループID' && event.source?.type === 'group') {
+          const groupId: string = event.source.groupId;
+          await sendLineMessage(
+            groupId,
+            `【Animo Bot】\nこのグループのIDは以下です。\n\nLINE_NOTIFY_GROUP_ID=${groupId}\n\nVercel の環境変数に設定してください。`
+          );
+          continue;
+        }
+
         // 電話番号らしきテキストが来たら連携処理
         const looksLikePhone = /^[\d\-\(\)\s]{10,15}$/.test(text);
         if (looksLikePhone) {
