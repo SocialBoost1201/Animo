@@ -128,7 +128,9 @@ export async function updateSession(request: NextRequest) {
     const role = await getAppRole(supabase, user.id)
 
     if (!isAdminLoginRole(role)) {
-      return redirectToSafeDestination(request, role)
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/login'
+      return NextResponse.redirect(url)
     }
   }
 
