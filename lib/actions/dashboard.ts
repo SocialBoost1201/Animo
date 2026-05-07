@@ -128,26 +128,49 @@ export async function getDashboardKPIs(): Promise<DashboardKPIData> {
     supabase.from('recruit_applications').select('id', { count: 'exact', head: true }).eq('is_read', false),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('shift_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
+    supabase.from('daily_cast_attendance').select('cast_id, status').eq('business_date', today),
     supabase.from('daily_operation_memos').select('id').eq('operation_date', today).limit(1),
   ]);
 
-  // 本日の出勤キャスト数を抽出
-  let todayShiftCount = 0;
+  // 手動オーバーライド (キャスト管理ページの 出勤/休み トグル)
+  const manualWorkingIds = new Set(
+    (manualAttendance || []).filter(m => m.status === 'working').map(m => m.cast_id)
+  );
+  const manualAbsentIds = new Set(
+    (manualAttendance || []).filter(m => m.status === 'absent').map(m => m.cast_id)
+  );
+
+  // 本日の出勤キャスト集合: 承認済みシフト ∪ 手動出勤 − 手動休み
+  const todayWorkingCastIds = new Set<string>();
   if (shiftsRaw) {
     for (const row of shiftsRaw) {
       const d = row.shifts_data as Record<string, { type: string }>;
-      if (d[today]?.type === 'work') todayShiftCount++;
+      if (d[today]?.type === 'work') todayWorkingCastIds.add(row.cast_id);
     }
   }
+  for (const id of manualWorkingIds) todayWorkingCastIds.add(id);
+  for (const id of manualAbsentIds) todayWorkingCastIds.delete(id);
+
+  const todayShiftCount = todayWorkingCastIds.size;
 
   // 確認済 / 未確認
-  // 確認済 / 未確認 の論理的な再定義
   const checkedIds = new Set((checkinsRaw || []).map(c => c.cast_id));
-  // 確定数: 本日シフトがあり、かつ出勤済み（欠勤以外）の人数
-  const confirmedCount = (checkinsRaw || []).filter(c => !c.is_absent).length;
-  // 未確認数: 本日シフトがある人のうち、まだチェックイン（出勤/欠勤回答）していない人数
-  const unconfirmedCount = Math.max(0, todayShiftCount - checkedIds.size);
+  // 確定数: 出勤済みチェックイン（欠勤以外）+ 手動出勤（todayWorkingCastIds 内に限る、重複排除）
+  const confirmedIds = new Set<string>();
+  for (const c of checkinsRaw || []) {
+    if (!c.is_absent && todayWorkingCastIds.has(c.cast_id)) confirmedIds.add(c.cast_id);
+  }
+  for (const id of manualWorkingIds) {
+    if (todayWorkingCastIds.has(id)) confirmedIds.add(id);
+  }
+  const confirmedCount = confirmedIds.size;
+  // 未確認数: 本日出勤予定で、checkin も手動オーバーライドも未設定
+  let unconfirmedCount = 0;
+  for (const id of todayWorkingCastIds) {
+    if (!checkedIds.has(id) && !manualWorkingIds.has(id) && !manualAbsentIds.has(id)) {
+      unconfirmedCount++;
+    }
+  }
 
   // 予定来店人数
   const totalGuests = (todayReservations || []).reduce((s, r) => s + (r.guest_count ?? 1), 0);
@@ -223,16 +246,22 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     supabase.from('daily_trials').select('id').eq('trial_date', today),
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
-    supabase.from('daily_cast_attendance').select('cast_id').eq('business_date', today),
+    supabase.from('daily_cast_attendance').select('cast_id, status').eq('business_date', today),
   ]);
 
-  let confirmedCastCount = 0;
+  // 手動オーバーライドを含む本日の出勤キャスト集合
+  const todayWorkingCastIds = new Set<string>();
   if (shiftsRaw) {
     for (const row of shiftsRaw) {
       const d = row.shifts_data as Record<string, { type: string }>;
-      if (d[today]?.type === 'work') confirmedCastCount++;
+      if (d[today]?.type === 'work') todayWorkingCastIds.add(row.cast_id);
     }
   }
+  for (const m of manualAttendance || []) {
+    if (m.status === 'working') todayWorkingCastIds.add(m.cast_id);
+    else if (m.status === 'absent') todayWorkingCastIds.delete(m.cast_id);
+  }
+  const confirmedCastCount = todayWorkingCastIds.size;
 
   const totalGuests = (reservations || []).reduce((s, r) => s + (r.guest_count ?? 1), 0);
 
@@ -323,19 +352,34 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
       .eq('status', 'published'),
     supabase
       .from('daily_cast_attendance')
-      .select('cast_id, status, note')
+      .select('cast_id, status, note, casts(stage_name, profile_image_url)')
       .eq('business_date', today),
   ])
 
   const checkinMap = new Map((checkinsRaw || []).map(c => [c.cast_id, c]))
   const recentPostCastIds = new Set((postsRaw || []).map(p => p.cast_id))
-  const manualMap = new Map(
-    (manualRaw || []).map(m => [m.cast_id, { status: m.status as ManualAttendanceStatus, note: m.note as string | null }])
+  type ManualEntry = {
+    status: ManualAttendanceStatus
+    note: string | null
+    castName: string | null
+    avatarUrl?: string
+  }
+  const manualMap = new Map<string, ManualEntry>(
+    (manualRaw || []).map(m => {
+      const cast = m.casts as unknown as { stage_name?: string; profile_image_url?: string } | null
+      return [m.cast_id, {
+        status: m.status as ManualAttendanceStatus,
+        note: m.note as string | null,
+        castName: cast?.stage_name ?? null,
+        avatarUrl: cast?.profile_image_url ?? undefined,
+      }]
+    })
   )
 
   type RowAcc = { row: DashboardCastShift; sortMin: number }
 
   const accumulated: RowAcc[] = []
+  const processedCastIds = new Set<string>()
 
   // 承認済シフトから本日出勤キャストを抽出（欠勤フィルタなし — manual override で表示制御）
   if (shiftsRaw) {
@@ -399,7 +443,37 @@ export async function getDashboardCastShifts(): Promise<DashboardCastShift[]> {
           finalStatusSource,
         },
       })
+      processedCastIds.add(row.cast_id)
     }
+  }
+
+  // シフト未提出で「出勤」に手動オーバーライドされたキャストを追加
+  const manualOnlyStart = '20:00'
+  for (const [castId, manual] of manualMap) {
+    if (manual.status !== 'working') continue
+    if (processedCastIds.has(castId)) continue
+
+    const castName = manual.castName ?? '不明'
+    const tags: string[] = ['手動出勤']
+    if (recentPostCastIds.has(castId)) tags.push('ブログ更新済')
+
+    accumulated.push({
+      sortMin: shiftClockToSortMinutes(manualOnlyStart),
+      row: {
+        castId,
+        castName,
+        initial: castName.charAt(0),
+        startTime: formatDashboardShiftClockForDisplay(manualOnlyStart),
+        endTime: undefined,
+        status: 'working',
+        tags,
+        avatarUrl: manual.avatarUrl,
+        manualStatus: 'working',
+        manualNote: manual.note,
+        finalStatusSource: 'manual',
+      },
+    })
+    processedCastIds.add(castId)
   }
 
   // 体験入店（manual override 対象外）

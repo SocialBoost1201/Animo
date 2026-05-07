@@ -1139,7 +1139,6 @@ export async function updateDailyCastAttendance(input: {
     isToday = false
   } else {
     // undecided: revert to approved-shift-based value
-    const serviceSupabase = createServiceClient()
     const { data: schedule } = await serviceSupabase
       .from('cast_schedules')
       .select('id')
@@ -1149,10 +1148,14 @@ export async function updateDailyCastAttendance(input: {
     isToday = !!schedule
   }
 
-  await supabase
+  const { error: castSyncError } = await serviceSupabase
     .from('casts')
     .update({ is_today: isToday })
     .eq('id', input.castId)
+
+  if (castSyncError) {
+    console.error('[updateDailyCastAttendance] casts.is_today sync failed', castSyncError)
+  }
 
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')
