@@ -6,13 +6,8 @@ import {
   rejectCheckin,
   rejectReservation,
 } from '@/lib/actions/today'
-import {
-  approveShiftSubmission,
-  getShiftSubmissions,
-  rejectShiftSubmission,
-} from '@/lib/actions/admin-shifts'
 import { updateCastPostStatus } from '@/lib/actions/cast-posts'
-import { UserCheck, Calendar, FileText, Clock } from 'lucide-react'
+import { UserCheck, FileText, Clock } from 'lucide-react'
 
 async function approveCheckinAction(formData: FormData): Promise<void> {
   'use server'
@@ -33,16 +28,6 @@ async function rejectReservationAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
   if (typeof id === 'string' && id) await rejectReservation(id)
-}
-async function approveShiftAction(formData: FormData): Promise<void> {
-  'use server'
-  const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveShiftSubmission(id)
-}
-async function rejectShiftAction(formData: FormData): Promise<void> {
-  'use server'
-  const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectShiftSubmission(id)
 }
 async function approvePostAction(formData: FormData): Promise<void> {
   'use server'
@@ -65,19 +50,6 @@ type CastPostPending = {
 function getCastName(casts: CastPostPending['casts']): string {
   if (Array.isArray(casts)) return casts[0]?.stage_name ?? '不明'
   return casts?.stage_name ?? '不明'
-}
-
-function formatShiftSummary(
-  shiftsData: Record<string, { type: string; start?: string; end?: string }>
-): string {
-  const workDays = Object.entries(shiftsData)
-    .filter(([, shift]) => shift.type === 'work')
-    .sort(([a], [b]) => a.localeCompare(b))
-    .slice(0, 3)
-    .map(([date, shift]) => `${date} ${shift.start ?? '--:--'}-${shift.end ?? 'LAST'}`)
-
-  if (workDays.length === 0) return '出勤シフトなし'
-  return workDays.join(' / ')
 }
 
 function toMinutes(time: string): number {
@@ -125,22 +97,6 @@ function createJstDate(year: number, month: number, day: number, hour: number, m
 function getToday1845Deadline(now = new Date()): Date {
   const { year, month, day } = getJstDateParts(now)
   return createJstDate(year, month, day, 18, 45)
-}
-
-function getNextSaturday2100Deadline(now = new Date()): Date {
-  const { year, month, day, weekday } = getJstDateParts(now)
-  let daysUntilSaturday = (6 - weekday + 7) % 7
-  if (daysUntilSaturday === 0) daysUntilSaturday = 7
-
-  const upcomingSaturdayBase = createJstDate(year, month, day, 0, 0)
-  upcomingSaturdayBase.setUTCDate(upcomingSaturdayBase.getUTCDate() + daysUntilSaturday)
-  return createJstDate(
-    upcomingSaturdayBase.getUTCFullYear(),
-    upcomingSaturdayBase.getUTCMonth() + 1,
-    upcomingSaturdayBase.getUTCDate(),
-    21,
-    0
-  )
 }
 
 function getUrgencyStatus(deadline: Date, now = new Date()): UrgencyLevel {
@@ -191,7 +147,7 @@ function sortFinal<T>(
   const p = priorityOrder[getPriorityType(a)] - priorityOrder[getPriorityType(b)]
   if (p !== 0) return p
 
-  return fallbackCompare(a, b) // stable維持
+  return fallbackCompare(a, b)
 }
 
 function sortByUrgencyPriorityKeepingOrder<T>(
@@ -221,15 +177,12 @@ export default async function AdminApprovalsPage({
   const resolvedSearchParams = (await searchParams) ?? {}
   const view = resolvedSearchParams.view ?? 'all'
 
-  const [today, shiftResult] = await Promise.all([getTodayDashboard(), getShiftSubmissions('pending')])
+  const today = await getTodayDashboard()
   const supabase = createServiceClient()
   const now = new Date()
   const lane1Deadline = getToday1845Deadline(now)
-  const shiftDeadline = getNextSaturday2100Deadline(now)
   const lane1Urgency = getUrgencyStatus(lane1Deadline, now)
-  const shiftUrgency = getUrgencyStatus(shiftDeadline, now)
   const lane1Badge = getUrgencyBadgeMeta(lane1Urgency)
-  const shiftBadge = getUrgencyBadgeMeta(shiftUrgency)
 
   const { data: pendingPosts } = await supabase
     .from('cast_posts')
@@ -237,7 +190,6 @@ export default async function AdminApprovalsPage({
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
 
-  const pendingShiftSubmissions = shiftResult.data ?? []
   const pendingCastPosts = (pendingPosts ?? []) as CastPostPending[]
   const pendingReservationsByCastId = new Map(
     today.pendingReservations.map((reservation) => [reservation.cast_id, reservation])
@@ -285,16 +237,6 @@ export default async function AdminApprovalsPage({
     )
   })
 
-  const sortedPendingShiftSubmissions = [...pendingShiftSubmissions].sort((a, b) => {
-    return sortFinal(
-      a,
-      b,
-      () => shiftUrgency,
-      () => 'normal',
-      (left, right) => left.target_week_monday.localeCompare(right.target_week_monday)
-    )
-  })
-
   const sortedPendingCastPosts = [...pendingCastPosts].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )
@@ -307,10 +249,6 @@ export default async function AdminApprovalsPage({
     view === 'all' ||
     view === 'reservations' ||
     (view === 'alerts' && lane1Urgency !== 'normal')
-  const showShifts =
-    view === 'all' ||
-    view === 'shifts' ||
-    (view === 'alerts' && shiftUrgency !== 'normal')
   const showPosts = view === 'all' || view === 'posts'
 
   const visibleCheckins = !showCheckins
@@ -336,11 +274,6 @@ export default async function AdminApprovalsPage({
           (item) => (item.reservation_type === 'douhan' ? 'douhan' : item.reservation_type === 'reservation' ? 'reservation' : 'normal')
         )
       : sortedPendingReservations
-  const visibleShiftSubmissions = !showShifts
-    ? []
-    : view === 'alerts'
-      ? sortByUrgencyPriorityKeepingOrder(sortedPendingShiftSubmissions, () => shiftUrgency, () => 'normal')
-      : sortedPendingShiftSubmissions
   const visibleCastPosts = showPosts ? sortedPendingCastPosts : []
 
   return (
@@ -350,7 +283,7 @@ export default async function AdminApprovalsPage({
         <div>
           <h1 className="text-[17px] font-bold text-[#f4f1ea] tracking-tight leading-tight">承認ハブ</h1>
           <p className="text-[12px] text-[#8a8478] mt-0.5 leading-relaxed tracking-[0.1px] opacity-70">
-            出勤・来店予定・シフト・ブログの承認を一元管理
+            出勤・来店予定・ブログの承認を一元管理
           </p>
         </div>
         {lane1Urgency !== 'normal' && (
@@ -364,8 +297,8 @@ export default async function AdminApprovalsPage({
         )}
       </div>
 
-      {/* Three-column grid */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-200px)]">
+      {/* Two-column grid */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:h-[calc(100vh-200px)]">
 
         {/* ── Column 1: 出勤 + 来店予定 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
@@ -512,71 +445,7 @@ export default async function AdminApprovalsPage({
           </div>
         </div>
 
-        {/* ── Column 2: シフト承認 ── */}
-        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
-          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
-            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
-                  <Calendar size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
-                </div>
-                <div className="flex flex-col">
-                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">シフト承認</p>
-                  <p className="text-[11px] text-[#8a8478] leading-tight">土曜21:00締切</p>
-                </div>
-              </div>
-              {visibleShiftSubmissions.length > 0 && (
-                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
-                  {visibleShiftSubmissions.length}
-                </span>
-              )}
-            </div>
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
-              {visibleShiftSubmissions.length === 0 ? (
-                <div className="flex items-center justify-center h-32">
-                  <p className="text-[12px] text-[#5a5650]">承認待ちのシフトなし</p>
-                </div>
-              ) : visibleShiftSubmissions.map((submission) => (
-                <article key={submission.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={10} className="text-[#5a5650]" />
-                      <span className="text-[10px] text-[#5a5650]">土曜21:00締切</span>
-                    </div>
-                    {shiftBadge && (
-                      <span className={`rounded-[5px] px-2 py-0.5 text-[9px] font-bold ${shiftBadge.className}`}>
-                        {shiftBadge.label}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[14px] font-bold text-[#f4f1ea] leading-tight">{submission.casts.stage_name}</p>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">対象週</span>
-                      <span className="text-[11px] text-[#c7c0b2]">{submission.target_week_monday}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">シフト</span>
-                      <span className="text-[11px] text-[#8a8478] leading-relaxed">{formatShiftSummary(submission.shifts_data)}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-0.5">
-                    <form action={approveShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                    </form>
-                    <form action={rejectShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                    </form>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Column 3: ブログ承認 ── */}
+        {/* ── Column 2: ブログ承認 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
           <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
             <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
