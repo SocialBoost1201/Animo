@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import {
   approveCheckin,
   approveReservation,
@@ -222,7 +222,7 @@ export default async function AdminApprovalsPage({
   const view = resolvedSearchParams.view ?? 'all'
 
   const [today, shiftResult] = await Promise.all([getTodayDashboard(), getShiftSubmissions('pending')])
-  const supabase = await createClient()
+  const supabase = createServiceClient()
   const now = new Date()
   const lane1Deadline = getToday1845Deadline(now)
   const shiftDeadline = getNextSaturday2100Deadline(now)
