@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, Settings, MessageSquare,
   LogOut, Briefcase, Menu, ChevronRight, X, Bell, ClipboardList,
-  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Printer, Newspaper,
+  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Newspaper,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 import { AdminThemeProvider, useAdminTheme } from '@/components/providers/AdminThemeProvider';
@@ -21,7 +21,6 @@ const NAV_ITEMS = [
   { href: '/admin/shift-requests',     icon: Calendar,        label: '出勤調整',       section: 'operations' },
   { href: '/admin/approvals',          icon: ClipboardList,   label: '承認',           section: 'operations', badge: 'shifts' },
   { href: '/admin/monthly-shifts',     icon: Calendar,        label: 'シフト管理',     section: 'operations' },
-  { href: '/admin/template-shifts',    icon: Printer,         label: 'シフト印刷表',   section: 'operations' },
   { href: '/admin/staffs',             icon: UserCheck,       label: 'スタッフ管理',   section: 'operations' },
   { href: '/admin/internal-notices',   icon: Bell,            label: '通知',           section: 'operations', badge: 'notifications' },
 
