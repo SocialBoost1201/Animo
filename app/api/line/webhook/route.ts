@@ -111,6 +111,18 @@ export async function POST(req: Request) {
     const events = body?.events ?? [];
 
     for (const event of events) {
+      // ── join イベント: Bot がグループに追加された時 ───────────────────────
+      // グループにグループIDを返信して環境変数設定に使えるようにする
+      if (event.type === 'join' && event.source?.type === 'group') {
+        const groupId: string = event.source.groupId;
+        console.log(`[LINE Webhook] Bot がグループに参加しました。groupId=${groupId}`);
+        await sendLineMessage(
+          groupId,
+          `【Animo Bot】\nグループへの参加が完了しました。\n\n通知用グループIDは以下です。\nVERCEL の環境変数に設定してください。\n\nLINE_NOTIFY_GROUP_ID=${groupId}`
+        );
+        continue;
+      }
+
       const lineUserId: string = event?.source?.userId;
       if (!lineUserId) continue;
 

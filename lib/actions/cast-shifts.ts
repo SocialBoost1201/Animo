@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { addCastScore } from './scores';
+import { notifyShiftSubmitted } from '@/lib/notifications/admin-notifier';
 
 export type ShiftType = 'off' | 'work';
 
@@ -74,7 +75,7 @@ export async function submitMyShift(
 
   const { data: ownedCast, error: castError } = await supabase
     .from('casts')
-    .select('id')
+    .select('id, stage_name, name')
     .eq('id', normalizedCastId)
     .eq('auth_user_id', user.id)
     .maybeSingle();
@@ -95,6 +96,8 @@ export async function submitMyShift(
     .eq('cast_id', normalizedCastId)
     .eq('target_week_monday', targetWeekMonday)
     .maybeSingle();
+
+  const isResubmit = !!existing
 
   if (existing) {
     // 更新
@@ -120,8 +123,8 @@ export async function submitMyShift(
       });
 
     if (error) return { success: false, error: error.message };
-    
-    // 新規提出の場合、期限チェックなどを行ってポイント付与（簡易的に初回提出で+10ptとする）
+
+    // 新規提出の場合、ポイント付与
     try {
       await addCastScore(normalizedCastId, 10, 'shift_submitted_on_time', 'シフトを提出しました');
     } catch (e) {
@@ -129,8 +132,18 @@ export async function submitMyShift(
     }
   }
 
+  // 通知（email + LINE、non-critical）
+  try {
+    const castName = (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).stage_name
+      || (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).name
+      || '不明'
+    await notifyShiftSubmitted({ castName, targetWeekMonday, isResubmit })
+  } catch (notifyErr) {
+    console.warn('[AdminNotifier] シフト提出通知失敗 (non-critical):', notifyErr)
+  }
+
   revalidatePath('/cast/shift');
   revalidatePath('/cast/dashboard');
-  
+
   return { success: true };
 }

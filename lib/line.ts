@@ -1,5 +1,7 @@
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const LINE_GROUP_ID = process.env.LINE_GROUP_ID;
+// 「通知用グループ」のグループID。キャストグループ（LINE_GROUP_ID）とは別。
+const LINE_NOTIFY_GROUP_ID = process.env.LINE_NOTIFY_GROUP_ID;
 
 type LineSendResult = {
   ok: boolean;
@@ -42,4 +44,18 @@ export async function sendLineGroupMessage(message: string): Promise<LineSendRes
   }
 
   return sendLineMessage(LINE_GROUP_ID, message);
+}
+
+/**
+ * 「通知用グループ」（管理者 + 公式LINE）への通知。
+ * キャストグループ（LINE_GROUP_ID）とは完全に別の送信先。
+ * .env.local に LINE_NOTIFY_GROUP_ID を設定すること。
+ */
+export async function sendLineNotifyGroupMessage(message: string): Promise<LineSendResult> {
+  if (!LINE_NOTIFY_GROUP_ID) {
+    console.warn('[LINE] LINE_NOTIFY_GROUP_ID が未設定です。送信をスキップします。');
+    return { ok: false, skipped: true, reason: 'missing_notify_group_id' };
+  }
+
+  return sendLineMessage(LINE_NOTIFY_GROUP_ID, message);
 }

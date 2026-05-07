@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath, unstable_cache } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/service';
 import { addCastScore } from './scores';
+import { notifyBlogSubmitted } from '@/lib/notifications/admin-notifier';
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Unknown error';
@@ -38,7 +39,7 @@ export async function createCastPost(formData: FormData) {
 
     const { data: ownedCast, error: castError } = await supabase
       .from('casts')
-      .select('id')
+      .select('id, stage_name, name')
       .eq('id', castId)
       .eq('auth_user_id', user.id)
       .maybeSingle();
@@ -99,6 +100,16 @@ export async function createCastPost(formData: FormData) {
       await sendCastPostNotification(castId, content);
     } catch (mailErr) {
       console.warn('Mail notification failed (non-critical):', mailErr);
+    }
+
+    // LINE通知（non-critical）
+    try {
+      const castName = (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).stage_name
+        || (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).name
+        || '不明'
+      await notifyBlogSubmitted({ castName, contentPreview: content })
+    } catch (lineErr) {
+      console.warn('[AdminNotifier] ブログLINE通知失敗 (non-critical):', lineErr)
     }
 
     // スコア付与 (+5pt)
