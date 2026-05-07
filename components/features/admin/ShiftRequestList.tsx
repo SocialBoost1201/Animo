@@ -164,8 +164,8 @@ export function ShiftRequestList({
                   style={{ paddingLeft: '24px' }}
                 >
                   送信:{' '}
-                  {submittedAt.toLocaleDateString('ja-JP')}{' '}
-                  {submittedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}
+                  {submittedAt.toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })}{' '}
+                  {submittedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' })}
                 </div>
               </div>
             </div>

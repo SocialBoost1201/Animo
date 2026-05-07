@@ -60,7 +60,7 @@ export function ShiftChangeRequestList({ requests }: { requests: ShiftChangeRequ
       {requestItems.map((req) => {
         const isActioning = isProcessing === req.id;
         const submitDate = new Date(req.created_at).toLocaleString('ja-JP', {
-          month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo'
         });
         const targetDate = req.target_date.replace(/-/g, '/');
 
