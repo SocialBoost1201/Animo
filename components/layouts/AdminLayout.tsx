@@ -208,28 +208,28 @@ function AdminLayoutInner({
                     prefetch={false}
                     onClick={() => setMobileOpen(false)}
                     onNavigate={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-200 text-xs font-medium group relative ${
                       isActive
-                        ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
-                        : T.navInactive
+                        ? 'bg-[linear-gradient(90deg,#b39855_0%,#fff9e6_50%,#b39855_100%)] text-white -translate-y-[1px] shadow-[0_6px_18px_rgba(179,152,85,0.45)]'
+                        : `${T.navInactive} hover:-translate-y-[1px] hover:shadow-[0_6px_16px_rgba(179,152,85,0.28)]`
                     }`}
                   >
                     <Icon
                       size={13}
                       strokeWidth={isActive ? 2.5 : 2}
-                      className={`shrink-0 ${isActive ? 'text-[#0b0b0d]' : T.navIconInactive}`}
+                      className={`shrink-0 ${isActive ? 'text-white' : T.navIconInactive}`}
                     />
                     <span className="flex-1 tracking-tight truncate">{item.label}</span>
 
                     {badgeCount > 0 && (
                       <div className={`flex items-center justify-center h-[16px] min-w-[16px] px-1 rounded-full text-[9px] font-bold ${
-                        isActive ? 'bg-[#0b0b0d]/15 text-[#0b0b0d]' : 'bg-[#dfbd6920] text-[#dfbd69]'
+                        isActive ? 'bg-white/25 text-white' : 'bg-[#dfbd6920] text-[#dfbd69]'
                       }`}>
                         {badgeCount}
                       </div>
                     )}
 
-                    {isActive && <ChevronRight size={10} className="opacity-50 shrink-0" />}
+                    {isActive && <ChevronRight size={10} className="opacity-60 shrink-0 text-white" />}
                   </Link>
                 );
               })}
