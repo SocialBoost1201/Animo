@@ -7,7 +7,12 @@ import {
   rejectReservation,
 } from '@/lib/actions/today'
 import { updateCastPostStatus } from '@/lib/actions/cast-posts'
-import { UserCheck, FileText, Clock } from 'lucide-react'
+import {
+  getPendingProfileImageRequests,
+  approveProfileImageRequest,
+  rejectProfileImageRequest,
+} from '@/lib/actions/admin-image-requests'
+import { UserCheck, FileText, Clock, ImageIcon } from 'lucide-react'
 
 async function approveCheckinAction(formData: FormData): Promise<void> {
   'use server'
@@ -38,6 +43,16 @@ async function rejectPostAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
   if (typeof id === 'string' && id) await updateCastPostStatus(id, 'draft')
+}
+async function approveImageAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await approveProfileImageRequest(id)
+}
+async function rejectImageAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await rejectProfileImageRequest(id)
 }
 
 type CastPostPending = {
@@ -177,7 +192,10 @@ export default async function AdminApprovalsPage({
   const resolvedSearchParams = (await searchParams) ?? {}
   const view = resolvedSearchParams.view ?? 'all'
 
-  const today = await getTodayDashboard()
+  const [today, imageResult] = await Promise.all([
+    getTodayDashboard(),
+    getPendingProfileImageRequests(),
+  ])
   const supabase = createServiceClient()
   const now = new Date()
   const lane1Deadline = getToday1845Deadline(now)
@@ -191,6 +209,7 @@ export default async function AdminApprovalsPage({
     .order('created_at', { ascending: false })
 
   const pendingCastPosts = (pendingPosts ?? []) as CastPostPending[]
+  const pendingImageRequests = imageResult.data
   const pendingReservationsByCastId = new Map(
     today.pendingReservations.map((reservation) => [reservation.cast_id, reservation])
   )
@@ -283,7 +302,7 @@ export default async function AdminApprovalsPage({
         <div>
           <h1 className="text-[17px] font-bold text-[#f4f1ea] tracking-tight leading-tight">承認ハブ</h1>
           <p className="text-[12px] text-[#8a8478] mt-0.5 leading-relaxed tracking-[0.1px] opacity-70">
-            出勤・来店予定・ブログの承認を一元管理
+            出勤・来店予定・ブログ・プロフィール画像の承認を一元管理
           </p>
         </div>
         {lane1Urgency !== 'normal' && (
@@ -297,8 +316,8 @@ export default async function AdminApprovalsPage({
         )}
       </div>
 
-      {/* Two-column grid */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:h-[calc(100vh-200px)]">
+      {/* Three-column grid */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-200px)]">
 
         {/* ── Column 1: 出勤 + 来店予定 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
@@ -490,6 +509,65 @@ export default async function AdminApprovalsPage({
                   </div>
                 </article>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column 3: プロフィール画像承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <ImageIcon size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">プロフィール画像</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">変更申請の審査</p>
+                </div>
+              </div>
+              {pendingImageRequests.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {pendingImageRequests.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {pendingImageRequests.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちの申請なし</p>
+                </div>
+              ) : pendingImageRequests.map((req) => {
+                const castName = Array.isArray(req.casts)
+                  ? (req.casts[0]?.stage_name ?? '不明')
+                  : (req.casts?.stage_name ?? '不明')
+                return (
+                  <article key={req.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[13px] font-bold text-[#f4f1ea]">{castName}</p>
+                      <span className="text-[10px] text-[#5a5650] shrink-0">
+                        {new Date(req.created_at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' })}
+                      </span>
+                    </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={req.image_url}
+                      alt={`${castName}の申請画像`}
+                      className="w-full aspect-square object-cover rounded-[8px] bg-[#ffffff08]"
+                    />
+                    <div className="flex gap-2 pt-0.5">
+                      <form action={approveImageAction} className="flex-1">
+                        <input type="hidden" name="id" value={req.id} />
+                        <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
+                      </form>
+                      <form action={rejectImageAction} className="flex-1">
+                        <input type="hidden" name="id" value={req.id} />
+                        <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
+                      </form>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
           </div>
         </div>
