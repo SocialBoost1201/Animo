@@ -12,6 +12,9 @@ import {
   CastMobileShell,
 } from '@/components/features/cast/CastMobileShell';
 
+// 21:00 〜 24:00、30分刻み
+const START_TIMES = ['21:00', '21:30', '22:00', '22:30', '23:00', '23:30', '24:00'] as const;
+
 function getInitialTargetMonday() {
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);
@@ -62,10 +65,22 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
   }, [targetMonday]);
 
   const handleTypeChange = (dateStr: string, type: ShiftType) => {
-      setShifts(prev => ({
-          ...prev,
-          [dateStr]: { ...prev[dateStr], type }
-      }));
+    setShifts(prev => ({
+      ...prev,
+      [dateStr]: {
+        ...prev[dateStr],
+        type,
+        // 出勤に切り替えた際、開始時刻が未設定なら 21:00 をデフォルトにする
+        start: prev[dateStr]?.start || '21:00',
+      },
+    }));
+  };
+
+  const handleStartTimeChange = (dateStr: string, start: string) => {
+    setShifts(prev => ({
+      ...prev,
+      [dateStr]: { ...prev[dateStr], start },
+    }));
   };
 
   const handleSubmit = async () => {
@@ -160,6 +175,32 @@ export default function ShiftSubmitPage({ castId }: { castId: string }) {
                         </div>
                         <span className={`h-[6px] w-[6px] rounded-full ${isWork ? 'bg-[#c9a76a]' : 'bg-[rgba(224,106,106,0.4)]'}`} />
                       </div>
+
+                      {/* 開始時刻セレクター（出勤のみ表示） */}
+                      {isWork && (
+                        <div className="mt-2.5 flex items-center gap-2">
+                          <span className="shrink-0 text-[10px] font-bold text-[#6b7280] tracking-[0.5px]">開始</span>
+                          <div className="flex gap-1 overflow-x-auto pb-0.5 scrollbar-hide">
+                            {START_TIMES.map((t) => {
+                              const isSelected = (shift.start || '21:00') === t;
+                              return (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  onClick={() => handleStartTimeChange(dateStr, t)}
+                                  className={`shrink-0 rounded-[7px] border px-2 py-1 text-[11px] font-bold transition-all duration-150 active:scale-[0.95] focus-visible:outline-none ${
+                                    isSelected
+                                      ? 'border-[rgba(201,167,106,0.6)] bg-[rgba(201,167,106,0.2)] text-[#c9a76a]'
+                                      : 'border-[#ffffff0f] bg-[rgba(255,255,255,0.03)] text-[#6b7280]'
+                                  }`}
+                                >
+                                  {t}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                   </div>
               );
           })}
