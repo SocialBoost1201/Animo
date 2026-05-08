@@ -12,7 +12,13 @@ import {
   approveProfileImageRequest,
   rejectProfileImageRequest,
 } from '@/lib/actions/admin-image-requests'
-import { UserCheck, FileText, Clock, ImageIcon } from 'lucide-react'
+import {
+  getPendingProfileTextRequests,
+  approveProfileTextRequest,
+  rejectProfileTextRequest,
+} from '@/lib/actions/admin-profile-text-requests'
+import { UserCheck, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
+import { ApprovalActionPair } from '@/components/features/admin/ApprovalActionButtons'
 
 async function approveCheckinAction(formData: FormData): Promise<void> {
   'use server'
@@ -53,6 +59,16 @@ async function rejectImageAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
   if (typeof id === 'string' && id) await rejectProfileImageRequest(id)
+}
+async function approveTextAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await approveProfileTextRequest(id)
+}
+async function rejectTextAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await rejectProfileTextRequest(id)
 }
 
 type CastPostPending = {
@@ -192,9 +208,10 @@ export default async function AdminApprovalsPage({
   const resolvedSearchParams = (await searchParams) ?? {}
   const view = resolvedSearchParams.view ?? 'all'
 
-  const [today, imageResult] = await Promise.all([
+  const [today, imageResult, textResult] = await Promise.all([
     getTodayDashboard(),
     getPendingProfileImageRequests(),
+    getPendingProfileTextRequests(),
   ])
   const supabase = createServiceClient()
   const now = new Date()
@@ -210,6 +227,7 @@ export default async function AdminApprovalsPage({
 
   const pendingCastPosts = (pendingPosts ?? []) as CastPostPending[]
   const pendingImageRequests = imageResult.data
+  const pendingTextRequests = textResult.data
   const pendingReservationsByCastId = new Map(
     today.pendingReservations.map((reservation) => [reservation.cast_id, reservation])
   )
@@ -302,7 +320,7 @@ export default async function AdminApprovalsPage({
         <div>
           <h1 className="text-[17px] font-bold text-[#f4f1ea] tracking-tight leading-tight">承認ハブ</h1>
           <p className="text-[12px] text-[#8a8478] mt-0.5 leading-relaxed tracking-[0.1px] opacity-70">
-            出勤・来店予定・ブログ・プロフィール画像の承認を一元管理
+            出勤・来店予定・ブログ・プロフィール画像・テキスト変更の承認を一元管理
           </p>
         </div>
         {lane1Urgency !== 'normal' && (
@@ -316,8 +334,8 @@ export default async function AdminApprovalsPage({
         )}
       </div>
 
-      {/* Three-column grid */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-200px)]">
+      {/* Four-column grid */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-4 xl:h-[calc(100vh-200px)]">
 
         {/* ── Column 1: 出勤 + 来店予定 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
@@ -385,16 +403,11 @@ export default async function AdminApprovalsPage({
                           </div>
                         )}
                       </div>
-                      <div className="flex gap-2 pt-0.5">
-                        <form action={approveCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                        </form>
-                        <form action={rejectCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                        </form>
-                      </div>
+                      <ApprovalActionPair
+                        id={checkin.id}
+                        approveAction={approveCheckinAction}
+                        rejectAction={rejectCheckinAction}
+                      />
                     </article>
                   ))}
                 </div>
@@ -446,16 +459,11 @@ export default async function AdminApprovalsPage({
                           </div>
                         )}
                       </div>
-                      <div className="flex gap-2 pt-0.5">
-                        <form action={approveReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                        </form>
-                        <form action={rejectReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                        </form>
-                      </div>
+                      <ApprovalActionPair
+                        id={reservation.id}
+                        approveAction={approveReservationAction}
+                        rejectAction={rejectReservationAction}
+                      />
                     </article>
                   ))}
                 </div>
@@ -497,16 +505,11 @@ export default async function AdminApprovalsPage({
                     </span>
                   </div>
                   <p className="text-[12px] text-[#8a8478] leading-relaxed line-clamp-4">{post.content}</p>
-                  <div className="flex gap-2 pt-0.5">
-                    <form action={approvePostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                    </form>
-                    <form action={rejectPostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                    </form>
-                  </div>
+                  <ApprovalActionPair
+                    id={post.id}
+                    approveAction={approvePostAction}
+                    rejectAction={rejectPostAction}
+                  />
                 </article>
               ))}
             </div>
@@ -555,16 +558,85 @@ export default async function AdminApprovalsPage({
                       alt={`${castName}の申請画像`}
                       className="w-full aspect-square object-cover rounded-[8px] bg-[#ffffff08]"
                     />
-                    <div className="flex gap-2 pt-0.5">
-                      <form action={approveImageAction} className="flex-1">
-                        <input type="hidden" name="id" value={req.id} />
-                        <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                      </form>
-                      <form action={rejectImageAction} className="flex-1">
-                        <input type="hidden" name="id" value={req.id} />
-                        <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                      </form>
+                    <ApprovalActionPair
+                      id={req.id}
+                      approveAction={approveImageAction}
+                      rejectAction={rejectImageAction}
+                    />
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column 4: プロフィールテキスト承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <AlignLeft size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">プロフィールテキスト</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">趣味・タグ・コメント変更申請</p>
+                </div>
+              </div>
+              {pendingTextRequests.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {pendingTextRequests.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {pendingTextRequests.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちの申請なし</p>
+                </div>
+              ) : pendingTextRequests.map((req) => {
+                const castName = Array.isArray(req.casts)
+                  ? (req.casts[0]?.stage_name ?? '不明')
+                  : (req.casts?.stage_name ?? '不明')
+                return (
+                  <article key={req.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[13px] font-bold text-[#f4f1ea]">{castName}</p>
+                      <span className="text-[10px] text-[#5a5650] shrink-0">
+                        {new Date(req.created_at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' })}
+                      </span>
                     </div>
+                    <div className="space-y-1.5">
+                      {req.hobby !== null && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">趣味</p>
+                          <p className="text-[12px] text-[#c7c0b2] leading-relaxed">{req.hobby}</p>
+                        </div>
+                      )}
+                      {req.quiz_tags !== null && req.quiz_tags.length > 0 && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">AI診断タグ</p>
+                          <div className="flex flex-wrap gap-1">
+                            {req.quiz_tags.map((tag) => (
+                              <span key={tag} className="rounded-full px-2 py-0.5 text-[9px] font-medium bg-[#dfbd691a] text-[#dfbd69] border border-[#dfbd6915]">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {req.comment !== null && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">一言コメント</p>
+                          <p className="text-[12px] text-[#c7c0b2] leading-relaxed line-clamp-3">{req.comment}</p>
+                        </div>
+                      )}
+                    </div>
+                    <ApprovalActionPair
+                      id={req.id}
+                      approveAction={approveTextAction}
+                      rejectAction={rejectTextAction}
+                    />
                   </article>
                 )
               })}
