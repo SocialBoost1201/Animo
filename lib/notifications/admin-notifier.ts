@@ -101,6 +101,33 @@ export async function notifyCheckinSubmitted(opts: {
 }
 
 /**
+ * プロフィールテキスト変更申請通知（公式LINE）
+ * cast-profile-requests.ts の requestProfileTextChange から呼ぶ。
+ */
+export async function notifyProfileTextChangeRequested(opts: {
+  castName: string
+  fields: { hobby: boolean; quizTags: boolean; comment: boolean }
+}): Promise<void> {
+  const fieldLabels = [
+    opts.fields.hobby     && '趣味',
+    opts.fields.quizTags  && 'AI診断タグ',
+    opts.fields.comment   && '一言コメント',
+  ].filter(Boolean).join('・')
+
+  const message = [
+    '【プロフィールテキスト申請】',
+    `${opts.castName} さんがテキスト変更を申請しました`,
+    `変更項目: ${fieldLabels}`,
+    '状態: 承認待ち',
+  ].join('\n')
+
+  const result = await sendLineNotifyGroupMessage(message)
+  if (!result.ok && !result.skipped) {
+    console.warn('[AdminNotifier] テキスト申請LINE通知失敗:', result.reason)
+  }
+}
+
+/**
  * 来店予定提出通知（公式LINE）
  * today.ts の addReservation から呼ぶ。
  * ※ キャストグループへの既存通知（sendLineGroupMessage）はそのまま残す。
