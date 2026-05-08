@@ -236,3 +236,10 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `lib/actions/cast-auth.ts`, `daily_log.md`.
 - validation: Targeted eslint passed for `lib/actions/cast-auth.ts`; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
 - remaining risks: Supabase OTP/SMS provider latency remains external; live timing should be checked with a real cast login attempt.
+
+### 2026-05-09 (cast trusted-device exit split)
+
+- scope: Split cast profile session controls into normal app exit, which preserves the trusted-device cookie, and explicit device-auth removal logout, which clears trusted state and signs out.
+- files changed: `lib/actions/cast-auth.ts`, `app/(cast)/cast/profile/page.tsx`, `daily_log.md`.
+- validation: Targeted eslint passed for `lib/actions/cast-auth.ts` and `app/(cast)/cast/profile/page.tsx`; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Live browser verification is needed to confirm the next `/cast/login` visit redirects without SMS after using `アプリを終了`.

@@ -9,7 +9,7 @@ import {
   LogOut,
   ChevronRight,
 } from 'lucide-react';
-import { getCurrentCast, castLogout, getMyCastPosts } from '@/lib/actions/cast-auth';
+import { castEndSession, castLogout, getCurrentCast, getMyCastPosts } from '@/lib/actions/cast-auth';
 import { getCastPVStats } from '@/lib/actions/posts-analytics';
 import { PlaceholderImage } from '@/components/ui/PlaceholderImage';
 import Link from 'next/link';
@@ -237,14 +237,24 @@ export default async function CastProfilePage() {
           ))}
         </CastMobileCard>
 
-        {/* ── Logout ── */}
+        {/* ── Session Actions ── */}
+        <form action={castEndSession}>
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-[rgba(201,167,106,0.25)] bg-[rgba(201,167,106,0.12)] px-4 py-3 text-[13px] font-bold text-[#c9a76a] transition-colors hover:bg-[rgba(201,167,106,0.18)]"
+          >
+            <LogOut className="h-[14px] w-[14px]" />
+            アプリを終了
+          </button>
+        </form>
+
         <form action={castLogout}>
           <button
             type="submit"
             className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-[rgba(224,106,106,0.2)] bg-[rgba(224,106,106,0.08)] px-4 py-3 text-[13px] font-bold text-[#e06a6a] transition-colors hover:bg-[rgba(224,106,106,0.14)]"
           >
             <LogOut className="h-[14px] w-[14px]" />
-            ログアウト
+            端末認証を解除してログアウト
           </button>
         </form>
 

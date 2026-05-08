@@ -705,6 +705,14 @@ export async function castForgotPassword(formData: FormData): Promise<{
 }
 
 /**
+ * キャスト画面を終了（信頼済み端末状態は維持）
+ */
+export async function castEndSession() {
+  await setCastReauthCookie();
+  redirect('/');
+}
+
+/**
  * キャストログアウト
  */
 export async function castLogout() {
