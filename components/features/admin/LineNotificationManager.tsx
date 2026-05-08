@@ -21,8 +21,20 @@ import {
 import { useAdminTheme } from '@/components/providers/AdminThemeProvider'
 import { showToast } from '@/components/ui/Toast'
 
+// ── LINEグループ定義 ─────────────────────────────────────────────────────────
+const LINE_GROUPS = [
+  { id: 'C36a09148a398d4905a72423371d00628', label: 'Animo業務連絡' },
+  { id: 'C168d57645f08a530cca6dbd69978be60', label: 'アニモ通知グループ' },
+] as const
+
 // ── 曜日ラベル ──────────────────────────────────────────────────────────────
 const DAY_LABELS = ['日', '月', '火', '水', '木', '金', '土']
+
+// ── グループ名解決 ───────────────────────────────────────────────────────────
+function resolveGroupLabel(targetId: string | null): string {
+  if (!targetId) return 'グループ'
+  return LINE_GROUPS.find((g) => g.id === targetId)?.label ?? 'グループ'
+}
 
 // ── スケジュール表示テキスト ─────────────────────────────────────────────────
 function formatSchedule(n: LineNotification): string {
@@ -357,7 +369,9 @@ function NotificationCard({
                 ? isDark ? 'border-blue-500/20 text-blue-400/80' : 'border-blue-400/30 text-blue-500/80'
                 : isDark ? 'border-purple-500/20 text-purple-400/80' : 'border-purple-400/30 text-purple-500/80'
             }`}>
-              {n.target_type === 'group' ? <><Users size={8} className="inline mr-0.5" />グループ</> : <><User size={8} className="inline mr-0.5" />個別</>}
+              {n.target_type === 'group'
+                ? <><Users size={8} className="inline mr-0.5" />{resolveGroupLabel(n.target_id)}</>
+                : <><User size={8} className="inline mr-0.5" />個別</>}
             </span>
           </div>
         </div>
@@ -507,7 +521,7 @@ function NotificationForm({
               <button
                 key={t}
                 type="button"
-                onClick={() => setForm((p) => ({ ...p, target_type: t }))}
+                onClick={() => setForm((p) => ({ ...p, target_type: t, target_id: '' }))}
                 className={`flex-1 flex items-center justify-center gap-2.5 py-3 text-[13px] font-bold border rounded-[8px] transition-all font-sans ${
                   form.target_type === t ? activeDayClass : inactiveDayClass
                 }`}
@@ -517,6 +531,23 @@ function NotificationForm({
             ))}
           </div>
         </div>
+
+        {/* グループ選択（グループのみ） */}
+        {form.target_type === 'group' && (
+          <div>
+            <label className={F.label}>送信先グループ</label>
+            <select
+              value={form.target_id ?? ''}
+              onChange={(e) => setForm((p) => ({ ...p, target_id: e.target.value }))}
+              className={F.input}
+            >
+              <option value="">グループを選択してください</option>
+              {LINE_GROUPS.map((g) => (
+                <option key={g.id} value={g.id}>{g.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* キャスト選択（個別のみ） */}
         {form.target_type === 'individual' && (

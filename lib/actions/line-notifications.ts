@@ -220,7 +220,8 @@ export async function testSendLineNotification(
   const message = buildMessage(notif.content)
 
   let result: { ok: boolean; skipped?: boolean; reason?: string }
-  if (notif.target_type === 'individual' && notif.target_id) {
+  if (notif.target_id) {
+    // group / individual どちらも target_id が設定されていれば直接送信
     result = await sendLineMessage(notif.target_id, message)
   } else {
     result = await sendLineGroupMessage(message)
@@ -286,7 +287,8 @@ export async function runScheduledNotifications(): Promise<{
     const message = buildMessage(notif.content)
 
     let result: { ok: boolean; skipped?: boolean; reason?: string }
-    if (notif.target_type === 'individual' && notif.target_id) {
+    if (notif.target_id) {
+      // group / individual どちらも target_id が設定されていれば直接送信
       result = await sendLineMessage(notif.target_id, message)
     } else {
       result = await sendLineGroupMessage(message)
