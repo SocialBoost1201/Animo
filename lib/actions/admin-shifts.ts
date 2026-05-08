@@ -142,6 +142,7 @@ export async function approveShiftSubmission(submissionId: string) {
 
   revalidatePath('/admin/shift-requests');
   revalidatePath('/admin/shifts');
+  revalidatePath('/admin/monthly-shifts');
   revalidatePath('/admin/approvals');
   revalidatePath('/shift');
   revalidatePath('/');

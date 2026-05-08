@@ -14,7 +14,7 @@ export default async function AdminMonthlyShiftsPage({
 
   const now = new Date();
   const year = resolvedParams.year ? parseInt(resolvedParams.year) : now.getFullYear();
-  let defaultMonth = now.getMonth() + 2;
+  let defaultMonth = now.getMonth() + 1;
   if (defaultMonth > 12) { defaultMonth -= 12; }
   const month = resolvedParams.month ? parseInt(resolvedParams.month) : defaultMonth;
   const activeTab = resolvedParams.tab === 'staff' ? 'staff' : 'cast';
