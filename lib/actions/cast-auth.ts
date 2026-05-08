@@ -163,21 +163,21 @@ export async function castSendLoginOtp(formData: FormData) {
     };
   }
 
+  const cookieStore = await cookies();
+  const reauthCookie = cookieStore.get(CAST_REAUTH_COOKIE_NAME)?.value;
+  const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now();
+  const hasCompletedSmsVerification = Boolean(castRecord.last_sms_verified_at);
+  const canReuseSession =
+    Boolean(castRecord.auth_user_id) &&
+    hasCompletedSmsVerification &&
+    Boolean(isValidCookie);
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (user && user.id === castRecord.auth_user_id) {
-    const cookieStore = await cookies();
-    const reauthCookie = cookieStore.get(CAST_REAUTH_COOKIE_NAME)?.value;
-    const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now();
+  if (canReuseSession) {
+    const { data: { user } } = await supabase.auth.getUser();
 
-    const hasCompletedSmsVerification = Boolean(castRecord.last_sms_verified_at);
-    const isValidSession =
-      Boolean(castRecord.auth_user_id) &&
-      hasCompletedSmsVerification &&
-      Boolean(isValidCookie);
-
-    if (isValidSession) {
+    if (user?.id === castRecord.auth_user_id) {
       await setCastReauthCookie();
       return {
         success: true,

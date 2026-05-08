@@ -229,3 +229,10 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `app/(cast)/cast/login/page.tsx`, `app/(cast)/cast/m/login/page.tsx`, `components/features/cast/OtpVerifyForm.tsx`, `components/features/cast/ProfileImageChangeForm.tsx`, `components/features/cast/ProfileTextChangeForm.tsx`, `daily_log.md`.
 - validation: Targeted eslint passed; contrast spot-check for updated helper text passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
 - remaining risks: Live SMS provider latency may still take several seconds; authenticated browser smoke with a real cast phone/OTP is recommended before production rollout confirmation.
+
+### 2026-05-09 (cast SMS login server wait reduction)
+
+- scope: Reduced actual SMS login wait by skipping the unused `auth.getUser()` round trip unless a valid cast reauth cookie makes session reuse possible.
+- files changed: `lib/actions/cast-auth.ts`, `daily_log.md`.
+- validation: Targeted eslint passed for `lib/actions/cast-auth.ts`; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Supabase OTP/SMS provider latency remains external; live timing should be checked with a real cast login attempt.
