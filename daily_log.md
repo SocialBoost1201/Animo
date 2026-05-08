@@ -215,3 +215,17 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `lib/auth/admin-roles.ts`, `daily_log.md`.
 - validation: Targeted eslint passed for `lib/auth/admin-roles.ts` and `AdminLayout.tsx`; `tsc --noEmit` passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `next build` passed.
 - remaining risks: Existing database roles and RLS policies still mention `staff`; no DB migration was applied in this minimal app-auth alignment.
+
+### 2026-05-09 (admin dashboard accessibility fixes)
+
+- scope: Fixed confirmed admin dashboard/sidebar accessibility issues without changing UI layout or component hierarchy.
+- files changed: `components/layouts/AdminLayout.tsx`, `app/admin/(protected)/dashboard/page.tsx`, `daily_log.md`.
+- validation: Targeted eslint passed; focused static accessibility checks passed for hidden mobile sidebar focus removal and dashboard description contrast; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Protected-route browser axe scan was not run in this turn; authenticated browser smoke is still recommended after preview deploy.
+
+### 2026-05-09 (cast profile/login feedback responsiveness)
+
+- scope: Improved immediate feedback for cast SMS login/verify and cast profile-edit submissions without changing auth behavior, data flow, layout hierarchy, or route contracts.
+- files changed: `app/(cast)/cast/login/page.tsx`, `app/(cast)/cast/m/login/page.tsx`, `components/features/cast/OtpVerifyForm.tsx`, `components/features/cast/ProfileImageChangeForm.tsx`, `components/features/cast/ProfileTextChangeForm.tsx`, `daily_log.md`.
+- validation: Targeted eslint passed; contrast spot-check for updated helper text passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Live SMS provider latency may still take several seconds; authenticated browser smoke with a real cast phone/OTP is recommended before production rollout confirmation.

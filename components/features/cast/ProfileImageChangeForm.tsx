@@ -29,6 +29,7 @@ export function ProfileImageChangeForm() {
     }
 
     setIsSubmitting(true)
+    toast.info('画像変更申請を送信しています。少しお待ちください。')
     try {
       const formData = new FormData()
       formData.append('image', file)
@@ -54,7 +55,8 @@ export function ProfileImageChangeForm() {
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="relative flex w-full flex-col items-center justify-center gap-2 rounded-[14px] border border-dashed py-8 transition-colors"
+        aria-describedby="cast-profile-image-help"
+        className="relative flex w-full flex-col items-center justify-center gap-2 rounded-[14px] border border-dashed py-8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50"
         style={{ borderColor: previewUrl ? 'rgba(201,167,106,0.5)' : 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.03)' }}
       >
         {previewUrl ? (
@@ -64,8 +66,8 @@ export function ProfileImageChangeForm() {
         ) : (
           <>
             <Camera className="h-[28px] w-[28px] text-[#c9a76a]" strokeWidth={1.5} />
-            <span className="text-[12px] text-[#6b7280]">タップして画像を選択</span>
-            <span className="text-[10px] text-[#4b5563]">JPEG / PNG / WebP · 5MB 以内</span>
+            <span className="text-[12px] text-[#8f96a3]">タップして画像を選択</span>
+            <span id="cast-profile-image-help" className="text-[10px] text-[#8f96a3]">JPEG / PNG / WebP · 5MB 以内</span>
           </>
         )}
         {previewUrl && (
@@ -75,6 +77,8 @@ export function ProfileImageChangeForm() {
 
       <input
         ref={fileInputRef}
+        id="cast-profile-image-file"
+        aria-describedby="cast-profile-image-help"
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif"
         className="hidden"
@@ -91,18 +95,22 @@ export function ProfileImageChangeForm() {
       <button
         type="submit"
         disabled={!file || isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-[14px] py-3 text-[13px] font-bold transition-opacity disabled:opacity-40"
+        aria-busy={isSubmitting}
+        className="flex w-full items-center justify-center gap-2 rounded-[14px] py-3 text-[13px] font-bold transition-opacity disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50"
         style={{
           background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           color: '#0b0b0d',
         }}
       >
         {isSubmitting ? (
-          <><Loader2 className="h-[14px] w-[14px] animate-spin" /> 送信中…</>
+          <><Loader2 className="h-[14px] w-[14px] animate-spin" /> 申請送信中…</>
         ) : (
           '変更を申請する'
         )}
       </button>
+      <p className="min-h-[18px] text-center text-[11px] text-[#8f96a3]" aria-live="polite">
+        {isSubmitting ? '画像変更申請を送信しています。画面を閉じずにお待ちください。' : ''}
+      </p>
     </form>
   )
 }

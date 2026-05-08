@@ -41,6 +41,7 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
+    toast.info('変更申請を送信しています。少しお待ちください。');
     try {
       const fd = new FormData();
       fd.append('hobby',   hobby);
@@ -64,13 +65,14 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
 
       {/* 趣味 */}
       <div className="space-y-1.5">
-        <label className="text-[11px] uppercase tracking-[0.16em] text-[#6b7280]">趣味</label>
+        <label htmlFor="cast-profile-hobby" className="text-[11px] uppercase tracking-[0.16em] text-[#8f96a3]">趣味</label>
         <input
+          id="cast-profile-hobby"
           type="text"
           value={hobby}
           onChange={e => { setHobby(e.target.value); setSubmitted(false); }}
           placeholder={currentHobby ?? '例：映画鑑賞、カフェ巡り'}
-          className="w-full rounded-[12px] border px-4 py-3 text-[13px] text-[#f7f4ed] placeholder-[#4b5563] focus:outline-none"
+          className="w-full rounded-[12px] border px-4 py-3 text-[13px] text-[#f7f4ed] placeholder-[#8f96a3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50"
           style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
           maxLength={100}
         />
@@ -78,7 +80,7 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
 
       {/* AI診断タグ */}
       <div className="space-y-2">
-        <label className="text-[11px] uppercase tracking-[0.16em] text-[#6b7280]">AI診断タグ（複数選択可）</label>
+        <div id="cast-profile-tags-label" className="text-[11px] uppercase tracking-[0.16em] text-[#8f96a3]">AI診断タグ（複数選択可）</div>
         <div className="flex flex-wrap gap-2">
           {QUIZ_TAG_OPTIONS.map(tag => {
             const active = selectedTags.includes(tag.value);
@@ -87,7 +89,9 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
                 key={tag.value}
                 type="button"
                 onClick={() => toggleTag(tag.value)}
-                className="rounded-full px-3 py-1.5 text-[11px] font-medium transition-all"
+                aria-pressed={active}
+                aria-describedby="cast-profile-tags-label"
+                className="min-h-11 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50"
                 style={{
                   background: active ? 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)' : 'rgba(255,255,255,0.06)',
                   color:      active ? '#0b0b0d' : '#9ca3af',
@@ -103,17 +107,18 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
 
       {/* 一言コメント */}
       <div className="space-y-1.5">
-        <label className="text-[11px] uppercase tracking-[0.16em] text-[#6b7280]">一言コメント</label>
+        <label htmlFor="cast-profile-comment" className="text-[11px] uppercase tracking-[0.16em] text-[#8f96a3]">一言コメント</label>
         <textarea
+          id="cast-profile-comment"
           value={comment}
           onChange={e => { setComment(e.target.value); setSubmitted(false); }}
           placeholder={currentComment ?? '自己紹介や来てほしいお客様へのメッセージなど'}
           rows={4}
-          className="w-full rounded-[12px] border px-4 py-3 text-[13px] text-[#f7f4ed] placeholder-[#4b5563] focus:outline-none resize-none"
+          className="w-full rounded-[12px] border px-4 py-3 text-[13px] text-[#f7f4ed] placeholder-[#8f96a3] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50 resize-none"
           style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
           maxLength={400}
         />
-        <p className="text-right text-[10px] text-[#4b5563]">{comment.length} / 400</p>
+        <p className="text-right text-[10px] text-[#8f96a3]">{comment.length} / 400</p>
       </div>
 
       {/* 送信済み */}
@@ -130,16 +135,20 @@ export function ProfileTextChangeForm({ currentHobby, currentComment, currentQui
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-[14px] py-3 text-[13px] font-bold transition-opacity disabled:opacity-40"
+        aria-busy={isSubmitting}
+        className="flex w-full items-center justify-center gap-2 rounded-[14px] py-3 text-[13px] font-bold transition-opacity disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a76a]/50"
         style={{
           background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           color: '#0b0b0d',
         }}
       >
         {isSubmitting
-          ? <><Loader2 className="h-[14px] w-[14px] animate-spin" />送信中…</>
+          ? <><Loader2 className="h-[14px] w-[14px] animate-spin" />申請送信中…</>
           : '変更を申請する'}
       </button>
+      <p className="min-h-[18px] text-center text-[11px] text-[#8f96a3]" aria-live="polite">
+        {isSubmitting ? '変更申請を送信しています。画面を閉じずにお待ちください。' : ''}
+      </p>
     </form>
   );
 }

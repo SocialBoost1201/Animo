@@ -1,6 +1,7 @@
 'use client';
 
 import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { castSendLoginOtp, castVerifyLoginOtp } from '@/lib/actions/cast-auth';
 import { formatJapaneseMobilePhone } from '@/lib/utils/phone';
 import { toast } from 'sonner';
@@ -28,6 +29,7 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false, redirectP
   const handleSendOtp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSending(true);
+    toast.info('SMS認証コードを送信しています。少しお待ちください。');
 
     try {
       const formData = new FormData();
@@ -50,6 +52,7 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false, redirectP
   const handleVerifyOtp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsVerifying(true);
+    toast.info('認証コードを確認しています。少しお待ちください。');
 
     try {
       const formData = new FormData();
@@ -114,14 +117,27 @@ export function OtpVerifyForm({ initialPhone, initialCodeSent = false, redirectP
       <button
         type="submit"
         disabled={isSending || isVerifying}
-        className="h-[48px] w-full rounded-[10px] text-base font-semibold transition-opacity disabled:opacity-60"
+        aria-busy={isSending || isVerifying}
+        className="flex h-[48px] w-full items-center justify-center gap-2 rounded-[10px] text-base font-semibold transition-opacity disabled:opacity-60"
         style={{
           background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
           color: '#18181b',
         }}
       >
-        {isSending || isVerifying ? '処理中...' : isCodeSent ? '認証する' : 'SMSを送信'}
+        {isSending || isVerifying ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {isVerifying ? '認証中...' : 'SMS送信中...'}
+          </>
+        ) : isCodeSent ? '認証する' : 'SMSを送信'}
       </button>
+      <p className="min-h-[18px] text-center text-[11px]" style={{ color: '#9f9fa9' }} aria-live="polite">
+        {isVerifying
+          ? '認証コードを確認しています。画面を閉じずにお待ちください。'
+          : isSending
+            ? '認証コードを送信しています。画面を閉じずにお待ちください。'
+            : ''}
+      </p>
 
       {isCodeSent && (
         <button

@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import { castSendLoginOtp } from '@/lib/actions/cast-auth';
 import { normalizeCastRedirectPath } from '@/lib/cast-auth-utils';
 import { formatJapaneseMobilePhone, normalizeJapanesePhone } from '@/lib/utils/phone';
@@ -25,6 +26,7 @@ export default function CastLoginMobilePage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+    toast.info('SMS認証コードを送信しています。少しお待ちください。');
 
     try {
       const formData = new FormData();
@@ -99,10 +101,11 @@ export default function CastLoginMobilePage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
+              <label htmlFor="cast-mobile-phone" className="block text-sm mb-2" style={{ color: '#9f9fa9' }}>
                 電話番号
               </label>
               <input
+                id="cast-mobile-phone"
                 name="phone"
                 type="tel"
                 required
@@ -123,14 +126,25 @@ export default function CastLoginMobilePage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-[48px] rounded-[10px] text-base font-semibold transition-opacity disabled:opacity-60"
+              aria-busy={isLoading}
+              className="flex w-full h-[48px] items-center justify-center gap-2 rounded-[10px] text-base font-semibold transition-opacity disabled:opacity-60"
               style={{
                 background: 'linear-gradient(90deg, rgb(223,189,105) 0%, rgb(146,111,52) 100%)',
                 color: '#18181b',
               }}
             >
-              {isLoading ? '送信中...' : 'SMSを送信'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  SMS送信中...
+                </>
+              ) : (
+                'SMSを送信'
+              )}
             </button>
+            <p className="min-h-[18px] text-center text-[11px]" style={{ color: '#9f9fa9' }} aria-live="polite">
+              {isLoading ? '認証コードを送信しています。画面を閉じずにお待ちください。' : ''}
+            </p>
           </form>
 
           <div className="mt-7 text-center space-y-3">
