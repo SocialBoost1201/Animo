@@ -13,46 +13,73 @@ import {
 } from '@/lib/actions/admin-shifts'
 import { updateCastPostStatus } from '@/lib/actions/cast-posts'
 import { UserCheck, Calendar, FileText, Clock } from 'lucide-react'
+import { ApprovalActionButton } from '@/components/features/admin/approvals/ApprovalActionButton'
 
-async function approveCheckinAction(formData: FormData): Promise<void> {
+type ActionResult = { success: boolean; error?: string }
+
+async function approveCheckinAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveCheckin(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await approveCheckin(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectCheckinAction(formData: FormData): Promise<void> {
+async function rejectCheckinAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectCheckin(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await rejectCheckin(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function approveReservationAction(formData: FormData): Promise<void> {
+async function approveReservationAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await approveReservation(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectReservationAction(formData: FormData): Promise<void> {
+async function rejectReservationAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await rejectReservation(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function approveShiftAction(formData: FormData): Promise<void> {
+async function approveShiftAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveShiftSubmission(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  try {
+    const result = await approveShiftSubmission(id)
+    return { success: result.success, error: result.success ? undefined : result.error }
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : '承認に失敗しました' }
+  }
 }
-async function rejectShiftAction(formData: FormData): Promise<void> {
+async function rejectShiftAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectShiftSubmission(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  try {
+    const result = await rejectShiftSubmission(id)
+    return { success: result.success, error: result.success ? undefined : result.error }
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : '却下に失敗しました' }
+  }
 }
-async function approvePostAction(formData: FormData): Promise<void> {
+async function approvePostAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'published')
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await updateCastPostStatus(id, 'published')
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectPostAction(formData: FormData): Promise<void> {
+async function rejectPostAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'draft')
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await updateCastPostStatus(id, 'draft')
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
 
 type CastPostPending = {
@@ -434,14 +461,22 @@ export default async function AdminApprovalsPage({
                         )}
                       </div>
                       <div className="flex gap-2 pt-0.5">
-                        <form action={approveCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                        </form>
-                        <form action={rejectCheckinAction} className="flex-1">
-                          <input type="hidden" name="id" value={checkin.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                        </form>
+                        <ApprovalActionButton
+                          id={checkin.id}
+                          action={approveCheckinAction}
+                          label="承認"
+                          successMessage={`${checkin.stage_name} の出勤を承認しました`}
+                          fallbackErrorMessage="出勤の承認に失敗しました"
+                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
+                        />
+                        <ApprovalActionButton
+                          id={checkin.id}
+                          action={rejectCheckinAction}
+                          label="却下"
+                          successMessage={`${checkin.stage_name} の出勤を却下しました`}
+                          fallbackErrorMessage="出勤の却下に失敗しました"
+                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
+                        />
                       </div>
                     </article>
                   ))}
@@ -495,14 +530,22 @@ export default async function AdminApprovalsPage({
                         )}
                       </div>
                       <div className="flex gap-2 pt-0.5">
-                        <form action={approveReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                        </form>
-                        <form action={rejectReservationAction} className="flex-1">
-                          <input type="hidden" name="id" value={reservation.id} />
-                          <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                        </form>
+                        <ApprovalActionButton
+                          id={reservation.id}
+                          action={approveReservationAction}
+                          label="承認"
+                          successMessage={`${reservation.stage_name} の来店予定を承認しました`}
+                          fallbackErrorMessage="来店予定の承認に失敗しました"
+                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
+                        />
+                        <ApprovalActionButton
+                          id={reservation.id}
+                          action={rejectReservationAction}
+                          label="却下"
+                          successMessage={`${reservation.stage_name} の来店予定を却下しました`}
+                          fallbackErrorMessage="来店予定の却下に失敗しました"
+                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
+                        />
                       </div>
                     </article>
                   ))}
@@ -561,14 +604,22 @@ export default async function AdminApprovalsPage({
                     </div>
                   </div>
                   <div className="flex gap-2 pt-0.5">
-                    <form action={approveShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                    </form>
-                    <form action={rejectShiftAction} className="flex-1">
-                      <input type="hidden" name="id" value={submission.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                    </form>
+                    <ApprovalActionButton
+                      id={submission.id}
+                      action={approveShiftAction}
+                      label="承認"
+                      successMessage={`${submission.casts.stage_name} のシフトを承認しました`}
+                      fallbackErrorMessage="シフトの承認に失敗しました"
+                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
+                    />
+                    <ApprovalActionButton
+                      id={submission.id}
+                      action={rejectShiftAction}
+                      label="却下"
+                      successMessage={`${submission.casts.stage_name} のシフトを却下しました`}
+                      fallbackErrorMessage="シフトの却下に失敗しました"
+                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
+                    />
                   </div>
                 </article>
               ))}
@@ -610,14 +661,22 @@ export default async function AdminApprovalsPage({
                   </div>
                   <p className="text-[12px] text-[#8a8478] leading-relaxed line-clamp-4">{post.content}</p>
                   <div className="flex gap-2 pt-0.5">
-                    <form action={approvePostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity">承認</button>
-                    </form>
-                    <form action={rejectPostAction} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
-                      <button type="submit" className="w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors">却下</button>
-                    </form>
+                    <ApprovalActionButton
+                      id={post.id}
+                      action={approvePostAction}
+                      label="承認"
+                      successMessage={`${getCastName(post.casts)} のブログを公開しました`}
+                      fallbackErrorMessage="ブログの承認に失敗しました"
+                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
+                    />
+                    <ApprovalActionButton
+                      id={post.id}
+                      action={rejectPostAction}
+                      label="却下"
+                      successMessage={`${getCastName(post.casts)} のブログを下書きに戻しました`}
+                      fallbackErrorMessage="ブログの却下に失敗しました"
+                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
+                    />
                   </div>
                 </article>
               ))}
