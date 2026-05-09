@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { revalidatePath } from 'next/cache';
 
 export type ShiftSubmissionWithCast = {
@@ -38,9 +39,12 @@ function mapShiftSubmission(row: ShiftSubmissionRow): ShiftSubmissionWithCast {
  * @param status 'pending' | 'approved' | 'rejected' | 'all'
  */
 export async function getShiftSubmissions(status: string = 'pending') {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // 管理者専用: RLSをバイパスして全キャストの提出を取得
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
 
   let query = supabase
     .from('shift_submissions')
@@ -72,9 +76,11 @@ export async function getShiftSubmissions(status: string = 'pending') {
  * 提出されたシフトを承認（Approve）し、本番の cast_schedules へ反映する
  */
 export async function approveShiftSubmission(submissionId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
 
   // 1. 対象の提出データを取得
   const { data: submission, error: fetchError } = await supabase
@@ -136,6 +142,7 @@ export async function approveShiftSubmission(submissionId: string) {
 
   revalidatePath('/admin/shift-requests');
   revalidatePath('/admin/shifts');
+  revalidatePath('/admin/monthly-shifts');
   revalidatePath('/admin/approvals');
   revalidatePath('/shift');
   revalidatePath('/');
@@ -147,9 +154,11 @@ export async function approveShiftSubmission(submissionId: string) {
  * 提出を却下（Reject）または取消する
  */
 export async function rejectShiftSubmission(submissionId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
 
   const { error } = await supabase
     .from('shift_submissions')
@@ -169,9 +178,11 @@ export async function rejectShiftSubmission(submissionId: string) {
  * 全アクティブキャストの、指定週のシフト提出ステータス一覧を取得する
  */
 export async function getAllCastShiftStatuses(targetWeekMonday: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
 
   // 1. 全アクティブキャストを取得 (auth_user_idが紐付いているキャストのみ対象とするか、全員とするか)
   // 今回は全アクティブキャストを取得し、authのメールアドレスも取得する
@@ -216,10 +227,12 @@ export async function getAllCastShiftStatuses(targetWeekMonday: string) {
  */
 export async function sendShiftRemindEmail(castId: string, _authUserId: string, stageName: string) {
   if (!process.env.RESEND_API_KEY) return { success: false, error: 'Resend API key missing' };
-  
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
   // Service Role Keyがなくても、現在ログイン中の管理者は supabase.auth.admin の権限がないと他人のメアドは取れない
   const { data: { user: targetUser }, error: authError } = await supabase.auth.admin.getUserById(_authUserId);
   

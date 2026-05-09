@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Calendar, Settings, MessageSquare,
   LogOut, Briefcase, Menu, ChevronRight, X, Bell, ClipboardList,
-  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Printer, Newspaper,
+  UserCheck, BarChart2, BookOpen, Moon, Sun, List, Newspaper,
 } from 'lucide-react';
 import { logout } from '@/lib/actions/auth';
 import { AdminThemeProvider, useAdminTheme } from '@/components/providers/AdminThemeProvider';
@@ -21,7 +21,6 @@ const NAV_ITEMS = [
   { href: '/admin/shift-requests',     icon: Calendar,        label: '出勤調整',       section: 'operations' },
   { href: '/admin/approvals',          icon: ClipboardList,   label: '承認',           section: 'operations', badge: 'shifts' },
   { href: '/admin/monthly-shifts',     icon: Calendar,        label: 'シフト管理',     section: 'operations' },
-  { href: '/admin/template-shifts',    icon: Printer,         label: 'シフト印刷表',   section: 'operations' },
   { href: '/admin/staffs',             icon: UserCheck,       label: 'スタッフ管理',   section: 'operations' },
   { href: '/admin/internal-notices',   icon: Bell,            label: '通知',           section: 'operations', badge: 'notifications' },
 
@@ -209,10 +208,10 @@ function AdminLayoutInner({
                     prefetch={false}
                     onClick={() => setMobileOpen(false)}
                     onNavigate={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-150 text-xs font-medium group relative ${
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] transition-all duration-200 text-xs font-medium group relative ${
                       isActive
-                        ? 'bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] shadow-md shadow-[#dfbd691a]'
-                        : T.navInactive
+                        ? 'bg-[linear-gradient(90deg,#b39855_0%,#fff9e6_50%,#b39855_100%)] text-[#0b0b0d] -translate-y-[1px] shadow-[0_6px_18px_rgba(179,152,85,0.45)]'
+                        : `${T.navInactive} hover:-translate-y-[1px] hover:shadow-[0_6px_16px_rgba(179,152,85,0.28)]`
                     }`}
                   >
                     <Icon
@@ -230,7 +229,7 @@ function AdminLayoutInner({
                       </div>
                     )}
 
-                    {isActive && <ChevronRight size={10} className="opacity-50 shrink-0" />}
+                    {isActive && <ChevronRight size={10} className="opacity-50 shrink-0 text-[#0b0b0d]" />}
                   </Link>
                 );
               })}

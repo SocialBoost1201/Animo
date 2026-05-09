@@ -71,7 +71,7 @@ export default async function ShiftsPage({
       <div className="grid grid-cols-2 gap-3">
         {[
           { href: '/admin/shift-requests', label: '出勤調整・承認', sub: '未承認のシフト申請を確認', dot: true },
-          { href: '/admin/monthly-shifts', label: 'シフト印刷表',  sub: '月次シフト一覧・エクスポート', dot: false },
+          { href: '/admin/monthly-shifts', label: 'シフト管理',    sub: '月次シフト一覧・スタッフ', dot: false },
         ].map((item) => (
           <Link
             key={item.href}

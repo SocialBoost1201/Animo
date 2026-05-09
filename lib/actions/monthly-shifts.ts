@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { revalidatePath } from 'next/cache';
 
 export type ShiftStatus = 'available' | 'unavailable' | 'maybe' | null;
@@ -139,9 +140,12 @@ export async function saveMonthlyShifts(castId: string, shiftsData: Record<strin
  * 管理者用：対象月の全キャストのシフト一覧を整形して取得する
  */
 export async function getAdminMonthlyShifts(year: number, month: number) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // 管理者専用: RLSをバイパスして全キャスト分を取得
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
   if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
 
   const { data: casts, error: castsErr } = await supabase
     .from('casts')

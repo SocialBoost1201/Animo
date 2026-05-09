@@ -112,6 +112,10 @@ export async function createCastPost(formData: FormData) {
       console.warn('[AdminNotifier] ブログLINE通知失敗 (non-critical):', lineErr)
     }
 
+    revalidatePath('/admin/approvals');
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/admin/posts');
+
     // スコア付与 (+5pt)
     try {
       await addCastScore(castId, 5, 'blog_posted', 'ブログ日記を新規投稿しました');

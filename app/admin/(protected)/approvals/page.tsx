@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import {
   approveCheckin,
   approveReservation,
@@ -6,14 +6,23 @@ import {
   rejectCheckin,
   rejectReservation,
 } from '@/lib/actions/today'
+import { updateCastPostStatus } from '@/lib/actions/cast-posts'
+import {
+  getPendingProfileImageRequests,
+  approveProfileImageRequest,
+  rejectProfileImageRequest,
+} from '@/lib/actions/admin-image-requests'
+import {
+  getPendingProfileTextRequests,
+  approveProfileTextRequest,
+  rejectProfileTextRequest,
+} from '@/lib/actions/admin-profile-text-requests'
 import {
   approveShiftSubmission,
-  getShiftSubmissions,
   rejectShiftSubmission,
 } from '@/lib/actions/admin-shifts'
-import { updateCastPostStatus } from '@/lib/actions/cast-posts'
-import { UserCheck, Calendar, FileText, Clock } from 'lucide-react'
-import { ApprovalActionButton } from '@/components/features/admin/approvals/ApprovalActionButton'
+import { UserCheck, Calendar, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
+import { ApprovalActionPair } from '@/components/features/admin/ApprovalActionButtons'
 
 type ActionResult = { success: boolean; error?: string }
 
@@ -45,29 +54,19 @@ async function rejectReservationAction(formData: FormData): Promise<ActionResult
   const result = await rejectReservation(id)
   return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function approveShiftAction(formData: FormData): Promise<ActionResult> {
+async function approveShiftAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
-  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
-  try {
-    const result = await approveShiftSubmission(id)
-    return { success: result.success, error: result.success ? undefined : result.error }
-  } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : '承認に失敗しました' }
-  }
+  if (typeof id !== 'string' || !id) return
+  await approveShiftSubmission(id)
 }
-async function rejectShiftAction(formData: FormData): Promise<ActionResult> {
+async function rejectShiftAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
-  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
-  try {
-    const result = await rejectShiftSubmission(id)
-    return { success: result.success, error: result.success ? undefined : result.error }
-  } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : '却下に失敗しました' }
-  }
+  if (typeof id !== 'string' || !id) return
+  await rejectShiftSubmission(id)
 }
-async function approvePostAction(formData: FormData): Promise<ActionResult> {
+async function approvePostAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
   if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
@@ -81,6 +80,26 @@ async function rejectPostAction(formData: FormData): Promise<ActionResult> {
   const result = await updateCastPostStatus(id, 'draft')
   return { success: result.success, error: result.success ? undefined : result.error }
 }
+async function approveImageAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await approveProfileImageRequest(id)
+}
+async function rejectImageAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await rejectProfileImageRequest(id)
+}
+async function approveTextAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await approveProfileTextRequest(id)
+}
+async function rejectTextAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id === 'string' && id) await rejectProfileTextRequest(id)
+}
 
 type CastPostPending = {
   id: string
@@ -92,19 +111,6 @@ type CastPostPending = {
 function getCastName(casts: CastPostPending['casts']): string {
   if (Array.isArray(casts)) return casts[0]?.stage_name ?? '不明'
   return casts?.stage_name ?? '不明'
-}
-
-function formatShiftSummary(
-  shiftsData: Record<string, { type: string; start?: string; end?: string }>
-): string {
-  const workDays = Object.entries(shiftsData)
-    .filter(([, shift]) => shift.type === 'work')
-    .sort(([a], [b]) => a.localeCompare(b))
-    .slice(0, 3)
-    .map(([date, shift]) => `${date} ${shift.start ?? '--:--'}-${shift.end ?? 'LAST'}`)
-
-  if (workDays.length === 0) return '出勤シフトなし'
-  return workDays.join(' / ')
 }
 
 function toMinutes(time: string): number {
@@ -152,22 +158,6 @@ function createJstDate(year: number, month: number, day: number, hour: number, m
 function getToday1845Deadline(now = new Date()): Date {
   const { year, month, day } = getJstDateParts(now)
   return createJstDate(year, month, day, 18, 45)
-}
-
-function getNextSaturday2100Deadline(now = new Date()): Date {
-  const { year, month, day, weekday } = getJstDateParts(now)
-  let daysUntilSaturday = (6 - weekday + 7) % 7
-  if (daysUntilSaturday === 0) daysUntilSaturday = 7
-
-  const upcomingSaturdayBase = createJstDate(year, month, day, 0, 0)
-  upcomingSaturdayBase.setUTCDate(upcomingSaturdayBase.getUTCDate() + daysUntilSaturday)
-  return createJstDate(
-    upcomingSaturdayBase.getUTCFullYear(),
-    upcomingSaturdayBase.getUTCMonth() + 1,
-    upcomingSaturdayBase.getUTCDate(),
-    21,
-    0
-  )
 }
 
 function getUrgencyStatus(deadline: Date, now = new Date()): UrgencyLevel {
@@ -218,7 +208,7 @@ function sortFinal<T>(
   const p = priorityOrder[getPriorityType(a)] - priorityOrder[getPriorityType(b)]
   if (p !== 0) return p
 
-  return fallbackCompare(a, b) // stable維持
+  return fallbackCompare(a, b)
 }
 
 function sortByUrgencyPriorityKeepingOrder<T>(
@@ -248,15 +238,16 @@ export default async function AdminApprovalsPage({
   const resolvedSearchParams = (await searchParams) ?? {}
   const view = resolvedSearchParams.view ?? 'all'
 
-  const [today, shiftResult] = await Promise.all([getTodayDashboard(), getShiftSubmissions('pending')])
-  const supabase = await createClient()
+  const [today, imageResult, textResult] = await Promise.all([
+    getTodayDashboard(),
+    getPendingProfileImageRequests(),
+    getPendingProfileTextRequests(),
+  ])
+  const supabase = createServiceClient()
   const now = new Date()
   const lane1Deadline = getToday1845Deadline(now)
-  const shiftDeadline = getNextSaturday2100Deadline(now)
   const lane1Urgency = getUrgencyStatus(lane1Deadline, now)
-  const shiftUrgency = getUrgencyStatus(shiftDeadline, now)
   const lane1Badge = getUrgencyBadgeMeta(lane1Urgency)
-  const shiftBadge = getUrgencyBadgeMeta(shiftUrgency)
 
   const { data: pendingPosts } = await supabase
     .from('cast_posts')
@@ -264,8 +255,9 @@ export default async function AdminApprovalsPage({
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
 
-  const pendingShiftSubmissions = shiftResult.data ?? []
   const pendingCastPosts = (pendingPosts ?? []) as CastPostPending[]
+  const pendingImageRequests = imageResult.data
+  const pendingTextRequests = textResult.data
   const pendingReservationsByCastId = new Map(
     today.pendingReservations.map((reservation) => [reservation.cast_id, reservation])
   )
@@ -312,16 +304,6 @@ export default async function AdminApprovalsPage({
     )
   })
 
-  const sortedPendingShiftSubmissions = [...pendingShiftSubmissions].sort((a, b) => {
-    return sortFinal(
-      a,
-      b,
-      () => shiftUrgency,
-      () => 'normal',
-      (left, right) => left.target_week_monday.localeCompare(right.target_week_monday)
-    )
-  })
-
   const sortedPendingCastPosts = [...pendingCastPosts].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )
@@ -334,10 +316,6 @@ export default async function AdminApprovalsPage({
     view === 'all' ||
     view === 'reservations' ||
     (view === 'alerts' && lane1Urgency !== 'normal')
-  const showShifts =
-    view === 'all' ||
-    view === 'shifts' ||
-    (view === 'alerts' && shiftUrgency !== 'normal')
   const showPosts = view === 'all' || view === 'posts'
 
   const visibleCheckins = !showCheckins
@@ -363,11 +341,6 @@ export default async function AdminApprovalsPage({
           (item) => (item.reservation_type === 'douhan' ? 'douhan' : item.reservation_type === 'reservation' ? 'reservation' : 'normal')
         )
       : sortedPendingReservations
-  const visibleShiftSubmissions = !showShifts
-    ? []
-    : view === 'alerts'
-      ? sortByUrgencyPriorityKeepingOrder(sortedPendingShiftSubmissions, () => shiftUrgency, () => 'normal')
-      : sortedPendingShiftSubmissions
   const visibleCastPosts = showPosts ? sortedPendingCastPosts : []
 
   return (
@@ -377,7 +350,7 @@ export default async function AdminApprovalsPage({
         <div>
           <h1 className="text-[17px] font-bold text-[#f4f1ea] tracking-tight leading-tight">承認ハブ</h1>
           <p className="text-[12px] text-[#8a8478] mt-0.5 leading-relaxed tracking-[0.1px] opacity-70">
-            出勤・来店予定・シフト・ブログの承認を一元管理
+            出勤・来店予定・ブログ・プロフィール画像・テキスト変更の承認を一元管理
           </p>
         </div>
         {lane1Urgency !== 'normal' && (
@@ -391,8 +364,8 @@ export default async function AdminApprovalsPage({
         )}
       </div>
 
-      {/* Three-column grid */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:h-[calc(100vh-200px)]">
+      {/* Four-column grid */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-4 xl:h-[calc(100vh-200px)]">
 
         {/* ── Column 1: 出勤 + 来店予定 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
@@ -460,24 +433,11 @@ export default async function AdminApprovalsPage({
                           </div>
                         )}
                       </div>
-                      <div className="flex gap-2 pt-0.5">
-                        <ApprovalActionButton
-                          id={checkin.id}
-                          action={approveCheckinAction}
-                          label="承認"
-                          successMessage={`${checkin.stage_name} の出勤を承認しました`}
-                          fallbackErrorMessage="出勤の承認に失敗しました"
-                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
-                        />
-                        <ApprovalActionButton
-                          id={checkin.id}
-                          action={rejectCheckinAction}
-                          label="却下"
-                          successMessage={`${checkin.stage_name} の出勤を却下しました`}
-                          fallbackErrorMessage="出勤の却下に失敗しました"
-                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
-                        />
-                      </div>
+                      <ApprovalActionPair
+                        id={checkin.id}
+                        approveAction={approveCheckinAction}
+                        rejectAction={rejectCheckinAction}
+                      />
                     </article>
                   ))}
                 </div>
@@ -529,24 +489,11 @@ export default async function AdminApprovalsPage({
                           </div>
                         )}
                       </div>
-                      <div className="flex gap-2 pt-0.5">
-                        <ApprovalActionButton
-                          id={reservation.id}
-                          action={approveReservationAction}
-                          label="承認"
-                          successMessage={`${reservation.stage_name} の来店予定を承認しました`}
-                          fallbackErrorMessage="来店予定の承認に失敗しました"
-                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
-                        />
-                        <ApprovalActionButton
-                          id={reservation.id}
-                          action={rejectReservationAction}
-                          label="却下"
-                          successMessage={`${reservation.stage_name} の来店予定を却下しました`}
-                          fallbackErrorMessage="来店予定の却下に失敗しました"
-                          className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
-                        />
-                      </div>
+                      <ApprovalActionPair
+                        id={reservation.id}
+                        approveAction={approveReservationAction}
+                        rejectAction={rejectReservationAction}
+                      />
                     </article>
                   ))}
                 </div>
@@ -603,24 +550,11 @@ export default async function AdminApprovalsPage({
                       <span className="text-[11px] text-[#8a8478] leading-relaxed">{formatShiftSummary(submission.shifts_data)}</span>
                     </div>
                   </div>
-                  <div className="flex gap-2 pt-0.5">
-                    <ApprovalActionButton
-                      id={submission.id}
-                      action={approveShiftAction}
-                      label="承認"
-                      successMessage={`${submission.casts.stage_name} のシフトを承認しました`}
-                      fallbackErrorMessage="シフトの承認に失敗しました"
-                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
-                    />
-                    <ApprovalActionButton
-                      id={submission.id}
-                      action={rejectShiftAction}
-                      label="却下"
-                      successMessage={`${submission.casts.stage_name} のシフトを却下しました`}
-                      fallbackErrorMessage="シフトの却下に失敗しました"
-                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
-                    />
-                  </div>
+                  <ApprovalActionPair
+                    id={submission.id}
+                    approveAction={approveShiftAction}
+                    rejectAction={rejectShiftAction}
+                  />
                 </article>
               ))}
             </div>
@@ -660,26 +594,141 @@ export default async function AdminApprovalsPage({
                     </span>
                   </div>
                   <p className="text-[12px] text-[#8a8478] leading-relaxed line-clamp-4">{post.content}</p>
-                  <div className="flex gap-2 pt-0.5">
-                    <ApprovalActionButton
-                      id={post.id}
-                      action={approvePostAction}
-                      label="承認"
-                      successMessage={`${getCastName(post.casts)} のブログを公開しました`}
-                      fallbackErrorMessage="ブログの承認に失敗しました"
-                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] bg-[linear-gradient(90deg,rgba(223,189,105,1)_0%,rgba(146,111,52,1)_100%)] text-[#0b0b0d] hover:opacity-90 transition-opacity"
-                    />
-                    <ApprovalActionButton
-                      id={post.id}
-                      action={rejectPostAction}
-                      label="却下"
-                      successMessage={`${getCastName(post.casts)} のブログを下書きに戻しました`}
-                      fallbackErrorMessage="ブログの却下に失敗しました"
-                      className="flex-1 w-full h-8 text-[11px] font-bold rounded-[8px] border border-[#c8823226] bg-[#c882321a] text-[#c8884d] hover:bg-[#c8823230] transition-colors"
-                    />
-                  </div>
+                  <ApprovalActionPair
+                    id={post.id}
+                    approveAction={approvePostAction}
+                    rejectAction={rejectPostAction}
+                  />
                 </article>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column 3: プロフィール画像承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <ImageIcon size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">プロフィール画像</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">変更申請の審査</p>
+                </div>
+              </div>
+              {pendingImageRequests.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {pendingImageRequests.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {pendingImageRequests.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちの申請なし</p>
+                </div>
+              ) : pendingImageRequests.map((req) => {
+                const castName = Array.isArray(req.casts)
+                  ? (req.casts[0]?.stage_name ?? '不明')
+                  : (req.casts?.stage_name ?? '不明')
+                return (
+                  <article key={req.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[13px] font-bold text-[#f4f1ea]">{castName}</p>
+                      <span className="text-[10px] text-[#5a5650] shrink-0">
+                        {new Date(req.created_at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' })}
+                      </span>
+                    </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={req.image_url}
+                      alt={`${castName}の申請画像`}
+                      className="w-full aspect-square object-cover rounded-[8px] bg-[#ffffff08]"
+                    />
+                    <ApprovalActionPair
+                      id={req.id}
+                      approveAction={approveImageAction}
+                      rejectAction={rejectImageAction}
+                    />
+                  </article>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column 4: プロフィールテキスト承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <AlignLeft size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">プロフィールテキスト</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">趣味・タグ・コメント変更申請</p>
+                </div>
+              </div>
+              {pendingTextRequests.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {pendingTextRequests.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {pendingTextRequests.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちの申請なし</p>
+                </div>
+              ) : pendingTextRequests.map((req) => {
+                const castName = Array.isArray(req.casts)
+                  ? (req.casts[0]?.stage_name ?? '不明')
+                  : (req.casts?.stage_name ?? '不明')
+                return (
+                  <article key={req.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[13px] font-bold text-[#f4f1ea]">{castName}</p>
+                      <span className="text-[10px] text-[#5a5650] shrink-0">
+                        {new Date(req.created_at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' })}
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {req.hobby !== null && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">趣味</p>
+                          <p className="text-[12px] text-[#c7c0b2] leading-relaxed">{req.hobby}</p>
+                        </div>
+                      )}
+                      {req.quiz_tags !== null && req.quiz_tags.length > 0 && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">AI診断タグ</p>
+                          <div className="flex flex-wrap gap-1">
+                            {req.quiz_tags.map((tag) => (
+                              <span key={tag} className="rounded-full px-2 py-0.5 text-[9px] font-medium bg-[#dfbd691a] text-[#dfbd69] border border-[#dfbd6915]">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {req.comment !== null && (
+                        <div className="space-y-0.5">
+                          <p className="text-[9px] uppercase tracking-[1.2px] text-[#5a5650]">一言コメント</p>
+                          <p className="text-[12px] text-[#c7c0b2] leading-relaxed line-clamp-3">{req.comment}</p>
+                        </div>
+                      )}
+                    </div>
+                    <ApprovalActionPair
+                      id={req.id}
+                      approveAction={approveTextAction}
+                      rejectAction={rejectTextAction}
+                    />
+                  </article>
+                )
+              })}
             </div>
           </div>
         </div>

@@ -142,7 +142,7 @@ export function UnsubmittedCastsList({
                   fontWeight: 400,
                 }}
               >
-                {s.cast.stage_name.trim() || '名前未設定'}
+                {s.cast.stage_name?.trim() || '名前未設定'}
               </span>
 
               {/* Cast login account status */}

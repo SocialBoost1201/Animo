@@ -5,8 +5,6 @@ import { getAdminShiftChangeRequests, hasPendingShiftChangeRequests } from '@/li
 import { ShiftRequestList } from '@/components/features/admin/ShiftRequestList';
 import { UnsubmittedCastsList } from '@/components/features/admin/UnsubmittedCastsList';
 import { ShiftChangeRequestList } from '@/components/features/admin/ShiftChangeRequestList';
-import { HelpRequestList } from '@/components/features/admin/HelpRequestList';
-import { getShiftRequests, getShiftRequestResponses, type ShiftRequest, type ShiftRequestResponse } from '@/lib/actions/admin-shift-requests';
 import Link from 'next/link';
 
 export default async function ShiftRequestsPage({
@@ -16,7 +14,7 @@ export default async function ShiftRequestsPage({
 }) {
   const resolved = await searchParams;
   const status = resolved.status || 'pending';
-  const tab    = resolved.tab    || 'new';
+  const tab    = resolved.tab === 'change' ? 'change' : 'new';
 
   const { data: submissions } =
     tab === 'new' ? await getShiftSubmissions(status) : { data: [] };
@@ -29,17 +27,9 @@ export default async function ShiftRequestsPage({
   const nextMondayStr  = new Date(nextMondayDate.getTime() - nextMondayDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   const { data: castStatuses } = await getAllCastShiftStatuses(nextMondayStr);
 
-  let helpRequests: ShiftRequest[]           = [];
-  let helpResponses: ShiftRequestResponse[]  = []
-  if (tab === 'help') {
-    helpRequests  = await getShiftRequests();
-    helpResponses = await getShiftRequestResponses(status === 'all' ? undefined : status);
-  }
-
-  const mainTabs: ReadonlyArray<{ id: 'new' | 'change' | 'help'; label: string; hasBadge?: boolean }> = [
+  const mainTabs: ReadonlyArray<{ id: 'new' | 'change'; label: string; hasBadge?: boolean }> = [
     { id: 'new', label: '新規提出' },
     { id: 'change', label: '変更申請', hasBadge: hasPendingChangeRequests },
-    { id: 'help', label: '店舗からの募集' },
   ];
 
   const subStatuses = [
@@ -64,7 +54,7 @@ export default async function ShiftRequestsPage({
       </div>
 
       <div className="rounded-[18px] border border-[#ffffff0f] bg-[#17181c] p-4 space-y-4">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {mainTabs.map((t) => {
               const isActive = tab === t.id;
               return (
@@ -116,13 +106,9 @@ export default async function ShiftRequestsPage({
         <div className="flex-1 w-full min-w-0">
           {tab === 'new' ? (
             <ShiftRequestList initialSubmissions={submissions || []} currentStatus={status} />
-          ) : tab === 'change' ? (
-            <div className="space-y-4">
-              <ShiftChangeRequestList requests={changeRequests || []} />
-            </div>
           ) : (
             <div className="space-y-4">
-              <HelpRequestList requests={helpRequests} responses={helpResponses} currentStatus={status} />
+              <ShiftChangeRequestList requests={changeRequests || []} />
             </div>
           )}
         </div>

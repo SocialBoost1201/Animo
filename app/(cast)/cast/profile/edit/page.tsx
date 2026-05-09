@@ -8,6 +8,7 @@ import {
   CastMobileSectionTitle,
 } from '@/components/features/cast/CastMobileShell';
 import { ProfileImageChangeForm } from '@/components/features/cast/ProfileImageChangeForm';
+import { ProfileTextChangeForm } from '@/components/features/cast/ProfileTextChangeForm';
 
 export default async function CastProfileEditPage() {
   const cast = await getCurrentCast();
@@ -20,10 +21,10 @@ export default async function CastProfileEditPage() {
         <CastMobileSectionTitle
           eyebrow="Profile Edit"
           title="プロフィール編集"
-          description="プロフィール情報の変更はスタッフ対応です。プロフィール画像は下のフォームから申請できます。"
+          description="変更申請を送信すると店長が確認・承認後に反映されます。"
         />
 
-        {/* ── プロフィール情報 ── */}
+        {/* ── プロフィール情報（表示名） ── */}
         <CastMobileCard className="space-y-4 px-5 py-5">
           <div>
             <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">現在の表示名</div>
@@ -46,6 +47,21 @@ export default async function CastProfileEditPage() {
             </p>
           </div>
           <ProfileImageChangeForm />
+        </CastMobileCard>
+
+        {/* ── プロフィールテキスト変更申請 ── */}
+        <CastMobileCard className="space-y-4 px-5 py-5">
+          <div>
+            <div className="text-xs uppercase tracking-[0.16em] text-[#6b7280]">趣味・タグ・一言コメントの変更申請</div>
+            <p className="mt-2 text-sm leading-6 text-[#a9afbc]">
+              変更したい内容を入力して申請してください。空欄のままにした項目は変更されません。
+            </p>
+          </div>
+          <ProfileTextChangeForm
+            currentHobby={cast.hobby ?? null}
+            currentComment={cast.comment ?? null}
+            currentQuizTags={cast.quiz_tags ?? null}
+          />
         </CastMobileCard>
       </main>
     </CastMobileShell>
