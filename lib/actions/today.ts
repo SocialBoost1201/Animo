@@ -12,6 +12,7 @@ import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 import { logAdminAction } from '@/lib/audit/admin-audit'
+import { notifyCastCheckinRejected } from '@/lib/notifications/cast-notifier'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -1043,6 +1044,30 @@ export async function rejectCheckin(id: string) {
     },
     metadata: { manual_override_skipped: existing?.source === 'manual' },
   })
+
+  // キャスト個人へのLINE通知（fire-and-forget）
+  void (async () => {
+    try {
+      const { data: castInfo } = await serviceSupabase
+        .from('casts')
+        .select('stage_name, name')
+        .eq('id', checkin.cast_id)
+        .single()
+      const { data: privateInfo } = await serviceSupabase
+        .from('cast_private_info')
+        .select('line_user_id')
+        .eq('cast_id', checkin.cast_id)
+        .single()
+      const castName = castInfo?.stage_name || castInfo?.name || ''
+      await notifyCastCheckinRejected({
+        castName,
+        lineUserId: privateInfo?.line_user_id ?? null,
+        checkinDate: checkin.checkin_date,
+      })
+    } catch (e) {
+      console.warn('[rejectCheckin] LINE通知失敗:', e)
+    }
+  })()
 
   return { success: true as const, id }
 }

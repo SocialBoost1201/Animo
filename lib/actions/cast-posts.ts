@@ -6,6 +6,10 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { addCastScore } from './scores';
 import { notifyBlogSubmitted } from '@/lib/notifications/admin-notifier';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import {
+  notifyCastPostPublished,
+  notifyCastPostUnpublished,
+} from '@/lib/notifications/cast-notifier';
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Unknown error';
@@ -173,6 +177,35 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
       afterData: { status },
       metadata: prev ? { cast_id: prev.cast_id } : undefined,
     });
+
+    // キャスト個人へのLINE通知（fire-and-forget）
+    // status の遷移に応じて公開化/非公開化のメッセージを出し分ける
+    if (prev && prev.cast_id && prev.status !== status) {
+      const castId = prev.cast_id as string;
+      void (async () => {
+        try {
+          const { data: castInfo } = await supabase
+            .from('casts')
+            .select('stage_name, name')
+            .eq('id', castId)
+            .single();
+          const { data: privateInfo } = await supabase
+            .from('cast_private_info')
+            .select('line_user_id')
+            .eq('cast_id', castId)
+            .single();
+          const castName = castInfo?.stage_name || castInfo?.name || '';
+          const lineUserId = privateInfo?.line_user_id ?? null;
+          if (status === 'published') {
+            await notifyCastPostPublished({ castName, lineUserId });
+          } else {
+            await notifyCastPostUnpublished({ castName, lineUserId });
+          }
+        } catch (e) {
+          console.warn('[updateCastPostStatus] LINE通知失敗:', e);
+        }
+      })();
+    }
 
     return { success: true };
   } catch (err: unknown) {

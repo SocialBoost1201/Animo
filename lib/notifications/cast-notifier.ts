@@ -80,3 +80,83 @@ export async function notifyCastProfileTextRejected(opts: {
   ].join('\n');
   await sendToCast(opts.lineUserId, message);
 }
+
+/**
+ * シフト提出 → 承認通知
+ */
+export async function notifyCastShiftApproved(opts: {
+  castName: string;
+  lineUserId: string | null;
+  weekMonday: string;
+}): Promise<void> {
+  const message = [
+    '【シフト確定】',
+    `${opts.castName} さん、提出シフトが承認されました。`,
+    `対象週: ${opts.weekMonday} 〜`,
+    'マイページで確定スケジュールを確認してください。',
+  ].join('\n');
+  await sendToCast(opts.lineUserId, message);
+}
+
+/**
+ * シフト提出 → 却下通知
+ */
+export async function notifyCastShiftRejected(opts: {
+  castName: string;
+  lineUserId: string | null;
+  weekMonday: string;
+}): Promise<void> {
+  const message = [
+    '【シフト要再提出】',
+    `${opts.castName} さん、提出シフトが却下されました。`,
+    `対象週: ${opts.weekMonday} 〜`,
+    '内容を確認して再度提出してください。',
+  ].join('\n');
+  await sendToCast(opts.lineUserId, message);
+}
+
+/**
+ * 本日の確認 → 却下通知（承認は静かなので通知なし）
+ */
+export async function notifyCastCheckinRejected(opts: {
+  castName: string;
+  lineUserId: string | null;
+  checkinDate: string;
+}): Promise<void> {
+  const message = [
+    '【本日の確認 要再提出】',
+    `${opts.castName} さん、${opts.checkinDate} の本日の確認が却下されました。`,
+    '内容を確認して再度提出してください。',
+  ].join('\n');
+  await sendToCast(opts.lineUserId, message);
+}
+
+/**
+ * 投稿 → 公開通知（admin が published に切替）
+ */
+export async function notifyCastPostPublished(opts: {
+  castName: string;
+  lineUserId: string | null;
+}): Promise<void> {
+  const message = [
+    '【ブログ公開】',
+    `${opts.castName} さん、投稿が公開されました。`,
+    'お疲れ様です！',
+  ].join('\n');
+  await sendToCast(opts.lineUserId, message);
+}
+
+/**
+ * 投稿 → 非公開化通知（admin が draft/pending に戻した）
+ */
+export async function notifyCastPostUnpublished(opts: {
+  castName: string;
+  lineUserId: string | null;
+}): Promise<void> {
+  const message = [
+    '【ブログ非公開化】',
+    `${opts.castName} さん、投稿が非公開に戻されました。`,
+    '内容を確認して、必要なら再度公開申請してください。',
+  ].join('\n');
+  await sendToCast(opts.lineUserId, message);
+}
