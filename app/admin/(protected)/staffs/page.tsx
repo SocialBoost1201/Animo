@@ -1,11 +1,11 @@
-import { getStaffs } from '@/lib/actions/staffs'
+import { getStaffsWithTodayAttendance } from '@/lib/actions/staffs'
 import { StaffList } from '@/components/features/admin/staffs/StaffList'
 import { InviteStaffButton } from '@/components/features/admin/InviteStaffButton'
 
 export const dynamic = 'force-dynamic'
 
 export default async function StaffsPage() {
-  const staffsData = await getStaffs(true)
+  const staffsData = await getStaffsWithTodayAttendance(true)
 
   return (
     <div className="space-y-6 font-inter">
