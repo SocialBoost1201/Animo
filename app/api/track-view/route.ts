@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { isAllowedOrigin, isUuid } from '@/lib/validators/origin';
 
 // 管理者権限（Service Role Key）でSupabaseを初期化し、RLSをバイパスしてRPCを実行する
 const supabaseAdmin = createClient(
@@ -7,24 +8,11 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// UUID v1〜v5 の標準形式（36文字）
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  const allowed = [
-    process.env.NEXT_PUBLIC_APP_URL,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-  ].filter((u): u is string => Boolean(u));
-  return allowed.some((u) => origin === u);
-}
-
 export async function POST(request: Request) {
   try {
     // ── 同一オリジン検証（外部サイトからの view count 水増しを遮断）──
     const origin = request.headers.get('origin');
-    if (!isAllowedOrigin(origin)) {
+    if (!isAllowedOrigin(origin, process.env.NEXT_PUBLIC_APP_URL)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -32,7 +20,7 @@ export async function POST(request: Request) {
     const { postId } = body;
 
     // ── postId 形式検証（不正な値で RPC を叩かせない）──
-    if (!postId || typeof postId !== 'string' || !UUID_PATTERN.test(postId)) {
+    if (!isUuid(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 

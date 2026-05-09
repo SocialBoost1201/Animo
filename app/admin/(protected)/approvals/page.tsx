@@ -19,15 +19,10 @@ import {
 } from '@/lib/actions/admin-profile-text-requests'
 import { UserCheck, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
 import { ApprovalActionPair } from '@/components/features/admin/ApprovalActionButtons'
-import type { ApprovalActionState } from '@/lib/types/approval-action'
-
-// 承認/却下アクションの結果。useActionState で client へ伝播する。
-// success=true なら revalidatePath が走り対象が一覧から消える。
-// success=false なら client がエラーメッセージを表示する。
-function asState(result: { success?: boolean; error?: string } | null | undefined, fallback: string): ApprovalActionState {
-  if (result?.success) return { success: true }
-  return { success: false, error: result?.error ?? fallback }
-}
+import {
+  asApprovalActionState as asState,
+  type ApprovalActionState,
+} from '@/lib/types/approval-action'
 
 async function approveCheckinAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
