@@ -44,7 +44,7 @@ export async function approveProfileTextRequest(
 
   const { data: req, error: fetchError } = await supabase
     .from('cast_profile_text_requests')
-    .select('cast_id, hobby, comment, quiz_tags, casts(stage_name)')
+    .select('cast_id, hobby, comment, quiz_tags, casts(stage_name, slug)')
     .eq('id', id)
     .single();
 
@@ -85,8 +85,10 @@ export async function approveProfileTextRequest(
     comment:  req.comment !== null,
   };
   const castId = req.cast_id;
-  const reqCasts = req.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
-  const castName = Array.isArray(reqCasts) ? (reqCasts[0]?.stage_name ?? '') : (reqCasts?.stage_name ?? '');
+  const reqCasts = req.casts as { stage_name: string | null; slug: string | null } | { stage_name: string | null; slug: string | null }[] | null;
+  const castInfo = Array.isArray(reqCasts) ? reqCasts[0] : reqCasts;
+  const castName = castInfo?.stage_name ?? '';
+  const castSlug = castInfo?.slug ?? '';
 
   void (async () => {
     try {
@@ -105,7 +107,11 @@ export async function approveProfileTextRequest(
     }
   })();
 
+  // 承認後の公開反映: トップ・キャスト一覧・個別ページのキャッシュを破棄
   revalidatePath('/admin/approvals');
+  revalidatePath('/');
+  revalidatePath('/cast');
+  if (castSlug) revalidatePath(`/cast/${castSlug}`);
   return { success: true };
 }
 

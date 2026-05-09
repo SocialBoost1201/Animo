@@ -42,7 +42,7 @@ export async function approveProfileImageRequest(
 
   const { data: request, error: fetchError } = await supabase
     .from('cast_profile_image_requests')
-    .select('cast_id, image_url, casts(stage_name)')
+    .select('cast_id, image_url, casts(stage_name, slug)')
     .eq('id', id)
     .single();
 
@@ -70,8 +70,10 @@ export async function approveProfileImageRequest(
 
   // キャスト個人へのLINE通知（fire-and-forget — 承認速度に影響しない）
   const castId = request.cast_id;
-  const reqCasts = request.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
-  const castName = Array.isArray(reqCasts) ? (reqCasts[0]?.stage_name ?? '') : (reqCasts?.stage_name ?? '');
+  const reqCasts = request.casts as { stage_name: string | null; slug: string | null } | { stage_name: string | null; slug: string | null }[] | null;
+  const castInfo = Array.isArray(reqCasts) ? reqCasts[0] : reqCasts;
+  const castName = castInfo?.stage_name ?? '';
+  const castSlug = castInfo?.slug ?? '';
 
   void (async () => {
     try {
@@ -89,7 +91,11 @@ export async function approveProfileImageRequest(
     }
   })();
 
+  // 承認後の公開反映: トップ・キャスト一覧・個別ページのキャッシュを破棄
   revalidatePath('/admin/approvals');
+  revalidatePath('/');
+  revalidatePath('/cast');
+  if (castSlug) revalidatePath(`/cast/${castSlug}`);
   return { success: true };
 }
 
