@@ -19,56 +19,75 @@ import {
 } from '@/lib/actions/admin-profile-text-requests'
 import { UserCheck, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
 import { ApprovalActionPair } from '@/components/features/admin/ApprovalActionButtons'
+import type { ApprovalActionState } from '@/lib/types/approval-action'
 
-async function approveCheckinAction(formData: FormData): Promise<void> {
-  'use server'
-  const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveCheckin(id)
+// 承認/却下アクションの結果。useActionState で client へ伝播する。
+// success=true なら revalidatePath が走り対象が一覧から消える。
+// success=false なら client がエラーメッセージを表示する。
+function asState(result: { success?: boolean; error?: string } | null | undefined, fallback: string): ApprovalActionState {
+  if (result?.success) return { success: true }
+  return { success: false, error: result?.error ?? fallback }
 }
-async function rejectCheckinAction(formData: FormData): Promise<void> {
+
+async function approveCheckinAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectCheckin(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await approveCheckin(id), '承認に失敗しました')
 }
-async function approveReservationAction(formData: FormData): Promise<void> {
+async function rejectCheckinAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await rejectCheckin(id), '却下に失敗しました')
 }
-async function rejectReservationAction(formData: FormData): Promise<void> {
+async function approveReservationAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await approveReservation(id), '承認に失敗しました')
 }
-async function approvePostAction(formData: FormData): Promise<void> {
+async function rejectReservationAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'published')
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await rejectReservation(id), '却下に失敗しました')
 }
-async function rejectPostAction(formData: FormData): Promise<void> {
+async function approvePostAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'draft')
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await updateCastPostStatus(id, 'published'), '承認に失敗しました')
 }
-async function approveImageAction(formData: FormData): Promise<void> {
+async function rejectPostAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveProfileImageRequest(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await updateCastPostStatus(id, 'draft'), '却下に失敗しました')
 }
-async function rejectImageAction(formData: FormData): Promise<void> {
+async function approveImageAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectProfileImageRequest(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await approveProfileImageRequest(id), '承認に失敗しました')
 }
-async function approveTextAction(formData: FormData): Promise<void> {
+async function rejectImageAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveProfileTextRequest(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await rejectProfileImageRequest(id), '却下に失敗しました')
 }
-async function rejectTextAction(formData: FormData): Promise<void> {
+async function approveTextAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectProfileTextRequest(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await approveProfileTextRequest(id), '承認に失敗しました')
+}
+async function rejectTextAction(_prev: ApprovalActionState, formData: FormData): Promise<ApprovalActionState> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' }
+  return asState(await rejectProfileTextRequest(id), '却下に失敗しました')
 }
 
 type CastPostPending = {

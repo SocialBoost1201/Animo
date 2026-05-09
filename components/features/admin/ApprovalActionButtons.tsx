@@ -1,7 +1,9 @@
 'use client';
 
+import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
+import type { ApprovalActionState } from '@/lib/types/approval-action';
 
 function ApproveBtn() {
   const { pending } = useFormStatus();
@@ -29,9 +31,18 @@ function RejectBtn() {
   );
 }
 
+type ApprovalAction = (
+  prev: ApprovalActionState,
+  formData: FormData,
+) => Promise<ApprovalActionState>;
+
 /**
  * 承認ハブで使う承認・却下ボタンペア。
- * Server Action を props で受け取り、useFormStatus でローディング状態を管理する。
+ * useActionState で Server Action の結果（成功/失敗）を受け取り、
+ * 失敗時はボタン下にエラーメッセージを表示する。
+ *
+ * 成功時は Server Action 側の revalidatePath で
+ * 対象アイテムが一覧から消えるため、UI の追加表示は不要。
  */
 export function ApprovalActionPair({
   id,
@@ -39,19 +50,42 @@ export function ApprovalActionPair({
   rejectAction,
 }: {
   id: string;
-  approveAction: (formData: FormData) => Promise<void>;
-  rejectAction: (formData: FormData) => Promise<void>;
+  approveAction: ApprovalAction;
+  rejectAction: ApprovalAction;
 }) {
+  const [approveState, approveFormAction] = useActionState<ApprovalActionState, FormData>(
+    approveAction,
+    null,
+  );
+  const [rejectState, rejectFormAction] = useActionState<ApprovalActionState, FormData>(
+    rejectAction,
+    null,
+  );
+
+  const errorMessage =
+    (approveState && approveState.success === false ? approveState.error : null) ??
+    (rejectState && rejectState.success === false ? rejectState.error : null);
+
   return (
-    <div className="flex gap-2 pt-0.5">
-      <form action={approveAction} className="flex-1">
-        <input type="hidden" name="id" value={id} />
-        <ApproveBtn />
-      </form>
-      <form action={rejectAction} className="flex-1">
-        <input type="hidden" name="id" value={id} />
-        <RejectBtn />
-      </form>
+    <div className="flex flex-col gap-1 pt-0.5">
+      <div className="flex gap-2">
+        <form action={approveFormAction} className="flex-1">
+          <input type="hidden" name="id" value={id} />
+          <ApproveBtn />
+        </form>
+        <form action={rejectFormAction} className="flex-1">
+          <input type="hidden" name="id" value={id} />
+          <RejectBtn />
+        </form>
+      </div>
+      {errorMessage && (
+        <p
+          role="alert"
+          className="text-[10px] leading-tight text-[#c8884d] font-medium px-1"
+        >
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 }
