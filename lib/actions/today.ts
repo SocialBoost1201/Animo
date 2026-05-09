@@ -726,6 +726,7 @@ export async function submitCheckin(formData: FormData) {
     revalidatePath('/cast/dashboard')
     revalidatePath('/cast/today')
     revalidatePath('/admin/today')
+    revalidatePath('/admin/approvals')
     if (!lineResult.ok) {
       return {
         success: true,
