@@ -313,6 +313,27 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
     (manualAttendanceRaw || []).map((row) => [row.cast_id, row.status as DailyCastAttendanceStatus])
   )
 
+  // シフト未提出で「出勤」に手動オーバーライドされたキャストを todayShifts に合流
+  // （TodayDesktopView / generateLineText が data.shifts を起点にするため、ここで補完）
+  const existingShiftCastIds = new Set(todayShifts.map((s) => s.cast_id))
+  const manualWorkingOnlyIds = (manualAttendanceRaw || [])
+    .filter((row) => row.status === 'working' && !existingShiftCastIds.has(row.cast_id))
+    .map((row) => row.cast_id)
+  if (manualWorkingOnlyIds.length > 0) {
+    const { data: extraCasts } = await supabase
+      .from('casts')
+      .select('id, stage_name')
+      .in('id', manualWorkingOnlyIds)
+    for (const cast of extraCasts ?? []) {
+      todayShifts.push({
+        cast_id: cast.id,
+        stage_name: (cast.stage_name as string) || '不明',
+        start_time: '20:00',
+      })
+    }
+    todayShifts.sort((a, b) => a.start_time.localeCompare(b.start_time))
+  }
+
   // 当日変更
   const { data: changesRaw } = await supabase
     .from('shift_changes')
@@ -1081,7 +1102,12 @@ export async function getTodayCastAttendanceStatuses(): Promise<Record<string, D
 
   const today = getJstDateString()
 
-  const { data, error } = await supabase
+  // Read via service role: RLS on daily_cast_attendance references public.user_roles
+  // which is not provisioned via migrations in this repo (admin role lives in `profiles`).
+  // Auth + role gate already enforced above; using service client keeps read consistent
+  // with `updateDailyCastAttendance` writes.
+  const serviceSupabase = createServiceClient()
+  const { data, error } = await serviceSupabase
     .from('daily_cast_attendance')
     .select('cast_id, status')
     .eq('business_date', today)
