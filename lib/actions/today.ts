@@ -11,6 +11,7 @@ import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/s
 import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
+import { logAdminAction } from '@/lib/audit/admin-audit'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -964,6 +965,20 @@ export async function approveCheckin(id: string) {
   revalidatePath('/cast/dashboard')
   revalidatePath('/')
   revalidatePath('/cast')
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'daily_checkin',
+    targetId: id,
+    afterData: {
+      approval_status: 'approved',
+      cast_id: checkin.cast_id,
+      checkin_date: checkin.checkin_date,
+    },
+    metadata: { manual_override_skipped: existing?.source === 'manual' },
+  })
+
   return { success: true as const, id }
 }
 
@@ -1015,6 +1030,20 @@ export async function rejectCheckin(id: string) {
   revalidatePath('/cast/dashboard')
   revalidatePath('/')
   revalidatePath('/cast')
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'daily_checkin',
+    targetId: id,
+    afterData: {
+      approval_status: 'rejected',
+      cast_id: checkin.cast_id,
+      checkin_date: checkin.checkin_date,
+    },
+    metadata: { manual_override_skipped: existing?.source === 'manual' },
+  })
+
   return { success: true as const, id }
 }
 

@@ -7,6 +7,7 @@ import {
   notifyCastProfileImageApproved,
   notifyCastProfileImageRejected,
 } from '@/lib/notifications/cast-notifier';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 export type ProfileImageRequest = {
   id: string;
@@ -96,6 +97,16 @@ export async function approveProfileImageRequest(
   revalidatePath('/');
   revalidatePath('/cast');
   if (castSlug) revalidatePath(`/cast/${castSlug}`);
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'cast_profile_image_request',
+    targetId: id,
+    afterData: { image_url: request.image_url },
+    metadata: { cast_id: castId, cast_slug: castSlug || null },
+  });
+
   return { success: true };
 }
 
@@ -147,5 +158,14 @@ export async function rejectProfileImageRequest(
   })();
 
   revalidatePath('/admin/approvals');
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'cast_profile_image_request',
+    targetId: id,
+    metadata: { cast_id: castId },
+  });
+
   return { success: true };
 }

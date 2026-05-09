@@ -7,6 +7,7 @@ import {
   notifyCastProfileTextApproved,
   notifyCastProfileTextRejected,
 } from '@/lib/notifications/cast-notifier';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 export type ProfileTextRequest = {
   id: string;
@@ -112,6 +113,16 @@ export async function approveProfileTextRequest(
   revalidatePath('/');
   revalidatePath('/cast');
   if (castSlug) revalidatePath(`/cast/${castSlug}`);
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'cast_profile_text_request',
+    targetId: id,
+    afterData: updatePayload,
+    metadata: { cast_id: castId, cast_slug: castSlug || null },
+  });
+
   return { success: true };
 }
 
@@ -167,5 +178,14 @@ export async function rejectProfileTextRequest(
   })();
 
   revalidatePath('/admin/approvals');
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'cast_profile_text_request',
+    targetId: id,
+    metadata: { cast_id: castId },
+  });
+
   return { success: true };
 }

@@ -5,6 +5,7 @@ import { revalidatePath, unstable_cache } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/service';
 import { addCastScore } from './scores';
 import { notifyBlogSubmitted } from '@/lib/notifications/admin-notifier';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Unknown error';
@@ -143,6 +144,13 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
     // RLSをバイパスして管理者として更新
     const supabase = createServiceClient();
 
+    // 監査ログ用に変更前 status を取得
+    const { data: prev } = await supabase
+      .from('cast_posts')
+      .select('status, cast_id')
+      .eq('id', postId)
+      .maybeSingle();
+
     const { error } = await supabase
       .from('cast_posts')
       .update({ status, updated_at: new Date().toISOString() })
@@ -155,6 +163,17 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
     revalidatePath('/admin/posts');
     revalidatePath('/admin/approvals');
     revalidatePath('/');
+
+    await logAdminAction({
+      actorUserId: user.id,
+      action: status === 'published' ? 'publish' : 'unpublish',
+      targetType: 'cast_post',
+      targetId: postId,
+      beforeData: prev ? { status: prev.status } : null,
+      afterData: { status },
+      metadata: prev ? { cast_id: prev.cast_id } : undefined,
+    });
+
     return { success: true };
   } catch (err: unknown) {
     return { success: false, error: getErrorMessage(err) };
@@ -166,9 +185,19 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
  */
 export async function deleteCastPost(postId: string) {
   try {
-    const supabase = await createClient();
-    
-    // DB削除
+    // 認証チェック（管理者であることを確認、監査ログにも actor が必要）
+    const authClient = await createClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) return { success: false, error: 'Unauthorized' };
+
+    // RLSをバイパスして管理者として削除（監査ログ用に削除前データも取得）
+    const supabase = createServiceClient();
+    const { data: prev } = await supabase
+      .from('cast_posts')
+      .select('id, cast_id, status, content, image_url, created_at')
+      .eq('id', postId)
+      .maybeSingle();
+
     const { error } = await supabase
       .from('cast_posts')
       .delete()
@@ -177,11 +206,20 @@ export async function deleteCastPost(postId: string) {
     if (error) {
       return { success: false, error: error.message };
     }
-    
+
     // Storageから画像削除 (publicUrlからパスを部分一致などで抜き出して削除するのが望ましいが、今回は必要なら実装)
 
     revalidatePath('/admin/posts');
     revalidatePath('/');
+
+    await logAdminAction({
+      actorUserId: user.id,
+      action: 'delete',
+      targetType: 'cast_post',
+      targetId: postId,
+      beforeData: prev ?? null,
+    });
+
     return { success: true };
   } catch (err: unknown) {
     return { success: false, error: getErrorMessage(err) };

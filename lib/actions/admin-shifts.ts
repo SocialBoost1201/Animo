@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { revalidatePath } from 'next/cache';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 export type ShiftSubmissionWithCast = {
   id: string;
@@ -147,6 +148,15 @@ export async function approveShiftSubmission(submissionId: string) {
   revalidatePath('/shift');
   revalidatePath('/');
 
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'shift_submission',
+    targetId: submissionId,
+    afterData: { status: 'approved', cast_id: submission.cast_id },
+    metadata: { cast_schedules_inserted: insertData.length, dates_count: dates.length },
+  });
+
   return { success: true };
 }
 
@@ -171,6 +181,15 @@ export async function rejectShiftSubmission(submissionId: string) {
 
   revalidatePath('/admin/shift-requests');
   revalidatePath('/admin/approvals');
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'shift_submission',
+    targetId: submissionId,
+    afterData: { status: 'rejected' },
+  });
+
   return { success: true };
 }
 
