@@ -10,20 +10,31 @@ function jstDateAfterDays(days: number): string {
   return new Date(Date.now() + 9 * 60 * 60 * 1000 + days * 86400000).toISOString().split('T')[0]
 }
 
-async function getManualAbsentCastIds(today: string) {
+async function getTodayAttendanceSets(today: string): Promise<{ workingIds: Set<string>; absentIds: Set<string> }> {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('daily_cast_attendance')
-    .select('cast_id')
+    .select('cast_id, status')
     .eq('business_date', today)
-    .eq('status', 'absent')
+    .in('status', ['working', 'absent'])
 
   if (error) {
-    console.error('getManualAbsentCastIds:', error)
-    return new Set<string>()
+    console.error('getTodayAttendanceSets:', error)
+    return { workingIds: new Set(), absentIds: new Set() }
   }
 
-  return new Set((data || []).map((row) => row.cast_id as string))
+  const workingIds = new Set<string>()
+  const absentIds = new Set<string>()
+  for (const row of data || []) {
+    if (row.status === 'working') workingIds.add(row.cast_id as string)
+    else if (row.status === 'absent') absentIds.add(row.cast_id as string)
+  }
+  return { workingIds, absentIds }
+}
+
+async function getManualAbsentCastIds(today: string) {
+  const { absentIds } = await getTodayAttendanceSets(today)
+  return absentIds
 }
 
 type CastImageRecord = {
@@ -86,7 +97,7 @@ export async function getPublicCasts() {
     if (error) { console.error('getPublicCasts:', error); return [] }
 
     // 一覧表示に必要な項目を欠損時フォールバック込みで正規化する
-    const manualAbsentCastIds = await getManualAbsentCastIds(today)
+    const { workingIds, absentIds } = await getTodayAttendanceSets(today)
     const diaryThreshold = Date.now() - 72 * 60 * 60 * 1000
 
     return data.map(cast => {
@@ -98,12 +109,16 @@ export async function getPublicCasts() {
       const displayName = cast.stage_name || cast.name || ''
       const imageUrl = resolveCastImageUrl(cast.image_url, cast.cast_images as CastImageRecord[] | null | undefined)
 
+      // is_today is derived exclusively from today's daily_cast_attendance record (date-scoped).
+      // casts.is_today is a persistent field that is not reset daily and must not be used here.
+      const isTodayWorking = workingIds.has(cast.id) && !absentIds.has(cast.id)
+
       return {
         ...cast,
         display_name: displayName,
         image_url: imageUrl,
         quiz_tags: Array.isArray(cast.quiz_tags) ? cast.quiz_tags : [],
-        is_today: cast.is_today && !manualAbsentCastIds.has(cast.id),
+        is_today: isTodayWorking,
         has_recent_post: typeof latest === 'number' ? latest >= diaryThreshold : false,
         latest_post_at: latest ? new Date(latest).toISOString() : null,
       }
