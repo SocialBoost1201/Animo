@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
-import { formatProtectedOperationTime } from '@/lib/operation-hours'
+import { compareOperationTimes, formatProtectedOperationTime } from '@/lib/operation-hours'
 import { sendLineGroupMessage } from '@/lib/line'
 import { notifyCheckinSubmitted, notifyReservationSubmitted } from '@/lib/notifications/admin-notifier'
 import { revalidatePath } from 'next/cache'
@@ -12,8 +12,6 @@ import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 
-// 曜日の日本語変換
-const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
 const TODAY_SUBMISSION_DEADLINE_HOUR = 19
 const TODAY_SUBMISSION_DEADLINE_MINUTE = 0
 
@@ -146,6 +144,7 @@ export type StaffAttendance = {
   display_name: string
   start_time: string
   end_time?: string | null
+  note?: string | null
 }
 
 export type AnalyticsSummary = {
@@ -355,7 +354,7 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
   // スタッフ出勤
   const { data: staffAttendances } = await supabase
     .from('daily_staff_attendances')
-    .select('id, display_name, start_time, end_time, staff_id')
+    .select('id, display_name, start_time, end_time, staff_id, note')
     .eq('staff_date', today)
     .order('start_time')
 
@@ -415,37 +414,37 @@ export async function getTodayDashboard(dateStr?: string): Promise<TodayDashboar
 // LINE共有テキスト生成
 // ==========================================
 export async function generateLineText(data: TodayDashboardData): Promise<string> {
-  const d = new Date(data.date)
-  const weekday = WEEKDAYS[d.getDay()]
-  const dateLabel = `${d.getMonth() + 1}月${d.getDate()}日（${weekday}）`
-
   const lines: string[] = []
-  lines.push('本日の営業状況')
-  lines.push(dateLabel)
+  lines.push('皆さんお疲れ様です')
 
-  // 出勤キャスト（時間ごとグループ、欠勤除外）
+  // 出勤キャスト（時間ごとグループ、欠勤除外）+ 派遣
   const activeCasts = data.shifts.filter(s => !data.absentCastIds.includes(s.cast_id))
-  if (activeCasts.length > 0 || data.dispatches.length > 0) {
-    const groups: Record<string, string[]> = {}
-    for (const cast of activeCasts) {
-      const time = formatProtectedOperationTime(cast.start_time)
-      if (!groups[time]) groups[time] = []
-      groups[time].push(cast.stage_name)
+  const douhanCastIds = new Set(
+    data.reservations.filter(r => r.reservation_type === 'douhan').map(r => r.cast_id)
+  )
+  const totalActive = activeCasts.length + data.dispatches.length
+
+  if (totalActive > 0) {
+    lines.push(`本日出勤${totalActive}名`)
+    const castGroups: Record<string, { regular: string[]; douhan: string[] }> = {}
+    for (const c of activeCasts) {
+      const time = formatProtectedOperationTime(c.start_time)
+      if (!castGroups[time]) castGroups[time] = { regular: [], douhan: [] }
+      if (douhanCastIds.has(c.cast_id)) {
+        castGroups[time].douhan.push(c.stage_name)
+      } else {
+        castGroups[time].regular.push(c.stage_name)
+      }
     }
-    // 派遣を同じ時間グループに追加
     for (const d of data.dispatches) {
       const time = formatProtectedOperationTime(d.start_time)
-      if (!groups[time]) groups[time] = []
-      groups[time].push(`${d.name}（派遣）`)
+      if (!castGroups[time]) castGroups[time] = { regular: [], douhan: [] }
+      castGroups[time].regular.push(`${d.name}（派遣）`)
     }
-    
-    lines.push('')
-    lines.push('出勤キャスト')
-    for (const time of Object.keys(groups).sort()) {
-      lines.push(`${time}〜`)
-      for (const name of groups[time]) {
-        lines.push(name)
-      }
+    for (const time of Object.keys(castGroups).sort(compareOperationTimes)) {
+      const group = castGroups[time]
+      if (group.regular.length > 0) lines.push(`${time}  ${group.regular.join('、')}`)
+      for (const name of group.douhan) lines.push(`${time}  ${name}同伴`)
     }
   }
 
@@ -454,17 +453,25 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
     lines.push('')
     lines.push('体入')
     for (const t of data.trials) {
-      lines.push(`${t.name}（${formatProtectedOperationTime(t.start_time)}〜）`)
+      lines.push(`${formatProtectedOperationTime(t.start_time)}  ${t.name}`)
     }
   }
 
-  // スタッフ
+  // 従業員（スタッフ）— 時間グループ、終了時刻と備考をインライン表記
   if (data.staffAttendances.length > 0) {
     lines.push('')
-    lines.push('スタッフ')
+    lines.push(`従業員　${data.staffAttendances.length}名`)
+    const staffGroups: Record<string, string[]> = {}
     for (const s of data.staffAttendances) {
-      const endTimeLabel = s.end_time ? formatProtectedOperationTime(s.end_time) : ''
-      lines.push(`${s.display_name}（${formatProtectedOperationTime(s.start_time)}〜${endTimeLabel}）`)
+      const time = formatProtectedOperationTime(s.start_time)
+      const end = s.end_time ? formatProtectedOperationTime(s.end_time) : ''
+      const noteSuffix = s.note ? `（${s.note}）` : ''
+      const item = end ? `${s.display_name}〜${end}${noteSuffix}` : `${s.display_name}${noteSuffix}`
+      if (!staffGroups[time]) staffGroups[time] = []
+      staffGroups[time].push(item)
+    }
+    for (const time of Object.keys(staffGroups).sort(compareOperationTimes)) {
+      lines.push(`${time}  ${staffGroups[time].join('、')}`)
     }
   }
 
@@ -492,19 +499,18 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
   if (absentAll.length > 0) {
     lines.push('')
     lines.push('当日欠勤')
-    for (const name of absentAll) {
-      lines.push(name)
-    }
+    for (const name of absentAll) lines.push(name)
   }
 
-  // 来店予定
+  // 予定（来店予定）
   if (data.reservations.length > 0) {
     lines.push('')
-    lines.push('来店予定')
+    lines.push('予定')
     for (const r of data.reservations) {
       const typeLabel = r.reservation_type === 'douhan' ? '同伴' : '来店予定'
-      const guestCountLabel = r.guest_count ? `　${r.guest_count}名` : ''
-      lines.push(`${formatProtectedOperationTime(r.visit_time)}　${r.stage_name}　${r.guest_name}様${guestCountLabel}　${typeLabel}`)
+      const guestCount = r.guest_count ? ` ${r.guest_count}名` : ''
+      lines.push(`${formatProtectedOperationTime(r.visit_time)}  ${r.stage_name}　${r.guest_name}様${guestCount}（${typeLabel}）`)
+      if (r.note) lines.push(`備考: ${r.note}`)
     }
   }
 
@@ -512,11 +518,11 @@ export async function generateLineText(data: TodayDashboardData): Promise<string
   if (data.unconfirmedCasts.length > 0) {
     lines.push('')
     lines.push('未確認キャスト')
-    for (const c of data.unconfirmedCasts) {
-      lines.push(c.stage_name)
-    }
+    for (const c of data.unconfirmedCasts) lines.push(c.stage_name)
   }
 
+  lines.push('')
+  lines.push('よろしくお願い致します(よろしく)')
   return lines.join('\n')
 }
 

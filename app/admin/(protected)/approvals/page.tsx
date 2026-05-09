@@ -17,38 +17,68 @@ import {
   approveProfileTextRequest,
   rejectProfileTextRequest,
 } from '@/lib/actions/admin-profile-text-requests'
-import { UserCheck, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
+import {
+  approveShiftSubmission,
+  rejectShiftSubmission,
+} from '@/lib/actions/admin-shifts'
+import { UserCheck, Calendar, FileText, Clock, ImageIcon, AlignLeft } from 'lucide-react'
 import { ApprovalActionPair } from '@/components/features/admin/ApprovalActionButtons'
 
-async function approveCheckinAction(formData: FormData): Promise<void> {
+type ActionResult = { success: boolean; error?: string }
+
+async function approveCheckinAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveCheckin(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await approveCheckin(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectCheckinAction(formData: FormData): Promise<void> {
+async function rejectCheckinAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectCheckin(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await rejectCheckin(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function approveReservationAction(formData: FormData): Promise<void> {
+async function approveReservationAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await approveReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await approveReservation(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectReservationAction(formData: FormData): Promise<void> {
+async function rejectReservationAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await rejectReservation(id)
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await rejectReservation(id)
+  return { success: result.success, error: result.success ? undefined : result.error }
+}
+async function approveShiftAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id !== 'string' || !id) return
+  await approveShiftSubmission(id)
+}
+async function rejectShiftAction(formData: FormData): Promise<void> {
+  'use server'
+  const id = formData.get('id')
+  if (typeof id !== 'string' || !id) return
+  await rejectShiftSubmission(id)
 }
 async function approvePostAction(formData: FormData): Promise<void> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'published')
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await updateCastPostStatus(id, 'published')
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
-async function rejectPostAction(formData: FormData): Promise<void> {
+async function rejectPostAction(formData: FormData): Promise<ActionResult> {
   'use server'
   const id = formData.get('id')
-  if (typeof id === 'string' && id) await updateCastPostStatus(id, 'draft')
+  if (typeof id !== 'string' || !id) return { success: false, error: 'IDが不正です' }
+  const result = await updateCastPostStatus(id, 'draft')
+  return { success: result.success, error: result.success ? undefined : result.error }
 }
 async function approveImageAction(formData: FormData): Promise<void> {
   'use server'
@@ -472,7 +502,66 @@ export default async function AdminApprovalsPage({
           </div>
         </div>
 
-        {/* ── Column 2: ブログ承認 ── */}
+        {/* ── Column 2: シフト承認 ── */}
+        <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
+          <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
+            <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-[33px] h-[33px] flex items-center justify-center bg-[#dfbd691a] rounded-[7px] shrink-0">
+                  <Calendar size={16} className="text-[#dfbd69]" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[13px] font-bold text-[#f4f1ea] tracking-[-0.08px] leading-tight">シフト承認</p>
+                  <p className="text-[11px] text-[#8a8478] leading-tight">土曜21:00締切</p>
+                </div>
+              </div>
+              {visibleShiftSubmissions.length > 0 && (
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#dfbd691a] text-[#dfbd69] text-[10px] font-bold">
+                  {visibleShiftSubmissions.length}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
+              {visibleShiftSubmissions.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <p className="text-[12px] text-[#5a5650]">承認待ちのシフトなし</p>
+                </div>
+              ) : visibleShiftSubmissions.map((submission) => (
+                <article key={submission.id} className="rounded-[12px] border border-[#ffffff0a] bg-[#ffffff04] p-3.5 space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={10} className="text-[#5a5650]" />
+                      <span className="text-[10px] text-[#5a5650]">土曜21:00締切</span>
+                    </div>
+                    {shiftBadge && (
+                      <span className={`rounded-[5px] px-2 py-0.5 text-[9px] font-bold ${shiftBadge.className}`}>
+                        {shiftBadge.label}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[14px] font-bold text-[#f4f1ea] leading-tight">{submission.casts.stage_name}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">対象週</span>
+                      <span className="text-[11px] text-[#c7c0b2]">{submission.target_week_monday}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-[10px] text-[#5a5650] w-10 shrink-0">シフト</span>
+                      <span className="text-[11px] text-[#8a8478] leading-relaxed">{formatShiftSummary(submission.shifts_data)}</span>
+                    </div>
+                  </div>
+                  <ApprovalActionPair
+                    id={submission.id}
+                    approveAction={approveShiftAction}
+                    rejectAction={rejectShiftAction}
+                  />
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column 3: ブログ承認 ── */}
         <div className="flex flex-col card-premium-skin rounded-[18px] min-h-0">
           <div className="card-premium-skin__surface flex flex-col flex-1 overflow-hidden rounded-[18px]">
             <div className="flex items-center justify-between px-5 h-[56px] border-b border-[#ffffff0f] shrink-0">

@@ -54,49 +54,59 @@ const TABS: { id: Tab; label: string }[] = [
 const inputCls =
   'w-full bg-white/5 border border-white/10 rounded-sm px-3 py-2 text-[12px] text-[#f4f1ea] placeholder-[#5a5650] focus:outline-none focus:border-gold/40 transition-all outline-none'
 
-const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
-
 function buildLineText(data: TodayDashboardData) {
-  const d = new Date(data.date)
-  const weekday = WEEKDAYS[d.getDay()]
-  const lines: string[] = [
-    '本日の営業状況',
-    `${d.getMonth() + 1}月${d.getDate()}日（${weekday}）`,
-  ]
+  const lines: string[] = ['皆さんお疲れ様です']
 
   const activeCasts = data.shifts.filter(s => !data.absentCastIds.includes(s.cast_id))
-  if (activeCasts.length > 0 || data.dispatches.length > 0) {
-    const groups: Record<string, string[]> = {}
+  const douhanCastIds = new Set(
+    data.reservations.filter(r => r.reservation_type === 'douhan').map(r => r.cast_id)
+  )
+  const totalActive = activeCasts.length + data.dispatches.length
+
+  if (totalActive > 0) {
+    lines.push(`本日出勤${totalActive}名`)
+    const castGroups: Record<string, { regular: string[]; douhan: string[] }> = {}
     for (const cast of activeCasts) {
       const time = formatProtectedOperationTime(cast.start_time)
-      if (!groups[time]) groups[time] = []
-      groups[time].push(cast.stage_name)
+      if (!castGroups[time]) castGroups[time] = { regular: [], douhan: [] }
+      if (douhanCastIds.has(cast.cast_id)) {
+        castGroups[time].douhan.push(cast.stage_name)
+      } else {
+        castGroups[time].regular.push(cast.stage_name)
+      }
     }
     for (const dispatch of data.dispatches) {
       const time = formatProtectedOperationTime(dispatch.start_time)
-      if (!groups[time]) groups[time] = []
-      groups[time].push(`${dispatch.name}（派遣）`)
+      if (!castGroups[time]) castGroups[time] = { regular: [], douhan: [] }
+      castGroups[time].regular.push(`${dispatch.name}（派遣）`)
     }
-
-    lines.push('', '出勤キャスト')
-    for (const time of Object.keys(groups).sort(compareOperationTimes)) {
-      lines.push(`${time}〜`)
-      for (const name of groups[time]) lines.push(name)
+    for (const time of Object.keys(castGroups).sort(compareOperationTimes)) {
+      const group = castGroups[time]
+      if (group.regular.length > 0) lines.push(`${time}  ${group.regular.join('、')}`)
+      for (const name of group.douhan) lines.push(`${time}  ${name}同伴`)
     }
   }
 
   if (data.trials.length > 0) {
     lines.push('', '体入')
     for (const trial of data.trials) {
-      lines.push(`${trial.name}（${formatProtectedOperationTime(trial.start_time)}〜）`)
+      lines.push(`${formatProtectedOperationTime(trial.start_time)}  ${trial.name}`)
     }
   }
 
   if (data.staffAttendances.length > 0) {
-    lines.push('', 'スタッフ')
+    lines.push('', `従業員　${data.staffAttendances.length}名`)
+    const staffGroups: Record<string, string[]> = {}
     for (const staff of data.staffAttendances) {
-      const endTimeLabel = formatProtectedOperationTime(staff.end_time)
-      lines.push(`${staff.display_name}（${formatProtectedOperationTime(staff.start_time)}〜${endTimeLabel}）`)
+      const time = formatProtectedOperationTime(staff.start_time)
+      const end = staff.end_time ? formatProtectedOperationTime(staff.end_time) : ''
+      const noteSuffix = staff.note ? `（${staff.note}）` : ''
+      const item = end ? `${staff.display_name}〜${end}${noteSuffix}` : `${staff.display_name}${noteSuffix}`
+      if (!staffGroups[time]) staffGroups[time] = []
+      staffGroups[time].push(item)
+    }
+    for (const time of Object.keys(staffGroups).sort(compareOperationTimes)) {
+      lines.push(`${time}  ${staffGroups[time].join('、')}`)
     }
   }
 
@@ -124,11 +134,12 @@ function buildLineText(data: TodayDashboardData) {
   }
 
   if (data.reservations.length > 0) {
-    lines.push('', '来店予定')
+    lines.push('', '予定')
     for (const reservation of data.reservations) {
       const typeLabel = reservation.reservation_type === 'douhan' ? '同伴' : '来店予定'
-      const guestCountLabel = reservation.guest_count ? `　${reservation.guest_count}名` : ''
-      lines.push(`${formatProtectedOperationTime(reservation.visit_time)}　${reservation.stage_name}　${reservation.guest_name}様${guestCountLabel}　${typeLabel}`)
+      const guestCount = reservation.guest_count ? ` ${reservation.guest_count}名` : ''
+      lines.push(`${formatProtectedOperationTime(reservation.visit_time)}  ${reservation.stage_name}　${reservation.guest_name}様${guestCount}（${typeLabel}）`)
+      if (reservation.note) lines.push(`備考: ${reservation.note}`)
     }
   }
 
@@ -137,6 +148,7 @@ function buildLineText(data: TodayDashboardData) {
     for (const cast of data.unconfirmedCasts) lines.push(cast.stage_name)
   }
 
+  lines.push('', 'よろしくお願い致します(よろしく)')
   return lines.join('\n')
 }
 

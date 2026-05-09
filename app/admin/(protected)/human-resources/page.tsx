@@ -1,5 +1,5 @@
 import { getCasts } from '@/lib/actions/casts';
-import { getStaffs } from '@/lib/actions/staffs';
+import { getStaffsWithTodayAttendance } from '@/lib/actions/staffs';
 import { getTodayCastAttendanceStatuses, type DailyCastAttendanceStatus } from '@/lib/actions/today';
 import Link from 'next/link';
 import { Plus, ChevronLeft, ChevronRight, Users, UserCheck } from 'lucide-react';
@@ -21,7 +21,7 @@ export default async function HumanResourcesPage({
       console.error('[admin/human-resources] Failed to load casts:', error);
       return [];
     }),
-    getStaffs(true),
+    getStaffsWithTodayAttendance(true),
     getTodayCastAttendanceStatuses().catch((error) => {
       console.error('[admin/human-resources] Failed to load today attendance:', error);
       return {} as Record<string, DailyCastAttendanceStatus>;
