@@ -29,8 +29,11 @@ async function getManualAbsentCastIds(today: string) {
 /**
  * 指定日に「出勤中」と判定すべき cast_id の Set を返す。
  *
- * 真実のソース:
- *   cast_schedules (当日エントリ有り) − daily_cast_attendance.status='absent' (手動欠勤)
+ * 優先順位:
+ *   1. daily_cast_attendance.status = 'absent' (手動欠勤) → 除外
+ *   2. daily_cast_attendance.status = 'working' (手動出勤) → 追加
+ *   3. cast_schedules に当日エントリ有り → 追加
+ *   (status = 'undecided' は何もしない＝ベース動作)
  *
  * 注意:
  *   `casts.is_today` は denormalized でドリフトの危険があるため使用しない。
@@ -39,22 +42,41 @@ async function getManualAbsentCastIds(today: string) {
 async function getWorkingCastIdsForDate(date: string) {
   const supabase = createServiceClient()
 
-  const [scheduledRes, manualAbsent] = await Promise.all([
+  const [scheduledRes, attendanceRes] = await Promise.all([
     supabase
       .from('cast_schedules')
       .select('cast_id')
       .eq('work_date', date),
-    getManualAbsentCastIds(date),
+    supabase
+      .from('daily_cast_attendance')
+      .select('cast_id, status')
+      .eq('business_date', date),
   ])
 
   if (scheduledRes.error) {
-    console.error('getWorkingCastIdsForDate:', scheduledRes.error)
-    return { workingIds: new Set<string>(), manualAbsentIds: manualAbsent }
+    console.error('getWorkingCastIdsForDate (cast_schedules):', scheduledRes.error)
+  }
+  if (attendanceRes.error) {
+    console.error('getWorkingCastIdsForDate (daily_cast_attendance):', attendanceRes.error)
+  }
+
+  const manualAbsent = new Set<string>()
+  const manualWorking = new Set<string>()
+  for (const row of attendanceRes.data || []) {
+    const id = row.cast_id as string
+    const status = row.status as string
+    if (status === 'absent') manualAbsent.add(id)
+    else if (status === 'working') manualWorking.add(id)
   }
 
   const workingIds = new Set<string>()
+  // schedule ベース
   for (const row of scheduledRes.data || []) {
     const id = row.cast_id as string
+    if (!manualAbsent.has(id)) workingIds.add(id)
+  }
+  // 手動 working オーバーライド（schedule に無いキャストも対象）
+  for (const id of manualWorking) {
     if (!manualAbsent.has(id)) workingIds.add(id)
   }
 

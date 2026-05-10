@@ -958,7 +958,9 @@ export async function approveCheckin(id: string) {
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'working', source: 'checkin_approved', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await serviceSupabase.from('casts').update({ is_today: true }).eq('id', checkin.cast_id)
+    // 公開サイトの is_today は cast_schedules - daily_cast_attendance.absent から
+    // 都度導出（getWorkingCastIdsForDate）されるため、casts.is_today への書き込みは
+    // 廃止 (#P0-3)。カラムは存在し続けるが本パスでは更新しない。
   }
 
   revalidatePath('/admin/today')
@@ -1023,7 +1025,7 @@ export async function rejectCheckin(id: string) {
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'absent', source: 'checkin_rejected', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await serviceSupabase.from('casts').update({ is_today: false }).eq('id', checkin.cast_id)
+    // casts.is_today への書き込みは廃止 (#P0-3、approveCheckin と同じ理由)。
   }
 
   revalidatePath('/admin/today')
@@ -1186,31 +1188,13 @@ export async function updateDailyCastAttendance(input: {
     return { success: false, error: error.message }
   }
 
-  // Sync casts.is_today so the public "本日の出勤キャスト" reflects the override
-  let isToday: boolean
-  if (input.status === 'working') {
-    isToday = true
-  } else if (input.status === 'absent') {
-    isToday = false
-  } else {
-    // undecided: revert to approved-shift-based value
-    const { data: schedule } = await serviceSupabase
-      .from('cast_schedules')
-      .select('id')
-      .eq('cast_id', input.castId)
-      .eq('work_date', today)
-      .maybeSingle()
-    isToday = !!schedule
-  }
-
-  const { error: castSyncError } = await serviceSupabase
-    .from('casts')
-    .update({ is_today: isToday })
-    .eq('id', input.castId)
-
-  if (castSyncError) {
-    console.error('[updateDailyCastAttendance] casts.is_today sync failed', castSyncError)
-  }
+  // 公開サイトの「本日の出勤キャスト」は getWorkingCastIdsForDate で
+  // daily_cast_attendance / cast_schedules から都度導出される (#1)。
+  // 旧実装はここで casts.is_today を計算して同期していたが、その読み手は
+  // 既に廃止済のため write も廃止 (#P0-3)。
+  // status='working' / 'absent' の状態は上記の daily_cast_attendance.upsert
+  // で既に記録されており、'undecided' は手動 override の解除を意味するため
+  // 別途特別な write は不要（公開サイトは自動的に schedule ベースに戻る）。
 
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')
