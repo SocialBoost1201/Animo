@@ -59,9 +59,13 @@ export async function POST(req: Request) {
     if (invitedUser?.user?.id) {
       await supabaseAdmin.from('profiles').upsert({
         id: invitedUser.user.id,
-        role,
         display_name: email.split('@')[0],
         updated_at: new Date().toISOString(),
+      });
+
+      await supabaseAdmin.from('user_roles').insert({
+        user_id: invitedUser.user.id,
+        role,
       });
     }
 
