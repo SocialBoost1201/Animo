@@ -219,6 +219,23 @@ export default function AdminRegisterMobilePage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-xs mb-1.5" style={{ color: '#9f9fa9' }}>
+                権限
+              </label>
+              <select
+                name="role"
+                required
+                defaultValue=""
+                className="w-full rounded-[10px] px-[10px] py-[6px] text-sm text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd69]/25"
+                style={{ background: '#27272a', border: '0.617px solid #3f3f47' }}
+              >
+                <option value="" disabled>選択してください</option>
+                <option value="owner">オーナー</option>
+                <option value="manager">マネージャー</option>
+              </select>
+            </div>
+
             {(state?.error || state?.message) && (
               <p
                 className="text-xs text-center rounded-lg py-2 px-3"
