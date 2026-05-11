@@ -16,8 +16,8 @@ CREATE INDEX IF NOT EXISTS idx_cast_shifts_work_date ON public.cast_shifts(work_
 
 ALTER TABLE public.cast_shifts ENABLE ROW LEVEL SECURITY;
 
--- キャスト本人は自身のシフトを読み書き可能
-CREATE POLICY IF NOT EXISTS "cast_shifts_cast_select"
+DROP POLICY IF EXISTS "cast_shifts_cast_select" ON public.cast_shifts;
+CREATE POLICY "cast_shifts_cast_select"
   ON public.cast_shifts FOR SELECT TO authenticated
   USING (
     cast_id IN (
@@ -25,7 +25,8 @@ CREATE POLICY IF NOT EXISTS "cast_shifts_cast_select"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "cast_shifts_cast_upsert"
+DROP POLICY IF EXISTS "cast_shifts_cast_upsert" ON public.cast_shifts;
+CREATE POLICY "cast_shifts_cast_upsert"
   ON public.cast_shifts FOR ALL TO authenticated
   USING (
     cast_id IN (
