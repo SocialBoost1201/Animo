@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ShiftRecruitModal } from './ShiftRecruitModal';
+import { ShiftEditModal } from './ShiftEditModal';
 import type { MonthlyShiftDetail } from '@/lib/actions/monthly-shifts';
 
 type CastRow = {
@@ -17,13 +18,33 @@ type Props = {
   days: number[];
 };
 
+type EditTarget = {
+  castId: string;
+  stageName: string;
+  day: number;
+  workDate: string;
+  currentDetail: MonthlyShiftDetail | undefined;
+};
+
 export function MonthlyShiftMatrix({ year, month, castsData, days }: Props) {
   const [recruitDate, setRecruitDate] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
 
-  const handleDayClick = (day: number) => {
-    const d = new Date(year, month - 1, day);
+  const handleDayHeaderClick = (day: number) => {
     const dateStr = `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
     setRecruitDate(dateStr);
+  };
+
+  const handleCellClick = (cast: CastRow, day: number) => {
+    const mm = String(month).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    setEditTarget({
+      castId: cast.castId,
+      stageName: cast.stageName,
+      day,
+      workDate: `${year}-${mm}-${dd}`,
+      currentDetail: cast.shifts[day],
+    });
   };
 
   return (
@@ -41,7 +62,7 @@ export function MonthlyShiftMatrix({ year, month, castsData, days }: Props) {
                   return (
                     <th
                       key={day}
-                      onClick={() => handleDayClick(day)}
+                      onClick={() => handleDayHeaderClick(day)}
                       className={`px-2 py-3 text-center min-w-[34px] border-r border-[#ffffff06] cursor-pointer hover:bg-[#dfbd6914] transition-colors select-none ${
                         dow === 0 ? 'text-[#d4785a]' : dow === 6 ? 'text-[#6ab0d4]' : 'text-[#5a5650]'
                       }`}
@@ -68,7 +89,8 @@ export function MonthlyShiftMatrix({ year, month, castsData, days }: Props) {
                     </td>
                     {days.map((day) => {
                       const detail = cast.shifts[day];
-                      const isWeekend = new Date(year, month - 1, day).getDay() === 0 || new Date(year, month - 1, day).getDay() === 6;
+                      const dow = new Date(year, month - 1, day).getDay();
+                      const isWeekend = dow === 0 || dow === 6;
                       let content = <span className="text-[#ffffff14]">–</span>;
 
                       if (detail) {
@@ -89,7 +111,9 @@ export function MonthlyShiftMatrix({ year, month, castsData, days }: Props) {
                       return (
                         <td
                           key={day}
-                          className={`px-2 py-2.5 text-center border-r border-[#ffffff05] ${isWeekend ? 'bg-[#ffffff02]' : ''}`}
+                          onClick={() => handleCellClick(cast, day)}
+                          className={`px-2 py-2.5 text-center border-r border-[#ffffff05] cursor-pointer hover:bg-[#ffffff08] transition-colors ${isWeekend ? 'bg-[#ffffff02]' : ''}`}
+                          title={`${cast.stageName} ${month}/${day}`}
                         >
                           {content}
                         </td>
@@ -107,6 +131,17 @@ export function MonthlyShiftMatrix({ year, month, castsData, days }: Props) {
         <ShiftRecruitModal
           targetDate={recruitDate}
           onClose={() => setRecruitDate(null)}
+        />
+      )}
+
+      {editTarget && (
+        <ShiftEditModal
+          castId={editTarget.castId}
+          stageName={editTarget.stageName}
+          workDate={editTarget.workDate}
+          displayDate={`${month}/${editTarget.day}`}
+          currentDetail={editTarget.currentDetail}
+          onClose={() => setEditTarget(null)}
         />
       )}
     </>
