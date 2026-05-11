@@ -3,6 +3,7 @@
 import { appendFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { sendAdminNotification, sendGuestConfirmation } from '@/lib/mail'
 
 const DEBUG_NDJSON_LOG =
@@ -81,40 +82,60 @@ export async function submitContact(formData: FormData) {
   }
 
   // --- 顧客データの自動保存または紐付け ---
+  // 公開フォームは anon ロールで動作するため、admin-only RLS の customers
+  // テーブルには直接アクセスできない。service_role 専用クライアントを
+  // 使い RLS を bypass して紐付け/作成する。
+  // service_role キーが未設定の環境（dev など）では customer 紐付けは
+  // skip し、contacts への保存のみ行う（既存挙動の劣化なし）。
   let customerId = null;
   const email = (contact_method && contact_method.includes('@')) ? contact_method : null;
 
-  if (phone) {
-    const { data: custData } = await supabase.from('customers').select('id').eq('phone', phone).single();
-    if (custData) customerId = custData.id;
-  }
-  
-  if (!customerId && email) {
-    const { data: custData } = await supabase.from('customers').select('id').eq('email', email).single();
-    if (custData) customerId = custData.id;
-  }
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const customerWriter = createServiceClient();
 
-  // 新規なら顧客データを作成
-  if (!customerId) {
-    const { data: newCustomer, error: insertCustomerError } = await supabase
-      .from('customers')
-      .insert({
-        name,
-        phone: phone || null,
-        email,
-        line_id: line_id || null,
-        rank: 'normal',
-        total_visits: 0
-      })
-      .select('id')
-      .single();
-
-    // エラーがなければ新しく採番されたIDを使用
-    if (!insertCustomerError && newCustomer) {
-      customerId = newCustomer.id;
-    } else if (insertCustomerError) {
-      console.warn('Customer auto-creation failed:', insertCustomerError);
+    if (phone) {
+      const { data: custData } = await customerWriter
+        .from('customers')
+        .select('id')
+        .eq('phone', phone)
+        .maybeSingle();
+      if (custData) customerId = custData.id;
     }
+
+    if (!customerId && email) {
+      const { data: custData } = await customerWriter
+        .from('customers')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+      if (custData) customerId = custData.id;
+    }
+
+    // 新規なら顧客データを作成
+    if (!customerId) {
+      const { data: newCustomer, error: insertCustomerError } = await customerWriter
+        .from('customers')
+        .insert({
+          name,
+          phone: phone || null,
+          email,
+          line_id: line_id || null,
+          rank: 'normal',
+          total_visits: 0,
+        })
+        .select('id')
+        .single();
+
+      if (!insertCustomerError && newCustomer) {
+        customerId = newCustomer.id;
+      } else if (insertCustomerError) {
+        console.warn('Customer auto-creation failed:', insertCustomerError);
+      }
+    }
+  } else {
+    console.warn(
+      '[submitContact] SUPABASE_SERVICE_ROLE_KEY not set; skipping customer auto-link.',
+    );
   }
 
   // DBの contacts テーブルに挿入

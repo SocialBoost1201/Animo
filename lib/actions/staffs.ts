@@ -200,10 +200,11 @@ export async function deleteStaff(id: string) {
 }
 
 /**
- * スタッフの権限ロールを更新する (profilesテーブル)
+ * スタッフの権限ロールを更新する (user_rolesテーブル)
  */
 export async function updateStaffRole(id: string, role: string) {
   const supabase = await createClient();
+  const serviceClient = createServiceClient();
 
   // 操作者が owner であることを確認
   const {
@@ -211,9 +212,13 @@ export async function updateStaffRole(id: string, role: string) {
   } = await supabase.auth.getUser();
   if (!user) return { error: '認証が必要です' };
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const { data: callerRole } = await serviceClient
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
-  if (profile?.role !== 'owner') {
+  if (callerRole?.role !== 'owner') {
     return { error: 'オーナー権限が必要です' };
   }
 
@@ -227,10 +232,9 @@ export async function updateStaffRole(id: string, role: string) {
     return { error: '無効なロールです' };
   }
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ role, updated_at: new Date().toISOString() })
-    .eq('id', id);
+  const { error } = await serviceClient
+    .from('user_roles')
+    .upsert({ user_id: id, role }, { onConflict: 'user_id' });
 
   if (error) return { error: error.message };
 
@@ -253,9 +257,14 @@ export async function removeStaff(id: string) {
     return { error: '自分自身を削除することはできません' };
   }
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const serviceClient = createServiceClient();
+  const { data: callerRole } = await serviceClient
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
-  if (profile?.role !== 'owner') {
+  if (callerRole?.role !== 'owner') {
     return { error: 'オーナー権限が必要です' };
   }
 

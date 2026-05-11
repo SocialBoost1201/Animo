@@ -3,6 +3,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { revalidatePath } from 'next/cache';
+import { logAdminAction } from '@/lib/audit/admin-audit';
+import {
+  notifyCastShiftApproved,
+  notifyCastShiftRejected,
+} from '@/lib/notifications/cast-notifier';
 
 export type ShiftSubmissionWithCast = {
   id: string;
@@ -82,10 +87,10 @@ export async function approveShiftSubmission(submissionId: string) {
 
   const supabase = createServiceClient();
 
-  // 1. 対象の提出データを取得
+  // 1. 対象の提出データを取得（通知用に cast 情報も併せて取得）
   const { data: submission, error: fetchError } = await supabase
     .from('shift_submissions')
-    .select('cast_id, shifts_data')
+    .select('cast_id, shifts_data, target_week_monday, casts(stage_name)')
     .eq('id', submissionId)
     .single();
 
@@ -147,6 +152,36 @@ export async function approveShiftSubmission(submissionId: string) {
   revalidatePath('/shift');
   revalidatePath('/');
 
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'shift_submission',
+    targetId: submissionId,
+    afterData: { status: 'approved', cast_id: submission.cast_id },
+    metadata: { cast_schedules_inserted: insertData.length, dates_count: dates.length },
+  });
+
+  // キャスト個人へのLINE通知（fire-and-forget）
+  const submissionCasts = submission.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
+  const castName = (Array.isArray(submissionCasts) ? submissionCasts[0]?.stage_name : submissionCasts?.stage_name) ?? '';
+  const targetWeekMonday = (submission as unknown as { target_week_monday: string }).target_week_monday ?? '';
+  void (async () => {
+    try {
+      const { data: privateInfo } = await supabase
+        .from('cast_private_info')
+        .select('line_user_id')
+        .eq('cast_id', submission.cast_id)
+        .single();
+      await notifyCastShiftApproved({
+        castName,
+        lineUserId: privateInfo?.line_user_id ?? null,
+        weekMonday: targetWeekMonday,
+      });
+    } catch (e) {
+      console.warn('[approveShiftSubmission] LINE通知失敗:', e);
+    }
+  })();
+
   return { success: true };
 }
 
@@ -160,6 +195,13 @@ export async function rejectShiftSubmission(submissionId: string) {
 
   const supabase = createServiceClient();
 
+  // 通知用に cast 情報を先に取得
+  const { data: submission } = await supabase
+    .from('shift_submissions')
+    .select('cast_id, target_week_monday, casts(stage_name)')
+    .eq('id', submissionId)
+    .single();
+
   const { error } = await supabase
     .from('shift_submissions')
     .update({ status: 'rejected' })
@@ -171,6 +213,38 @@ export async function rejectShiftSubmission(submissionId: string) {
 
   revalidatePath('/admin/shift-requests');
   revalidatePath('/admin/approvals');
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'shift_submission',
+    targetId: submissionId,
+    afterData: { status: 'rejected' },
+  });
+
+  // キャスト個人へのLINE通知（fire-and-forget）
+  if (submission) {
+    const submissionCasts = submission.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
+    const castName = (Array.isArray(submissionCasts) ? submissionCasts[0]?.stage_name : submissionCasts?.stage_name) ?? '';
+    const targetWeekMonday = (submission as unknown as { target_week_monday: string }).target_week_monday ?? '';
+    void (async () => {
+      try {
+        const { data: privateInfo } = await supabase
+          .from('cast_private_info')
+          .select('line_user_id')
+          .eq('cast_id', submission.cast_id)
+          .single();
+        await notifyCastShiftRejected({
+          castName,
+          lineUserId: privateInfo?.line_user_id ?? null,
+          weekMonday: targetWeekMonday,
+        });
+      } catch (e) {
+        console.warn('[rejectShiftSubmission] LINE通知失敗:', e);
+      }
+    })();
+  }
+
   return { success: true };
 }
 

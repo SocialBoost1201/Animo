@@ -30,7 +30,7 @@ export default async function DashboardPage() {
         <div className="flex flex-col justify-between gap-3 py-3 md:gap-4 md:py-3 xl:flex-row xl:items-center border-b border-[#ffffff08] mb-4">
           <div className="flex min-w-0 flex-col gap-1">
             <h1 className="text-[17px] font-bold leading-tight text-[#f4f1ea] tracking-tight md:text-[18px]">本日の営業概要</h1>
-            <p className="text-[12px] leading-relaxed text-[#8a8478] tracking-[0.1px] opacity-70">今日の営業判断に必要な情報を網羅的に確認できます</p>
+            <p className="text-[12px] leading-relaxed text-[#B5B0A5] tracking-[0.1px]">今日の営業判断に必要な情報を網羅的に確認できます</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 md:gap-3">

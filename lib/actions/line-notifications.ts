@@ -338,10 +338,12 @@ function shouldFire(
   // schedule_time を "HH:MM" でパース
   const [schedHour, schedMinute] = notif.schedule_time.split(':').map(Number)
 
-  // 時刻が ±7分以内か（Cronは15分ごと）
+  // 時刻が ±15分以内か（Cronは15分ごと）
+  // 窓を ±15 にすることで、cron 1回分の再送機会を確保する。
+  // 同時送信は dedup（status='sent' を直近30分以内で検査）で防止する。
   const totalCurrentMinutes = hour * 60 + minute
   const totalSchedMinutes = schedHour * 60 + schedMinute
-  if (Math.abs(totalCurrentMinutes - totalSchedMinutes) > 7) return false
+  if (Math.abs(totalCurrentMinutes - totalSchedMinutes) > 15) return false
 
   switch (notif.schedule_type) {
     case 'daily':
@@ -361,7 +363,7 @@ function shouldFire(
         onceJst.getUTCFullYear() === new Date(Date.now() + 9 * 60 * 60 * 1000).getUTCFullYear() &&
         onceJst.getUTCMonth() === new Date(Date.now() + 9 * 60 * 60 * 1000).getUTCMonth() &&
         onceJst.getUTCDate() === date &&
-        Math.abs(onceTotal - (hour * 60 + minute)) <= 7
+        Math.abs(onceTotal - (hour * 60 + minute)) <= 15
       )
 
     default:

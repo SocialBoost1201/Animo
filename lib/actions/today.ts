@@ -11,6 +11,8 @@ import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/s
 import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
+import { logAdminAction } from '@/lib/audit/admin-audit'
+import { notifyCastCheckinRejected } from '@/lib/notifications/cast-notifier'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -747,6 +749,7 @@ export async function submitCheckin(formData: FormData) {
     revalidatePath('/cast/dashboard')
     revalidatePath('/cast/today')
     revalidatePath('/admin/today')
+    revalidatePath('/admin/approvals')
     if (!lineResult.ok) {
       return {
         success: true,
@@ -976,7 +979,9 @@ export async function approveCheckin(id: string) {
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'working', source: 'checkin_approved', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await serviceSupabase.from('casts').update({ is_today: true }).eq('id', checkin.cast_id)
+    // 公開サイトの is_today は cast_schedules - daily_cast_attendance.absent から
+    // 都度導出（getWorkingCastIdsForDate）されるため、casts.is_today への書き込みは
+    // 廃止 (#P0-3)。カラムは存在し続けるが本パスでは更新しない。
   }
 
   revalidatePath('/admin/today')
@@ -984,6 +989,20 @@ export async function approveCheckin(id: string) {
   revalidatePath('/cast/dashboard')
   revalidatePath('/')
   revalidatePath('/cast')
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'approve',
+    targetType: 'daily_checkin',
+    targetId: id,
+    afterData: {
+      approval_status: 'approved',
+      cast_id: checkin.cast_id,
+      checkin_date: checkin.checkin_date,
+    },
+    metadata: { manual_override_skipped: existing?.source === 'manual' },
+  })
+
   return { success: true as const, id }
 }
 
@@ -1027,7 +1046,7 @@ export async function rejectCheckin(id: string) {
         { cast_id: checkin.cast_id, business_date: checkin.checkin_date, status: 'absent', source: 'checkin_rejected', updated_by: user.id },
         { onConflict: 'cast_id,business_date' }
       )
-    await serviceSupabase.from('casts').update({ is_today: false }).eq('id', checkin.cast_id)
+    // casts.is_today への書き込みは廃止 (#P0-3、approveCheckin と同じ理由)。
   }
 
   revalidatePath('/admin/today')
@@ -1035,6 +1054,44 @@ export async function rejectCheckin(id: string) {
   revalidatePath('/cast/dashboard')
   revalidatePath('/')
   revalidatePath('/cast')
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'reject',
+    targetType: 'daily_checkin',
+    targetId: id,
+    afterData: {
+      approval_status: 'rejected',
+      cast_id: checkin.cast_id,
+      checkin_date: checkin.checkin_date,
+    },
+    metadata: { manual_override_skipped: existing?.source === 'manual' },
+  })
+
+  // キャスト個人へのLINE通知（fire-and-forget）
+  void (async () => {
+    try {
+      const { data: castInfo } = await serviceSupabase
+        .from('casts')
+        .select('stage_name, name')
+        .eq('id', checkin.cast_id)
+        .single()
+      const { data: privateInfo } = await serviceSupabase
+        .from('cast_private_info')
+        .select('line_user_id')
+        .eq('cast_id', checkin.cast_id)
+        .single()
+      const castName = castInfo?.stage_name || castInfo?.name || ''
+      await notifyCastCheckinRejected({
+        castName,
+        lineUserId: privateInfo?.line_user_id ?? null,
+        checkinDate: checkin.checkin_date,
+      })
+    } catch (e) {
+      console.warn('[rejectCheckin] LINE通知失敗:', e)
+    }
+  })()
+
   return { success: true as const, id }
 }
 
@@ -1157,31 +1214,13 @@ export async function updateDailyCastAttendance(input: {
     return { success: false, error: error.message }
   }
 
-  // Sync casts.is_today so the public "本日の出勤キャスト" reflects the override
-  let isToday: boolean
-  if (input.status === 'working') {
-    isToday = true
-  } else if (input.status === 'absent') {
-    isToday = false
-  } else {
-    // undecided: revert to approved-shift-based value
-    const { data: schedule } = await serviceSupabase
-      .from('cast_schedules')
-      .select('id')
-      .eq('cast_id', input.castId)
-      .eq('work_date', today)
-      .maybeSingle()
-    isToday = !!schedule
-  }
-
-  const { error: castSyncError } = await serviceSupabase
-    .from('casts')
-    .update({ is_today: isToday })
-    .eq('id', input.castId)
-
-  if (castSyncError) {
-    console.error('[updateDailyCastAttendance] casts.is_today sync failed', castSyncError)
-  }
+  // 公開サイトの「本日の出勤キャスト」は getWorkingCastIdsForDate で
+  // daily_cast_attendance / cast_schedules から都度導出される (#1)。
+  // 旧実装はここで casts.is_today を計算して同期していたが、その読み手は
+  // 既に廃止済のため write も廃止 (#P0-3)。
+  // status='working' / 'absent' の状態は上記の daily_cast_attendance.upsert
+  // で既に記録されており、'undecided' は手動 override の解除を意味するため
+  // 別途特別な write は不要（公開サイトは自動的に schedule ベースに戻る）。
 
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/today')

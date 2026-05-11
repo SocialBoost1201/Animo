@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { isAllowedOrigin, isUuid } from '@/lib/validators/origin';
 
 // 管理者権限（Service Role Key）でSupabaseを初期化し、RLSをバイパスしてRPCを実行する
 const supabaseAdmin = createClient(
@@ -9,18 +10,25 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   try {
+    // ── 同一オリジン検証（外部サイトからの view count 水増しを遮断）──
+    const origin = request.headers.get('origin');
+    if (!isAllowedOrigin(origin, process.env.NEXT_PUBLIC_APP_URL)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { postId } = body;
 
-    if (!postId) {
-      return NextResponse.json({ error: 'Post ID is required' }, { status: 400 });
+    // ── postId 形式検証（不正な値で RPC を叩かせない）──
+    if (!isUuid(postId)) {
+      return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
     // クライアントのIPアドレス（プロキシ等のヘッダーを順番に確認）
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
     const viewerIp = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || 'unknown-ip');
-    
+
     // User Agent
     const userAgent = request.headers.get('user-agent') || 'unknown-ua';
 

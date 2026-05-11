@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { Bell, CheckCheck } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { getCurrentCast } from '@/lib/actions/cast-auth';
 import { getCastNotices, markAllCastNoticesAsRead } from '@/lib/actions/cast-notices';
 import {
@@ -8,6 +8,11 @@ import {
   CastMobileHeader,
   CastMobileShell,
 } from '@/components/features/cast/CastMobileShell';
+import { MarkAllAsReadButton } from '@/components/features/cast/MarkAllAsReadButton';
+import {
+  asApprovalActionState,
+  type ApprovalActionState,
+} from '@/lib/types/approval-action';
 
 export default async function CastNoticesPage() {
   const cast = await getCurrentCast();
@@ -15,10 +20,18 @@ export default async function CastNoticesPage() {
 
   const notices = await getCastNotices(cast.id);
 
-  async function markAllAsReadAction() {
+  // useActionState の signature に合わせ、結果を ApprovalActionState で返す。
+  // 失敗時は client 側で toast.error 表示。
+  async function markAllAsReadAction(
+    _prev: ApprovalActionState,
+    _formData: FormData,
+  ): Promise<ApprovalActionState> {
     'use server';
-
-    await markAllCastNoticesAsRead(cast.id);
+    void _prev; void _formData; // useActionState signature - intentionally unused
+    return asApprovalActionState(
+      await markAllCastNoticesAsRead(cast.id),
+      '既読化に失敗しました',
+    );
   }
 
   return (
@@ -30,15 +43,7 @@ export default async function CastNoticesPage() {
             <h1 className="text-[20px] font-bold leading-[30px] text-[#f7f4ed]">お知らせ</h1>
             <p className="mt-1 text-[13px] leading-[19.5px] text-[#c9a76a]">未読 {notices.filter((notice) => !notice.is_read).length}件</p>
           </div>
-          <form action={markAllAsReadAction}>
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 rounded-[10px] border border-white/8 bg-[#181d27] px-3 py-[9px] text-[12px] font-medium leading-[18px] text-[#a9afbc]"
-            >
-              <CheckCheck className="h-[13px] w-[13px]" />
-              すべて既読
-            </button>
-          </form>
+          <MarkAllAsReadButton action={markAllAsReadAction} />
         </div>
 
         <CastMobileCard className="overflow-hidden rounded-[16px]">

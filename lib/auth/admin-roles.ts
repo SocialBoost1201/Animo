@@ -29,17 +29,7 @@ export async function getAppRole(client: RoleLookupClient, userId: string) {
     .eq('user_id', userId)
     .maybeSingle()
 
-  if (userRole?.role) {
-    return userRole.role
-  }
-
-  const profilesQuery = client.from('profiles') as RoleLookupQuery
-  const { data: profile } = await profilesQuery
-    .select('role')
-    .eq('id', userId)
-    .maybeSingle()
-
-  return profile?.role ?? null
+  return userRole?.role ?? null
 }
 
 export function isAdminLoginRole(role: string | null): role is AdminLoginRole {

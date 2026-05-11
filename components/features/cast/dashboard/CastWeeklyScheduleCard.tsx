@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/shift-utils';
 
 type CastWeeklyScheduleCardProps = {
   summaryDates: Date[];
-  scheduleStatusMap: Set<string>;
+  scheduleStatusMap: Map<string, 'work'>;
   today: string;
   todayShift: { start_time: string | null; end_time: string | null } | null;
   workCount: number;

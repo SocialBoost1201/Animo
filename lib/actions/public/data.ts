@@ -26,6 +26,63 @@ async function getManualAbsentCastIds(today: string) {
   return new Set((data || []).map((row) => row.cast_id as string))
 }
 
+/**
+ * 指定日に「出勤中」と判定すべき cast_id の Set を返す。
+ *
+ * 優先順位:
+ *   1. daily_cast_attendance.status = 'absent' (手動欠勤) → 除外
+ *   2. daily_cast_attendance.status = 'working' (手動出勤) → 追加
+ *   3. cast_schedules に当日エントリ有り → 追加
+ *   (status = 'undecided' は何もしない＝ベース動作)
+ *
+ * 注意:
+ *   `casts.is_today` は denormalized でドリフトの危険があるため使用しない。
+ *   このヘルパーは getTodayShifts と同じ canonical source を使う。
+ */
+async function getWorkingCastIdsForDate(date: string) {
+  const supabase = createServiceClient()
+
+  const [scheduledRes, attendanceRes] = await Promise.all([
+    supabase
+      .from('cast_schedules')
+      .select('cast_id')
+      .eq('work_date', date),
+    supabase
+      .from('daily_cast_attendance')
+      .select('cast_id, status')
+      .eq('business_date', date),
+  ])
+
+  if (scheduledRes.error) {
+    console.error('getWorkingCastIdsForDate (cast_schedules):', scheduledRes.error)
+  }
+  if (attendanceRes.error) {
+    console.error('getWorkingCastIdsForDate (daily_cast_attendance):', attendanceRes.error)
+  }
+
+  const manualAbsent = new Set<string>()
+  const manualWorking = new Set<string>()
+  for (const row of attendanceRes.data || []) {
+    const id = row.cast_id as string
+    const status = row.status as string
+    if (status === 'absent') manualAbsent.add(id)
+    else if (status === 'working') manualWorking.add(id)
+  }
+
+  const workingIds = new Set<string>()
+  // schedule ベース
+  for (const row of scheduledRes.data || []) {
+    const id = row.cast_id as string
+    if (!manualAbsent.has(id)) workingIds.add(id)
+  }
+  // 手動 working オーバーライド（schedule に無いキャストも対象）
+  for (const id of manualWorking) {
+    if (!manualAbsent.has(id)) workingIds.add(id)
+  }
+
+  return { workingIds, manualAbsentIds: manualAbsent }
+}
+
 type CastImageRecord = {
   image_url?: string | null
   is_primary?: boolean | null
@@ -73,7 +130,6 @@ export async function getPublicCasts() {
         comment,
         image_url,
         quiz_tags,
-        is_today,
         created_at,
         updated_at,
         cast_images(image_url, image_type, is_primary, sort_order),
@@ -86,7 +142,9 @@ export async function getPublicCasts() {
     if (error) { console.error('getPublicCasts:', error); return [] }
 
     // 一覧表示に必要な項目を欠損時フォールバック込みで正規化する
-    const manualAbsentCastIds = await getManualAbsentCastIds(today)
+    // is_today は cast_schedules を真実のソースとして導出する
+    // (denormalized な casts.is_today は使わない)
+    const { workingIds } = await getWorkingCastIdsForDate(today)
     const diaryThreshold = Date.now() - 72 * 60 * 60 * 1000
 
     return data.map(cast => {
@@ -103,7 +161,7 @@ export async function getPublicCasts() {
         display_name: displayName,
         image_url: imageUrl,
         quiz_tags: Array.isArray(cast.quiz_tags) ? cast.quiz_tags : [],
-        is_today: cast.is_today && !manualAbsentCastIds.has(cast.id),
+        is_today: workingIds.has(cast.id),
         has_recent_post: typeof latest === 'number' ? latest >= diaryThreshold : false,
         latest_post_at: latest ? new Date(latest).toISOString() : null,
       }

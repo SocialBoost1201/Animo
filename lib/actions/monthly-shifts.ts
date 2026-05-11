@@ -138,6 +138,7 @@ export async function saveMonthlyShifts(castId: string, shiftsData: Record<strin
 
 /**
  * 管理者用：対象月の全キャストのシフト一覧を整形して取得する
+ * cast_shifts のエントリが shift_submissions より優先される（管理者オーバーライド）
  */
 export async function getAdminMonthlyShifts(year: number, month: number) {
   // 管理者専用: RLSをバイパスして全キャスト分を取得
@@ -172,6 +173,25 @@ export async function getAdminMonthlyShifts(year: number, month: number) {
     return [];
   }
 
+  // cast_shifts オーバーライドを取得（管理者が手動設定した値が優先）
+  const { data: castShiftOverrides } = await supabase
+    .from('cast_shifts')
+    .select('cast_id, work_date, status, start_time, is_douhan')
+    .gte('work_date', startDate)
+    .lte('work_date', endDate);
+
+  // オーバーライドマップ: castId → day → detail
+  const overrideMap: Record<string, Record<number, MonthlyShiftDetail>> = {};
+  castShiftOverrides?.forEach((row) => {
+    const day = Number((row.work_date as string).slice(-2));
+    if (!overrideMap[row.cast_id]) overrideMap[row.cast_id] = {};
+    overrideMap[row.cast_id][day] = {
+      status: row.status as ShiftStatus,
+      startTime: row.start_time ? (row.start_time as string).substring(0, 5) : null,
+      isDouhan: !!row.is_douhan,
+    };
+  });
+
   return (casts satisfies CastRow[]).map((cast) => {
     const shiftMap: Record<number, MonthlyShiftDetail> = {};
 
@@ -195,10 +215,59 @@ export async function getAdminMonthlyShifts(year: number, month: number) {
         });
       });
 
+    // 管理者オーバーライドを適用（優先）
+    const overrides = overrideMap[cast.id] ?? {};
+    for (const [dayStr, detail] of Object.entries(overrides)) {
+      shiftMap[Number(dayStr)] = detail;
+    }
+
     return {
       castId: cast.id,
       stageName: cast.stage_name,
       shifts: shiftMap
     };
   });
+}
+
+/**
+ * 管理者用：特定キャストの特定日のシフトを手動オーバーライドする
+ * status=null でオーバーライドを削除（申請データに戻る）
+ */
+export async function adminOverrideCastShift(
+  castId: string,
+  workDate: string,
+  status: 'available' | 'unavailable' | null,
+  startTime?: string | null,
+) {
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const supabase = createServiceClient();
+
+  if (status === null) {
+    const { error } = await supabase
+      .from('cast_shifts')
+      .delete()
+      .eq('cast_id', castId)
+      .eq('work_date', workDate);
+    if (error) return { success: false, error: error.message };
+  } else {
+    const { error } = await supabase
+      .from('cast_shifts')
+      .upsert(
+        {
+          cast_id: castId,
+          work_date: workDate,
+          status,
+          start_time: startTime || null,
+          is_douhan: false,
+        },
+        { onConflict: 'cast_id, work_date', ignoreDuplicates: false }
+      );
+    if (error) return { success: false, error: error.message };
+  }
+
+  revalidatePath('/admin/monthly-shifts');
+  return { success: true };
 }

@@ -3,7 +3,11 @@ import { createClient } from '@/lib/supabase/server';
 import { updateCastPostStatus, deleteCastPost } from '@/lib/actions/cast-posts';
 import { CheckCircle2, XCircle, Trash2, Clock, Eye } from 'lucide-react';
 import Image from 'next/image';
-import { revalidatePath } from 'next/cache';
+import { PostActionForm } from '@/components/features/admin/PostActionForm';
+import {
+  asApprovalActionState,
+  type ApprovalActionState,
+} from '@/lib/types/approval-action';
 
 export const metadata = {
   title: 'キャストブログ管理 | Animo CMS',
@@ -31,25 +35,39 @@ export default async function AdminCastPostsPage({
     );
   }
 
-  const handleApprove = async (formData: FormData) => {
+  // 承認/却下/削除の Server Action は ApprovalActionState を返し、
+  // PostActionForm + useActionState で client へ伝播する。
+  // 失敗時はボタン下にエラーメッセージが表示される。
+  // revalidatePath は updateCastPostStatus / deleteCastPost が
+  // 内部で呼んでいるため、ここでは重複呼び出しをしない。
+  const handleApprove = async (
+    _prev: ApprovalActionState,
+    formData: FormData,
+  ): Promise<ApprovalActionState> => {
     'use server';
-    const id = formData.get('id') as string;
-    await updateCastPostStatus(id, 'published');
-    revalidatePath('/admin/posts');
+    const id = formData.get('id');
+    if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' };
+    return asApprovalActionState(await updateCastPostStatus(id, 'published'), '承認に失敗しました');
   };
 
-  const handleReject = async (formData: FormData) => {
+  const handleReject = async (
+    _prev: ApprovalActionState,
+    formData: FormData,
+  ): Promise<ApprovalActionState> => {
     'use server';
-    const id = formData.get('id') as string;
-    await updateCastPostStatus(id, 'draft');
-    revalidatePath('/admin/posts');
+    const id = formData.get('id');
+    if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' };
+    return asApprovalActionState(await updateCastPostStatus(id, 'draft'), '非公開化に失敗しました');
   };
 
-  const handleDelete = async (formData: FormData) => {
+  const handleDelete = async (
+    _prev: ApprovalActionState,
+    formData: FormData,
+  ): Promise<ApprovalActionState> => {
     'use server';
-    const id = formData.get('id') as string;
-    await deleteCastPost(id);
-    revalidatePath('/admin/posts');
+    const id = formData.get('id');
+    if (typeof id !== 'string' || !id) return { success: false, error: '不正なIDです' };
+    return asApprovalActionState(await deleteCastPost(id), '削除に失敗しました');
   };
 
   const tabs = [
@@ -134,8 +152,7 @@ export default async function AdminCastPostsPage({
                 {/* Actions */}
                 <div className="flex gap-2 pt-3 border-t border-[#ffffff08]">
                   {status === 'pending' && (
-                    <form action={handleApprove} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
+                    <PostActionForm id={post.id} action={handleApprove} className="flex-1">
                       <button
                         type="submit"
                         className="w-full py-1.5 rounded-[8px] text-[11px] font-bold text-[#0b0b0d] transition-opacity hover:opacity-90"
@@ -143,32 +160,29 @@ export default async function AdminCastPostsPage({
                       >
                         承認して公開
                       </button>
-                    </form>
+                    </PostActionForm>
                   )}
                   {status === 'published' && (
-                    <form action={handleReject} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
+                    <PostActionForm id={post.id} action={handleReject} className="flex-1">
                       <button
                         type="submit"
                         className="w-full py-1.5 rounded-[8px] text-[11px] font-medium text-[#8a8478] border border-[#ffffff14] hover:border-[#ffffff25] hover:text-[#c7c0b2] transition-colors"
                       >
                         非公開にする
                       </button>
-                    </form>
+                    </PostActionForm>
                   )}
                   {status === 'draft' && (
-                    <form action={handleApprove} className="flex-1">
-                      <input type="hidden" name="id" value={post.id} />
+                    <PostActionForm id={post.id} action={handleApprove} className="flex-1">
                       <button
                         type="submit"
                         className="w-full py-1.5 rounded-[8px] text-[11px] font-medium text-[#dfbd69] border border-[#dfbd6930] hover:bg-[#dfbd6910] transition-colors"
                       >
                         再公開する
                       </button>
-                    </form>
+                    </PostActionForm>
                   )}
-                  <form action={handleDelete}>
-                    <input type="hidden" name="id" value={post.id} />
+                  <PostActionForm id={post.id} action={handleDelete}>
                     <button
                       type="submit"
                       className="px-3 py-1.5 rounded-[8px] text-[#5a5650] border border-[#ffffff0f] hover:border-[#d4785a30] hover:text-[#d4785a] hover:bg-[#d4785a08] transition-colors"
@@ -176,7 +190,7 @@ export default async function AdminCastPostsPage({
                     >
                       <Trash2 size={13} />
                     </button>
-                  </form>
+                  </PostActionForm>
                 </div>
               </div>
             </div>

@@ -806,12 +806,9 @@ function CastTab({
             className="flex items-center gap-1.5 text-gold hover:text-[#e6c982] transition-colors"
           >
             <Plus size={12} strokeWidth={2.5} />
-            <span className="text-[9px] font-bold tracking-widest uppercase">ADD</span>
+            <span className="text-[9px] font-bold tracking-widest uppercase">ADD TRIAL</span>
           </button>
         </p>
-        {data.trials.length === 0 && !showTrial && (
-          <p className="text-[11px] text-[#5a5650] italic px-3 py-2 font-sans">No trials recorded for today.</p>
-        )}
         {data.trials.map(t => (
           <Row key={t.id}>
             <Badge color="purple">TRIAL</Badge>
@@ -882,7 +879,7 @@ function CastTab({
               }}
               className="space-y-3"
             >
-              <input name="name" type="text" placeholder="Trial Cast Name" required className={inputCls} />
+              <input name="name" type="text" placeholder="Cast Name" required className={inputCls} />
               <OperationTimeSelect name="start_time" required className={inputCls} />
               <button type="submit" disabled={isBusy('add-trial')} className="w-full py-2 bg-gold text-black text-[10px] font-bold tracking-widest rounded-sm uppercase hover:bg-[#e6c982] transition-all disabled:opacity-60">ADD TRIAL</button>
             </form>
