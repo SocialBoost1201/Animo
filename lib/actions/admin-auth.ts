@@ -40,9 +40,13 @@ export async function adminRegister(formData: FormData) {
   const email = (formData.get('email') as string | null)?.trim().toLowerCase() ?? ''
   const password = (formData.get('password') as string | null) ?? ''
   const confirmPassword = (formData.get('confirmPassword') as string | null) ?? ''
+  const role = (formData.get('role') as string | null) ?? ''
 
   if (!lastName || !firstName || !stageName || !phone || !email || !password) {
     return { success: false as const, error: 'すべての項目を入力してください。' }
+  }
+  if (role !== 'owner' && role !== 'manager') {
+    return { success: false as const, error: '権限を選択してください。' }
   }
   if (password !== confirmPassword) {
     return { success: false as const, error: 'パスワードが一致しません。' }
@@ -94,6 +98,17 @@ export async function adminRegister(formData: FormData) {
     return {
       success: false as const,
       error: `プロフィール保存に失敗しました: ${profileError.message}`,
+    }
+  }
+
+  const { error: roleError } = await serviceRoleClient
+    .from('user_roles')
+    .insert({ user_id: data.user.id, role })
+
+  if (roleError) {
+    return {
+      success: false as const,
+      error: `権限設定に失敗しました: ${roleError.message}`,
     }
   }
 
