@@ -1,4 +1,4 @@
-export const PROTECTED_OPERATION_WINDOW_LABEL = '19:00〜2:00'
+export const PROTECTED_OPERATION_WINDOW_LABEL = '21:00〜2:00'
 
 export type OperationTimeOption = {
   value: string

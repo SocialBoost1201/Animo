@@ -29,11 +29,13 @@ export type DashboardTodayOpsData = {
   dateLabel: string;
   /** Protected admin operation window label (`PROTECTED_OPERATION_WINDOW_LABEL`). */
   operationWindowLabel: string;
+  totalActiveCasts: number;
   plannedCastCount: number;
   confirmedCastCount: number;
   reservationCount: number;
   totalGuests: number;
   trialCount: number;
+  dispatchCount: number;
   vipMemo: string | null;
   eventMemo: string | null;
   urgentMemo: string | null;
@@ -240,6 +242,8 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     { count: activeCasts },
     { data: noticeMemos },
     { data: manualAttendance },
+    { data: approvedCheckins },
+    { data: dispatches },
   ] = await Promise.all([
     supabase.from('shift_submissions').select('cast_id, shifts_data').eq('status', 'approved'),
     supabase.from('daily_reservations').select('guest_count, reservation_type').eq('reservation_date', today).eq('approval_status', 'approved'),
@@ -247,9 +251,11 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     supabase.from('casts').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('daily_operation_memos').select('memo_type, content').eq('operation_date', today).limit(10),
     supabase.from('daily_cast_attendance').select('cast_id, status').eq('business_date', today),
+    supabase.from('daily_checkins').select('cast_id, is_absent').eq('checkin_date', today).eq('approval_status', 'approved'),
+    supabase.from('daily_dispatches').select('id').eq('dispatch_date', today),
   ]);
 
-  // 手動オーバーライドを含む本日の出勤キャスト集合
+  // 手動オーバーライドを含む本日の想定出勤キャスト集合
   const todayWorkingCastIds = new Set<string>();
   if (shiftsRaw) {
     for (const row of shiftsRaw) {
@@ -261,15 +267,17 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     if (m.status === 'working') todayWorkingCastIds.add(m.cast_id);
     else if (m.status === 'absent') todayWorkingCastIds.delete(m.cast_id);
   }
-  const confirmedCastCount = todayWorkingCastIds.size;
+  // 確定出勤数: 管理者が承認した出勤確認のうち欠勤でないもの
+  const confirmedCastCount = (approvedCheckins || []).filter(c => !c.is_absent).length;
 
   const totalGuests = (reservations || []).reduce((s, r) => s + (r.guest_count ?? 1), 0);
 
   const vipMemo = noticeMemos?.find(m => m.memo_type === 'vip')?.content ?? null;
   const eventMemo = noticeMemos?.find(m => m.memo_type === 'event')?.content ?? null;
   const urgentMemo = noticeMemos?.find(m => m.memo_type === 'urgent')?.content ?? null;
+  const plannedCastCount = todayWorkingCastIds.size;
   const hasOperationalRecords =
-    confirmedCastCount > 0 ||
+    plannedCastCount > 0 ||
     (reservations?.length ?? 0) > 0 ||
     (trials?.length ?? 0) > 0 ||
     (noticeMemos?.length ?? 0) > 0 ||
@@ -280,11 +288,13 @@ export async function getDashboardTodayOps(): Promise<DashboardTodayOpsData> {
     date: today,
     dateLabel,
     operationWindowLabel: PROTECTED_OPERATION_WINDOW_LABEL,
-    plannedCastCount: activeCasts ?? 0,
+    totalActiveCasts: activeCasts ?? 0,
+    plannedCastCount,
     confirmedCastCount,
     reservationCount: (reservations || []).length,
     totalGuests,
     trialCount: (trials || []).length,
+    dispatchCount: (dispatches || []).length,
     vipMemo,
     eventMemo,
     urgentMemo,

@@ -7,13 +7,15 @@ export async function DashboardTodayOps() {
   const ops = await getDashboardTodayOps();
 
   const overviewRows = [
-    { label: '営業日',      value: ops.dateLabel },
-    { label: '営業時間',    value: ops.operationWindowLabel },
-    { label: '想定出勤数',  value: `${ops.plannedCastCount}名` },
-    { label: '確定出勤数',  value: `${ops.confirmedCastCount}名`, bold: true },
-    { label: '予約件数',    value: `${ops.reservationCount}件` },
-    { label: '予定来店人数', value: `${ops.totalGuests}名` },
-    { label: '体入人数',    value: `${ops.trialCount}名（本日初回）` },
+    { label: '営業日',        value: ops.dateLabel },
+    { label: '営業時間',      value: ops.operationWindowLabel },
+    { label: 'キャスト総人員', value: `${ops.totalActiveCasts}名` },
+    { label: '想定出勤数',    value: `${ops.plannedCastCount}名` },
+    { label: '確定出勤数',    value: `${ops.confirmedCastCount}名`, bold: true },
+    { label: '予約件数',      value: `${ops.reservationCount}件` },
+    { label: '予定来店人数',  value: `${ops.totalGuests}名` },
+    { label: '体入人数',      value: `${ops.trialCount}名` },
+    { label: '派遣人数',      value: `${ops.dispatchCount}名` },
   ];
 
   const memos = [
