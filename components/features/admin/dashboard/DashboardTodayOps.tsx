@@ -14,7 +14,7 @@ export async function DashboardTodayOps() {
     { label: '確定出勤数',    value: `${ops.confirmedCastCount}名`, bold: true },
     { label: '予約件数',      value: `${ops.reservationCount}件` },
     { label: '予定来店人数',  value: `${ops.totalGuests}名` },
-    { label: '体入人数',      value: `${ops.trialCount}名` },
+    { label: '体入人数',      value: `${ops.trialCount}名（本日初回）` },
     { label: '派遣人数',      value: `${ops.dispatchCount}名` },
   ];
 
