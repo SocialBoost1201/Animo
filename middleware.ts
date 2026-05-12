@@ -58,8 +58,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // === Rate Limit (Simple in-memory) ===
-  // フォーム送信等、POSTリクエスト（Server Action含む）に対する簡易的制限
-  if (request.method === 'POST') {
+  // フォーム送信等、外部POSTリクエストに対する簡易的制限
+  // Next-Action ヘッダーが付いているリクエストは Next.js Server Action の
+  // 内部通信なので除外する（認証チェック済みのため別途制限不要）
+  const isServerAction = request.headers.has('next-action')
+  if (request.method === 'POST' && !isServerAction) {
     // 例: 1分間に10リクエストまで
     const { success } = checkRateLimit(request, 10, 60 * 1000);
     if (!success) {
