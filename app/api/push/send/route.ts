@@ -4,15 +4,12 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles';
 
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
-const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY ?? '';
-
-if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(
-    'mailto:animo4266@gmaill.com',
-    VAPID_PUBLIC_KEY,
-    VAPID_PRIVATE_KEY
-  );
+function initWebPush(): boolean {
+  const pub = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
+  const priv = process.env.VAPID_PRIVATE_KEY ?? '';
+  if (!pub || !priv) return false;
+  webpush.setVapidDetails('mailto:animo4266@gmaill.com', pub, priv);
+  return true;
 }
 
 function getServiceRoleClient() {
@@ -35,7 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
+  if (!initWebPush()) {
     return NextResponse.json({ error: 'VAPID keys not configured' }, { status: 500 });
   }
 
