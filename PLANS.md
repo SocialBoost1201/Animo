@@ -408,3 +408,10 @@ validation:
 
 next step:
 - ...
+
+### Admin/Cast v2 parallel rebuild planning (2026-05-15)
+
+- **Approval:** [?] Needs decision (master)
+- **Status:** [~] In progress (planning only)
+- **Plan doc:** `docs/plans/2026-05-15-admin-cast-v2-rebuild-plan.md`
+- **Guardrails:** Keep existing `app/admin` and `app/(cast)/cast` unchanged; build in `app/admin-v2` and `app/cast-v2`.
