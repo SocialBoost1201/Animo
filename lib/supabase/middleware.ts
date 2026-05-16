@@ -19,6 +19,18 @@ const ADMIN_PUBLIC_PATHS = new Set([
   '/admin/m/forgot-password',
   '/admin/m/reset-password',
 ])
+
+const ADMIN_V2_PUBLIC_PATHS = new Set([
+  '/admin-v2/login',
+])
+
+function isAdminPath(pathname: string) {
+  return pathname === '/admin' || pathname.startsWith('/admin/')
+}
+
+function isAdminV2Path(pathname: string) {
+  return pathname === '/admin-v2' || pathname.startsWith('/admin-v2/')
+}
 async function getLinkedCastData(
   supabase: ReturnType<typeof createServerClient>,
   userId: string
@@ -34,7 +46,11 @@ async function getLinkedCastData(
 
 function redirectToSafeDestination(request: NextRequest, role: string | null) {
   const url = request.nextUrl.clone()
-  url.pathname = role === 'cast' ? '/cast/dashboard' : '/'
+  url.pathname = role === 'cast'
+    ? request.nextUrl.pathname.startsWith('/cast-v2')
+      ? '/cast-v2/dashboard'
+      : '/cast/dashboard'
+    : '/'
   return NextResponse.redirect(url)
 }
 
@@ -50,6 +66,24 @@ function getCurrentCastDestination(request: NextRequest) {
 
 function createCastAuthRedirect(request: NextRequest, kind: 'login' | 'verify', reauth = false) {
   const url = request.nextUrl.clone()
+  if (request.nextUrl.pathname === '/cast-v2' || request.nextUrl.pathname.startsWith('/cast-v2/')) {
+    url.pathname = `/cast-v2/${kind}`
+    const redirectPath = normalizeCastRedirectPath(
+      request.nextUrl.searchParams.get('redirect') ?? getCurrentCastDestination(request)
+    )
+    if (reauth) {
+      url.searchParams.set('reauth', '1')
+    } else {
+      url.searchParams.delete('reauth')
+    }
+    if (redirectPath) {
+      url.searchParams.set('redirect', redirectPath)
+    } else {
+      url.searchParams.delete('redirect')
+    }
+    return NextResponse.redirect(url)
+  }
+
   const isLineTodayLink =
     request.nextUrl.pathname === '/cast/today' && request.nextUrl.searchParams.get('from') === 'line'
   const prefix = isLineTodayLink || !preferCastMobileView(request) ? '/cast' : '/cast/m'
@@ -110,8 +144,43 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
 
+  // Protect /admin-v2 routes without changing legacy /admin behavior.
+  if (isAdminV2Path(pathname) && !ADMIN_V2_PUBLIC_PATHS.has(pathname)) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin-v2/login'
+      return NextResponse.redirect(url)
+    }
+
+    if (pathname === '/admin-v2') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin-v2/dashboard'
+      return NextResponse.redirect(url)
+    }
+
+    const role = await getAppRole(supabase, user.id)
+
+    if (!isAdminLoginRole(role)) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin-v2/login'
+      return NextResponse.redirect(url)
+    }
+  }
+
+  if (ADMIN_V2_PUBLIC_PATHS.has(pathname) && user) {
+    const role = await getAppRole(supabase, user.id)
+
+    if (!isAdminLoginRole(role)) {
+      return supabaseResponse
+    }
+
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin-v2/dashboard'
+    return NextResponse.redirect(url)
+  }
+
   // Protect /admin routes
-  if (pathname.startsWith('/admin') && !ADMIN_PUBLIC_PATHS.has(pathname)) {
+  if (isAdminPath(pathname) && !ADMIN_PUBLIC_PATHS.has(pathname)) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
@@ -191,11 +260,12 @@ export async function updateSession(request: NextRequest) {
     const isValidCookie = reauthCookie && parseInt(reauthCookie, 10) > Date.now()
     const isValidSession = hasCompletedSmsVerification && Boolean(isValidCookie)
 
-    const isVerifyPath = pathname === '/cast/verify' || pathname === '/cast/m/verify'
+    const isVerifyPath = pathname === '/cast/verify' || pathname === '/cast/m/verify' || pathname === '/cast-v2/verify'
     if (isValidSession) {
       const url = request.nextUrl.clone()
       const redirectPath = normalizeCastRedirectPath(request.nextUrl.searchParams.get('redirect'))
-      url.pathname = redirectPath ? new URL(redirectPath, request.nextUrl.origin).pathname : '/cast/dashboard'
+      const defaultDashboard = pathname.startsWith('/cast-v2') ? '/cast-v2/dashboard' : '/cast/dashboard'
+      url.pathname = redirectPath ? new URL(redirectPath, request.nextUrl.origin).pathname : defaultDashboard
       url.search = redirectPath ? new URL(redirectPath, request.nextUrl.origin).search : ''
       url.searchParams.delete('reauth')
       return NextResponse.redirect(url)

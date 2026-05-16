@@ -35,6 +35,7 @@ export default function CastLoginPage() {
 
       if (!result.success) {
         if ('code' in result && result.code === 'NEEDS_REGISTER') {
+          toast.info('新規登録が必要です。登録画面に移動します。');
           const normalizedPhone = normalizeJapanesePhone(phone);
           const params = new URLSearchParams({ phone: normalizedPhone });
           if (redirectPath) params.set('redirect', redirectPath);

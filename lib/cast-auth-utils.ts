@@ -11,6 +11,8 @@ const CAST_PORTAL_PUBLIC_PATHS = new Set([
   '/cast/m/verify',
   '/cast/m/register',
   '/cast/m/forgot-password',
+  '/cast-v2/login',
+  '/cast-v2/verify',
 ])
 
 const CAST_PORTAL_PROTECTED_PREFIXES = [
@@ -23,6 +25,15 @@ const CAST_PORTAL_PROTECTED_PREFIXES = [
   '/cast/today',
   '/cast/profile',
   '/cast/schedule',
+  '/cast-v2/dashboard',
+  '/cast-v2/posts',
+  '/cast-v2/post',
+  '/cast-v2/shift',
+  '/cast-v2/monthly-shift',
+  '/cast-v2/notices',
+  '/cast-v2/today',
+  '/cast-v2/profile',
+  '/cast-v2/schedule',
 ]
 
 export const CAST_REAUTH_COOKIE_NAME = 'cast_reauth_until'

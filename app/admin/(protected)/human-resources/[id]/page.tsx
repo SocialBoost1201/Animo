@@ -1,5 +1,6 @@
 import { CastForm } from '@/components/features/admin/CastForm'
 import { CastImageManager } from '@/components/features/admin/CastImageManager'
+import { CastAccountProvisionButton } from '@/components/features/admin/CastAccountProvisionButton'
 import { getCastById } from '@/lib/actions/casts'
 import { getCastAccountSnapshot } from './account-status'
 
@@ -106,6 +107,21 @@ export default async function EditCastPage({ params }: { params: Promise<{ id: s
             <dd className="text-[#171717]">{privateInfo?.line_user_id ? '連携済み' : '未連携'}</dd>
           </div>
         </dl>
+
+        {accountSnapshot.status === 'unregistered' && (
+          privateInfo?.phone ? (
+            <div className="rounded-sm border border-[#dfbd69]/30 bg-[#dfbd69]/5 px-4 py-4 space-y-3">
+              <p className="text-xs text-amber-900 leading-relaxed">
+                アカウントが未作成です。管理者がアカウントを作成すると、本人は SMS 認証のみでログインできるようになります。
+              </p>
+              <CastAccountProvisionButton castId={id} stageName={cast?.stage_name ?? ''} />
+            </div>
+          ) : (
+            <div className="rounded-sm border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600 leading-relaxed">
+              電話番号が未登録のためアカウントを作成できません。先に電話番号を登録してください。
+            </div>
+          )
+        )}
 
         {accountSnapshot.authUserId && (
           <div className="rounded-sm border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 leading-relaxed space-y-1">
