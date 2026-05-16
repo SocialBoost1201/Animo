@@ -84,10 +84,9 @@ export async function createCastPost(formData: FormData) {
       .getPublicUrl(uploadData.path);
 
     // データベース (cast_posts) へ保存
-    // cast_posts の INSERT は cast 権限のRLS条件と衝突しやすいため、
-    // 所有者検証後に service role で確定保存する。
-    const serviceRoleClient = createServiceClient();
-    const { error: dbError } = await serviceRoleClient
+    // cast_insert_own_posts RLS ポリシーが「auth_user_id = auth.uid() のキャスト」への
+    // INSERT を許可するため、所有者検証済みの SSR クライアントで保存する。
+    const { error: dbError } = await supabase
       .from('cast_posts')
       .insert({
         cast_id: castId,
