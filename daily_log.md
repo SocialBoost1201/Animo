@@ -243,3 +243,10 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - files changed: `lib/actions/cast-auth.ts`, `app/(cast)/cast/profile/page.tsx`, `daily_log.md`.
 - validation: Targeted eslint passed for `lib/actions/cast-auth.ts` and `app/(cast)/cast/profile/page.tsx`; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
 - remaining risks: Live browser verification is needed to confirm the next `/cast/login` visit redirects without SMS after using `アプリを終了`.
+
+### 2026-05-15 (admin/cast v2 planning inventory)
+
+- scope: Read-only investigation and implementation planning for parallel `admin-v2` / `cast-v2` rebuild, with no code-path or DB changes.
+- files changed: `docs/plans/2026-05-15-admin-cast-v2-rebuild-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: File-based inventory via `rg --files` and dependency mapping via `rg -n` completed; no runtime/build command executed because this turn is docs/planning only.
+- remaining risks: Requested investigation target `prisma/schema.prisma` is not present in current repository; DB shape must be inferred from Supabase migrations/actions until owner clarifies canonical schema source.
