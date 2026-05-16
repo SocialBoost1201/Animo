@@ -10,6 +10,35 @@ Do not load full logs unless explicitly instructed.
 
 ## Approved implementation plans
 
+### admin-v2 visual dashboard redesign (2026-05-16)
+
+- **Approval:** [x] Approved (master, 2026-05-16)
+- **Status:** [x] Completed
+- **Objective:** Align `/admin-v2/dashboard` and `/admin-v2/today` with the provided dashboard screenshots using real production data only.
+- **Plan doc:** `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`
+- **In scope:** admin-v2 shell styling, dashboard KPI/quick-action layout, today operational sections, v2 reservation creation, v2 daily memo upsert, logs and validation.
+- **Out of scope:** Existing `/admin` edits, DB schema changes, env/Vercel changes, public site changes, v2 cast creation form, v2 recruitment handling, and v2 notice posting form.
+- **Phase 1 plan/log:** [x] Completed
+- **Phase 2 v2 action facade:** [x] Completed
+- **Phase 3 v2 forms:** [x] Completed
+- **Phase 4 visual route redesign:** [x] Completed
+- **Phase 5 validation/logging:** [x] Completed
+- **Hardening pass:** [x] Completed (RLS-enforced v2 writes, route-aware sidebar active state, fixed sample-name removal)
+
+### admin-v2 today operational screen (2026-05-16)
+
+- **Approval:** [x] Approved (master, 2026-05-16)
+- **Status:** [x] Completed
+- **Objective:** Add `/admin-v2/today` as the first operational v2 admin screen while preserving existing `/admin/today`, DB schema, public site, auth, env, and current data.
+- **Plan doc:** `docs/plans/2026-05-16-admin-v2-today-implementation-plan.md`
+- **In scope:** v2 route, v2 action facade, approval queues for today's check-ins/reservations, read-only operational summary, and v2 navigation links for completed v2 screens.
+- **Out of scope:** Existing `/admin/today` edits, DB changes, LINE behavior changes, cast-v2 today, root route replacement, and public site changes.
+- **Phase 1 plan/log:** [x] Completed
+- **Phase 2 v2 action facade:** [x] Completed
+- **Phase 3 v2 today screen:** [x] Completed
+- **Phase 4 v2 navigation wiring:** [x] Completed
+- **Phase 5 validation/logging:** [x] Completed
+
 ### Final stabilization for Animo restart (2026-05-06)
 
 - **Approval:** [x] Approved (master, 2026-05-06)

@@ -244,9 +244,128 @@ Context rule: before starting work, read `CURRENT_STATE.md` plus only the latest
 - validation: Targeted eslint passed for `lib/actions/cast-auth.ts` and `app/(cast)/cast/profile/page.tsx`; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
 - remaining risks: Live browser verification is needed to confirm the next `/cast/login` visit redirects without SMS after using `アプリを終了`.
 
+### 2026-05-14 (web push VAPID build hardening)
+
+- scope: Centralized Web Push VAPID validation/initialization so malformed VAPID keys no longer crash route import or production build during page-data collection.
+- files changed: `lib/notifications/web-push.ts`, `lib/notifications/web-push.test.ts`, `app/api/push/send/route.ts`, `app/api/push/subscribe/route.ts`, `app/api/cron/push-notification/route.ts`, `daily_log.md`.
+- validation: Targeted Web Push unit test passed; targeted eslint passed; invalid VAPID route-import smoke passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Vercel environment variables still need the real URL-safe VAPID public/private key pair for push delivery to succeed at runtime.
+
+### 2026-05-14 (Vercel Production VAPID env correction)
+
+- scope: Corrected Vercel Production Web Push VAPID environment variables by removing trailing literal `\n` from the existing values without exposing secrets.
+- files changed: `daily_log.md`.
+- validation: Pulled Production env after update and confirmed `NEXT_PUBLIC_VAPID_PUBLIC_KEY` length 87 and `VAPID_PRIVATE_KEY` length 43, both URL-safe and without `=` padding; temporary secret files were deleted.
+- remaining risks: Production redeploy was still required at this checkpoint; completed in the following entry.
+
+### 2026-05-14 (Production redeploy after VAPID env correction)
+
+- scope: Redeployed Production so corrected VAPID environment variables are available to deployed serverless functions.
+- files changed: `daily_log.md`.
+- validation: `vercel deploy --prod` completed; deployment `dpl_FwgMzmGkvN5Z91iBWP6Q4jdcjdRo` is `Ready`; `https://club-animo.jp` returned HTTP 200.
+- remaining risks: Push send/subscribe runtime behavior still needs an authenticated operational smoke test if notification delivery must be verified end-to-end.
+
+### 2026-05-14 (admin cast visibility scope correction)
+
+- scope: Treated cast public/private status as public-site visibility only by keeping private casts available in admin shift, monthly-shift, shift-request, and internal-notice management data.
+- files changed: `lib/actions/schedules.ts`, `lib/actions/monthly-shifts.ts`, `lib/actions/admin-shifts.ts`, `lib/actions/internal-notices.ts`, `daily_log.md`.
+- validation: Targeted eslint passed; verified updated admin actions no longer filter casts by `is_active=true` or `status=public`; `pnpm lint` passed with existing warnings only; `pnpm build` passed.
+- remaining risks: Authenticated browser smoke is recommended on `/admin/human-resources`, `/admin/shifts`, `/admin/monthly-shifts`, `/admin/shift-requests`, and `/admin/internal-notices` with a private cast.
+
 ### 2026-05-15 (admin/cast v2 planning inventory)
 
 - scope: Read-only investigation and implementation planning for parallel `admin-v2` / `cast-v2` rebuild, with no code-path or DB changes.
 - files changed: `docs/plans/2026-05-15-admin-cast-v2-rebuild-plan.md`, `PLANS.md`, `daily_log.md`.
 - validation: File-based inventory via `rg --files` and dependency mapping via `rg -n` completed; no runtime/build command executed because this turn is docs/planning only.
 - remaining risks: Requested investigation target `prisma/schema.prisma` is not present in current repository; DB shape must be inferred from Supabase migrations/actions until owner clarifies canonical schema source.
+
+### 2026-05-16 (admin/cast v2 execution blueprint)
+
+- scope: Added the skill-guided execution blueprint for the parallel `admin-v2` / `cast-v2` rebuild, covering architecture boundaries, context-management rules, operational KPI maps, dashboard structure, button contracts, phases, risks, and validation checks.
+- files changed: `docs/plans/2026-05-16-admin-cast-v2-execution-blueprint.md`, `daily_log.md`.
+- validation: Docs-only scope reviewed; no app route, DB migration, environment, public site, or existing `app/admin` / `app/(cast)/cast` files were changed.
+- remaining risks: Route shell implementation and runtime validation were still pending at this checkpoint; completed in the following entry.
+
+### 2026-05-16 (admin/cast v2 route shell)
+
+- scope: Implemented the first safe v2 slice with isolated `admin-v2` / `cast-v2` login and read-only dashboard routes, v2 action facades, and minimal middleware recognition for v2 auth redirects.
+- files changed: `app/admin-v2/**`, `app/cast-v2/**`, `lib/actions-v2/**`, `lib/cast-auth-utils.ts`, `lib/supabase/middleware.ts`, `daily_log.md`.
+- validation: Resolved `daily_log.md` conflict markers with content preserved; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed and listed `/admin-v2`, `/admin-v2/dashboard`, `/admin-v2/login`, `/cast-v2`, `/cast-v2/dashboard`, `/cast-v2/login`, and `/cast-v2/verify`.
+- remaining risks: Authenticated browser smoke with real admin and cast accounts is still required before considering route replacement; v2 operation buttons intentionally route to existing legacy operation screens until each v2 subpage is implemented.
+
+### 2026-05-16 (admin-v2 today start)
+
+- scope: Started `/admin-v2/today` implementation as the first operational v2 admin screen.
+- files changed: `docs/plans/2026-05-16-admin-v2-today-implementation-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Inspected existing `/admin/today`, `TodayDesktopView`, and `lib/actions/today.ts`; no app behavior changed at this checkpoint.
+- remaining risks: Approval action wrappers and v2 route implementation still pending.
+
+### 2026-05-16 (admin-v2 today action facade)
+
+- scope: Added v2 today action facade and approval action component, reusing existing admin today approval actions with additional `/admin-v2/*` revalidation.
+- files changed: `lib/actions-v2/admin/today.ts`, `components/features/admin-v2/today/AdminV2TodayApprovalActions.tsx`, `docs/plans/2026-05-16-admin-v2-today-implementation-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Static edit only at this checkpoint; full lint/build to run after route implementation.
+- remaining risks: `/admin-v2/today` page wiring and navigation updates still pending.
+
+### 2026-05-16 (admin-v2 today route)
+
+- scope: Added `/admin-v2/today` with operational metrics, check-in approval queue, reservation approval queue, read-only shift/reservation/memo panels, and v2 navigation wiring.
+- files changed: `app/admin-v2/(protected)/today/page.tsx`, `app/admin-v2/(protected)/dashboard/page.tsx`, `app/admin-v2/(protected)/layout.tsx`, `docs/plans/2026-05-16-admin-v2-today-implementation-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Static edit only at this checkpoint; full lint/build and route smoke still pending.
+- remaining risks: Add/edit/delete workflows still route to existing `/admin/today` until their v2 flows are implemented.
+
+### 2026-05-16 (admin-v2 today validation)
+
+- scope: Completed `/admin-v2/today` implementation validation and final plan status updates.
+- files changed: `app/admin-v2/(protected)/today/page.tsx`, `components/features/admin-v2/today/AdminV2TodayApprovalActions.tsx`, `lib/actions-v2/admin/today.ts`, `app/admin-v2/(protected)/dashboard/page.tsx`, `app/admin-v2/(protected)/layout.tsx`, `docs/plans/2026-05-16-admin-v2-today-implementation-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Targeted eslint passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed and listed `/admin-v2/today`; local unauthenticated smoke confirmed `/admin-v2/today` redirects to `/admin-v2/login`.
+- remaining risks: Authenticated admin smoke is still needed to verify live approval button behavior; v2 add/edit/delete workflows still intentionally fall back to existing `/admin/today`.
+
+### 2026-05-16 (admin-v2 visual dashboard start)
+
+- scope: Started screenshot-guided `admin-v2` dashboard/today redesign with real-data-only constraint and v2 writes limited to reservation creation plus daily memo upsert.
+- files changed: `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Inspected `CURRENT_STATE.md`, existing v2 files, `lib/actions/dashboard.ts`, `lib/actions/today.ts`, and current v2 action facade; no runtime validation yet.
+- remaining risks: Route implementation, v2 forms, and full validation still pending.
+
+### 2026-05-16 (admin-v2 visual action facade)
+
+- scope: Extended the v2 today facade with cast shifts, shift coverage, cast ranking, reservations, admin-created reservations, and daily memo upsert.
+- files changed: `lib/actions-v2/admin/today.ts`, `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Static edit only at this checkpoint; targeted eslint/build pending after UI wiring.
+- remaining risks: Form components and route redesign still pending.
+
+### 2026-05-16 (admin-v2 visual forms)
+
+- scope: Added v2 client forms for admin-created reservations and daily operation memos, using the protected operation time selector and v2 action facade.
+- files changed: `components/features/admin-v2/today/AdminV2TodayForms.tsx`, `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Static edit only at this checkpoint; targeted eslint/build pending after route wiring.
+- remaining risks: Dashboard/today visual route integration still pending.
+
+### 2026-05-16 (admin-v2 visual route redesign)
+
+- scope: Reworked the admin-v2 protected shell, dashboard, and today page toward the provided screenshots, including KPI cards, operational panels, cast shift table, shift coverage, ranking, alerts, reservation table, and memo/reservation forms.
+- files changed: `app/admin-v2/(protected)/layout.tsx`, `app/admin-v2/(protected)/dashboard/page.tsx`, `app/admin-v2/(protected)/today/page.tsx`, `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Static edit only at this checkpoint; targeted eslint/build pending.
+- remaining risks: Type and browser rendering validation still pending.
+
+### 2026-05-16 (admin-v2 visual dashboard validation)
+
+- scope: Completed screenshot-guided `admin-v2` dashboard/today redesign validation and final plan status updates.
+- files changed: `app/admin-v2/(protected)/layout.tsx`, `app/admin-v2/(protected)/dashboard/page.tsx`, `app/admin-v2/(protected)/today/page.tsx`, `components/features/admin-v2/today/AdminV2TodayForms.tsx`, `lib/actions-v2/admin/today.ts`, `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Targeted eslint passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed and listed `/admin-v2/dashboard` and `/admin-v2/today`; local unauthenticated smoke confirmed both routes redirect to `/admin-v2/login`.
+- remaining risks: Authenticated browser smoke is still needed for visual verification and to confirm reservation/memo writes against live data; unfinished actions still intentionally link to existing `/admin/*` routes.
+
+### 2026-05-16 (admin-v2 hardening pass)
+
+- scope: Removed likely error causes one by one after the visual redesign: v2 reservation and memo writes now use the authenticated Supabase client so existing RLS policies are enforced; sidebar active state now follows the current route; fixed sample names were removed from the v2 shell/form.
+- files changed: `lib/actions-v2/admin/today.ts`, `app/admin-v2/(protected)/layout.tsx`, `components/features/admin-v2/AdminV2SidebarNav.tsx`, `components/features/admin-v2/today/AdminV2TodayForms.tsx`, `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `PLANS.md`, `daily_log.md`.
+- validation: Targeted eslint passed; `git diff --check` passed; `pnpm lint` passed with existing warnings only; `pnpm build` passed; curl and Playwright confirmed unauthenticated `/admin-v2/dashboard` and `/admin-v2/today` redirect to `/admin-v2/login` and the login heading renders.
+- remaining risks: Authenticated browser smoke is still blocked until an admin session or credentials are available; live reservation/memo writes must be verified with real admin auth before route replacement.
+
+### 2026-05-16 (admin-v2 authenticated smoke)
+
+- scope: Verified authenticated `admin-v2` dashboard/today navigation with an admin account, without writing reservation or memo data.
+- files changed: `docs/plans/2026-05-16-admin-v2-visual-dashboard-plan.md`, `daily_log.md`.
+- validation: Playwright login reached `/admin-v2/dashboard`; dashboard displayed core sections; `/admin-v2/today` displayed cast shift, coverage, ranking, reservation, and memo sections; reservation and memo forms were visible; quick action routed to `/admin-v2/today#new-reservation`; sidebar active state switched correctly; legacy action links pointed to existing `/admin/*` routes.
+- remaining risks: Live data-write smoke for reservation and memo forms is intentionally not executed yet because it changes today's Supabase operational data.
