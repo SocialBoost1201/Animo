@@ -175,23 +175,18 @@ export async function updateCastPostStatus(postId: string, status: 'draft' | 'pe
         try {
           const { data: castInfo } = await supabase
             .from('casts')
-            .select('stage_name, name')
+            .select('stage_name, name, auth_user_id')
             .eq('id', castId)
             .single();
-          const { data: privateInfo } = await supabase
-            .from('cast_private_info')
-            .select('line_user_id')
-            .eq('cast_id', castId)
-            .single();
           const castName = castInfo?.stage_name || castInfo?.name || '';
-          const lineUserId = privateInfo?.line_user_id ?? null;
+          const castAuthUserId = castInfo?.auth_user_id ?? null;
           if (status === 'published') {
-            await notifyCastPostPublished({ castName, lineUserId });
+            await notifyCastPostPublished({ castName, castAuthUserId });
           } else {
-            await notifyCastPostUnpublished({ castName, lineUserId });
+            await notifyCastPostUnpublished({ castName, castAuthUserId });
           }
         } catch (e) {
-          console.warn('[updateCastPostStatus] LINE通知失敗:', e);
+          console.warn('[updateCastPostStatus] Push通知失敗:', e);
         }
       })();
     }

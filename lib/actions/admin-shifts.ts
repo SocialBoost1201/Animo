@@ -161,24 +161,24 @@ export async function approveShiftSubmission(submissionId: string) {
     metadata: { cast_schedules_inserted: insertData.length, dates_count: dates.length },
   });
 
-  // キャスト個人へのLINE通知（fire-and-forget）
+  // キャスト個人への Web Push 通知（fire-and-forget）
   const submissionCasts = submission.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
   const castName = (Array.isArray(submissionCasts) ? submissionCasts[0]?.stage_name : submissionCasts?.stage_name) ?? '';
   const targetWeekMonday = (submission as unknown as { target_week_monday: string }).target_week_monday ?? '';
   void (async () => {
     try {
-      const { data: privateInfo } = await supabase
-        .from('cast_private_info')
-        .select('line_user_id')
-        .eq('cast_id', submission.cast_id)
+      const { data: castRow } = await supabase
+        .from('casts')
+        .select('auth_user_id')
+        .eq('id', submission.cast_id)
         .single();
       await notifyCastShiftApproved({
         castName,
-        lineUserId: privateInfo?.line_user_id ?? null,
+        castAuthUserId: castRow?.auth_user_id ?? null,
         weekMonday: targetWeekMonday,
       });
     } catch (e) {
-      console.warn('[approveShiftSubmission] LINE通知失敗:', e);
+      console.warn('[approveShiftSubmission] Push通知失敗:', e);
     }
   })();
 
@@ -222,25 +222,25 @@ export async function rejectShiftSubmission(submissionId: string) {
     afterData: { status: 'rejected' },
   });
 
-  // キャスト個人へのLINE通知（fire-and-forget）
+  // キャスト個人への Web Push 通知（fire-and-forget）
   if (submission) {
     const submissionCasts = submission.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
     const castName = (Array.isArray(submissionCasts) ? submissionCasts[0]?.stage_name : submissionCasts?.stage_name) ?? '';
     const targetWeekMonday = (submission as unknown as { target_week_monday: string }).target_week_monday ?? '';
     void (async () => {
       try {
-        const { data: privateInfo } = await supabase
-          .from('cast_private_info')
-          .select('line_user_id')
-          .eq('cast_id', submission.cast_id)
+        const { data: castRow } = await supabase
+          .from('casts')
+          .select('auth_user_id')
+          .eq('id', submission.cast_id)
           .single();
         await notifyCastShiftRejected({
           castName,
-          lineUserId: privateInfo?.line_user_id ?? null,
+          castAuthUserId: castRow?.auth_user_id ?? null,
           weekMonday: targetWeekMonday,
         });
       } catch (e) {
-        console.warn('[rejectShiftSubmission] LINE通知失敗:', e);
+        console.warn('[rejectShiftSubmission] Push通知失敗:', e);
       }
     })();
   }

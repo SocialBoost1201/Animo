@@ -1,53 +1,130 @@
 import 'server-only';
 
-// LINE公式アカウント廃止につき、通知関数はすべてno-op。
-// Web Push実装時にここを置き換える。
+import { sendPushToCastUser } from './web-push';
+import {
+  buildProfileImageApprovedMessage,
+  buildProfileImageRejectedMessage,
+  buildProfileTextApprovedMessage,
+  buildProfileTextRejectedMessage,
+  buildShiftApprovedMessage,
+  buildShiftRejectedMessage,
+  buildCheckinRejectedMessage,
+  buildPostPublishedMessage,
+  buildPostUnpublishedMessage,
+} from './cast-notifier-messages';
 
-export async function notifyCastProfileImageApproved(_opts: {
-  castName: string;
-  lineUserId: string | null;
-}): Promise<void> {}
+// 管理→キャスト Web Push 通知モジュール。
+// 送信先は castAuthUserId（casts.auth_user_id = auth.users.id）で特定する。
+// 購読なし・VAPID未設定の場合は静かにスキップする（non-critical）。
 
-export async function notifyCastProfileImageRejected(_opts: {
+export async function notifyCastProfileImageApproved(opts: {
   castName: string;
-  lineUserId: string | null;
-}): Promise<void> {}
+  castAuthUserId: string | null;
+}): Promise<void> {
+  const msg = buildProfileImageApprovedMessage(opts.castName);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'プロフィール画像が承認されました',
+    body: msg,
+    url: '/cast/profile',
+  });
+}
 
-export async function notifyCastProfileTextApproved(_opts: {
+export async function notifyCastProfileImageRejected(opts: {
   castName: string;
-  lineUserId: string | null;
+  castAuthUserId: string | null;
+}): Promise<void> {
+  const msg = buildProfileImageRejectedMessage(opts.castName);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'プロフィール画像申請が却下されました',
+    body: msg,
+    url: '/cast/profile',
+  });
+}
+
+export async function notifyCastProfileTextApproved(opts: {
+  castName: string;
+  castAuthUserId: string | null;
   fields: { hobby: boolean; quizTags: boolean; comment: boolean };
-}): Promise<void> {}
+}): Promise<void> {
+  const msg = buildProfileTextApprovedMessage(opts.castName, opts.fields);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'プロフィールが更新されました',
+    body: msg,
+    url: '/cast/profile',
+  });
+}
 
-export async function notifyCastProfileTextRejected(_opts: {
+export async function notifyCastProfileTextRejected(opts: {
   castName: string;
-  lineUserId: string | null;
-}): Promise<void> {}
+  castAuthUserId: string | null;
+}): Promise<void> {
+  const msg = buildProfileTextRejectedMessage(opts.castName);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'プロフィール申請が却下されました',
+    body: msg,
+    url: '/cast/profile',
+  });
+}
 
-export async function notifyCastShiftApproved(_opts: {
+export async function notifyCastShiftApproved(opts: {
   castName: string;
-  lineUserId: string | null;
+  castAuthUserId: string | null;
   weekMonday: string;
-}): Promise<void> {}
+}): Promise<void> {
+  const msg = buildShiftApprovedMessage(opts.castName, opts.weekMonday);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'シフトが承認されました',
+    body: msg,
+    url: '/cast/schedule',
+  });
+}
 
-export async function notifyCastShiftRejected(_opts: {
+export async function notifyCastShiftRejected(opts: {
   castName: string;
-  lineUserId: string | null;
+  castAuthUserId: string | null;
   weekMonday: string;
-}): Promise<void> {}
+}): Promise<void> {
+  const msg = buildShiftRejectedMessage(opts.castName, opts.weekMonday);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'シフトが却下されました',
+    body: msg,
+    url: '/cast/monthly-shift',
+  });
+}
 
-export async function notifyCastCheckinRejected(_opts: {
+export async function notifyCastCheckinRejected(opts: {
   castName: string;
-  lineUserId: string | null;
+  castAuthUserId: string | null;
   checkinDate: string;
-}): Promise<void> {}
+}): Promise<void> {
+  const msg = buildCheckinRejectedMessage(opts.castName, opts.checkinDate);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: '本日の確認が却下されました',
+    body: msg,
+    url: '/cast/today',
+  });
+}
 
-export async function notifyCastPostPublished(_opts: {
+export async function notifyCastPostPublished(opts: {
   castName: string;
-  lineUserId: string | null;
-}): Promise<void> {}
+  castAuthUserId: string | null;
+}): Promise<void> {
+  const msg = buildPostPublishedMessage(opts.castName);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'ブログが公開されました',
+    body: msg,
+    url: '/cast/posts',
+  });
+}
 
-export async function notifyCastPostUnpublished(_opts: {
+export async function notifyCastPostUnpublished(opts: {
   castName: string;
-  lineUserId: string | null;
-}): Promise<void> {}
+  castAuthUserId: string | null;
+}): Promise<void> {
+  const msg = buildPostUnpublishedMessage(opts.castName);
+  await sendPushToCastUser(opts.castAuthUserId, {
+    title: 'ブログが非公開になりました',
+    body: msg,
+    url: '/cast/posts',
+  });
+}
