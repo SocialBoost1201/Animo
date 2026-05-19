@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { notifyProfileImageChangeRequested } from '@/lib/notifications/admin-notifier';
 
 export async function uploadCastImages(castId: string, formData: FormData): Promise<{ success?: boolean; error?: string }> {
   const supabase = await createClient();
@@ -140,14 +139,6 @@ export async function requestProfileImageChange(
   if (dbError) {
     console.error('[requestProfileImageChange] DB エラー:', dbError)
     return { error: '申請データの保存に失敗しました。' }
-  }
-
-  // 通知（non-critical）
-  try {
-    const castName = cast.stage_name || cast.name || '不明'
-    await notifyProfileImageChangeRequested({ castName, castId: cast.id })
-  } catch (notifyErr) {
-    console.warn('[AdminNotifier] 画像申請通知失敗 (non-critical):', notifyErr)
   }
 
   revalidatePath('/cast/profile')

@@ -5,7 +5,6 @@ import { createServiceClient } from '@/lib/supabase/service'
 import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
 import { formatProtectedOperationTime } from '@/lib/operation-hours'
 import { sendLineGroupMessage } from '@/lib/line'
-import { notifyCheckinSubmitted, notifyReservationSubmitted } from '@/lib/notifications/admin-notifier'
 import { revalidatePath } from 'next/cache'
 import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/staff-records'
 import { getAnalyticsSummary } from './analytics'
@@ -732,20 +731,6 @@ export async function submitCheckin(formData: FormData) {
       })
     }
 
-    // メール通知（non-critical）
-    try {
-      await notifyCheckinSubmitted({
-        castName,
-        today,
-        isAbsent,
-        hasChange,
-        changeNote,
-        memo,
-      })
-    } catch (mailErr) {
-      console.warn('[AdminNotifier] 出勤確認メール通知失敗 (non-critical):', mailErr)
-    }
-
     revalidatePath('/cast/dashboard')
     revalidatePath('/cast/today')
     revalidatePath('/admin/today')
@@ -836,21 +821,6 @@ export async function addReservation(formData: FormData) {
         skipped: lineResult.skipped,
         status: lineResult.status,
       })
-    }
-
-    // メール通知（non-critical）
-    try {
-      await notifyReservationSubmitted({
-        castName,
-        today,
-        visitTime,
-        guestName,
-        guestCount,
-        reservationType,
-        note,
-      })
-    } catch (mailErr) {
-      console.warn('[AdminNotifier] 来店予定メール通知失敗 (non-critical):', mailErr)
     }
 
     revalidatePath('/cast/dashboard')

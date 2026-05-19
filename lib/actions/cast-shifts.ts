@@ -3,7 +3,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { addCastScore } from './scores';
-import { notifyShiftSubmitted } from '@/lib/notifications/admin-notifier';
 
 export type ShiftType = 'off' | 'work';
 
@@ -132,15 +131,7 @@ export async function submitMyShift(
     }
   }
 
-  // 通知（email + LINE、non-critical）
-  try {
-    const castName = (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).stage_name
-      || (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).name
-      || '不明'
-    await notifyShiftSubmitted({ castName, targetWeekMonday, isResubmit })
-  } catch (notifyErr) {
-    console.warn('[AdminNotifier] シフト提出通知失敗 (non-critical):', notifyErr)
-  }
+
 
   revalidatePath('/cast/shift');
   revalidatePath('/cast/dashboard');
