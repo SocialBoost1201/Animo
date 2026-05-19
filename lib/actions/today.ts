@@ -4,14 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { getJstDateString, isPastJstTime } from '@/lib/date-utils'
 import { formatProtectedOperationTime } from '@/lib/operation-hours'
-import { sendLineGroupMessage } from '@/lib/line'
 import { revalidatePath } from 'next/cache'
 import { mapRowToStaffSlave, type StaffSlave, type StaffTableRow } from '@/lib/staff-records'
 import { getAnalyticsSummary } from './analytics'
 import { isMasterAccount } from '@/lib/config/master'
 import { getAppRole, isAdminLoginRole } from '@/lib/auth/admin-roles'
 import { logAdminAction } from '@/lib/audit/admin-audit'
-import { notifyCastCheckinRejected } from '@/lib/notifications/cast-notifier'
 
 // 曜日の日本語変換
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
@@ -28,64 +26,6 @@ function getTodaySubmissionDeadlineLabel() {
   return `${String(TODAY_SUBMISSION_DEADLINE_HOUR).padStart(2, '0')}:${String(TODAY_SUBMISSION_DEADLINE_MINUTE).padStart(2, '0')}`
 }
 
-function buildCheckinLineMessage(params: {
-  castName: string
-  today: string
-  isAbsent: boolean
-  hasChange: boolean
-  changeNote: string | null
-  memo: string | null
-}) {
-  const lines = [
-    '【本日の確認提出】',
-    `${params.castName} さん`,
-    `日付: ${params.today}`,
-    `欠勤: ${params.isAbsent ? 'あり' : 'なし'}`,
-    `出勤変更: ${params.hasChange ? 'あり' : 'なし'}`,
-    '状態: 店長承認待ち',
-  ]
-
-  if (params.changeNote) {
-    lines.push(`変更内容: ${params.changeNote}`)
-  }
-
-  if (params.memo) {
-    lines.push(`メモ: ${params.memo}`)
-  }
-
-  return lines.join('\n')
-}
-
-function buildReservationLineMessage(params: {
-  castName: string
-  today: string
-  visitTime: string
-  guestName: string
-  guestCount: number | null
-  reservationType: string
-  note: string | null
-}) {
-  const typeLabel = params.reservationType === 'douhan' ? '同伴' : '来店予定'
-  const lines = [
-    '【来店予定提出】',
-    `${params.castName} さん`,
-    `日付: ${params.today}`,
-    `時間: ${params.visitTime.substring(0, 5)}`,
-    `お客様: ${params.guestName} 様`,
-    `種別: ${typeLabel}`,
-    '状態: 店長承認待ち',
-  ]
-
-  if (params.guestCount) {
-    lines.push(`人数: ${params.guestCount}名`)
-  }
-
-  if (params.note) {
-    lines.push(`メモ: ${params.note}`)
-  }
-
-  return lines.join('\n')
-}
 
 function getSubmissionClosedError() {
   return `本日の提出締切 ${getTodaySubmissionDeadlineLabel()} を過ぎたため送信できません。`
@@ -710,40 +650,10 @@ export async function submitCheckin(formData: FormData) {
       }
     }
 
-    const castName = cast.stage_name || cast.name || '不明'
-    const lineResult = await sendLineGroupMessage(
-      buildCheckinLineMessage({
-        castName,
-        today,
-        isAbsent,
-        hasChange,
-        changeNote: changeNote,
-        memo: memo,
-      })
-    )
-
-    if (!lineResult.ok) {
-      console.warn('[LINE] 本日の確認通知の送信に失敗しました', {
-        castId: cast.id,
-        reason: lineResult.reason,
-        skipped: lineResult.skipped,
-        status: lineResult.status,
-      })
-    }
-
     revalidatePath('/cast/dashboard')
     revalidatePath('/cast/today')
     revalidatePath('/admin/today')
     revalidatePath('/admin/approvals')
-    if (!lineResult.ok) {
-      return {
-        success: true,
-        warning: lineResult.skipped
-          ? '提出は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
-          : '提出は保存されましたが、LINE通知の送信に失敗しました。',
-        message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
-      }
-    }
     return {
       success: true,
       message: '本日の確認を提出しました。店長の承認後に営業状況へ反映されます。',
@@ -801,37 +711,11 @@ export async function addReservation(formData: FormData) {
       .single()
 
     if (error) return { error: error.message }
-    const castName = cast.stage_name || cast.name || '不明'
-    const lineResult = await sendLineGroupMessage(
-      buildReservationLineMessage({
-        castName,
-        today,
-        visitTime,
-        guestName,
-        guestCount,
-        reservationType,
-        note,
-      })
-    )
-
-    if (!lineResult.ok) {
-      console.warn('[LINE] 来店予定通知の送信に失敗しました', {
-        castId: cast.id,
-        reason: lineResult.reason,
-        skipped: lineResult.skipped,
-        status: lineResult.status,
-      })
-    }
 
     revalidatePath('/cast/dashboard')
     revalidatePath('/admin/today')
     return {
       success: true,
-      warning: !lineResult.ok
-        ? lineResult.skipped
-          ? '来店予定は保存されましたが、LINE設定が未完了のため通知は送信されませんでした。'
-          : '来店予定は保存されましたが、LINE通知の送信に失敗しました。'
-        : undefined,
       message: '来店予定を提出しました。店長の承認後に営業状況へ反映されます。',
       data: reservation,
     }
@@ -1038,29 +922,6 @@ export async function rejectCheckin(id: string) {
     metadata: { manual_override_skipped: existing?.source === 'manual' },
   })
 
-  // キャスト個人へのLINE通知（fire-and-forget）
-  void (async () => {
-    try {
-      const { data: castInfo } = await serviceSupabase
-        .from('casts')
-        .select('stage_name, name')
-        .eq('id', checkin.cast_id)
-        .single()
-      const { data: privateInfo } = await serviceSupabase
-        .from('cast_private_info')
-        .select('line_user_id')
-        .eq('cast_id', checkin.cast_id)
-        .single()
-      const castName = castInfo?.stage_name || castInfo?.name || ''
-      await notifyCastCheckinRejected({
-        castName,
-        lineUserId: privateInfo?.line_user_id ?? null,
-        checkinDate: checkin.checkin_date,
-      })
-    } catch (e) {
-      console.warn('[rejectCheckin] LINE通知失敗:', e)
-    }
-  })()
 
   return { success: true as const, id }
 }

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { createServiceClient } from '@/lib/supabase/service'
-import { sendLineGroupMessage, sendLineMessage } from '@/lib/line'
 
 // ── 型定義 ──────────────────────────────────────────────────────────────────
 
@@ -217,30 +216,21 @@ export async function testSendLineNotification(
 
   if (fetchError || !notif) return { ok: false, error: 'notification_not_found' }
 
-  const message = buildMessage(notif.content)
-
-  let result: { ok: boolean; skipped?: boolean; reason?: string }
-  if (notif.target_id) {
-    // group / individual どちらも target_id が設定されていれば直接送信
-    result = await sendLineMessage(notif.target_id, message)
-  } else {
-    result = await sendLineGroupMessage(message)
-  }
-
-  // ログ記録
-  await supabase.from('line_notification_logs').insert({
-    notification_id: id,
-    status: result.ok ? 'sent' : result.skipped ? 'skipped' : 'failed',
-    message_preview: message.slice(0, 100),
-    error_reason: result.ok ? null : result.reason ?? null,
-  })
-
-  return { ok: result.ok, error: result.ok ? undefined : result.reason }
+  // LINE公式アカウント廃止のため送信停止
+  return { ok: false, error: 'line_disabled' }
 }
 
 // ── スケジューラー実行（Cronから呼ばれる） ────────────────────────────────────
 
+// LINE公式アカウント廃止のためスケジューラーも停止
 export async function runScheduledNotifications(): Promise<{
+  executed: number
+  errors: number
+}> {
+  return { executed: 0, errors: 0 }
+}
+
+async function _runScheduledNotificationsDisabled(): Promise<{
   executed: number
   errors: number
 }> {
@@ -286,13 +276,8 @@ export async function runScheduledNotifications(): Promise<{
 
     const message = buildMessage(notif.content)
 
-    let result: { ok: boolean; skipped?: boolean; reason?: string }
-    if (notif.target_id) {
-      // group / individual どちらも target_id が設定されていれば直接送信
-      result = await sendLineMessage(notif.target_id, message)
-    } else {
-      result = await sendLineGroupMessage(message)
-    }
+    const result: { ok: boolean; skipped?: boolean; reason?: string } =
+      { ok: false, skipped: true, reason: 'line_disabled' }
 
     const status = result.ok ? 'sent' : result.skipped ? 'skipped' : 'failed'
 

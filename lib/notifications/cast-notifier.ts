@@ -1,96 +1,53 @@
 import 'server-only';
 
-import { sendLineMessage } from '@/lib/line';
-import {
-  buildProfileImageApprovedMessage,
-  buildProfileImageRejectedMessage,
-  buildProfileTextApprovedMessage,
-  buildProfileTextRejectedMessage,
-  buildShiftApprovedMessage,
-  buildShiftRejectedMessage,
-  buildCheckinRejectedMessage,
-  buildPostPublishedMessage,
-  buildPostUnpublishedMessage,
-} from './cast-notifier-messages';
+// LINE公式アカウント廃止につき、通知関数はすべてno-op。
+// Web Push実装時にここを置き換える。
 
-// キャスト個人への通知専用モジュール。
-// グループ（LINE_GROUP_ID / LINE_NOTIFY_GROUP_ID）には絶対に送信しない。
-// line_user_id が null の場合は静かにスキップする。
-//
-// 文言の組み立ては cast-notifier-messages.ts の pure builder 群に委譲し、
-// 本ファイルは「LINE 個別チャットに送る」という副作用に専念する。
-
-async function sendToCast(lineUserId: string | null, message: string): Promise<void> {
-  if (!lineUserId) return;
-  const result = await sendLineMessage(lineUserId, message);
-  if (!result.ok && !result.skipped) {
-    console.warn('[CastNotifier] 個別LINE通知失敗:', result.reason);
-  }
-}
-
-export async function notifyCastProfileImageApproved(opts: {
+export async function notifyCastProfileImageApproved(_opts: {
   castName: string;
   lineUserId: string | null;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildProfileImageApprovedMessage(opts.castName));
-}
+}): Promise<void> {}
 
-export async function notifyCastProfileImageRejected(opts: {
+export async function notifyCastProfileImageRejected(_opts: {
   castName: string;
   lineUserId: string | null;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildProfileImageRejectedMessage(opts.castName));
-}
+}): Promise<void> {}
 
-export async function notifyCastProfileTextApproved(opts: {
+export async function notifyCastProfileTextApproved(_opts: {
   castName: string;
   lineUserId: string | null;
   fields: { hobby: boolean; quizTags: boolean; comment: boolean };
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildProfileTextApprovedMessage(opts.castName, opts.fields));
-}
+}): Promise<void> {}
 
-export async function notifyCastProfileTextRejected(opts: {
+export async function notifyCastProfileTextRejected(_opts: {
   castName: string;
   lineUserId: string | null;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildProfileTextRejectedMessage(opts.castName));
-}
+}): Promise<void> {}
 
-export async function notifyCastShiftApproved(opts: {
+export async function notifyCastShiftApproved(_opts: {
   castName: string;
   lineUserId: string | null;
   weekMonday: string;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildShiftApprovedMessage(opts.castName, opts.weekMonday));
-}
+}): Promise<void> {}
 
-export async function notifyCastShiftRejected(opts: {
+export async function notifyCastShiftRejected(_opts: {
   castName: string;
   lineUserId: string | null;
   weekMonday: string;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildShiftRejectedMessage(opts.castName, opts.weekMonday));
-}
+}): Promise<void> {}
 
-export async function notifyCastCheckinRejected(opts: {
+export async function notifyCastCheckinRejected(_opts: {
   castName: string;
   lineUserId: string | null;
   checkinDate: string;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildCheckinRejectedMessage(opts.castName, opts.checkinDate));
-}
+}): Promise<void> {}
 
-export async function notifyCastPostPublished(opts: {
+export async function notifyCastPostPublished(_opts: {
   castName: string;
   lineUserId: string | null;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildPostPublishedMessage(opts.castName));
-}
+}): Promise<void> {}
 
-export async function notifyCastPostUnpublished(opts: {
+export async function notifyCastPostUnpublished(_opts: {
   castName: string;
   lineUserId: string | null;
-}): Promise<void> {
-  await sendToCast(opts.lineUserId, buildPostUnpublishedMessage(opts.castName));
-}
+}): Promise<void> {}
