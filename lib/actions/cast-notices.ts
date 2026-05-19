@@ -18,9 +18,21 @@ export type CastNotice = {
 
 /**
  * キャスト自身が見られるお知らせ一覧（既読ステータス付き）を取得する
+ * castId の所有権を検証してから取得する。
  */
 export async function getCastNotices(castId: string): Promise<CastNotice[]> {
   const supabase = await createClient();
+
+  // 所有権確認
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+  const { data: owned } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('id', castId)
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+  if (!owned) return [];
 
   // 1. 全てのお知らせを取得
   const { data: notices, error: noticeErr } = await supabase
@@ -59,9 +71,21 @@ export async function getCastNotices(castId: string): Promise<CastNotice[]> {
 
 /**
  * 指定したお知らせを「既読」にする
+ * castId の所有権を検証してから更新する。
  */
 export async function markNoticeAsRead(castId: string, noticeId: string) {
   const supabase = await createClient();
+
+  // 所有権確認
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: 'Unauthorized' };
+  const { data: owned } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('id', castId)
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+  if (!owned) return { success: false, error: 'Unauthorized' };
 
   // upsertで既読テーブルに登録（すでにあれば何もしない）
   const { error } = await supabase
@@ -83,6 +107,7 @@ export async function markNoticeAsRead(castId: string, noticeId: string) {
 }
 
 export async function markAllCastNoticesAsRead(castId: string) {
+  // getCastNotices 内で所有権確認済み
   const notices = await getCastNotices(castId);
   const unreadIds = notices.filter((notice) => !notice.is_read).map((notice) => notice.id);
 

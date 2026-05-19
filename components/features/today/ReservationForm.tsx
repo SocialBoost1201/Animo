@@ -75,9 +75,6 @@ export function ReservationForm({
         toast.error(result.error)
       } else {
         toast.success(result.message || '来店予定を追加しました')
-        if ('warning' in result && result.warning) {
-          toast.error(result.warning)
-        }
         setPendingIds((current) => current.filter((id) => id !== tempId))
         if ('data' in result && result.data) {
           const savedReservation = result.data

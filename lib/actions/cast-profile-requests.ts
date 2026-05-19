@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { notifyProfileTextChangeRequested } from '@/lib/notifications/admin-notifier';
 
 /**
  * キャスト本人が趣味・AI診断タグ・一言コメントの変更を申請する
@@ -45,27 +44,6 @@ export async function requestProfileTextChange(
     console.error('[requestProfileTextChange]', insertError);
     return { error: '申請の送信に失敗しました。時間をおいて再試行してください。' };
   }
-
-  // 管理者グループへの通知（fire-and-forget）
-  void (async () => {
-    try {
-      const { data: castWithName } = await supabase
-        .from('casts')
-        .select('stage_name')
-        .eq('id', cast.id)
-        .single();
-      await notifyProfileTextChangeRequested({
-        castName: castWithName?.stage_name ?? '',
-        fields: {
-          hobby:    hobby !== null,
-          quizTags: quiz_tags.length > 0,
-          comment:  comment !== null,
-        },
-      });
-    } catch (e) {
-      console.warn('[requestProfileTextChange] LINE通知失敗:', e);
-    }
-  })();
 
   revalidatePath('/cast/profile/edit');
   return { success: true };

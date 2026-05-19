@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath, unstable_cache } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/service';
 import { addCastScore } from './scores';
-import { notifyBlogSubmitted } from '@/lib/notifications/admin-notifier';
 import { logAdminAction } from '@/lib/audit/admin-audit';
 import {
   notifyCastPostPublished,
@@ -105,16 +104,6 @@ export async function createCastPost(formData: FormData) {
       await sendCastPostNotification(castId, content);
     } catch (mailErr) {
       console.warn('Mail notification failed (non-critical):', mailErr);
-    }
-
-    // LINE通知（non-critical）
-    try {
-      const castName = (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).stage_name
-        || (ownedCast as { id: string; stage_name?: string | null; name?: string | null }).name
-        || '不明'
-      await notifyBlogSubmitted({ castName, contentPreview: content })
-    } catch (lineErr) {
-      console.warn('[AdminNotifier] ブログLINE通知失敗 (non-critical):', lineErr)
     }
 
     revalidatePath('/admin/approvals');

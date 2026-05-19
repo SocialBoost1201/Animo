@@ -1,21 +1,15 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { sendLineGroupMessage } from '@/lib/line';
 
+// LINE公式アカウント廃止につき通知送信は停止。Web Push実装時に復元する。
 export async function sendShiftRecruitment(
-  targetDate: string,
-  message: string
+  _targetDate: string,
+  _message: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'Unauthorized' };
 
-  try {
-    await sendLineGroupMessage(`【出勤募集】${targetDate}\n${message}`);
-    return { success: true };
-  } catch (err) {
-    console.error('[sendShiftRecruitment] LINE送信失敗:', err);
-    return { success: false, error: 'LINE送信に失敗しました' };
-  }
+  return { success: true };
 }

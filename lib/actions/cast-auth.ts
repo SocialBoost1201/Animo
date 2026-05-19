@@ -743,9 +743,21 @@ export async function getCurrentCast() {
 
 /**
  * キャスト本人の投稿一覧取得（全ステータス）
+ * castId の所有権を検証してから取得する。
  */
 export async function getMyCastPosts(castId: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: null, error: 'Unauthorized' };
+
+  const { data: ownedCast } = await supabase
+    .from('casts')
+    .select('id')
+    .eq('id', castId)
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+  if (!ownedCast) return { data: null, error: 'Unauthorized' };
+
   const { data, error } = await supabase
     .from('cast_posts')
     .select('*')
