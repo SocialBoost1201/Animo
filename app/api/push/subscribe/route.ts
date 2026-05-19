@@ -1,15 +1,13 @@
 import webpush from 'web-push';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { NextResponse } from 'next/server';
-
-// VAPID 鍵は環境変数で管理
-// 初回は `npx web-push generate-vapid-keys` で生成して .env に設定
 
 function initWebPush(): boolean {
   const pub = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
   const priv = process.env.VAPID_PRIVATE_KEY ?? '';
   if (!pub || !priv) return false;
-  webpush.setVapidDetails('mailto:animo4266@gmaill.com', pub, priv);
+  webpush.setVapidDetails('mailto:animo4266@gmail.com', pub, priv);
   return true;
 }
 
@@ -18,19 +16,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'VAPID keys not configured' }, { status: 500 });
   }
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { subscription } = await req.json();
     if (!subscription?.endpoint) {
       return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 });
     }
 
-    const supabase = await createClient();
-
-    // Supabase の push_subscriptions テーブルへ保存（upsert）
-    const { error } = await supabase
+    const serviceClient = createServiceClient();
+    const { error } = await serviceClient
       .from('push_subscriptions')
       .upsert(
-        { endpoint: subscription.endpoint, subscription: JSON.stringify(subscription) },
+        {
+          endpoint: subscription.endpoint,
+          subscription: JSON.stringify(subscription),
+          user_id: user.id,
+        },
         { onConflict: 'endpoint' }
       );
 

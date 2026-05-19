@@ -93,18 +93,18 @@ export async function approveProfileTextRequest(
 
   void (async () => {
     try {
-      const { data: privateInfo } = await supabase
-        .from('cast_private_info')
-        .select('line_user_id')
-        .eq('cast_id', castId)
+      const { data: castRow } = await supabase
+        .from('casts')
+        .select('auth_user_id')
+        .eq('id', castId)
         .single();
       await notifyCastProfileTextApproved({
         castName,
-        lineUserId: privateInfo?.line_user_id ?? null,
+        castAuthUserId: castRow?.auth_user_id ?? null,
         fields: castFields,
       });
     } catch (e) {
-      console.warn('[approveProfileTextRequest] LINE通知失敗:', e);
+      console.warn('[approveProfileTextRequest] Push通知失敗:', e);
     }
   })();
 
@@ -156,24 +156,24 @@ export async function rejectProfileTextRequest(
 
   if (error) return { success: false, error: error.message };
 
-  // キャスト個人へのLINE通知（fire-and-forget — 承認速度に影響しない）
+  // キャスト個人への Web Push 通知（fire-and-forget）
   const castId = req.cast_id;
   const reqCasts = req.casts as { stage_name: string | null } | { stage_name: string | null }[] | null;
   const castName = Array.isArray(reqCasts) ? (reqCasts[0]?.stage_name ?? '') : (reqCasts?.stage_name ?? '');
 
   void (async () => {
     try {
-      const { data: privateInfo } = await supabase
-        .from('cast_private_info')
-        .select('line_user_id')
-        .eq('cast_id', castId)
+      const { data: castRow } = await supabase
+        .from('casts')
+        .select('auth_user_id')
+        .eq('id', castId)
         .single();
       await notifyCastProfileTextRejected({
         castName,
-        lineUserId: privateInfo?.line_user_id ?? null,
+        castAuthUserId: castRow?.auth_user_id ?? null,
       });
     } catch (e) {
-      console.warn('[rejectProfileTextRequest] LINE通知失敗:', e);
+      console.warn('[rejectProfileTextRequest] Push通知失敗:', e);
     }
   })();
 
